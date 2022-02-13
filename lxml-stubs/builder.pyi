@@ -14,17 +14,18 @@ class ElementMaker:
     def __call__(
         self,
         tag: str,
-        # Although default ElementMaker only accepts _Element and types
-        # interpretable by default typemap (that is str, CDATA and dict)
-        # as children, typemap can be expanded to make sure item of any
-        # type is accepted.
+        # Although, by default, the ElementMaker only accepts _Element and types
+        # interpretable by the default typemap (that is str, CDATA and dict)
+        # as children, the typemap can be expanded to make sure items of any
+        # type are accepted.
+
         *children: Any,
         **attrib: _AnyStr,
     ) -> _Element: ...
     # __getattr__ here is special. ElementMaker is a factory that generates
-    # element of *any* tag, as long as tag name does not conflict with basic
-    # object methods (including python keywords like "class" and "for",
-    # which are common in HTML)
+    # elements with any tag provided as attribute name, as long as the name
+    # does not conflict with the basic object methods (including python keywords
+    # like "class" and "for", which are common in HTML)
     def __getattr__(self, name: str) -> Callable[..., _Element]: ...
 
 E: ElementMaker
