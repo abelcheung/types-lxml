@@ -1,0 +1,65 @@
+- case: builder_default_element_factory
+  main: |
+    from lxml.builder import E
+    reveal_type(E)  # N: Revealed type is "lxml.builder.ElementMaker"
+
+- case: builder_custom_element_factory
+  parametrized:
+    - args: namespace=ns
+    - args: makeelement=etree.Element
+    - args: namespace=ns, nsmap=map
+    - args: typemap=typemap
+  main: |
+    from typing import Callable, Dict, Type
+    from lxml.builder import ElementMaker
+    from lxml import etree
+    ns: str
+    map: Dict[str, str]
+    def add_text(elem: etree._Element, item: str) -> None: ...
+    typemap = {str: add_text}
+    E = ElementMaker({{ args }})
+    reveal_type(E)  # N: Revealed type is "lxml.builder.ElementMaker"
+
+- case: builder_create_elements
+  parametrized:
+    - method: foo
+      rt: lxml.etree._Element
+    - method: BAR
+      rt: lxml.etree._Element
+    - method: __fOoBaR_
+      rt: lxml.etree._Element
+    - method: __str__
+      rt: builtins.str
+  main: |
+    from lxml.builder import E
+    reveal_type(E.{{ method }}())  # N: Revealed type is "{{ rt }}"
+
+# Directly taken from lxml.builder docstring example
+- case: builder_complex_example
+  main: |
+    from lxml.builder import E
+    from lxml import etree as ET
+
+    A = E.a
+    I = E.i
+    B = E.b
+
+    def CLASS(v):
+      return {'class': v}
+
+    page = (
+      E.html(
+        E.head(
+          E.title("This is a sample document")
+        ),
+        E.body(
+          E.h1("Hello!", CLASS("title")),
+          E.p("This is a paragraph with ", B("bold"), " text in it!"),
+          E.p("This is another paragraph, with a ",
+              A("link", href="http://www.python.org"), "."),
+          E.p("Here are some reserved characters: <spam&egg>."),
+          ET.XML("<p>And finally, here is an embedded XHTML fragment.</p>"),
+        )
+      )
+    )
+    reveal_type(page)  # N: Revealed type is "lxml.etree._Element"
