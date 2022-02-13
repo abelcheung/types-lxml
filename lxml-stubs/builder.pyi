@@ -18,7 +18,6 @@ class ElementMaker:
         # interpretable by the default typemap (that is str, CDATA and dict)
         # as children, the typemap can be expanded to make sure items of any
         # type are accepted.
-
         *children: Any,
         **attrib: _AnyStr,
     ) -> _Element: ...
