@@ -19,7 +19,7 @@ class ElementMaker:
         # as children, the typemap can be expanded to make sure items of any
         # type are accepted.
         *children: Any,
-        **attrib: _AnyStr,
+        **attrib: str,
     ) -> _Element: ...
     # __getattr__ here is special. ElementMaker is a factory that generates
     # elements with any tag provided as attribute name, as long as the name
