@@ -1,8 +1,6 @@
 # lxml-stubs
-<!-- start-no-pypi -->
-[![Python Tests](https://github.com/lxml/lxml-stubs/workflows/Python%20Tests/badge.svg)](https://github.com/lxml/lxml-stubs/actions?query=workflow%3A%22Python+Tests%22)
-[![pypi](https://img.shields.io/pypi/v/lxml-stubs.svg)](https://pypi.python.org/pypi/lxml-stubs/)
-<!-- end-no-pypi -->
+[![Build](https://github.com/abelcheung/lxml-stubs/workflows/build.yml/badge.svg?branch=moveon)](https://github.com/abelcheung/lxml-stubs/workflows/build.yml/badge.svg?branch=moveon)
+[![Test](https://github.com/abelcheung/lxml-stubs/workflows/test.yml/badge.svg?branch=moveon)](https://github.com/abelcheung/lxml-stubs/workflows/test.yml/badge.svg?branch=moveon)
 
 ## About
 This repository contains external type annotations (see

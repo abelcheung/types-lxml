@@ -1,24 +1,72 @@
-[tool.pytest.ini_options]
-testpaths = [
-    "test-data",
+[build-system]
+requires = ['pdm-pep517']
+build-backend = 'pdm.pep517.api'
+
+[project]
+name = 'lxml-stubs'
+dynamic = ['version']
+description = 'Type annotations for lxml'
+readme = 'README.md'
+requires-python = '>=3.6'
+dependencies = [ # version dependency uncertain
+    'lxml',
+]
+keywords = ['lxml', 'typing', 'stubs']
+authors = [
+    { name = 'Michael van Tellingen', email = 'michaelvantellingen@gmail.com' },
+    { name = 'Stefan Behnel', email = 'gh@behnel.de' },
+    { name = 'Jelle Zijlstra', email = 'jelle.zijlstra@gmail.com' },
+]
+maintainers = [
+    { name = 'Abel Cheung', email = 'abelcheung@gmail.com' },
+]
+classifiers = [
+    'Development Status :: 2 - Pre-Alpha',
+    'Programming Language :: Python',
+    'Intended Audience :: Developers',
+    'License :: OSI Approved :: Apache Software License',
+    'Programming Language :: Python :: 3 :: Only',
+    'Programming Language :: Python :: 3.6',
+    'Programming Language :: Python :: 3.7',
+    'Programming Language :: Python :: 3.8',
+    'Programming Language :: Python :: 3.9',
+    'Programming Language :: Python :: 3.10',
+    'Typing :: Stubs Only',
 ]
 
-[tool.coverage.paths]
-source = ["lxml-stubs", "*/.tox/*/site-packages"]
+[project.urls]
+homepage = 'https://github.com/abelcheung/lxml-stubs'
+repository = 'https://github.com/abelcheung/lxml-stubs'
+
+[tool.pdm]
+version = {use_scm = true}
+includes = [
+    'lxml-stubs/',
+    'py.typed',
+]
+excludes = [
+    '**/*.bak',
+]
+source-includes = [
+    'test-data/',
+    'LICENSE',
+    'README.md',
+    'tox.ini',
+]
+
+[tool.pytest.ini_options]
+testpaths = [
+    'test-data',
+]
 
 [tool.isort]
-line_length = 88
-multi_line_output = 3
-include_trailing_comma = true
-balanced_wrapping = true
-default_section = "THIRDPARTY"
-use_parentheses = true
+profile = 'black'
 
 [tool.pyright]
-include = ["lxml-stubs"]
+include = ['lxml-stubs']
 exclude = [
-    "**/node_modules",
-    "**/__pycache__",
-    "/.tox",
+    '**/node_modules',
+    '**/__pycache__',
+    '/.tox',
 ]
 reportPrivateUsage = false
