@@ -4,13 +4,8 @@ on: [push, pull_request]
 
 jobs:
 
-  checks:
+  format:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        toxenv:
-          - format
-          - mypy
     steps:
     - uses: actions/checkout@v2
     - name: Set up Python 3.9
@@ -20,14 +15,14 @@ jobs:
     - name: Install dependencies
       run: pip install tox
     - name: Validate formatting
-      run: tox -e ${{ matrix.toxenv }}
+      run: tox -e format
 
   test:
     runs-on: ubuntu-latest
     strategy:
       max-parallel: 4
       matrix:
-        python-version: ["3.6", "3.7", "3.8", "3.9", "3.10"]
+        python-version: ["3.6", "3.7", "3.8", "3.9"]
     steps:
     - uses: actions/checkout@v2
     - name: Set up Python ${{ matrix.python-version }}
@@ -39,4 +34,4 @@ jobs:
         python -m pip install --upgrade pip
         pip install tox tox-gh-actions
     - name: Test with tox
-      run: tox -e py
+      run: tox

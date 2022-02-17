@@ -3,9 +3,9 @@ import re
 from setuptools import setup
 
 tests_require = [
-    "coverage[toml]==5.2",
     "pytest>=6.0.0",
-    "pytest-mypy-plugins==1.9.3"
+    "pytest-mypy-plugins==1.4.0",
+    "coverage[toml]==5.2",
 ]
 
 with open("README.md") as fh:
