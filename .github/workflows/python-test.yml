@@ -1,37 +1,69 @@
-name: Python Tests
+name: Build and test
 
-on: [push, pull_request]
+on:
+  push:
+    paths-ignore:
+      - '.gitignore'
+      - 'README.md'
+      - 'LICENSE'
 
 jobs:
-
-  format:
+  build:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
-    - name: Set up Python 3.9
-      uses: actions/setup-python@v1
+
+    - name: Set up Python
+      uses: actions/setup-python@v2
       with:
-        python-version: 3.9
+        python-version: "3.10"
+
     - name: Install dependencies
-      run: pip install tox
-    - name: Validate formatting
-      run: tox -e format
+      run: pip install -v tox
+
+    - name: Pre-validation
+      env:
+        TOX_PARALLEL_NO_SPINNER: 1
+      run: tox -v -p -e format,mypy
+
+    - name: Build sdist and wheel
+      run: tox -v -e build
+
+    - name: Upload artifact
+      uses: actions/upload-artifact@v2
+      with:
+        name: dist
+        path: dist/*
+        if-no-files-found: error
 
   test:
     runs-on: ubuntu-latest
+    needs: build
     strategy:
-      max-parallel: 4
       matrix:
-        python-version: ["3.6", "3.7", "3.8", "3.9"]
+        python-version: ["3.6", "3.7", "3.8", "3.9", "3.10"]
     steps:
     - uses: actions/checkout@v2
+
     - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v1
+      uses: actions/setup-python@v2
       with:
         python-version: ${{ matrix.python-version }}
+
+    - name: Download artifact
+      uses: actions/download-artifact@v2
+      with:
+        name: dist
+
     - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install tox tox-gh-actions
-    - name: Test with tox
-      run: tox
+      run: pip install -v tox
+
+    - name: Test sdist
+      run: tox --installpkg *.tar.gz --result-json test-job-${{ strategy.job-index }}.json -v
+
+    - name: Upload log artifact
+      uses: actions/upload-artifact@v2
+      with:
+        name: log
+        path: test-job-*.json
+        if-no-files-found: error
