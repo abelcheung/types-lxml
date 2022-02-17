@@ -1,6 +1,9 @@
 # lxml-stubs
-[![Build](https://github.com/abelcheung/lxml-stubs/workflows/build.yml/badge.svg?branch=moveon)](https://github.com/abelcheung/lxml-stubs/workflows/build.yml/badge.svg?branch=moveon)
-[![Test](https://github.com/abelcheung/lxml-stubs/workflows/test.yml/badge.svg?branch=moveon)](https://github.com/abelcheung/lxml-stubs/workflows/test.yml/badge.svg?branch=moveon)
+[![Testing](https://github.com/abelcheung/lxml-stubs/actions/workflows/python-test.yml/badge.svg?branch=moveon)](https://github.com/abelcheung/lxml-stubs/actions/workflows/python-test.yml/badge.svg?branch=moveon)
+
+## Relationship with official lxml-stubs
+This fork is an attempt to move forward with faster pace while official
+one remains stable. Please contribute to official repository.
 
 ## About
 This repository contains external type annotations (see
