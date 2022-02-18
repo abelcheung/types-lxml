@@ -22,6 +22,8 @@ from typing import (
     overload,
 )
 
+from typing_extensions import Literal, Protocol, TypeGuard
+
 from ._types import (
     _AnyStr,
     _Dict_Tuple2AnyStr_Any,
@@ -30,8 +32,7 @@ from ._types import (
     _NSMap,
     _OptionalNamespace,
 )
-
-from typing_extensions import Literal, Protocol, TypeGuard
+from .cssselect import _CSSTransArg
 
 # dummy for missing stubs
 def __getattr__(name: str) -> Any: ...
@@ -56,6 +57,17 @@ _XPathObject = Union[
             Tuple[Optional[_AnyStr], Optional[_AnyStr]],
         ]
     ],
+]
+# Although xpath variable supports most of the XPathObject types
+# as _input argument_ value, most users would only use
+# primivite types for variable substitution though
+_XPathVarArg = Union[
+    bool,
+    int,
+    float,
+    _AnyStr,
+    _Element,
+    List[_Element],
 ]
 _T = TypeVar("_T")
 _KnownEncodings = Literal[
@@ -116,7 +128,12 @@ class _Element(Iterable["_Element"], Sized):
     def addprevious(self, element: "_Element") -> None: ...
     def addnext(self, element: "_Element") -> None: ...
     def append(self, element: "_Element") -> None: ...
-    def cssselect(self, expression: str) -> List[_Element]: ...
+    def cssselect(
+        self,
+        expression: str,
+        *,
+        translator: _CSSTransArg = ...,
+    ) -> List[_Element]: ...
     def extend(self, elements: Iterable["_Element"]) -> None: ...
     def find(
         self, path: str, namespaces: _OptionalNamespace = ...
@@ -159,7 +176,7 @@ class _Element(Iterable["_Element"], Sized):
         self,
         tag: Optional[_TagSelector] = ...,
         reversed: bool = False,
-        *tags: _TagSelector
+        *tags: _TagSelector,
     ) -> Iterable[_Element]: ...
     iterdescendants = iter
     def iterfind(
@@ -169,13 +186,13 @@ class _Element(Iterable["_Element"], Sized):
         self,
         tag: Optional[_TagSelector] = ...,
         preceding: bool = False,
-        *tags: _TagSelector
+        *tags: _TagSelector,
     ) -> Iterable[_Element]: ...
     def itertext(
         self,
         tag: Optional[_TagSelector] = ...,
         with_tail: bool = False,
-        *tags: _TagSelector
+        *tags: _TagSelector,
     ) -> Iterable[_AnyStr]: ...
     def keys(self) -> Sequence[_AnyStr]: ...
     def makeelement(
@@ -183,7 +200,7 @@ class _Element(Iterable["_Element"], Sized):
         _tag: _TagName,
         attrib: Optional[_DictAnyStr] = ...,
         nsmap: Optional[_NSMap] = ...,
-        **_extra: Any
+        **_extra: Any,
     ) -> _Element: ...
     def remove(self, element: _Element) -> None: ...
     def replace(self, old_element: _Element, new_element: _Element) -> None: ...
@@ -195,7 +212,7 @@ class _Element(Iterable["_Element"], Sized):
         namespaces: Optional[_DictAnyStr] = ...,
         extensions: Any = ...,
         smart_strings: bool = ...,
-        **_variables: _XPathObject
+        **_variables: _XPathObject,
     ) -> _XPathObject: ...
     tag = ...  # type: str
     attrib = ...  # type: _Attrib
@@ -257,14 +274,14 @@ class _ElementTree:
         namespaces: Optional[_DictAnyStr] = ...,
         extensions: Any = ...,
         smart_strings: bool = ...,
-        **_variables: _XPathObject
+        **_variables: _XPathObject,
     ) -> _XPathObject: ...
     def xslt(
         self,
         _xslt: XSLT,
         extensions: Optional[_Dict_Tuple2AnyStr_Any] = ...,
         access_control: Optional[XSLTAccessControl] = ...,
-        **_variables: Any
+        **_variables: Any,
     ) -> _ElementTree: ...
 
 class __ContentOnlyEleement(_Element): ...
@@ -345,7 +362,7 @@ class _BaseParser:
         _tag: _TagName,
         attrib: Optional[Union[_DictAnyStr, _Attrib]] = ...,
         nsmap: Optional[_NSMap] = ...,
-        **_extra: Any
+        **_extra: Any,
     ) -> _Element: ...
     def setElementClassLookup(
         self, lookup: Optional[ElementClassLookup] = ...
@@ -434,7 +451,7 @@ class XSLT:
         self,
         _input: _ElementOrTree,
         profile_run: bool = ...,
-        **kwargs: Union[_AnyStr, _XSLTQuotedStringParam]
+        **kwargs: Union[_AnyStr, _XSLTQuotedStringParam],
     ) -> _XSLTResultTree: ...
     @staticmethod
     def strparam(s: _AnyStr) -> _XSLTQuotedStringParam: ...
@@ -444,14 +461,14 @@ def Element(
     _tag: _TagName,
     attrib: Optional[_DictAnyStr] = ...,
     nsmap: Optional[_NSMap] = ...,
-    **extra: _AnyStr
+    **extra: _AnyStr,
 ) -> _Element: ...
 def SubElement(
     _parent: _Element,
     _tag: _TagName,
     attrib: Optional[_DictAnyStr] = ...,
     nsmap: Optional[_NSMap] = ...,
-    **extra: _AnyStr
+    **extra: _AnyStr,
 ) -> _Element: ...
 def ElementTree(
     element: _Element = ...,
@@ -566,10 +583,10 @@ class XPath(_XPathEvaluatorBase):
         namespaces: Optional[_DictAnyStr] = ...,
         extensions: Any = ...,
         regexp: bool = ...,
-        smart_strings: bool = ...
+        smart_strings: bool = ...,
     ) -> None: ...
     def __call__(
-        self, _etree_or_element: _ElementOrTree, **_variables: _XPathObject
+        self, _etree_or_element: _ElementOrTree, **_variables: _XPathVarArg
     ) -> _XPathObject: ...
     path = ...  # type: str
 
@@ -580,7 +597,7 @@ class ETXPath(XPath):
         *,
         extensions: Any = ...,
         regexp: bool = ...,
-        smart_strings: bool = ...
+        smart_strings: bool = ...,
     ) -> None: ...
 
 class XPathElementEvaluator(_XPathEvaluatorBase):
@@ -591,7 +608,7 @@ class XPathElementEvaluator(_XPathEvaluatorBase):
         namespaces: Optional[_DictAnyStr] = ...,
         extensions: Any = ...,
         regexp: bool = ...,
-        smart_strings: bool = ...
+        smart_strings: bool = ...,
     ) -> None: ...
     def __call__(self, _path: _AnyStr, **_variables: _XPathObject) -> _XPathObject: ...
     def register_namespace(self, prefix: _AnyStr, uri: _AnyStr) -> None: ...
@@ -605,7 +622,7 @@ class XPathDocumentEvaluator(XPathElementEvaluator):
         namespaces: Optional[_DictAnyStr] = ...,
         extensions: Any = ...,
         regexp: bool = ...,
-        smart_strings: bool = ...
+        smart_strings: bool = ...,
     ) -> None: ...
 
 @overload

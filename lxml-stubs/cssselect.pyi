@@ -1,18 +1,35 @@
-from typing import Any, Dict, List, Optional, Union
+from typing import List, Union
 
-from lxml import etree
+from typing_extensions import Literal
 
-from ._types import _DictAnyStr
+from ._types import _OptionalNamespace
+from .etree import XPath, _Element, _ElementOrTree, _XPathVarArg
 
-# dummy for missing stubs
-def __getattr__(name) -> Any: ...
+_CSSTransArg = Union[LxmlTranslator, Literal["xml", "html", "xhtml"]]
 
-class CSSSelector(etree.XPath):
+class SelectorError(Exception): ...
+class SelectorSyntaxError(SelectorError, SyntaxError): ...
+class ExpressionError(SelectorError, RuntimeError): ...
+
+# Cssselect has never had stub in typeshed or official repo.
+# Only include the bare minimum init argument to make following
+# classes self-contained, as long as users are not creating
+# customized translators.
+class LxmlTranslator: ...
+
+class LxmlHTMLTranslator(LxmlTranslator):
+    def __init__(self, xhtml: bool = ...) -> None: ...
+
+class CSSSelector(XPath):
+    css: str
     def __init__(
-        self, css: str, namespaces: Optional[_DictAnyStr] = ..., translator: str = ...
-    ): ...
-    def __call__(
         self,
-        _etree_or_element: Union[etree._Element, etree._ElementTree],
-        **_variables: etree._XPathObject
-    ) -> etree._XPathObject: ...
+        css: str,  # byte str unaccepted
+        namespaces: _OptionalNamespace = ...,
+        translator: _CSSTransArg = ...,
+    ) -> None: ...
+    def __call__(  # type: ignore[override]
+        self,
+        _etree_or_element: _ElementOrTree,
+        **_variables: _XPathVarArg,
+    ) -> List[_Element]: ...  # XPath() returns XPathObject
