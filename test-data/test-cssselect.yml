@@ -1,5 +1,4 @@
 - case: cssselect_create_selector
-  disable_cache: true
   parametrized:
     - val: sel
       rt: lxml.cssselect.CSSSelector
@@ -13,7 +12,6 @@
     reveal_type({{ val }})  # N: Revealed type is "{{ rt }}"
 
 - case: cssselect_evaluation_of_selector
-  disable_cache: true
   main: |
     from lxml import etree
     from lxml.cssselect import CSSSelector
@@ -23,7 +21,6 @@
     reveal_type(result)  # N: Revealed type is "builtins.list[lxml.etree._Element]"
 
 - case: cssselect_method_for_element
-  disable_cache: true
   main: |
     from lxml import etree
     root = etree.fromstring('<doc></doc>')
