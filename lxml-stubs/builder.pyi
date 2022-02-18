@@ -1,6 +1,7 @@
 from typing import Any, Callable, Mapping, Optional
 
-from .etree import _AnyStr, _Element
+from ._types import _AnyStr
+from .etree import _Element
 
 class ElementMaker:
     def __init__(

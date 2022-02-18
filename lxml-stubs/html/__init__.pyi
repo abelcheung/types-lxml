@@ -1,5 +1,4 @@
 from typing import (
-    TYPE_CHECKING,
     Any,
     Callable,
     Iterable,
@@ -13,10 +12,10 @@ from typing import (
 
 from typing_extensions import Literal
 
-if TYPE_CHECKING:
-    from ..etree import HTMLParser as _HTMLParser
-    from ..etree import XMLParser as _XMLParser
-    from ..etree import _AnySmartStr, _AnyStr, _BaseParser, _Element
+from .._types import _AnyStr
+from ..etree import HTMLParser as _HTMLParser
+from ..etree import XMLParser as _XMLParser
+from ..etree import _AnySmartStr, _BaseParser, _Element
 
 _HANDLE_FALURES = Literal["ignore", "discard", None]
 

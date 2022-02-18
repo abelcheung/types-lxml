@@ -22,16 +22,20 @@ from typing import (
     overload,
 )
 
+from ._types import (
+    _AnyStr,
+    _Dict_Tuple2AnyStr_Any,
+    _DictAnyStr,
+    _ListAnyStr,
+    _NSMap,
+    _OptionalNamespace,
+)
+
 from typing_extensions import Literal, Protocol, TypeGuard
 
 # dummy for missing stubs
 def __getattr__(name: str) -> Any: ...
 
-# We do *not* want `typing.AnyStr` because it is a `TypeVar`, which is an
-# unnecessary constraint. It seems reasonable to constrain each
-# List/Dict argument to use one type consistently, though, and it is
-# necessary in order to keep these brief.
-_AnyStr = Union[str, bytes]
 _AnySmartStr = Union[
     "_ElementUnicodeResult", "_PyElementUnicodeResult", "_ElementStringResult"
 ]
@@ -53,12 +57,6 @@ _XPathObject = Union[
         ]
     ],
 ]
-_ListAnyStr = Union[List[str], List[bytes]]
-_DictAnyStr = Union[Dict[str, str], Dict[bytes, bytes]]
-_Dict_Tuple2AnyStr_Any = Union[Dict[Tuple[str, str], Any], Tuple[bytes, bytes], Any]
-_NSMap = Union[Dict[Union[bytes, None], bytes], Dict[Union[str, None], str]]
-_xpath = Union["XPath", _AnyStr]
-_OptionalNamespace = Optional[Mapping[str, Any]]
 _T = TypeVar("_T")
 _KnownEncodings = Literal[
     "ASCII",
