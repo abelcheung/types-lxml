@@ -34,9 +34,6 @@ from ._types import (
 )
 from .cssselect import _CSSTransArg
 
-# dummy for missing stubs
-def __getattr__(name: str) -> Any: ...
-
 _AnySmartStr = Union["_ElementUnicodeResult", "_ElementStringResult"]
 _TagName = Union[str, bytes, QName]
 # _TagSelector also allows Element, Comment, ProcessingInstruction
@@ -166,23 +163,23 @@ class _Element(Iterable["_Element"], Sized):
     def iterchildren(
         self,
         tag: Optional[_TagSelector] = ...,
-        reversed: bool = False,
+        reversed: bool = ...,
         *tags: _TagSelector,
     ) -> Iterable[_Element]: ...
     iterdescendants = iter
     def iterfind(
-        self, path: str, namespaces: _OptionalNamespace = None
+        self, path: str, namespaces: _OptionalNamespace = ...
     ) -> Iterator["_Element"]: ...
     def itersiblings(
         self,
         tag: Optional[_TagSelector] = ...,
-        preceding: bool = False,
+        preceding: bool = ...,
         *tags: _TagSelector,
     ) -> Iterable[_Element]: ...
     def itertext(
         self,
         tag: Optional[_TagSelector] = ...,
-        with_tail: bool = False,
+        with_tail: bool = ...,
         *tags: _TagSelector,
     ) -> Iterable[_AnyStr]: ...
     def keys(self) -> Sequence[_AnyStr]: ...
@@ -275,10 +272,10 @@ class _ElementTree:
         **_variables: Any,
     ) -> _ElementTree: ...
 
-class __ContentOnlyEleement(_Element): ...
-class _Comment(__ContentOnlyEleement): ...
+class __ContentOnlyElement(_Element): ...
+class _Comment(__ContentOnlyElement): ...
 
-class _ProcessingInstruction(__ContentOnlyEleement):
+class _ProcessingInstruction(__ContentOnlyElement):
     target: _AnyStr
 
 class _Attrib:
@@ -316,7 +313,7 @@ class QName:
     text = ...  # type: str
     def __init__(
         self,
-        text_or_uri_element: Union[None, _AnyStr, _Element],
+        text_or_uri_or_element: Union[None, _AnyStr, _Element],
         tag: Optional[_AnyStr] = ...,
     ) -> None: ...
 
@@ -346,7 +343,6 @@ class CustomElementClassLookup(FallbackElementClassLookup):
     ) -> Optional[Type[ElementBase]]: ...
 
 class _BaseParser:
-    def __getattr__(self, name: str) -> Any: ...  # Incomplete
     def copy(self) -> _BaseParser: ...
     def makeelement(
         self,
@@ -363,7 +359,6 @@ class _BaseParser:
     ) -> None: ...
 
 class _FeedParser(_BaseParser):
-    def __getattr__(self, name: str) -> Any: ...  # Incomplete
     def close(self) -> _Element: ...
     def feed(self, data: _AnyStr) -> None: ...
 
@@ -511,7 +506,7 @@ def tostring(
 def tostring(
     element_or_tree: _ElementOrTree,
     # Should be anything but "unicode", cannot be typed
-    encoding: Optional[_KnownEncodings] = None,
+    encoding: Optional[_KnownEncodings] = ...,
     method: str = ...,
     xml_declaration: bool = ...,
     pretty_print: bool = ...,

@@ -58,6 +58,7 @@ analyze.py
 
 # Editor backup files
 *~
+*.bak
 .*.sw?
 .vscode/
 .idea/
