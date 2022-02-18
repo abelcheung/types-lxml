@@ -37,9 +37,7 @@ from .cssselect import _CSSTransArg
 # dummy for missing stubs
 def __getattr__(name: str) -> Any: ...
 
-_AnySmartStr = Union[
-    "_ElementUnicodeResult", "_PyElementUnicodeResult", "_ElementStringResult"
-]
+_AnySmartStr = Union["_ElementUnicodeResult", "_ElementStringResult"]
 _TagName = Union[str, bytes, QName]
 # _TagSelector also allows Element, Comment, ProcessingInstruction
 _TagSelector = Union[str, bytes, QName, Any]
@@ -87,13 +85,6 @@ class ElementChildIterator(Iterator["_Element"]):
     def __next__(self) -> "_Element": ...
 
 class _ElementUnicodeResult(str):
-    is_attribute: bool
-    is_tail: bool
-    is_text: bool
-    attrname: Optional[_AnyStr]
-    def getparent(self) -> Optional["_Element"]: ...
-
-class _PyElementUnicodeResult(str):
     is_attribute: bool
     is_tail: bool
     is_text: bool
