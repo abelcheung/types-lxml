@@ -24,9 +24,7 @@ jobs:
       run: pip install -v tox
 
     - name: Pre-validation
-      env:
-        TOX_PARALLEL_NO_SPINNER: 1
-      run: tox -v -p -e format,mypy
+      run: tox -v -e mypy
 
     - name: Build sdist and wheel
       run: tox -v -e build
