@@ -3,6 +3,9 @@ from typing import Any, Callable, Dict, List, Mapping, Optional, Tuple, Union
 from .etree import _Element
 
 # ElementTree API is notable of canonicalizing byte / unicode input data.
+# This type alias should only be used for input arguments, while one would
+# expect plain str in return type for most part of API (except a few places),
+# as far as python3 annotation is concerned.
 # Not to be confused with typing.AnyStr which is TypeVar.
 _AnyStr = Union[str, bytes]
 
@@ -13,8 +16,8 @@ _Dict_Tuple2AnyStr_Any = Union[Dict[Tuple[str, str], Any], Tuple[bytes, bytes], 
 # See https://github.com/python/typing/pull/273
 # Due to Mapping having invariant key types, Mapping[Union[A, B], ...]
 # would fail to validate against either Mapping[A, ...] or Mapping[B, ...]
-# Try to settle for simpler solution, assuming users would not use byte
-# string as namespace prefix.
+# Try to settle for simpler solution, assuming python3 users would not
+# use byte string as namespace prefix.
 _NSMapArg = Optional[
     Union[
         Mapping[None, _AnyStr],

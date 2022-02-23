@@ -7,24 +7,25 @@
     - val: sel.path
       rt: builtins.str
   main: |
-    from lxml import cssselect
-    sel = cssselect.CSSSelector('#id')
+    from lxml.cssselect import CSSSelector
+    sel = CSSSelector('#id')
     reveal_type({{ val }})  # N: Revealed type is "{{ rt }}"
 
 - case: cssselect_evaluation_of_selector
   main: |
     from lxml import etree
     from lxml.cssselect import CSSSelector
-    sel = CSSSelector('#id')
-    document = etree.fromstring("<doc></doc>")
+    sel: CSSSelector
+    document: etree._Element
     result = sel(document)
     reveal_type(result)  # N: Revealed type is "builtins.list[lxml.etree._Element]"
 
 - case: cssselect_method_for_element
   main: |
     from lxml import etree
-    root = etree.fromstring('<doc></doc>')
-    result = root.cssselect('doc')
+    root: etree._Element
+    expr: str
+    result = root.cssselect(expr)
     reveal_type(result)  # N: Revealed type is "builtins.list[lxml.etree._Element]"
 
 # TODO method for HTML

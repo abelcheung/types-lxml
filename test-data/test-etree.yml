@@ -1,101 +1,103 @@
--   case: etree_from_string_returns_element
-    main: |
-        from lxml import etree
-        document = etree.fromstring("<doc></doc>")
-        reveal_type(document)  # N: Revealed type is "lxml.etree._Element"
+- case: etree_from_string_returns_element
+  main: |
+    from lxml import etree
+    document = etree.fromstring("<doc></doc>")
+    reveal_type(document)  # N: Revealed type is "lxml.etree._Element"
 
--   case: etree_element_find
-    main: |
-        from lxml import etree
-        element = etree.Element("foo")
-        result = element.find("/my-path/")
-        reveal_type(result)  # N: Revealed type is "Union[lxml.etree._Element, None]"
+- case: etree_element_find
+  main: |
+    from lxml import etree
+    element = etree.Element("foo")
+    result = element.find("/my-path/")
+    reveal_type(result)  # N: Revealed type is "Union[lxml.etree._Element, None]"
 
--   case: etree_element_get
-    main: |
-        from lxml import etree
-        element = etree.Element("foo")
-        result = element.get("my-attr")
-        reveal_type(result)  # N: Revealed type is "Union[builtins.str, None]"
+- case: etree_element_get
+  main: |
+    from lxml import etree
+    element = etree.Element("foo")
+    result = element.get("my-attr")
+    reveal_type(result)  # N: Revealed type is "Union[builtins.str, None]"
 
--   case: etree_element_iterchildren
-    main: |
-        from lxml import etree
-        element = etree.Element("foo")
-        reveal_type(element.iterchildren)  # N: Revealed type is "def (tag: Union[builtins.str, builtins.bytes, lxml.etree.QName, Any, None] =, reversed: builtins.bool =, *tags: Union[builtins.str, builtins.bytes, lxml.etree.QName, Any]) -> typing.Iterable[lxml.etree._Element]"
-        result = element.iterchildren("my-attr")
-        reveal_type(result)  # N: Revealed type is "typing.Iterable[lxml.etree._Element]"
+- case: etree_element_iterchildren
+  main: |
+    from lxml import etree
+    element = etree.Element("foo")
+    reveal_type(element.iterchildren)  # N: Revealed type is "def (tag: Union[builtins.str, builtins.bytes, lxml.etree.QName, Any, None] =, reversed: builtins.bool =, *tags: Union[builtins.str, builtins.bytes, lxml.etree.QName, Any]) -> typing.Iterable[lxml.etree._Element]"
+    result = element.iterchildren("my-attr")
+    reveal_type(result)  # N: Revealed type is "typing.Iterable[lxml.etree._Element]"
 
--   case: etree_xmlparser_makeelement
-    main: |
-        from lxml import etree
-        parser = etree.XMLParser()
-        element = parser.makeelement("foobar")
-        reveal_type(element)  # N: Revealed type is "lxml.etree._Element"
+- case: etree_xmlparser_makeelement
+  main: |
+    from lxml import etree
+    parser = etree.XMLParser()
+    element = parser.makeelement("foobar")
+    reveal_type(element)  # N: Revealed type is "lxml.etree._Element"
 
--   case: etree_htmlparser_makeelement
-    main: |
-        from lxml import etree
-        parser = etree.HTMLParser()
-        element = parser.makeelement("foobar")
-        reveal_type(element)  # N: Revealed type is "lxml.etree._Element"
+- case: etree_htmlparser_makeelement
+  main: |
+    from lxml import etree
+    parser = etree.HTMLParser()
+    element = parser.makeelement("foobar")
+    reveal_type(element)  # N: Revealed type is "lxml.etree._Element"
 
--   case: etree_tostring_encoding_default_or_type
-    parametrized:
-        -   kwd: null
-            rt: builtins.bytes
-        -   kwd: encoding=str
-            rt: builtins.str
-    main: |
-        from lxml import etree
-        string = etree.tostring(etree.Element("foo"), {{ kwd }})
-        reveal_type(string)  # N: Revealed type is "{{ rt }}"
+- case: etree_tostring_encoding_default_or_type
+  parametrized:
+    - kwd: null
+      rt: builtins.bytes
+    - kwd: encoding=str
+      rt: builtins.str
+  main: |
+    from lxml import etree
+    string = etree.tostring(etree.Element("foo"), {{ kwd }})
+    reveal_type(string)  # N: Revealed type is "{{ rt }}"
 
--   case: etree_tostring_encoding_specific
-    parametrized:
-        -   val: ascii
-            rt: builtins.bytes
-        -   val: utf8
-            rt: builtins.bytes
-        -   val: unknown_encoding
-            rt: Union[builtins.str, builtins.bytes]
-        -   val: unicode
-            rt: builtins.str
-    main: |
-        from lxml import etree
-        string = etree.tostring(etree.Element("foo"), encoding="{{ val }}")
-        reveal_type(string)  # N: Revealed type is "{{ rt }}"
+- case: etree_tostring_encoding_specific
+  parametrized:
+    - val: ascii
+      rt: builtins.bytes
+    - val: utf8
+      rt: builtins.bytes
+    - val: unknown_encoding
+      rt: Union[builtins.str, builtins.bytes]
+    - val: unicode
+      rt: builtins.str
+  main: |
+    from lxml import etree
+    string = etree.tostring(etree.Element("foo"), encoding="{{ val }}")
+    reveal_type(string)  # N: Revealed type is "{{ rt }}"
 
--   case: etree_treebuilder_implements_parsertarget
-    main: |
-        # this test does no explicit checks; it should pass
-        # if mypy doesn't raise an "Incompatible types in assignment"
-        from lxml import etree
-        target: etree.ParserTarget = etree.TreeBuilder()
--   case: etree_HTML_returns_element
-    main: |
-        from lxml import etree
-        document = etree.HTML("<doc></doc>", parser=etree.HTMLParser(), base_url="http://example.com/")
-        reveal_type(document)  # N: Revealed type is "lxml.etree._Element"
--   case: etree_XML_returns_element
-    main: |
-        from lxml import etree
-        document = etree.XML("<doc></doc>", parser=etree.XMLParser(), base_url="http://example.com/")
-        reveal_type(document)  # N: Revealed type is "lxml.etree._Element"
+- case: etree_treebuilder_implements_parsertarget
+  main: |
+    # this test does no explicit checks; it should pass
+    # if mypy doesn't raise an "Incompatible types in assignment"
+    from lxml import etree
+    target: etree.ParserTarget = etree.TreeBuilder()
 
--   case: etree_pyerrorlog_object
-    main: |
-        from lxml import etree
-        obj = etree.PyErrorLog()
-        reveal_type(obj)  # N: Revealed type is "lxml.etree._xmlerror.PyErrorLog"
-        reveal_type(obj.level_map)  # N: Revealed type is "builtins.dict[builtins.int, builtins.int]"
+- case: etree_HTML_returns_element
+  main: |
+    from lxml import etree
+    document = etree.HTML("<doc></doc>", parser=etree.HTMLParser(), base_url="http://example.com/")
+    reveal_type(document)  # N: Revealed type is "lxml.etree._Element"
 
--   case: etree_error_log_struct
-    main: |
-        from lxml import etree
-        parser: etree.XMLParser
-        s: str
-        document = etree.XML(s, parser=parser)
-        last_err = parser.error_log.last_error
-        reveal_type(last_err.level)  # N: Revealed type is "builtins.int"
-        reveal_type(last_err.filename)  # N: Revealed type is "Union[builtins.str, None]"
+- case: etree_XML_returns_element
+  main: |
+    from lxml import etree
+    document = etree.XML("<doc></doc>", parser=etree.XMLParser(), base_url="http://example.com/")
+    reveal_type(document)  # N: Revealed type is "lxml.etree._Element"
+
+- case: etree_pyerrorlog_object
+  main: |
+    from lxml import etree
+    obj = etree.PyErrorLog()
+    reveal_type(obj)  # N: Revealed type is "lxml.etree._xmlerror.PyErrorLog"
+    reveal_type(obj.level_map)  # N: Revealed type is "builtins.dict[builtins.int, builtins.int]"
+
+- case: etree_error_log_struct
+  main: |
+    from lxml import etree
+    parser: etree.XMLParser
+    s: str
+    document = etree.XML(s, parser=parser)
+    last_err = parser.error_log.last_error
+    reveal_type(last_err.level)  # N: Revealed type is "builtins.int"
+    reveal_type(last_err.filename)  # N: Revealed type is "Union[builtins.str, None]"
