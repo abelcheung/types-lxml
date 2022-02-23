@@ -13,11 +13,11 @@ _Dict_Tuple2AnyStr_Any = Union[Dict[Tuple[str, str], Any], Tuple[bytes, bytes], 
 # would fail to validate against either Mapping[A, ...] or Mapping[B, ...]
 # Try to settle for simpler solution, assuming users would not use byte
 # string as namespace prefix.
-NSMapArg = Optional[
+_NSMapArg = Optional[
     Union[
         Mapping[None, _AnyStr],
         Mapping[str, _AnyStr],
         Mapping[Optional[str], _AnyStr],
     ]
 ]
-NonDefaultNSMapArg = Optional[Mapping[str, _AnyStr]]
+_NonDefaultNSMapArg = Optional[Mapping[str, _AnyStr]]

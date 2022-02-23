@@ -25,8 +25,8 @@ from typing import (
 from typing_extensions import Literal, Protocol, TypeGuard
 
 from ._types import (
-    NonDefaultNSMapArg,
-    NSMapArg,
+    _NonDefaultNSMapArg,
+    _NSMapArg,
     _AnyStr,
     _Dict_Tuple2AnyStr_Any,
     _DictAnyStr,
@@ -118,23 +118,23 @@ class _Element(Iterable["_Element"], Sized):
     ) -> List[_Element]: ...
     def extend(self, elements: Iterable["_Element"]) -> None: ...
     def find(
-        self, path: str, namespaces: NSMapArg = ...
+        self, path: str, namespaces: _NSMapArg = ...
     ) -> Optional["_Element"]: ...
     @overload
     def findtext(
         self,
         path: str,
-        namespaces: NSMapArg = ...,
+        namespaces: _NSMapArg = ...,
     ) -> Optional[str]: ...
     @overload
     def findtext(
         self,
         path: str,
         default: _T = ...,
-        namespaces: NSMapArg = ...,
+        namespaces: _NSMapArg = ...,
     ) -> Union[str, _T]: ...
     def findall(
-        self, path: str, namespaces: NSMapArg = ...
+        self, path: str, namespaces: _NSMapArg = ...
     ) -> List["_Element"]: ...
     def clear(self) -> None: ...
     @overload
@@ -162,7 +162,7 @@ class _Element(Iterable["_Element"], Sized):
     ) -> Iterable[_Element]: ...
     iterdescendants = iter
     def iterfind(
-        self, path: str, namespaces: NSMapArg = ...
+        self, path: str, namespaces: _NSMapArg = ...
     ) -> Iterator["_Element"]: ...
     def itersiblings(
         self,
@@ -181,7 +181,7 @@ class _Element(Iterable["_Element"], Sized):
         self,
         _tag: _TagName,
         attrib: Optional[_DictAnyStr] = ...,
-        nsmap: NSMapArg = ...,
+        nsmap: _NSMapArg = ...,
         **_extra: Any,
     ) -> _Element: ...
     def remove(self, element: _Element) -> None: ...
@@ -191,7 +191,7 @@ class _Element(Iterable["_Element"], Sized):
     def xpath(
         self,
         _path: _AnyStr,
-        namespaces: NonDefaultNSMapArg = ...,
+        namespaces: _NonDefaultNSMapArg = ...,
         extensions: Any = ...,
         smart_strings: bool = ...,
         **_variables: _XPathVarArg,
@@ -211,16 +211,16 @@ class _ElementTree:
     parser = ...  # type: XMLParser
     docinfo = ...  # type: DocInfo
     def find(
-        self, path: str, namespaces: NSMapArg = ...
+        self, path: str, namespaces: _NSMapArg = ...
     ) -> Optional["_Element"]: ...
     def findtext(
         self,
         path: str,
         default: Optional[str] = ...,
-        namespaces: NSMapArg = ...,
+        namespaces: _NSMapArg = ...,
     ) -> Optional[str]: ...
     def findall(
-        self, path: str, namespaces: NSMapArg = ...
+        self, path: str, namespaces: _NSMapArg = ...
     ) -> List["_Element"]: ...
     def getpath(self, element: _Element) -> str: ...
     def getroot(self) -> _Element: ...
@@ -253,7 +253,7 @@ class _ElementTree:
     def xpath(
         self,
         _path: _AnyStr,
-        namespaces: NonDefaultNSMapArg = ...,
+        namespaces: _NonDefaultNSMapArg = ...,
         extensions: Any = ...,
         smart_strings: bool = ...,
         **_variables: _XPathVarArg,
@@ -342,7 +342,7 @@ class _BaseParser:
         self,
         _tag: _TagName,
         attrib: Optional[Union[_DictAnyStr, _Attrib]] = ...,
-        nsmap: NSMapArg = ...,
+        nsmap: _NSMapArg = ...,
         **_extra: Any,
     ) -> _Element: ...
     def setElementClassLookup(
@@ -440,14 +440,14 @@ def Comment(text: Optional[_AnyStr] = ...) -> _Comment: ...
 def Element(
     _tag: _TagName,
     attrib: Optional[_DictAnyStr] = ...,
-    nsmap: NSMapArg = ...,
+    nsmap: _NSMapArg = ...,
     **extra: _AnyStr,
 ) -> _Element: ...
 def SubElement(
     _parent: _Element,
     _tag: _TagName,
     attrib: Optional[_DictAnyStr] = ...,
-    nsmap: NSMapArg = ...,
+    nsmap: _NSMapArg = ...,
     **extra: _AnyStr,
 ) -> _Element: ...
 def ElementTree(
@@ -473,7 +473,7 @@ def XML(
 ) -> _Element: ...
 def cleanup_namespaces(
     tree_or_element: _ElementOrTree,
-    top_nsmap: NSMapArg = ...,
+    top_nsmap: _NSMapArg = ...,
     keep_ns_prefixes: Optional[Iterable[_AnyStr]] = ...,
 ) -> None: ...
 def parse(
@@ -560,7 +560,7 @@ class XPath(_XPathEvaluatorBase):
         self,
         path: _AnyStr,
         *,
-        namespaces: NonDefaultNSMapArg = ...,
+        namespaces: _NonDefaultNSMapArg = ...,
         extensions: Any = ...,
         regexp: bool = ...,
         smart_strings: bool = ...,
@@ -585,21 +585,21 @@ class XPathElementEvaluator(_XPathEvaluatorBase):
         self,
         element: _Element,
         *,
-        namespaces: NonDefaultNSMapArg = ...,
+        namespaces: _NonDefaultNSMapArg = ...,
         extensions: Any = ...,
         regexp: bool = ...,
         smart_strings: bool = ...,
     ) -> None: ...
     def __call__(self, _path: _AnyStr, **_variables: _XPathVarArg) -> _XPathObject: ...
     def register_namespace(self, prefix: _AnyStr, uri: _AnyStr) -> None: ...
-    def register_namespaces(self, namespaces: NonDefaultNSMapArg) -> None: ...
+    def register_namespaces(self, namespaces: _NonDefaultNSMapArg) -> None: ...
 
 class XPathDocumentEvaluator(XPathElementEvaluator):
     def __init__(
         self,
         etree: _ElementTree,
         *,
-        namespaces: NonDefaultNSMapArg = ...,
+        namespaces: _NonDefaultNSMapArg = ...,
         extensions: Any = ...,
         regexp: bool = ...,
         smart_strings: bool = ...,
@@ -608,7 +608,7 @@ class XPathDocumentEvaluator(XPathElementEvaluator):
 @overload
 def XPathEvaluator(
     etree_or_element: _Element,
-    namespaces: NonDefaultNSMapArg = ...,
+    namespaces: _NonDefaultNSMapArg = ...,
     extensions: Any = ...,
     regexp: bool = ...,
     smart_strings: bool = ...,
@@ -616,7 +616,7 @@ def XPathEvaluator(
 @overload
 def XPathEvaluator(
     etree_or_element: _ElementTree,
-    namespaces: NonDefaultNSMapArg = ...,
+    namespaces: _NonDefaultNSMapArg = ...,
     extensions: Any = ...,
     regexp: bool = ...,
     smart_strings: bool = ...,
@@ -624,7 +624,7 @@ def XPathEvaluator(
 @overload
 def XPathEvaluator(
     etree_or_element: _ElementOrTree,
-    namespaces: NonDefaultNSMapArg = ...,
+    namespaces: _NonDefaultNSMapArg = ...,
     extensions: Any = ...,
     regexp: bool = ...,
     smart_strings: bool = ...,

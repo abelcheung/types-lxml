@@ -2,7 +2,7 @@ from typing import List, Union
 
 from typing_extensions import Literal
 
-from ._types import NonDefaultNSMapArg
+from ._types import _NonDefaultNSMapArg
 from .etree import XPath, _Element, _ElementOrTree, _XPathVarArg
 
 _CSSTransArg = Union[LxmlTranslator, Literal["xml", "html", "xhtml"]]
@@ -25,7 +25,7 @@ class CSSSelector(XPath):
     def __init__(
         self,
         css: str,  # byte str unaccepted
-        namespaces: NonDefaultNSMapArg = ...,
+        namespaces: _NonDefaultNSMapArg = ...,
         translator: _CSSTransArg = ...,
     ) -> None: ...
     def __call__(  # type: ignore[override]
