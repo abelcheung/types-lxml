@@ -34,28 +34,16 @@ from ._types import (
 )
 from .cssselect import _CSSTransArg
 
-_AnySmartStr = Union["_ElementUnicodeResult", "_ElementStringResult"]
 _TagName = Union[str, bytes, QName]
 # _TagSelector also allows Element, Comment, ProcessingInstruction
 _TagSelector = Union[str, bytes, QName, Any]
-# XPath object - http://lxml.de/xpathxslt.html#xpath-return-values
-_XPathObject = Union[
-    bool,
-    float,
-    _AnySmartStr,
-    _AnyStr,
-    List[
-        Union[
-            "_Element",
-            _AnySmartStr,
-            _AnyStr,
-            Tuple[Optional[_AnyStr], Optional[_AnyStr]],
-        ]
-    ],
-]
-# Although xpath variable supports most of the XPathObject types
-# as _input argument_ value, most users would only use
-# primivite types for variable substitution though
+# XPathObject documented in https://lxml.de/xpathxslt.html#xpath-return-values
+# However the type is too versatile to be of any use in further processing,
+# so users are encouraged to do type narrowing by themselves.
+_XPathObject = Any
+# XPath variable supports most of the XPathObject types
+# as _input_ argument value, but most users would probably
+# only use primivite types for substitution.
 _XPathVarArg = Union[
     bool,
     int,
@@ -81,19 +69,25 @@ class ElementChildIterator(Iterator["_Element"]):
     def __iter__(self) -> "ElementChildIterator": ...
     def __next__(self) -> "_Element": ...
 
-class _ElementUnicodeResult(str):
-    is_attribute: bool
-    is_tail: bool
-    is_text: bool
-    attrname: Optional[_AnyStr]
-    def getparent(self) -> Optional["_Element"]: ...
+class _SmartStr(str):
+    """Smart string is a private str subclass documented in
+    [return types](https://lxml.de/xpathxslt.html#xpath-return-values)
+    of XPath evaluation result. This stub-only class can be utilized like:
 
-class _ElementStringResult(bytes):
+    ```python
+    if TYPE_CHECKING:
+        from lxml.etree import _SmartStr
+    def is_smart_str(s: str) -> TypeGuard[_SmartStr]:
+        return hasattr(s, 'getparent')
+    if is_smart_str(result):
+        parent = result.getparent() # identified as lxml.etree._Element
+    ```
+    """
     is_attribute: bool
     is_tail: bool
     is_text: bool
-    attrname: Optional[_AnyStr]
-    def getparent(self) -> Optional["_Element"]: ...
+    attrname: Optional[str]
+    def getparent(self) -> Optional[_Element]: ...
 
 class DocInfo:
     root_name = ...  # type: str
@@ -200,7 +194,7 @@ class _Element(Iterable["_Element"], Sized):
         namespaces: NonDefaultNSMapArg = ...,
         extensions: Any = ...,
         smart_strings: bool = ...,
-        **_variables: _XPathObject,
+        **_variables: _XPathVarArg,
     ) -> _XPathObject: ...
     tag = ...  # type: str
     attrib = ...  # type: _Attrib
@@ -262,7 +256,7 @@ class _ElementTree:
         namespaces: NonDefaultNSMapArg = ...,
         extensions: Any = ...,
         smart_strings: bool = ...,
-        **_variables: _XPathObject,
+        **_variables: _XPathVarArg,
     ) -> _XPathObject: ...
     def xslt(
         self,
@@ -596,7 +590,7 @@ class XPathElementEvaluator(_XPathEvaluatorBase):
         regexp: bool = ...,
         smart_strings: bool = ...,
     ) -> None: ...
-    def __call__(self, _path: _AnyStr, **_variables: _XPathObject) -> _XPathObject: ...
+    def __call__(self, _path: _AnyStr, **_variables: _XPathVarArg) -> _XPathObject: ...
     def register_namespace(self, prefix: _AnyStr, uri: _AnyStr) -> None: ...
     def register_namespaces(self, namespaces: NonDefaultNSMapArg) -> None: ...
 
