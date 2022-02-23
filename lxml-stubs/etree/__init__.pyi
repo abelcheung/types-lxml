@@ -24,34 +24,45 @@ from typing import (
 
 from typing_extensions import Literal, Protocol, TypeGuard
 
-from ._types import (
-    _NonDefaultNSMapArg,
-    _NSMapArg,
+from .._types import (
     _AnyStr,
     _Dict_Tuple2AnyStr_Any,
     _DictAnyStr,
     _ListAnyStr,
+    _NonDefaultNSMapArg,
+    _NSMapArg,
+    _XPathObject,
+    _XPathVarArg,
 )
-from .cssselect import _CSSTransArg
+from ._xmlerror import (
+    ErrorDomains as ErrorDomains,
+    ErrorLevels as ErrorLevels,
+    ErrorTypes as ErrorTypes,
+    PyErrorLog as PyErrorLog,
+    RelaxNGErrorTypes as RelaxNGErrorTypes,
+    _BaseErrorLog,
+    _ErrorLog,
+    clear_error_log as clear_error_log,
+    use_global_python_log as use_global_python_log,
+)
+from ._xpath import (
+    ETXPath as ETXPath,
+    XPath as XPath,
+    XPathDocumentEvaluator as XPathDocumentEvaluator,
+    XPathElementEvaluator as XPathElementEvaluator,
+    XPathError as XPathError,
+    XPathEvaluator as XPathEvaluator,
+    XPathSyntaxError as XPathSyntaxError,
+)
+from ..cssselect import _CSSTransArg
+
+#
+# Basic variables and constants
+#
 
 _TagName = Union[str, bytes, QName]
 # _TagSelector also allows Element, Comment, ProcessingInstruction
 _TagSelector = Union[str, bytes, QName, Any]
-# XPathObject documented in https://lxml.de/xpathxslt.html#xpath-return-values
-# However the type is too versatile to be of any use in further processing,
-# so users are encouraged to do type narrowing by themselves.
-_XPathObject = Any
-# XPath variable supports most of the XPathObject types
-# as _input_ argument value, but most users would probably
-# only use primivite types for substitution.
-_XPathVarArg = Union[
-    bool,
-    int,
-    float,
-    _AnyStr,
-    _Element,
-    List[_Element],
-]
 _T = TypeVar("_T")
 _KnownEncodings = Literal[
     "ASCII",
@@ -83,6 +94,7 @@ class _SmartStr(str):
         parent = result.getparent() # identified as lxml.etree._Element
     ```
     """
+
     is_attribute: bool
     is_tail: bool
     is_text: bool
@@ -117,9 +129,7 @@ class _Element(Iterable["_Element"], Sized):
         translator: _CSSTransArg = ...,
     ) -> List[_Element]: ...
     def extend(self, elements: Iterable["_Element"]) -> None: ...
-    def find(
-        self, path: str, namespaces: _NSMapArg = ...
-    ) -> Optional["_Element"]: ...
+    def find(self, path: str, namespaces: _NSMapArg = ...) -> Optional["_Element"]: ...
     @overload
     def findtext(
         self,
@@ -133,9 +143,7 @@ class _Element(Iterable["_Element"], Sized):
         default: _T = ...,
         namespaces: _NSMapArg = ...,
     ) -> Union[str, _T]: ...
-    def findall(
-        self, path: str, namespaces: _NSMapArg = ...
-    ) -> List["_Element"]: ...
+    def findall(self, path: str, namespaces: _NSMapArg = ...) -> List["_Element"]: ...
     def clear(self) -> None: ...
     @overload
     def get(self, key: _TagName) -> Optional[str]: ...
@@ -210,18 +218,14 @@ class ElementBase(_Element): ...
 class _ElementTree:
     parser = ...  # type: XMLParser
     docinfo = ...  # type: DocInfo
-    def find(
-        self, path: str, namespaces: _NSMapArg = ...
-    ) -> Optional["_Element"]: ...
+    def find(self, path: str, namespaces: _NSMapArg = ...) -> Optional["_Element"]: ...
     def findtext(
         self,
         path: str,
         default: Optional[str] = ...,
         namespaces: _NSMapArg = ...,
     ) -> Optional[str]: ...
-    def findall(
-        self, path: str, namespaces: _NSMapArg = ...
-    ) -> List["_Element"]: ...
+    def findall(self, path: str, namespaces: _NSMapArg = ...) -> List["_Element"]: ...
     def getpath(self, element: _Element) -> str: ...
     def getroot(self) -> _Element: ...
     def iter(
@@ -351,6 +355,8 @@ class _BaseParser:
     def set_element_class_lookup(
         self, lookup: Optional[ElementClassLookup] = ...
     ) -> None: ...
+    @property
+    def error_log(self) -> _ErrorLog: ...
 
 class _FeedParser(_BaseParser):
     def close(self) -> _Element: ...
@@ -435,6 +441,8 @@ class XSLT:
     ) -> _XSLTResultTree: ...
     @staticmethod
     def strparam(s: _AnyStr) -> _XSLTQuotedStringParam: ...
+    @property
+    def error_log(self) -> _ErrorLog: ...
 
 def Comment(text: Optional[_AnyStr] = ...) -> _Comment: ...
 def Element(
@@ -526,12 +534,13 @@ def tostring(
     inclusive_ns_prefixes: Any = ...,
 ) -> _AnyStr: ...
 
-class _ErrorLog: ...
 class Error(Exception): ...
 
 class LxmlError(Error):
-    def __init__(self, message: Any, error_log: _ErrorLog = ...) -> None: ...
-    error_log = ...  # type: _ErrorLog
+    def __init__(
+        self, message: Any, error_log: Optional[_BaseErrorLog] = ...
+    ) -> None: ...
+    error_log: _BaseErrorLog = ...
 
 class DocumentInvalid(LxmlError): ...
 class LxmlSyntaxError(LxmlError, SyntaxError): ...
@@ -545,90 +554,14 @@ class _Validator:
     def assert_(self, etree: _ElementOrTree) -> None: ...
     def assertValid(self, etree: _ElementOrTree) -> None: ...
     def validate(self, etree: _ElementOrTree) -> bool: ...
-    error_log = ...  # type: _ErrorLog
+    @property
+    def error_log(self) -> _ErrorLog: ...
 
 class DTD(_Validator):
     def __init__(
         self, file: Union[_AnyStr, IO[Any]] = ..., *, external_id: Any = ...
     ) -> None: ...
     def __call__(self, etree: _ElementOrTree) -> bool: ...
-
-class _XPathEvaluatorBase: ...
-
-class XPath(_XPathEvaluatorBase):
-    def __init__(
-        self,
-        path: _AnyStr,
-        *,
-        namespaces: _NonDefaultNSMapArg = ...,
-        extensions: Any = ...,
-        regexp: bool = ...,
-        smart_strings: bool = ...,
-    ) -> None: ...
-    def __call__(
-        self, _etree_or_element: _ElementOrTree, **_variables: _XPathVarArg
-    ) -> _XPathObject: ...
-    path = ...  # type: str
-
-class ETXPath(XPath):
-    def __init__(
-        self,
-        path: _AnyStr,
-        *,
-        extensions: Any = ...,
-        regexp: bool = ...,
-        smart_strings: bool = ...,
-    ) -> None: ...
-
-class XPathElementEvaluator(_XPathEvaluatorBase):
-    def __init__(
-        self,
-        element: _Element,
-        *,
-        namespaces: _NonDefaultNSMapArg = ...,
-        extensions: Any = ...,
-        regexp: bool = ...,
-        smart_strings: bool = ...,
-    ) -> None: ...
-    def __call__(self, _path: _AnyStr, **_variables: _XPathVarArg) -> _XPathObject: ...
-    def register_namespace(self, prefix: _AnyStr, uri: _AnyStr) -> None: ...
-    def register_namespaces(self, namespaces: _NonDefaultNSMapArg) -> None: ...
-
-class XPathDocumentEvaluator(XPathElementEvaluator):
-    def __init__(
-        self,
-        etree: _ElementTree,
-        *,
-        namespaces: _NonDefaultNSMapArg = ...,
-        extensions: Any = ...,
-        regexp: bool = ...,
-        smart_strings: bool = ...,
-    ) -> None: ...
-
-@overload
-def XPathEvaluator(
-    etree_or_element: _Element,
-    namespaces: _NonDefaultNSMapArg = ...,
-    extensions: Any = ...,
-    regexp: bool = ...,
-    smart_strings: bool = ...,
-) -> XPathElementEvaluator: ...
-@overload
-def XPathEvaluator(
-    etree_or_element: _ElementTree,
-    namespaces: _NonDefaultNSMapArg = ...,
-    extensions: Any = ...,
-    regexp: bool = ...,
-    smart_strings: bool = ...,
-) -> XPathDocumentEvaluator: ...
-@overload
-def XPathEvaluator(
-    etree_or_element: _ElementOrTree,
-    namespaces: _NonDefaultNSMapArg = ...,
-    extensions: Any = ...,
-    regexp: bool = ...,
-    smart_strings: bool = ...,
-) -> Union[XPathElementEvaluator, XPathDocumentEvaluator]: ...
 
 _ElementFactory = Callable[[Any, Dict[_AnyStr, _AnyStr]], _Element]
 _CommentFactory = Callable[[_AnyStr], _Comment]

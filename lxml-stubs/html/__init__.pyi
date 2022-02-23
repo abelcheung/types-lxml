@@ -13,9 +13,12 @@ from typing import (
 from typing_extensions import Literal
 
 from .._types import _AnyStr
-from ..etree import HTMLParser as _HTMLParser
-from ..etree import XMLParser as _XMLParser
-from ..etree import _BaseParser, _Element
+from ..etree import (
+    HTMLParser as _HTMLParser,
+    XMLParser as _XMLParser,
+    _BaseParser,
+    _Element,
+)
 
 _HANDLE_FALURES = Literal["ignore", "discard", None]
 

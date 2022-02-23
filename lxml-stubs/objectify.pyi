@@ -1,6 +1,6 @@
 from typing import Union
 
-from lxml.etree import ElementBase, XMLParser
+from .etree import ElementBase, XMLParser
 
 class ObjectifiedElement(ElementBase):
     pass
