@@ -5,8 +5,8 @@
 from typing import Any, Union, overload
 
 from .._types import _AnyStr, _NonDefaultNSMapArg, _XPathObject, _XPathVarArg
-from ._xmlerror import _ErrorLog
 from . import LxmlError, LxmlSyntaxError, _Element, _ElementOrTree, _ElementTree
+from ._xmlerror import _ErrorLog
 
 # TODO Belongs to extensions.pxi, to be moved
 class XPathError(LxmlError): ...

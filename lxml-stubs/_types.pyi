@@ -1,6 +1,21 @@
-from typing import Any, Callable, Dict, List, Mapping, Optional, Tuple, Union
+from typing import (
+    Any,
+    Callable,
+    Collection,
+    Dict,
+    List,
+    Mapping,
+    Optional,
+    Protocol,
+    Tuple,
+    TypeVar,
+    Union,
+)
 
 from .etree import _Element
+
+_KT_co = TypeVar("_KT_co", covariant=True)
+_VT_co = TypeVar("_VT_co", covariant=True)
 
 # ElementTree API is notable of canonicalizing byte / unicode input data.
 # This type alias should only be used for input arguments, while one would
@@ -49,3 +64,17 @@ _XPathVarArg = Union[
     _Element,
     list[_Element],
 ]
+
+# lxml contains many private classes implementing custom accessors
+# and mixins that almost behave like common python types.
+# It is better for function arguments to accept protocols instead.
+
+class SupportsLaxedItems(Protocol[_KT_co, _VT_co]):
+    """Relaxed form of SupportsItems
+
+    Original SupportsItems from typeshed returns generic set which
+    is compatible with ItemsView. However, _Attrib doesn't conform
+    and returns list instead. Gotta find a common ground here.
+    """
+
+    def items(self) -> Collection[tuple[_KT_co, _VT_co]]: ...

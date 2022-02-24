@@ -1,0 +1,179 @@
+- case: element_is_like_sequence
+  parametrized:
+    - val: elem.index(elem)
+      rt: builtins.int
+    - val: len(elem)
+      rt: builtins.int
+    - val: elem[3]
+      rt: lxml.etree._Element
+    - val: elem[:2]
+      rt: builtins.list[lxml.etree._Element]
+    - val: iter(elem)
+      rt: typing.Iterator[lxml.etree._Element*]
+    - val: reversed(elem)
+      rt: builtins.reversed[lxml.etree._Element*]
+  main: |
+    from lxml import etree
+    elem = etree.Element("foo")
+    reveal_type({{ val }})  # N: Revealed type is "{{ rt }}"
+
+- case: element_is_like_sequence2
+  main: |
+    from lxml import etree
+    elem = etree.Element("foo")
+    elem in elem
+
+- case: element_is_like_mutable_sequence
+  parametrized:
+    - method: append
+      arg: elem
+    - method: append
+      arg: pi_
+    # - method: extend
+    #   arg: "[entity, comment, elem]"
+    - method: insert
+      arg: 4, comment
+    - method: remove
+      arg: pi_
+    # - method: replace
+    #   arg: elem, entity
+    - method: clear
+      arg: false
+  main: |
+    from lxml import etree
+    elem = etree.Element("foo")
+    comment = etree.Comment("bar")
+    pi_ = etree.ProcessingInstruction("pi")
+    # entity = etree.Entity("#x2CEB")
+    elem.{{ method }}({{ arg }})
+
+- case: element_read_only_properties
+  parametrized:
+    - prop: attrib
+      rt: lxml.etree._Attrib
+    - prop: prefix
+      rt: Union[builtins.str, None]
+    - prop: nsmap
+      rt: builtins.dict[Union[builtins.str, None], builtins.str]
+  main: |
+    from lxml import etree
+    elem = etree.Element("foo")
+    result = elem.{{ prop }}
+    reveal_type(result)
+    elem.{{ prop }} = result
+  out: |
+    main:4: note: Revealed type is "{{ rt }}"
+    main:5: error: Property "{{ prop }}" defined in "_Element" is read-only
+
+# Quite a few projects perform automatic property conversion under the hook,
+# lxml employs it in project-wide manner, including str/byte conversion
+# for element properties.
+# But mypy is _very_ unhappy about this, while pyright doesn't have such
+# restriction (used to be, but not now).
+# Soothe mypy by only checking compatible types as input arg.
+- case: element_read_write_properties
+  parametrized:
+    - prop: base
+      rt: Union[builtins.str, None]
+      arg_type: str
+    - prop: tag
+      rt: builtins.str
+      arg_type: str
+    - prop: text
+      rt: Union[builtins.str, None]
+      arg_type: str
+    - prop: tail
+      rt: Union[builtins.str, None]
+      arg_type: str
+    - prop: sourceline
+      rt: Union[builtins.int, None]
+      arg_type: int
+  main: |
+    from lxml import etree
+    elem: etree._Element
+    reveal_type(elem.{{ prop }})  # N: Revealed type is "{{ rt }}"
+    val: {{ arg_type }}
+    elem.{{ prop }} = val
+
+# get() and set() have their own tests
+- case: element_attrib_is_like_mapping
+  parametrized:
+    - method: keys
+      rt: builtins.list[builtins.str]
+    - method: values
+      rt: builtins.list[builtins.str]
+    - method: items
+      rt: builtins.list[Tuple[builtins.str, builtins.str]]
+  main: |
+    from lxml import etree
+    elem = etree.Element("foo")
+    val = elem.{{ method }}()
+    reveal_type(val)  # N: Revealed type is "{{ rt }}"
+
+- case: element_method_find
+  main: |
+    from lxml import etree
+    elem = etree.Element("foo")
+    result = elem.find("/my-path/")
+    reveal_type(result)  # N: Revealed type is "Union[lxml.etree._Element, None]"
+
+- case: element_method_get
+  parametrized:
+    - arg: attr1
+      rt: Union[builtins.str, None]
+    - arg: attr2
+      rt: Union[builtins.str, None]
+    - arg: qname
+      rt: Union[builtins.str, None]
+    - arg: "qname, 4"
+      rt: Union[builtins.str, builtins.int*]
+  main: |
+    from lxml import etree
+    elem = etree.Element("foo")
+    attr1 = "my-attr"
+    attr2 = b"my-attr"
+    qname = etree.QName(b'ns', 'a')
+    result = elem.get({{ arg }})
+    reveal_type(result)  # N: Revealed type is "{{ rt }}"
+
+- case: element_method_getroottree
+  main: |
+    from lxml import etree
+    elem = etree.Element("foo")
+    tree = elem.getroottree()
+    reveal_type(tree)  # N: Revealed type is "lxml.etree._ElementTree"
+
+- case: element_method_iter_family
+  parametrized:
+    - func: itersiblings
+    - func: iterancestors
+    - func: iterdescendants
+    - func: iterchildren
+    - func: iter
+  main: |
+    from lxml import etree
+    elem: etree._Element
+    result = elem.{{ func }}()
+    reveal_type(result)  # N: Revealed type is "typing.Iterator[lxml.etree._Element]"
+    result = elem.{{ func }}("my-attr")
+    reveal_type(result)  # N: Revealed type is "typing.Iterator[lxml.etree._Element]"
+    result = elem.{{ func }}(etree.Comment, b'attr2')
+    reveal_type(result)  # N: Revealed type is "typing.Iterator[lxml.etree._Element]"
+
+- case: element_method_iter_family_special_kwd
+  parametrized:
+    - func: itersiblings
+      arg: preceding
+    - func: iterchildren
+      arg: reversed
+  main: |
+    from lxml import etree
+    elem = etree.Element("foo")
+    result = elem.{{ func }}("my-attr", {{ arg }}=True)
+    reveal_type(result)
+    result = elem.{{ func }}("my-attr", badarg=True)
+    result = elem.{{ func }}("my-attr", {{ arg }}='bad')
+  out: |
+    main:4: note: Revealed type is "typing.Iterator[lxml.etree._Element]"
+    main:5: error: Unexpected keyword argument "badarg" for "{{ func }}" of "_Element"
+    main:6: error: Argument "{{ arg }}" to "{{ func }}" of "_Element" has incompatible type "str"; expected "bool"
