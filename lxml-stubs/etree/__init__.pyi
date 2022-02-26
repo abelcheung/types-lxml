@@ -62,13 +62,16 @@ from ._xpath import (
 # Basic variables and constants
 #
 
+_T = TypeVar("_T")
+_ET = TypeVar("_ET", bound=_Element)
+
 _TagName = Union[str, bytes, QName]
 # Note that _TagSelector filters element type not by classes, but
 # checks for element _factory functions_ instead
 # (that is Element(), Comment() and ProcessingInstruction()).
-# Unrealistic to explicitly union callables of different arguments.
-_TagSelector = Union[str, bytes, QName, Callable[..., _Element]]
-_T = TypeVar("_T")
+_TagSelector = Union[str, bytes, QName, _ElemFactory[_Element]]
+# Elementpath API doesn't do str/byte conversion, only unicode accepted for py3
+_ElemPathArg = Union[str, QName]
 _KnownEncodings = Literal[
     "ASCII",
     "ascii",
@@ -131,11 +134,11 @@ class _Element(Collection[_Element], Reversible[_Element]):
     @property
     def text(self) -> str | None: ...
     @text.setter
-    def text(self, value: Optional[_AnyStr | QName]) -> None: ...  # FIXME missing CDATA
+    def text(self, value: Optional[_AnyStr | QName | CDATA]) -> None: ...
     @property
     def tail(self) -> str | None: ...
     @tail.setter
-    def tail(self, value: Optional[_AnyStr]) -> None: ...  # FIXME missing CDATA
+    def tail(self, value: Optional[_AnyStr | CDATA]) -> None: ...
     #
     # _Element-only properties
     # Following props are marked as read-only in comment,
@@ -233,28 +236,27 @@ class _Element(Collection[_Element], Reversible[_Element]):
         nsmap: _NSMapArg = ...,
         **_extra: _AnyStr,
     ) -> _Element: ...
-    # Elementpath API doesn't do str/byte conversion, only unicode accepted for py3
     def find(
-        self, path: str | QName, namespaces: _NSMapArg = ...
+        self, path: _ElemPathArg, namespaces: _NSMapArg = ...
     ) -> _Element | None: ...
     @overload
     def findtext(
         self,
-        path: str | QName,
+        path: _ElemPathArg,
         namespaces: _NSMapArg = ...,
     ) -> str | None: ...
     @overload
     def findtext(
         self,
-        path: str | QName,
+        path: _ElemPathArg,
         default: _T = ...,
         namespaces: _NSMapArg = ...,
     ) -> str | _T: ...
     def findall(
-        self, path: str | QName, namespaces: _NSMapArg = ...
+        self, path: _ElemPathArg, namespaces: _NSMapArg = ...
     ) -> list[_Element]: ...
     def iterfind(
-        self, path: str | QName, namespaces: _NSMapArg = ...
+        self, path: _ElemPathArg, namespaces: _NSMapArg = ...
     ) -> Iterator[_Element]: ...
     def xpath(
         self,
@@ -334,12 +336,6 @@ class _ElementTree:
         access_control: Optional[XSLTAccessControl] = ...,
         **_variables: Any,
     ) -> _ElementTree: ...
-
-class __ContentOnlyElement(_Element): ...
-class _Comment(__ContentOnlyElement): ...
-
-class _ProcessingInstruction(__ContentOnlyElement):
-    target: _AnyStr
 
 class _Attrib:
     def __setitem__(self, key: _AnyStr, value: _AnyStr) -> None: ...
@@ -509,39 +505,92 @@ class XSLT:
     @property
     def error_log(self) -> _ErrorLog: ...
 
+#
+# Element types and content node types
+#
+
+# __ContentOnlyElement is just a noop layer in class inheritance
+# Maybe re-add if decided to override various _Element methods
+# or simply discouple __ContentOnlyElement from _Element
+
+# class __ContentOnlyElement(_Element): ...
+
+class _Comment(_Element):
+    # Signature of "tag" incompatible with supertype "_Element"
+    @property  # type: ignore[misc]
+    def tag(self) -> _ElemFactory[_Comment]: ...  # type: ignore[override]
+
+class _ProcessingInstruction(_Element):
+    @property  # type: ignore[misc]
+    def tag(self) -> _ElemFactory[_ProcessingInstruction]: ...  # type: ignore[override]
+    @property
+    def target(self) -> str: ...
+    @target.setter
+    def target(self, value: _AnyStr) -> None: ...
+    @overload
+    def get(self, key: _AnyStr | QName) -> str | None: ...
+    @overload
+    def get(self, key: _AnyStr | QName, default: _T = ...) -> str | _T: ...
+    @property
+    def attrib(self) -> dict[str, str]: ...  # type: ignore[override]
+
+class _Entity(_Element):
+    @property  # type: ignore[misc]
+    def tag(self) -> _ElemFactory[_Entity]: ...  # type: ignore[override]
+    @property  # type: ignore[misc]
+    def text(self) -> str: ...
+    @property
+    def name(self) -> str: ...
+    @name.setter
+    def name(self, value: _AnyStr) -> None: ...
+
+class CDATA:
+    def __init__(self, data: _AnyStr) -> None: ...
+
+# Element factory functions
+#
+
+# Most arguments for factories functions are optional, so accurate
+# typing can't be done. Opt for generic aliases instead.
+_ElemFactory = Callable[..., _ET]
+
 def Comment(text: Optional[_AnyStr] = ...) -> _Comment: ...
-def Element(
-    _tag: _TagName,
-    attrib: Optional[_DictAnyStr] = ...,
-    nsmap: _NSMapArg = ...,
-    **extra: _AnyStr,
-) -> _Element: ...
-def SubElement(
-    _parent: _Element,
-    _tag: _TagName,
-    attrib: Optional[_DictAnyStr] = ...,
-    nsmap: _NSMapArg = ...,
-    **extra: _AnyStr,
-) -> _Element: ...
-def ElementTree(
-    element: _Element = ...,
-    file: Union[_AnyStr, IO[Any]] = ...,
-    parser: XMLParser = ...,
-) -> _ElementTree: ...
 def ProcessingInstruction(
-    target: _AnyStr, text: _AnyStr = ...
+    target: _AnyStr, text: Optional[_AnyStr] = ...
 ) -> _ProcessingInstruction: ...
 
 PI = ProcessingInstruction
 
+def Entity(name: _AnyStr) -> _Entity: ...
+def Element(  # Args identical to _Element.makeelement
+    _tag: _TagName,
+    attrib: SupportsLaxedItems[str, _AnyStr] | None = ...,
+    nsmap: _NSMapArg = ...,
+    **_extra: _AnyStr,
+) -> _Element: ...
+def SubElement(
+    _parent: _Element,
+    _tag: _TagName,
+    attrib: SupportsLaxedItems[str, _AnyStr] | None = ...,
+    nsmap: _NSMapArg = ...,
+    **_extra: _AnyStr,
+) -> _Element: ...
+def ElementTree(
+    element: _Element = ...,
+    *,
+    file: Union[_AnyStr, IO[Any]] = ...,
+    parser: XMLParser = ...,
+) -> _ElementTree: ...
 def HTML(
     text: _AnyStr,
     parser: Optional[HTMLParser] = ...,
+    *,
     base_url: Optional[_AnyStr] = ...,
 ) -> _Element: ...
 def XML(
     text: _AnyStr,
     parser: Optional[XMLParser] = ...,
+    *,
     base_url: Optional[_AnyStr] = ...,
 ) -> _Element: ...
 def cleanup_namespaces(
@@ -628,17 +677,13 @@ class DTD(_Validator):
     ) -> None: ...
     def __call__(self, etree: _ElementOrTree) -> bool: ...
 
-_ElementFactory = Callable[[Any, Dict[_AnyStr, _AnyStr]], _Element]
-_CommentFactory = Callable[[_AnyStr], _Comment]
-_ProcessingInstructionFactory = Callable[[_AnyStr, _AnyStr], _ProcessingInstruction]
-
 class TreeBuilder:
     def __init__(
         self,
-        element_factory: Optional[_ElementFactory] = ...,
+        element_factory: Optional[_ElemFactory[_Element]] = ...,
         parser: Optional[_BaseParser] = ...,
-        comment_factory: Optional[_CommentFactory] = ...,
-        pi_factory: Optional[_ProcessingInstructionFactory] = ...,
+        comment_factory: Optional[_ElemFactory[_Comment]] = ...,
+        pi_factory: Optional[_ElemFactory[_ProcessingInstruction]] = ...,
         insert_comments: bool = ...,
         insert_pis: bool = ...,
     ) -> None: ...

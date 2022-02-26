@@ -29,22 +29,22 @@
       arg: elem
     - method: append
       arg: pi_
-    # - method: extend
-    #   arg: "[entity, comment, elem]"
+    - method: extend
+      arg: "[entity, comment, elem]"
     - method: insert
       arg: 4, comment
     - method: remove
       arg: pi_
-    # - method: replace
-    #   arg: elem, entity
+    - method: replace
+      arg: elem, entity
     - method: clear
       arg: false
   main: |
     from lxml import etree
-    elem = etree.Element("foo")
-    comment = etree.Comment("bar")
-    pi_ = etree.ProcessingInstruction("pi")
-    # entity = etree.Entity("#x2CEB")
+    elem: etree._Element
+    comment: etree._Comment
+    pi_: etree._ProcessingInstruction
+    entity: etree._Entity
     elem.{{ method }}({{ arg }})
 
 - case: element_read_only_properties
