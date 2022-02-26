@@ -239,17 +239,22 @@ class _Element(Collection[_Element], Reversible[_Element]):
     def find(
         self, path: _ElemPathArg, namespaces: _NSMapArg = ...
     ) -> _Element | None: ...
+    # Original method has no star. If somebody only supplies
+    # 'path' and 'default' argument as positional one, it
+    # would be misinterpreted as namespaces argument in first
+    # overload form. Add star here to guard against such situation.
     @overload
     def findtext(
         self,
         path: _ElemPathArg,
+        *,
         namespaces: _NSMapArg = ...,
     ) -> str | None: ...
     @overload
     def findtext(
         self,
         path: _ElemPathArg,
-        default: _T = ...,
+        default: _T,
         namespaces: _NSMapArg = ...,
     ) -> str | _T: ...
     def findall(
