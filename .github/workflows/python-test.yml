@@ -8,6 +8,8 @@ on:
       - 'LICENSE'
     branches-ignore:
       - master
+    tags:
+      - 20**
 
 jobs:
   build:
