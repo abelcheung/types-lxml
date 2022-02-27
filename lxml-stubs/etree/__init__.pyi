@@ -23,6 +23,7 @@ from typing import (
     overload,
 )
 
+from os import PathLike
 from typing_extensions import Literal, Protocol, TypeGuard
 
 from .._types import (
@@ -83,6 +84,7 @@ _KnownEncodings = Literal[
     "us-ascii",
 ]
 _ElementOrTree = Union[_Element, _ElementTree]
+_FileSource = Union[_AnyStr, IO[Any], PathLike[Any]]
 
 class _SmartStr(str):
     """Smart string is a private str subclass documented in
@@ -305,7 +307,7 @@ class _ElementTree:
     ) -> Iterable[_Element]: ...
     def write(
         self,
-        file: Union[_AnyStr, IO[Any]],
+        file: _FileSource,
         encoding: _AnyStr = ...,
         method: _AnyStr = ...,
         pretty_print: bool = ...,
@@ -319,7 +321,7 @@ class _ElementTree:
     ) -> None: ...
     def write_c14n(
         self,
-        file: Union[_AnyStr, IO[Any]],
+        file: _FileSource,
         with_comments: bool = ...,
         compression: int = ...,
         inclusive_ns_prefixes: Iterable[_AnyStr] = ...,
@@ -485,7 +487,7 @@ class XMLSchema(_Validator):
     def __init__(
         self,
         etree: _ElementOrTree = ...,
-        file: Union[_AnyStr, IO[Any]] = ...,
+        file: _FileSource = ...,
     ) -> None: ...
     def __call__(self, etree: _ElementOrTree) -> bool: ...
 
@@ -583,7 +585,7 @@ def SubElement(
 def ElementTree(
     element: _Element = ...,
     *,
-    file: Union[_AnyStr, IO[Any]] = ...,
+    file: _FileSource = ...,
     parser: XMLParser = ...,
 ) -> _ElementTree: ...
 def HTML(
@@ -604,7 +606,7 @@ def cleanup_namespaces(
     keep_ns_prefixes: Optional[Iterable[_AnyStr]] = ...,
 ) -> None: ...
 def parse(
-    source: Union[_AnyStr, IO[Any]], parser: XMLParser = ..., base_url: _AnyStr = ...
+    source: _FileSource, parser: XMLParser = ..., base_url: _AnyStr = ...
 ) -> _ElementTree: ...
 def fromstring(
     text: _AnyStr, parser: XMLParser = ..., *, base_url: _AnyStr = ...
@@ -677,9 +679,7 @@ class _Validator:
     def error_log(self) -> _ErrorLog: ...
 
 class DTD(_Validator):
-    def __init__(
-        self, file: Union[_AnyStr, IO[Any]] = ..., *, external_id: Any = ...
-    ) -> None: ...
+    def __init__(self, file: _FileSource = ..., *, external_id: Any = ...) -> None: ...
     def __call__(self, etree: _ElementOrTree) -> bool: ...
 
 class TreeBuilder:
