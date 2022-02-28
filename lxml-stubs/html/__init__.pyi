@@ -1,11 +1,4 @@
-from typing import (
-    Any,
-    Callable,
-    Iterable,
-    Iterator,
-    MutableMapping,
-    MutableSet,
-)
+from typing import Any, Callable, Iterable, Iterator, MutableMapping, MutableSet
 
 from typing_extensions import Literal
 

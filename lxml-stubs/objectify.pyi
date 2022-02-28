@@ -5,8 +5,5 @@ class ObjectifiedElement(ElementBase):
     pass
 
 def fromstring(
-    text: _AnyStr,
-    parser: XMLParser = ...,
-    *,
-    base_url: _AnyStr = ...
+    text: _AnyStr, parser: XMLParser = ..., *, base_url: _AnyStr = ...
 ) -> ObjectifiedElement: ...

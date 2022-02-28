@@ -19,11 +19,18 @@ class LxmlHTMLTranslator(LxmlTranslator):
     def __init__(self, xhtml: bool = ...) -> None: ...
 
 class CSSSelector(XPath):
-    css: str
+    # Although 'css' is implemented as plain attribute, it is
+    # meaningless to modify it, because instance is initialized
+    # with translated XPath expression, not the CSS expression.
+    # Allowing attribute modification would cause confusion as
+    # CSS expression and the underlying XPath expression don't
+    # match.
+    @property
+    def css(self) -> str: ...
     def __init__(
         self,
         css: str,
-        namespaces: _NonDefaultNSMapArg = ...,
+        namespaces: _NonDefaultNSMapArg | None = ...,
         translator: _CSSTransArg = ...,
     ) -> None: ...
     def __call__(  # type: ignore[override]

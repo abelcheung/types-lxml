@@ -28,7 +28,7 @@ class XPath(_XPathEvaluatorBase):
         self,
         path: _AnyStr,
         *,
-        namespaces: _NonDefaultNSMapArg = ...,
+        namespaces: _NonDefaultNSMapArg | None = ...,
         extensions: _XPathExtFuncArg | None = ...,
         regexp: bool = ...,
         smart_strings: bool = ...,
@@ -36,7 +36,8 @@ class XPath(_XPathEvaluatorBase):
     def __call__(
         self, _etree_or_element: _ElementOrTree, **_variables: _XPathVarArg
     ) -> _XPathObject: ...
-    path = ...  # type: str
+    @property
+    def path(self) -> str: ...
 
 class ETXPath(XPath):
     def __init__(
@@ -53,21 +54,21 @@ class XPathElementEvaluator(_XPathEvaluatorBase):
         self,
         element: _Element,
         *,
-        namespaces: _NonDefaultNSMapArg = ...,
+        namespaces: _NonDefaultNSMapArg | None = ...,
         extensions: _XPathExtFuncArg | None = ...,
         regexp: bool = ...,
         smart_strings: bool = ...,
     ) -> None: ...
     def __call__(self, _path: _AnyStr, **_variables: _XPathVarArg) -> _XPathObject: ...
     def register_namespace(self, prefix: _AnyStr, uri: _AnyStr) -> None: ...
-    def register_namespaces(self, namespaces: _NonDefaultNSMapArg) -> None: ...
+    def register_namespaces(self, namespaces: _NonDefaultNSMapArg | None) -> None: ...
 
 class XPathDocumentEvaluator(XPathElementEvaluator):
     def __init__(
         self,
         etree: _ElementTree,
         *,
-        namespaces: _NonDefaultNSMapArg = ...,
+        namespaces: _NonDefaultNSMapArg | None = ...,
         extensions: _XPathExtFuncArg | None = ...,
         regexp: bool = ...,
         smart_strings: bool = ...,
@@ -77,7 +78,7 @@ class XPathDocumentEvaluator(XPathElementEvaluator):
 def XPathEvaluator(
     etree_or_element: _Element,
     *,
-    namespaces: _NonDefaultNSMapArg = ...,
+    namespaces: _NonDefaultNSMapArg | None = ...,
     extensions: _XPathExtFuncArg | None = ...,
     regexp: bool = ...,
     smart_strings: bool = ...,
@@ -86,7 +87,7 @@ def XPathEvaluator(
 def XPathEvaluator(
     etree_or_element: _ElementTree,
     *,
-    namespaces: _NonDefaultNSMapArg = ...,
+    namespaces: _NonDefaultNSMapArg | None = ...,
     extensions: _XPathExtFuncArg | None = ...,
     regexp: bool = ...,
     smart_strings: bool = ...,
@@ -95,7 +96,7 @@ def XPathEvaluator(
 def XPathEvaluator(
     etree_or_element: _ElementOrTree,
     *,
-    namespaces: _NonDefaultNSMapArg = ...,
+    namespaces: _NonDefaultNSMapArg | None = ...,
     extensions: _XPathExtFuncArg | None = ...,
     regexp: bool = ...,
     smart_strings: bool = ...,

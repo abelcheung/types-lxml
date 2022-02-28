@@ -17,19 +17,21 @@ _AnyStr = str | bytes
 # would fail to validate against either Mapping[A, ...] or Mapping[B, ...]
 # Try to settle for simpler solution, assuming python3 users would not
 # use byte string as namespace prefix.
+# fmt: off
 _NSMapArg = (
     Mapping[None      , _AnyStr] |
     Mapping[str       , _AnyStr] |
-    Mapping[str | None, _AnyStr] |
-    None
+    Mapping[str | None, _AnyStr]
 )
-_NonDefaultNSMapArg = Mapping[str, _AnyStr] | None
+# fmt: on
+_NonDefaultNSMapArg = Mapping[str, _AnyStr]
 
 # https://lxml.de/extensions.html#xpath-extension-functions
 # The returned result of extension function itself is not exactly Any,
 # but too complex to list.
 # And xpath extension func really checks for dict in implementation,
 # not just any mapping.
+# fmt: off
 _XPathExtFuncArg = (
     Iterable[
         SupportsLaxedItems[
@@ -41,7 +43,7 @@ _XPathExtFuncArg = (
     | dict[tuple[None      , str], Callable[..., Any]]
     | dict[tuple[str | None, str], Callable[..., Any]]
 )
-
+# fmt: on
 
 # XPathObject documented in https://lxml.de/xpathxslt.html#xpath-return-values
 # However the type is too versatile to be of any use in further processing,
@@ -50,6 +52,7 @@ _XPathObject = Any
 # XPath variable supports most of the XPathObject types
 # as _input_ argument value, but most users would probably
 # only use primivite types for substitution.
+# fmt: off
 _XPathVarArg = (
     bool |
     int |
@@ -58,6 +61,7 @@ _XPathVarArg = (
     _Element |
     list[_Element]
 )
+# fmt: on
 
 # lxml contains many private classes implementing custom accessors
 # and mixins that almost behave like common python types.

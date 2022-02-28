@@ -2,6 +2,7 @@
 # This is *far* from complete, and the stubgen-generated ones crash mypy.
 # Any use of `Any` below means I couldn't figure out the type.
 
+from os import PathLike
 from typing import (
     IO,
     Any,
@@ -18,7 +19,6 @@ from typing import (
     overload,
 )
 
-from os import PathLike
 from typing_extensions import Literal, Protocol, TypeGuard
 
 from .._types import (
@@ -236,11 +236,11 @@ class _Element(Collection[_Element], Reversible[_Element]):
         _tag: _TagName,
         # Final result is sort of like {**attrib, **_extra}
         attrib: SupportsLaxedItems[str, _AnyStr] | None = ...,
-        nsmap: _NSMapArg = ...,
+        nsmap: _NSMapArg | None = ...,
         **_extra: _AnyStr,
     ) -> _Element: ...
     def find(
-        self, path: _ElemPathArg, namespaces: _NSMapArg = ...
+        self, path: _ElemPathArg, namespaces: _NSMapArg | None = ...
     ) -> _Element | None: ...
     # Original method has no star. If somebody only supplies
     # 'path' and 'default' argument as positional one, it
@@ -251,25 +251,25 @@ class _Element(Collection[_Element], Reversible[_Element]):
         self,
         path: _ElemPathArg,
         *,
-        namespaces: _NSMapArg = ...,
+        namespaces: _NSMapArg | None = ...,
     ) -> str | None: ...
     @overload
     def findtext(
         self,
         path: _ElemPathArg,
         default: _T,
-        namespaces: _NSMapArg = ...,
+        namespaces: _NSMapArg | None = ...,
     ) -> str | _T: ...
     def findall(
-        self, path: _ElemPathArg, namespaces: _NSMapArg = ...
+        self, path: _ElemPathArg, namespaces: _NSMapArg | None = ...
     ) -> list[_Element]: ...
     def iterfind(
-        self, path: _ElemPathArg, namespaces: _NSMapArg = ...
+        self, path: _ElemPathArg, namespaces: _NSMapArg | None = ...
     ) -> Iterator[_Element]: ...
     def xpath(
         self,
         _path: _AnyStr,
-        namespaces: _NonDefaultNSMapArg = ...,
+        namespaces: _NonDefaultNSMapArg | None = ...,
         extensions: _XPathExtFuncArg | None = ...,
         smart_strings: bool = ...,
         **_variables: _XPathVarArg,
@@ -294,14 +294,18 @@ class _ElementTree:
     parser = ...  # type: XMLParser
     @property
     def docinfo(self) -> DocInfo: ...
-    def find(self, path: str, namespaces: _NSMapArg = ...) -> _Element | None: ...
+    def find(
+        self, path: str, namespaces: _NSMapArg | None = ...
+    ) -> _Element | None: ...
     def findtext(
         self,
         path: str,
         default: str | None = ...,
-        namespaces: _NSMapArg = ...,
+        namespaces: _NSMapArg | None = ...,
     ) -> str | None: ...
-    def findall(self, path: str, namespaces: _NSMapArg = ...) -> list[_Element]: ...
+    def findall(
+        self, path: str, namespaces: _NSMapArg | None = ...
+    ) -> list[_Element]: ...
     def getpath(self, element: _Element) -> str: ...
     def getroot(self) -> _Element: ...
     def iter(
@@ -333,7 +337,7 @@ class _ElementTree:
     def xpath(
         self,
         _path: _AnyStr,
-        namespaces: _NonDefaultNSMapArg = ...,
+        namespaces: _NonDefaultNSMapArg | None = ...,
         extensions: _XPathExtFuncArg | None = ...,
         smart_strings: bool = ...,
         **_variables: _XPathVarArg,
@@ -351,7 +355,9 @@ class _Attrib:
     def __delitem__(self, key: _AnyStr) -> None: ...
     def update(
         self,
-        sequence_or_dict: _Attrib | Mapping[_AnyStr, _AnyStr] | Sequence[tuple[_AnyStr, _AnyStr]],
+        sequence_or_dict: _Attrib
+        | Mapping[_AnyStr, _AnyStr]
+        | Sequence[tuple[_AnyStr, _AnyStr]],
     ) -> None: ...
     def pop(self, key: _AnyStr, default: _AnyStr) -> _AnyStr: ...
     def clear(self) -> None: ...
@@ -428,7 +434,7 @@ class _BaseParser:
         self,
         _tag: _TagName,
         attrib: SupportsLaxedItems[str, _AnyStr] | None = ...,
-        nsmap: _NSMapArg = ...,
+        nsmap: _NSMapArg | None = ...,
         **_extra: _AnyStr,
     ) -> _Element: ...
     def setElementClassLookup(
@@ -586,14 +592,14 @@ def Entity(name: _AnyStr) -> _Entity: ...
 def Element(  # Args identical to _Element.makeelement
     _tag: _TagName,
     attrib: SupportsLaxedItems[str, _AnyStr] | None = ...,
-    nsmap: _NSMapArg = ...,
+    nsmap: _NSMapArg | None = ...,
     **_extra: _AnyStr,
 ) -> _Element: ...
 def SubElement(
     _parent: _Element,
     _tag: _TagName,
     attrib: SupportsLaxedItems[str, _AnyStr] | None = ...,
-    nsmap: _NSMapArg = ...,
+    nsmap: _NSMapArg | None = ...,
     **_extra: _AnyStr,
 ) -> _Element: ...
 def ElementTree(
@@ -616,7 +622,7 @@ def XML(
 ) -> _Element: ...
 def cleanup_namespaces(
     tree_or_element: _ElementOrTree,
-    top_nsmap: _NSMapArg = ...,
+    top_nsmap: _NSMapArg | None = ...,
     keep_ns_prefixes: Iterable[_AnyStr] | None = ...,
 ) -> None: ...
 def parse(
@@ -672,9 +678,7 @@ def tostring(
 class Error(Exception): ...
 
 class LxmlError(Error):
-    def __init__(
-        self, message: Any, error_log: _BaseErrorLog | None = ...
-    ) -> None: ...
+    def __init__(self, message: Any, error_log: _BaseErrorLog | None = ...) -> None: ...
     error_log: _BaseErrorLog = ...
 
 class DocumentInvalid(LxmlError): ...
