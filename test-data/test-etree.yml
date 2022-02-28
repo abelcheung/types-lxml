@@ -79,3 +79,58 @@
     last_err = parser.error_log.last_error
     reveal_type(last_err.level)  # N: Revealed type is "builtins.int"
     reveal_type(last_err.filename)  # N: Revealed type is "Union[builtins.str, None]"
+
+- case: qname_create_ok
+  parametrized:
+    - kwds: tagname
+    - kwds: text_or_uri_or_element=qn
+    - kwds: el
+    - kwds: None, tagname
+    - kwds: None, tag=qn
+  main: |
+    from lxml.etree import QName, _Element
+    tagname: str
+    el: _Element
+    qn: QName
+    result = QName({{ kwds }})
+    reveal_type(result)  # N: Revealed type is "lxml.etree.QName"
+
+- case: qname_create_fail
+  expect_fail: true
+  parametrized:
+    - kwds: null
+    - kwds: None
+    - kwds: 1
+    - kwds: None, 1
+  main: |
+    from lxml.etree import QName
+    result = QName({{ kwds }})
+
+- case: qname_properties
+  parametrized:
+    - prop: namespace
+      rt: Union[builtins.str, None]
+    - prop: localname
+      rt: builtins.str
+    - prop: text
+      rt: builtins.str
+  main: |
+    from lxml.etree import QName
+    qn: QName
+    reveal_type(qn.{{ prop }})  # N: Revealed type is "{{ rt }}"
+    qn.{{ prop }} = ""  # E: Property "{{ prop }}" defined in "QName" is read-only
+
+- case: qname_compare
+  parametrized:
+    - other: qn
+    - other: s
+  main: |
+    from lxml.etree import QName
+    s: str
+    qn: QName
+    qn == {{ other }}
+    qn != {{ other }}
+    qn > {{ other }}
+    qn < {{ other }}
+    qn >= {{ other }}
+    qn <= {{ other }}
