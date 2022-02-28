@@ -19,9 +19,6 @@ _VT_co = TypeVar("_VT_co", covariant=True)
 # Not to be confused with typing.AnyStr which is TypeVar.
 _AnyStr = str | bytes
 
-_ListAnyStr = list[str] | list[bytes]
-_DictAnyStr = dict[str, str] | dict[bytes, bytes]
-
 # See https://github.com/python/typing/pull/273
 # Due to Mapping having invariant key types, Mapping[A | B, ...]
 # would fail to validate against either Mapping[A, ...] or Mapping[B, ...]
