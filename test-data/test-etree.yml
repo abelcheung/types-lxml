@@ -134,3 +134,49 @@
     qn < {{ other }}
     qn >= {{ other }}
     qn <= {{ other }}
+
+- case: docinfo_methods
+  main: |
+    from lxml.etree import DocInfo, _Element, _ElementTree
+    et: _ElementTree
+    el: _Element
+    reveal_type(DocInfo(et))  # N: Revealed type is "lxml.etree.DocInfo"
+    reveal_type(DocInfo(el))  # N: Revealed type is "lxml.etree.DocInfo"
+    d: DocInfo
+    d.clear()
+
+- case: docinfo_ro_properties
+  parametrized:
+    - prop: root_name
+      rt: Union[builtins.str, None]
+    - prop: xml_version
+      rt: Union[builtins.str, None]
+    - prop: encoding
+      rt: Union[builtins.str, None]
+    - prop: standalone
+      rt: Union[builtins.bool, None]
+    - prop: doctype
+      rt: builtins.str
+    - prop: internalDTD
+      rt: Union[lxml.etree.DTD, None]
+    - prop: externalDTD
+      rt: Union[lxml.etree.DTD, None]
+  main: |
+    from lxml.etree import DocInfo
+    d: DocInfo
+    reveal_type(d.{{ prop }})  # N: Revealed type is "{{ rt }}"
+
+- case: docinfo_rw_properties
+  parametrized:
+    - prop: public_id
+      rt: Union[builtins.str, None]
+    - prop: system_id
+      rt: Union[builtins.str, None]
+    - prop: URL
+      rt: Union[builtins.str, None]
+  main: |
+    from lxml.etree import DocInfo
+    d: DocInfo
+    reveal_type(d.{{ prop }})  # N: Revealed type is "{{ rt }}"
+    s: str
+    d.{{ prop }} = s
