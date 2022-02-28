@@ -24,9 +24,9 @@ from typing_extensions import Literal, Protocol, TypeGuard
 from .._types import (
     SupportsLaxedItems,
     _AnyStr,
-    _ExtensionArg,
     _NonDefaultNSMapArg,
     _NSMapArg,
+    _XPathExtFuncArg,
     _XPathObject,
     _XPathVarArg,
 )
@@ -270,7 +270,7 @@ class _Element(Collection[_Element], Reversible[_Element]):
         self,
         _path: _AnyStr,
         namespaces: _NonDefaultNSMapArg = ...,
-        extensions: Any = ...,
+        extensions: _XPathExtFuncArg | None = ...,
         smart_strings: bool = ...,
         **_variables: _XPathVarArg,
     ) -> _XPathObject: ...
@@ -334,14 +334,14 @@ class _ElementTree:
         self,
         _path: _AnyStr,
         namespaces: _NonDefaultNSMapArg = ...,
-        extensions: Any = ...,
+        extensions: _XPathExtFuncArg | None = ...,
         smart_strings: bool = ...,
         **_variables: _XPathVarArg,
     ) -> _XPathObject: ...
     def xslt(
         self,
         _xslt: XSLT,
-        extensions: _ExtensionArg | None = ...,
+        extensions: Any = ...,
         access_control: XSLTAccessControl | None = ...,
         **_variables: Any,
     ) -> _ElementTree: ...
@@ -511,7 +511,7 @@ class XSLT:
     def __init__(
         self,
         xslt_input: _ElementOrTree,
-        extensions:_ExtensionArg | None = ...,
+        extensions: Any = ...,
         regexp: bool = ...,
         access_control: XSLTAccessControl = ...,
     ) -> None: ...

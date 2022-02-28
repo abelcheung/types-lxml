@@ -1,11 +1,4 @@
-from typing import (
-    Any,
-    Callable,
-    Collection,
-    Mapping,
-    Protocol,
-    TypeVar,
-)
+from typing import Any, Callable, Collection, Iterable, Mapping, Protocol, TypeVar
 
 from .etree import _Element
 
@@ -32,10 +25,23 @@ _NSMapArg = (
 )
 _NonDefaultNSMapArg = Mapping[str, _AnyStr] | None
 
-_ExtensionArg = Mapping[
-    tuple[_AnyStr | None, _AnyStr],
-    Callable[..., Any],  # TODO extension function not investigated yet
-]
+# https://lxml.de/extensions.html#xpath-extension-functions
+# The returned result of extension function itself is not exactly Any,
+# but too complex to list.
+# And xpath extension func really checks for dict in implementation,
+# not just any mapping.
+_XPathExtFuncArg = (
+    Iterable[
+        SupportsLaxedItems[
+            tuple[str | None, str],
+            Callable[..., Any],
+        ]
+    ]
+    | dict[tuple[str       , str], Callable[..., Any]]
+    | dict[tuple[None      , str], Callable[..., Any]]
+    | dict[tuple[str | None, str], Callable[..., Any]]
+)
+
 
 # XPathObject documented in https://lxml.de/xpathxslt.html#xpath-return-values
 # However the type is too versatile to be of any use in further processing,

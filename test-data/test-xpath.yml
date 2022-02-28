@@ -1,9 +1,26 @@
-- case: xpath_create_selector
+- case: xpath_create_simple
   main: |
     from lxml import etree
     expr: str
     xpath = etree.XPath(expr)
     reveal_type(xpath)  # N: Revealed type is "lxml.etree._xpath.XPath"
+
+- case: xpath_create_args
+  parametrized:
+    - args: expr, regexp=True, smart_strings=False
+    - args: path=expr, namespaces=ns
+    - args: expr, extensions=ext1
+    - args: expr, regexp=False, extensions=ext2, namespaces=ns
+  main: |
+    from lxml.etree import XPath
+    expr: str
+    s: str
+    ns = {s: s}
+    def extfunc1(context, a) -> str: ...
+    def extfunc2(context, a, b) -> int: ...
+    ext1 = [{(None, s): extfunc1}]
+    ext2 = {(s, s): extfunc2}
+    result = XPath({{ args }})
 
 - case: xpath_create_evaluator_for_element
   main: |
