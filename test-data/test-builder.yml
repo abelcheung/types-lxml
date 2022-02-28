@@ -10,7 +10,7 @@
     - args: namespace=ns, nsmap=map
     - args: typemap=typemap
   main: |
-    from typing import Callable, Dict, Type
+    from typing import Dict
     from lxml.builder import ElementMaker
     from lxml import etree
     ns: str

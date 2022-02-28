@@ -7,17 +7,12 @@ from typing import (
     Any,
     Callable,
     Collection,
-    Dict,
     Iterable,
     Iterator,
-    List,
     Mapping,
-    Optional,
     Reversible,
     Sequence,
     SupportsBytes,
-    Tuple,
-    Type,
     TypeVar,
     Union,
     overload,
@@ -29,7 +24,7 @@ from typing_extensions import Literal, Protocol, TypeGuard
 from .._types import (
     SupportsLaxedItems,
     _AnyStr,
-    _Dict_Tuple2AnyStr_Any,
+    _ExtensionArg,
     _DictAnyStr,
     _ListAnyStr,
     _NonDefaultNSMapArg,
@@ -66,13 +61,13 @@ from ._xpath import (
 _T = TypeVar("_T")
 _ET = TypeVar("_ET", bound=_Element)
 
-_TagName = Union[str, bytes, QName]
+_TagName = _AnyStr | QName
 # Note that _TagSelector filters element type not by classes, but
 # checks for element _factory functions_ instead
 # (that is Element(), Comment() and ProcessingInstruction()).
-_TagSelector = Union[str, bytes, QName, _ElemFactory[_Element]]
+_TagSelector = Union[_TagName, _ElemFactory[_Element]]
 # Elementpath API doesn't do str/byte conversion, only unicode accepted for py3
-_ElemPathArg = Union[str, QName]
+_ElemPathArg = str | QName
 _KnownEncodings = Literal[
     "ASCII",
     "ascii",
@@ -83,7 +78,7 @@ _KnownEncodings = Literal[
     "US-ASCII",
     "us-ascii",
 ]
-_ElementOrTree = Union[_Element, _ElementTree]
+_ElementOrTree = _Element | _ElementTree
 _FileSource = Union[_AnyStr, IO[Any], PathLike[Any]]
 
 class _SmartStr(str):
@@ -104,20 +99,20 @@ class _SmartStr(str):
     is_attribute: bool
     is_tail: bool
     is_text: bool
-    attrname: Optional[str]
-    def getparent(self) -> Optional[_Element]: ...
+    attrname: str | None
+    def getparent(self) -> _Element | None: ...
 
 class DocInfo:
     root_name = ...  # type: str
-    public_id = ...  # type: Optional[str]
-    system_id = ...  # type: Optional[str]
-    xml_version = ...  # type: Optional[str]
-    encoding = ...  # type: Optional[str]
-    standalone = ...  # type: Optional[bool]
+    public_id = ...  # type: str | None
+    system_id = ...  # type: str | None
+    xml_version = ...  # type: str | None
+    encoding = ...  # type: str | None
+    standalone = ...  # type: bool | None
     URL = ...  # type: str
     internalDTD = ...  # type: "DTD"
     externalDTD = ...  # type: "DTD"
-    def __init__(self, tree: Union["_ElementTree", "_Element"]) -> None: ...
+    def __init__(self, tree: _ElementOrTree) -> None: ...
     def clear(self) -> None: ...
 
 # The base of _Element is *almost* an amalgam of MutableSequence[_Element]
@@ -136,11 +131,11 @@ class _Element(Collection[_Element], Reversible[_Element]):
     @property
     def text(self) -> str | None: ...
     @text.setter
-    def text(self, value: Optional[_AnyStr | QName | CDATA]) -> None: ...
+    def text(self, value: _AnyStr | QName | CDATA | None) -> None: ...
     @property
     def tail(self) -> str | None: ...
     @tail.setter
-    def tail(self, value: Optional[_AnyStr | CDATA]) -> None: ...
+    def tail(self, value: _AnyStr | CDATA | None) -> None: ...
     #
     # _Element-only properties
     # Following props are marked as read-only in comment,
@@ -158,7 +153,7 @@ class _Element(Collection[_Element], Reversible[_Element]):
     @property
     def base(self) -> str | None: ...
     @base.setter
-    def base(self, value: Optional[_AnyStr]) -> None: ...
+    def base(self, value: _AnyStr | None) -> None: ...
     #
     # Accessors
     #
@@ -204,29 +199,29 @@ class _Element(Collection[_Element], Reversible[_Element]):
     def getprevious(self) -> _Element | None: ...
     def itersiblings(
         self,
-        tag: Optional[_TagSelector] = ...,
+        tag: _TagSelector | None = ...,
         *tags: _TagSelector,
         preceding: bool = ...,
     ) -> Iterator[_Element]: ...
     def iterancestors(
-        self, tag: Optional[_TagSelector] = ..., *tags: _TagSelector
+        self, tag: _TagSelector | None = ..., *tags: _TagSelector
     ) -> Iterator[_Element]: ...
     def iterdescendants(
-        self, tag: Optional[_TagSelector] = ..., *tags: _TagSelector
+        self, tag: _TagSelector | None = ..., *tags: _TagSelector
     ) -> Iterator[_Element]: ...
     def iterchildren(
         self,
-        tag: Optional[_TagSelector] = ...,
+        tag: _TagSelector | None = ...,
         *tags: _TagSelector,
         reversed: bool = ...,
     ) -> Iterator[_Element]: ...
     def getroottree(self) -> _ElementTree: ...
     def iter(
-        self, tag: Optional[_TagSelector] = ..., *tags: _TagSelector
+        self, tag: _TagSelector | None = ..., *tags: _TagSelector
     ) -> Iterator[_Element]: ...
     def itertext(
         self,
-        tag: Optional[_TagSelector] = ...,
+        tag: _TagSelector | None = ...,
         *tags: _TagSelector,
         with_tail: bool = ...,
     ) -> Iterator[str]: ...
@@ -283,7 +278,7 @@ class _Element(Collection[_Element], Reversible[_Element]):
     def getchildren(self) -> list[_Element]: ...  # = list(self)
     def getiterator(
         self,
-        tag: Optional[_TagSelector],
+        tag: _TagSelector | None,
         *tags: _TagSelector,
     ) -> Iterator[_Element]: ...
 
@@ -292,18 +287,18 @@ class ElementBase(_Element): ...
 class _ElementTree:
     parser = ...  # type: XMLParser
     docinfo = ...  # type: DocInfo
-    def find(self, path: str, namespaces: _NSMapArg = ...) -> Optional["_Element"]: ...
+    def find(self, path: str, namespaces: _NSMapArg = ...) -> _Element | None: ...
     def findtext(
         self,
         path: str,
-        default: Optional[str] = ...,
+        default: str | None = ...,
         namespaces: _NSMapArg = ...,
-    ) -> Optional[str]: ...
-    def findall(self, path: str, namespaces: _NSMapArg = ...) -> List["_Element"]: ...
+    ) -> str | None: ...
+    def findall(self, path: str, namespaces: _NSMapArg = ...) -> list[_Element]: ...
     def getpath(self, element: _Element) -> str: ...
     def getroot(self) -> _Element: ...
     def iter(
-        self, tag: Optional[_TagSelector] = ..., *tags: _TagSelector
+        self, tag: _TagSelector | None = ..., *tags: _TagSelector
     ) -> Iterable[_Element]: ...
     def write(
         self,
@@ -339,8 +334,8 @@ class _ElementTree:
     def xslt(
         self,
         _xslt: XSLT,
-        extensions: Optional[_Dict_Tuple2AnyStr_Any] = ...,
-        access_control: Optional[XSLTAccessControl] = ...,
+        extensions: _ExtensionArg | None = ...,
+        access_control: XSLTAccessControl | None = ...,
         **_variables: Any,
     ) -> _ElementTree: ...
 
@@ -349,26 +344,24 @@ class _Attrib:
     def __delitem__(self, key: _AnyStr) -> None: ...
     def update(
         self,
-        sequence_or_dict: Union[
-            _Attrib, Mapping[_AnyStr, _AnyStr], Sequence[Tuple[_AnyStr, _AnyStr]]
-        ],
+        sequence_or_dict: _Attrib | Mapping[_AnyStr, _AnyStr] | Sequence[tuple[_AnyStr, _AnyStr]],
     ) -> None: ...
     def pop(self, key: _AnyStr, default: _AnyStr) -> _AnyStr: ...
     def clear(self) -> None: ...
     def __repr__(self) -> str: ...
     def __copy__(self) -> _DictAnyStr: ...
-    def __deepcopy__(self, memo: Dict[Any, Any]) -> _DictAnyStr: ...
+    def __deepcopy__(self, memo: dict[Any, Any]) -> _DictAnyStr: ...
     def __getitem__(self, key: _AnyStr) -> _AnyStr: ...
     def __bool__(self) -> bool: ...
     def __len__(self) -> int: ...
-    def get(self, key: _AnyStr, default: _AnyStr = ...) -> Optional[_AnyStr]: ...
+    def get(self, key: _AnyStr, default: _AnyStr = ...) -> _AnyStr | None: ...
     def keys(self) -> _ListAnyStr: ...
     def __iter__(self) -> Iterator[_AnyStr]: ...  # actually _AttribIterator
     def iterkeys(self) -> Iterator[_AnyStr]: ...
     def values(self) -> _ListAnyStr: ...
     def itervalues(self) -> Iterator[_AnyStr]: ...
-    def items(self) -> List[Tuple[_AnyStr, _AnyStr]]: ...
-    def iteritems(self) -> Iterator[Tuple[_AnyStr, _AnyStr]]: ...
+    def items(self) -> list[tuple[_AnyStr, _AnyStr]]: ...
+    def iteritems(self) -> Iterator[tuple[_AnyStr, _AnyStr]]: ...
     def has_key(self, key: _AnyStr) -> bool: ...
     def __contains__(self, key: _AnyStr) -> bool: ...
     def __richcmp__(self, other: _Attrib, op: int) -> bool: ...
@@ -410,34 +403,34 @@ class ParserTarget(Protocol):
     def close(self) -> Any: ...
     def data(self, data: _AnyStr) -> None: ...
     def end(self, tag: _AnyStr) -> None: ...
-    def start(self, tag: _AnyStr, attrib: Dict[_AnyStr, _AnyStr]) -> None: ...
+    def start(self, tag: _AnyStr, attrib: dict[_AnyStr, _AnyStr]) -> None: ...
 
 class ElementClassLookup: ...
 
 class FallbackElementClassLookup(ElementClassLookup):
-    fallback: Optional[ElementClassLookup]
-    def __init__(self, fallback: Optional[ElementClassLookup] = ...): ...
+    fallback: ElementClassLookup | None
+    def __init__(self, fallback: ElementClassLookup | None = ...): ...
     def set_fallback(self, lookup: ElementClassLookup) -> None: ...
 
 class CustomElementClassLookup(FallbackElementClassLookup):
     def lookup(
         self, type: str, doc: str, namespace: str, name: str
-    ) -> Optional[Type[ElementBase]]: ...
+    ) -> type[ElementBase] | None: ...
 
 class _BaseParser:
     def copy(self) -> _BaseParser: ...
     def makeelement(
         self,
         _tag: _TagName,
-        attrib: Optional[Union[_DictAnyStr, _Attrib]] = ...,
+        attrib: _DictAnyStr | _Attrib | None = ...,
         nsmap: _NSMapArg = ...,
         **_extra: Any,
     ) -> _Element: ...
     def setElementClassLookup(
-        self, lookup: Optional[ElementClassLookup] = ...
+        self, lookup: ElementClassLookup | None = ...
     ) -> None: ...
     def set_element_class_lookup(
-        self, lookup: Optional[ElementClassLookup] = ...
+        self, lookup: ElementClassLookup | None = ...
     ) -> None: ...
     @property
     def error_log(self) -> _ErrorLog: ...
@@ -449,14 +442,14 @@ class _FeedParser(_BaseParser):
 class XMLParser(_FeedParser):
     def __init__(
         self,
-        encoding: Optional[_AnyStr] = ...,
+        encoding: _AnyStr | None = ...,
         attribute_defaults: bool = ...,
         dtd_validation: bool = ...,
         load_dtd: bool = ...,
         no_network: bool = ...,
         ns_clean: bool = ...,
         recover: bool = ...,
-        schema: Optional[XMLSchema] = ...,
+        schema: XMLSchema | None = ...,
         huge_tree: bool = ...,
         remove_blank_text: bool = ...,
         resolve_entities: bool = ...,
@@ -464,7 +457,7 @@ class XMLParser(_FeedParser):
         remove_pis: bool = ...,
         strip_cdata: bool = ...,
         collect_ids: bool = ...,
-        target: Optional[ParserTarget] = ...,
+        target: ParserTarget | None = ...,
         compact: bool = ...,
     ) -> None: ...
     resolvers = ...  # type: _ResolverRegistry
@@ -472,7 +465,7 @@ class XMLParser(_FeedParser):
 class HTMLParser(_FeedParser):
     def __init__(
         self,
-        encoding: Optional[_AnyStr] = ...,
+        encoding: _AnyStr | None = ...,
         collect_ids: bool = ...,
         compact: bool = ...,
         huge_tree: bool = ...,
@@ -481,9 +474,9 @@ class HTMLParser(_FeedParser):
         remove_blank_text: bool = ...,
         remove_comments: bool = ...,
         remove_pis: bool = ...,
-        schema: Optional[XMLSchema] = ...,
+        schema: XMLSchema | None = ...,
         strip_cdata: bool = ...,
-        target: Optional[ParserTarget] = ...,
+        target: ParserTarget | None = ...,
     ) -> None: ...
 
 class _ResolverRegistry:
@@ -493,10 +486,10 @@ class _ResolverRegistry:
 class Resolver:
     def resolve(self, system_url: str, public_id: str): ...
     def resolve_file(
-        self, f: IO[Any], context: Any, *, base_url: Optional[_AnyStr], close: bool
+        self, f: IO[Any], context: Any, *, base_url: _AnyStr | None, close: bool
     ): ...
     def resolve_string(
-        self, string: _AnyStr, context: Any, *, base_url: Optional[_AnyStr]
+        self, string: _AnyStr, context: Any, *, base_url: _AnyStr | None
     ): ...
 
 class XMLSchema(_Validator):
@@ -513,7 +506,7 @@ class XSLT:
     def __init__(
         self,
         xslt_input: _ElementOrTree,
-        extensions: _Dict_Tuple2AnyStr_Any = ...,
+        extensions:_ExtensionArg | None = ...,
         regexp: bool = ...,
         access_control: XSLTAccessControl = ...,
     ) -> None: ...
@@ -521,7 +514,7 @@ class XSLT:
         self,
         _input: _ElementOrTree,
         profile_run: bool = ...,
-        **kwargs: Union[_AnyStr, _XSLTQuotedStringParam],
+        **kwargs: _AnyStr | _XSLTQuotedStringParam,
     ) -> _XSLTResultTree: ...
     @staticmethod
     def strparam(s: _AnyStr) -> _XSLTQuotedStringParam: ...
@@ -577,9 +570,9 @@ class CDATA:
 # typing can't be done. Opt for generic aliases instead.
 _ElemFactory = Callable[..., _ET]
 
-def Comment(text: Optional[_AnyStr] = ...) -> _Comment: ...
+def Comment(text: _AnyStr | None = ...) -> _Comment: ...
 def ProcessingInstruction(
-    target: _AnyStr, text: Optional[_AnyStr] = ...
+    target: _AnyStr, text: _AnyStr | None = ...
 ) -> _ProcessingInstruction: ...
 
 PI = ProcessingInstruction
@@ -606,20 +599,20 @@ def ElementTree(
 ) -> _ElementTree: ...
 def HTML(
     text: _AnyStr,
-    parser: Optional[HTMLParser] = ...,
+    parser: HTMLParser | None = ...,
     *,
-    base_url: Optional[_AnyStr] = ...,
+    base_url: _AnyStr | None = ...,
 ) -> _Element: ...
 def XML(
     text: _AnyStr,
-    parser: Optional[XMLParser] = ...,
+    parser: XMLParser | None = ...,
     *,
-    base_url: Optional[_AnyStr] = ...,
+    base_url: _AnyStr | None = ...,
 ) -> _Element: ...
 def cleanup_namespaces(
     tree_or_element: _ElementOrTree,
     top_nsmap: _NSMapArg = ...,
-    keep_ns_prefixes: Optional[Iterable[_AnyStr]] = ...,
+    keep_ns_prefixes: Iterable[_AnyStr] | None = ...,
 ) -> None: ...
 def parse(
     source: _FileSource, parser: XMLParser = ..., base_url: _AnyStr = ...
@@ -630,7 +623,7 @@ def fromstring(
 @overload
 def tostring(
     element_or_tree: _ElementOrTree,
-    encoding: Union[Type[str], Literal["unicode"]],
+    encoding: type[str] | Literal["unicode"],
     method: str = ...,
     xml_declaration: bool = ...,
     pretty_print: bool = ...,
@@ -645,7 +638,7 @@ def tostring(
 def tostring(
     element_or_tree: _ElementOrTree,
     # Should be anything but "unicode", cannot be typed
-    encoding: Optional[_KnownEncodings] = ...,
+    encoding: _KnownEncodings | None = ...,
     method: str = ...,
     xml_declaration: bool = ...,
     pretty_print: bool = ...,
@@ -659,7 +652,7 @@ def tostring(
 @overload
 def tostring(
     element_or_tree: _ElementOrTree,
-    encoding: Union[str, type] = ...,
+    encoding: str | type = ...,
     method: str = ...,
     xml_declaration: bool = ...,
     pretty_print: bool = ...,
@@ -675,7 +668,7 @@ class Error(Exception): ...
 
 class LxmlError(Error):
     def __init__(
-        self, message: Any, error_log: Optional[_BaseErrorLog] = ...
+        self, message: Any, error_log: _BaseErrorLog | None = ...
     ) -> None: ...
     error_log: _BaseErrorLog = ...
 
@@ -683,7 +676,7 @@ class DocumentInvalid(LxmlError): ...
 class LxmlSyntaxError(LxmlError, SyntaxError): ...
 
 class ParseError(LxmlSyntaxError):
-    position: Tuple[int, int]
+    position: tuple[int, int]
 
 class XMLSyntaxError(ParseError): ...
 
@@ -701,10 +694,10 @@ class DTD(_Validator):
 class TreeBuilder:
     def __init__(
         self,
-        element_factory: Optional[_ElemFactory[_Element]] = ...,
-        parser: Optional[_BaseParser] = ...,
-        comment_factory: Optional[_ElemFactory[_Comment]] = ...,
-        pi_factory: Optional[_ElemFactory[_ProcessingInstruction]] = ...,
+        element_factory: _ElemFactory[_Element] | None = ...,
+        parser: _BaseParser | None = ...,
+        comment_factory: _ElemFactory[_Comment] | None = ...,
+        pi_factory: _ElemFactory[_ProcessingInstruction] | None = ...,
         insert_comments: bool = ...,
         insert_pis: bool = ...,
     ) -> None: ...
@@ -712,7 +705,7 @@ class TreeBuilder:
     def comment(self, text: _AnyStr) -> None: ...
     def data(self, data: _AnyStr) -> None: ...
     def end(self, tag: _AnyStr) -> None: ...
-    def pi(self, target: _AnyStr, data: Optional[_AnyStr] = ...) -> Any: ...
-    def start(self, tag: _AnyStr, attrib: Dict[_AnyStr, _AnyStr]) -> None: ...
+    def pi(self, target: _AnyStr, data: _AnyStr | None = ...) -> Any: ...
+    def start(self, tag: _AnyStr, attrib: dict[_AnyStr, _AnyStr]) -> None: ...
 
 def iselement(element: Any) -> TypeGuard[_Element]: ...

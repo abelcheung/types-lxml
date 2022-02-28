@@ -2,14 +2,9 @@ from typing import (
     Any,
     Callable,
     Collection,
-    Dict,
-    List,
     Mapping,
-    Optional,
     Protocol,
-    Tuple,
     TypeVar,
-    Union,
 )
 
 from .etree import _Element
@@ -22,31 +17,27 @@ _VT_co = TypeVar("_VT_co", covariant=True)
 # expect plain str in return type for most part of API (except a few places),
 # as far as python3 annotation is concerned.
 # Not to be confused with typing.AnyStr which is TypeVar.
-_AnyStr = Union[str, bytes]
+_AnyStr = str | bytes
 
-_ListAnyStr = Union[List[str], List[bytes]]
-_DictAnyStr = Union[Dict[str, str], Dict[bytes, bytes]]
-_Dict_Tuple2AnyStr_Any = Union[Dict[Tuple[str, str], Any], Tuple[bytes, bytes], Any]
+_ListAnyStr = list[str] | list[bytes]
+_DictAnyStr = dict[str, str] | dict[bytes, bytes]
 
 # See https://github.com/python/typing/pull/273
-# Due to Mapping having invariant key types, Mapping[Union[A, B], ...]
+# Due to Mapping having invariant key types, Mapping[A | B, ...]
 # would fail to validate against either Mapping[A, ...] or Mapping[B, ...]
 # Try to settle for simpler solution, assuming python3 users would not
 # use byte string as namespace prefix.
-_NSMapArg = Optional[
-    Union[
-        Mapping[None, _AnyStr],
-        Mapping[str, _AnyStr],
-        Mapping[Optional[str], _AnyStr],
-    ]
-]
-_NonDefaultNSMapArg = Optional[Mapping[str, _AnyStr]]
+_NSMapArg = (
+    Mapping[None      , _AnyStr] |
+    Mapping[str       , _AnyStr] |
+    Mapping[str | None, _AnyStr] |
+    None
+)
+_NonDefaultNSMapArg = Mapping[str, _AnyStr] | None
 
-_ExtensionArg = Optional[
-    Mapping[
-        Tuple[Optional[_AnyStr], _AnyStr],
-        Callable[..., Any],  # TODO extension function not investigated yet
-    ]
+_ExtensionArg = Mapping[
+    tuple[_AnyStr | None, _AnyStr],
+    Callable[..., Any],  # TODO extension function not investigated yet
 ]
 
 # XPathObject documented in https://lxml.de/xpathxslt.html#xpath-return-values
@@ -56,14 +47,14 @@ _XPathObject = Any
 # XPath variable supports most of the XPathObject types
 # as _input_ argument value, but most users would probably
 # only use primivite types for substitution.
-_XPathVarArg = Union[
-    bool,
-    int,
-    float,
-    _AnyStr,
-    _Element,
-    list[_Element],
-]
+_XPathVarArg = (
+    bool |
+    int |
+    float |
+    _AnyStr |
+    _Element |
+    list[_Element]
+)
 
 # lxml contains many private classes implementing custom accessors
 # and mixins that almost behave like common python types.

@@ -1,16 +1,16 @@
-from typing import Any, Callable, Mapping, Optional
+from typing import Any, Callable, Mapping
 
-from ._types import _AnyStr
-from .etree import _Element
+from ._types import _NSMapArg
+from .etree import _Element, _ElemFactory
 
 class ElementMaker:
     def __init__(
         self,
-        typemap: Optional[Mapping[Any, Callable[[_Element, Any], None]]] = ...,
-        namespace: Optional[str] = ...,
-        nsmap: Optional[Mapping[Any, _AnyStr]] = ...,
+        typemap: Mapping[Any, Callable[[_Element, Any], None]] | None = ...,
+        namespace: str | None = ...,
+        nsmap: _NSMapArg = ...,
         # same signature as etree.Element()
-        makeelement: Optional[Callable[..., _Element]] = ...,
+        makeelement: _ElemFactory[_Element] | None = ...,
     ) -> None: ...
     def __call__(
         self,

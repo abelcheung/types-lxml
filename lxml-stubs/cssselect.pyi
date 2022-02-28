@@ -1,11 +1,9 @@
-from typing import List, Union
-
 from typing_extensions import Literal
 
 from ._types import _NonDefaultNSMapArg, _XPathVarArg
 from .etree import XPath, _Element, _ElementOrTree
 
-_CSSTransArg = Union[LxmlTranslator, Literal["xml", "html", "xhtml"]]
+_CSSTransArg = LxmlTranslator | Literal["xml", "html", "xhtml"]
 
 class SelectorError(Exception): ...
 class SelectorSyntaxError(SelectorError, SyntaxError): ...
@@ -32,4 +30,4 @@ class CSSSelector(XPath):
         self,
         _etree_or_element: _ElementOrTree,
         **_variables: _XPathVarArg,
-    ) -> List[_Element]: ...  # XPath() returns XPathObject
+    ) -> list[_Element]: ...  # XPath() returns XPathObject

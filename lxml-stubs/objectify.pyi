@@ -1,13 +1,12 @@
-from typing import Union
-
+from ._types import _AnyStr
 from .etree import ElementBase, XMLParser
 
 class ObjectifiedElement(ElementBase):
     pass
 
 def fromstring(
-    text: Union[bytes, str],
+    text: _AnyStr,
     parser: XMLParser = ...,
     *,
-    base_url: Union[bytes, str] = ...
+    base_url: _AnyStr = ...
 ) -> ObjectifiedElement: ...

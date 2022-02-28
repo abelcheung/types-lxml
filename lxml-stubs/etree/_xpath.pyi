@@ -2,7 +2,7 @@
 # Internal classes and functions from lxml/xpath.pxi
 #
 
-from typing import Any, Union, overload
+from typing import Any, overload
 
 from .._types import _AnyStr, _NonDefaultNSMapArg, _XPathObject, _XPathVarArg
 from . import LxmlError, LxmlSyntaxError, _Element, _ElementOrTree, _ElementTree
@@ -93,4 +93,4 @@ def XPathEvaluator(
     extensions: Any = ...,
     regexp: bool = ...,
     smart_strings: bool = ...,
-) -> Union[XPathElementEvaluator, XPathDocumentEvaluator]: ...
+) -> XPathElementEvaluator | XPathDocumentEvaluator: ...
