@@ -1,0 +1,74 @@
+- case: attrib_construct
+  main: |
+    from lxml.etree import _Element
+    el: _Element
+    a = el.attrib
+    reveal_type(a)  # N: Revealed type is "lxml.etree._Attrib"
+
+- case: attrib_is_like_mapping
+  main: |
+    from lxml.etree import _Attrib, QName
+    attr: _Attrib
+    s: str
+    b: bytes
+    qn: QName
+    s in attr
+    if attr:
+      reveal_type(len(attr))  # N: Revealed type is "builtins.int"
+    for k in attr:
+      reveal_type(attr[k])  # N: Revealed type is "builtins.str"
+    attr[b] = qn
+    attr[qn] = s
+    del attr[s]
+
+- case: attrib_methods_1
+  parametrized:
+    - method: get
+      args: s
+      rt: Union[builtins.str, None]
+    - method: get
+      args: s, 0
+      rt: Union[builtins.str, builtins.int*]
+    - method: pop
+      args: s
+      rt: Union[builtins.str, None]
+    - method: pop
+      args: s, 0
+      rt: Union[builtins.str, builtins.int*]
+    - method: has_key
+      args: b
+      rt: builtins.bool
+    - method: update
+      args: attr
+      rt: None
+    - method: update
+      args: attr.items()
+      rt: None
+    - method: update
+      args: '{s: s, b: b}'
+      rt: None
+  main: |
+    from lxml.etree import _Attrib
+    attr: _Attrib
+    s: str
+    b: bytes
+    reveal_type(attr.{{ method }}({{ args }}))  # N: Revealed type is "{{ rt }}"
+
+- case: attrib_methods_2
+  parametrized:
+    - method: keys
+      rt: builtins.list[builtins.str]
+    - method: values
+      rt: builtins.list[builtins.str]
+    - method: items
+      rt: builtins.list[Tuple[builtins.str, builtins.str]]
+    - method: iterkeys
+      rt: typing.Iterator[builtins.str]
+    - method: itervalues
+      rt: typing.Iterator[builtins.str]
+    - method: iteritems
+      rt: typing.Iterator[Tuple[builtins.str, builtins.str]]
+  main: |
+    from lxml.etree import _Attrib
+    attr: _Attrib
+    reveal_type(attr.{{ method }}())  # N: Revealed type is "{{ rt }}"
