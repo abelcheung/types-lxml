@@ -1,6 +1,8 @@
 from typing import Any, Callable, Collection, Iterable, Mapping, Protocol, TypeVar
 
-from .etree import _Element
+from typing_extensions import TypeAlias
+
+from .etree import QName, _Element
 
 _KT_co = TypeVar("_KT_co", covariant=True)
 _VT_co = TypeVar("_VT_co", covariant=True)
@@ -10,7 +12,19 @@ _VT_co = TypeVar("_VT_co", covariant=True)
 # expect plain str in return type for most part of API (except a few places),
 # as far as python3 annotation is concerned.
 # Not to be confused with typing.AnyStr which is TypeVar.
-_AnyStr = str | bytes
+_AnyStr: TypeAlias = str | bytes
+
+# String argument also support QName in various places
+_TextArg: TypeAlias = str | bytes | QName
+
+# On the other hand, Elementpath API doesn't do str/byte canonicalization,
+# only unicode accepted for py3
+_ElemPathArg: TypeAlias = str | QName
+
+# Aliases semantically indicating the purpose of text argument
+_TagName: TypeAlias = _TextArg
+_AttrName: TypeAlias = _TextArg
+_AttrVal: TypeAlias = _TextArg
 
 # See https://github.com/python/typing/pull/273
 # Due to Mapping having invariant key types, Mapping[A | B, ...]
@@ -57,7 +71,8 @@ _XPathVarArg = (
     bool |
     int |
     float |
-    _AnyStr |
+    str |
+    bytes |
     _Element |
     list[_Element]
 )

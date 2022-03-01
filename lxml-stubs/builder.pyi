@@ -14,7 +14,7 @@ class ElementMaker:
     ) -> None: ...
     def __call__(
         self,
-        tag: str | QName,
+        tag: str | QName,  # No bytes here
         # Although, by default, the ElementMaker only accepts _Element and types
         # interpretable by the default typemap (that is str, CDATA and dict)
         # as children, the typemap can be expanded to make sure items of any
