@@ -33,6 +33,15 @@ from .._types import (
     _XPathVarArg,
 )
 from ..cssselect import _CSSTransArg
+from ._classlookup import (
+    CommentBase as CommentBase,
+    CustomElementClassLookup as CustomElementClassLookup,
+    ElementBase as ElementBase,
+    ElementClassLookup as ElementClassLookup,
+    EntityBase as EntityBase,
+    FallbackElementClassLookup as FallbackElementClassLookup,
+    PIBase as PIBase,
+)
 from ._xmlerror import (
     ErrorDomains as ErrorDomains,
     ErrorLevels as ErrorLevels,
@@ -287,8 +296,6 @@ class _Element(Collection[_Element], Reversible[_Element]):
         *tags: _TagSelector,
     ) -> Iterator[_Element]: ...
 
-class ElementBase(_Element): ...
-
 class _ElementTree:
     parser = ...  # type: XMLParser
     @property
@@ -426,18 +433,6 @@ class ParserTarget(Protocol):
     def data(self, data: _AnyStr) -> None: ...
     def end(self, tag: _AnyStr) -> None: ...
     def start(self, tag: _AnyStr, attrib: dict[_AnyStr, _AnyStr]) -> None: ...
-
-class ElementClassLookup: ...
-
-class FallbackElementClassLookup(ElementClassLookup):
-    fallback: ElementClassLookup | None
-    def __init__(self, fallback: ElementClassLookup | None = ...): ...
-    def set_fallback(self, lookup: ElementClassLookup) -> None: ...
-
-class CustomElementClassLookup(FallbackElementClassLookup):
-    def lookup(
-        self, type: str, doc: str, namespace: str, name: str
-    ) -> type[ElementBase] | None: ...
 
 class _BaseParser:
     def copy(self) -> _BaseParser: ...

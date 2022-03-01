@@ -1,6 +1,6 @@
-from typing import Any, Callable, Collection, Iterable, Mapping, Protocol, TypeVar
+from typing import Any, Callable, Collection, Iterable, Mapping, TypeVar
 
-from typing_extensions import TypeAlias
+from typing_extensions import Literal, Protocol, TypeAlias
 
 from .etree import QName, _Element
 
@@ -77,6 +77,9 @@ _XPathVarArg = (
     list[_Element]
 )
 # fmt: on
+
+# https://lxml.de/element_classes.html#custom-element-class-lookup
+_ElemClsLookupArg = Literal["element", "comment", "PI", "entity"]
 
 # lxml contains many private classes implementing custom accessors
 # and mixins that almost behave like common python types.
