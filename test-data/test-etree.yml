@@ -20,13 +20,14 @@
 
 - case: etree_tostring_encoding_default_or_type
   parametrized:
-    - kwd: null
+    - kwd: elem
       rt: builtins.bytes
-    - kwd: encoding=str
+    - kwd: "elem, encoding=str"
       rt: builtins.str
   main: |
     from lxml import etree
-    string = etree.tostring(etree.Element("foo"), {{ kwd }})
+    elem: etree._Element
+    string = etree.tostring({{ kwd }})
     reveal_type(string)  # N: Revealed type is "{{ rt }}"
 
 - case: etree_tostring_encoding_specific
