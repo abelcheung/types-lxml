@@ -284,7 +284,7 @@ class _Element(Collection[_Element], Reversible[_Element]):
     ) -> _XPathObject: ...
     def cssselect(
         self,
-        expression: str,
+        expr: str,
         *,
         translator: _CSSTransArg = ...,
     ) -> list[_Element]: ...
