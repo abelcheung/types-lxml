@@ -2,7 +2,7 @@ from ._types import _AnyStr
 from .etree import ElementBase, XMLParser
 
 class ObjectifiedElement(ElementBase):
-    pass
+    def __getattr__(self, __k: str) -> ObjectifiedElement: ...
 
 def fromstring(
     text: _AnyStr, parser: XMLParser = ..., *, base_url: _AnyStr = ...

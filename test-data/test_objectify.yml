@@ -1,0 +1,11 @@
+-   case: etree_from_string_returns_element
+    main: |
+        from lxml import objectify
+        document = objectify.fromstring("<doc></doc>")
+        reveal_type(document)  # N: Revealed type is "lxml.objectify.ObjectifiedElement"
+
+-   case: etree_from_string_returns_element
+    main: |
+        from lxml import objectify
+        xyz = objectify.fromstring("<doc><xyz/></doc>").xyz
+        reveal_type(xyz)  # N: Revealed type is "lxml.objectify.ObjectifiedElement"
