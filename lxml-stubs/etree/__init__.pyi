@@ -27,6 +27,7 @@ from .._types import (
     _ElemPathArg,
     _NonDefaultNSMapArg,
     _NSMapArg,
+    _OutputMethodArg,
     _TagName,
     _XPathExtFuncArg,
     _XPathObject,
@@ -74,6 +75,9 @@ _ET = TypeVar("_ET", bound=_Element)
 # but checks for element _factory functions_ instead
 # (that is Element(), Comment() and ProcessingInstruction()).
 _TagSelector = Union[_TagName, _ElemFactory[_Element]]
+# For tostring() encoding. In theory it should be any encoding name
+# except "unicode", but is not representable in current typing system.
+# Settle for commonly seen encodings in XML.
 _KnownEncodings = Literal[
     "ASCII",
     "ascii",
@@ -321,7 +325,7 @@ class _ElementTree:
         self,
         file: _FileSource,
         encoding: _AnyStr = ...,
-        method: _AnyStr = ...,
+        method: _OutputMethodArg | Literal["c14n", "c14n2"] = ...,
         pretty_print: bool = ...,
         xml_declaration: Any = ...,
         with_tail: Any = ...,
@@ -637,45 +641,61 @@ def parse(
 def fromstring(
     text: _AnyStr, parser: XMLParser = ..., *, base_url: _AnyStr = ...
 ) -> _Element: ...
-@overload
+
+@overload  # Native str, no XML declaration
 def tostring(
     element_or_tree: _ElementOrTree,
+    *,
     encoding: type[str] | Literal["unicode"],
-    method: str = ...,
-    xml_declaration: bool = ...,
+    method: _OutputMethodArg = ...,
     pretty_print: bool = ...,
     with_tail: bool = ...,
-    standalone: bool = ...,
-    doctype: str = ...,
-    exclusive: bool = ...,
-    with_comments: bool = ...,
-    inclusive_ns_prefixes: Any = ...,
+    standalone: bool | None = ...,
+    doctype: str | None = ...,
 ) -> str: ...
-@overload
+@overload  # byte str, no XML declaration
 def tostring(
     element_or_tree: _ElementOrTree,
-    # Should be anything but "unicode", cannot be typed
+    *,
     encoding: _KnownEncodings | None = ...,
-    method: str = ...,
-    xml_declaration: bool = ...,
+    method: _OutputMethodArg = ...,
+    xml_declaration: bool | None = ...,
     pretty_print: bool = ...,
     with_tail: bool = ...,
-    standalone: bool = ...,
-    doctype: str = ...,
-    exclusive: bool = ...,
-    with_comments: bool = ...,
-    inclusive_ns_prefixes: Any = ...,
+    standalone: bool | None = ...,
+    doctype: str | None = ...,
 ) -> bytes: ...
-@overload
+
+# Under XML Canonicalization (C14N) mode, most arguments are ignored,
+# some arguments would even raise exception outright if specified.
+@overload  # method="c14n"
 def tostring(
     element_or_tree: _ElementOrTree,
-    encoding: str | type = ...,
+    *,
+    method: Literal["c14n"],
+    exclusive: bool = ...,
+    inclusive_ns_prefixes: Iterable[_AnyStr] | None = ...,
+    with_comments: bool = ...,
+) -> bytes: ...
+@overload  # method="c14n2"
+def tostring(
+    element_or_tree: _ElementOrTree,
+    *,
+    method: Literal["c14n2"],
+    with_comments: bool = ...,
+    strip_text: bool = ...,
+) -> bytes: ...
+@overload  # catch all
+def tostring(
+    element_or_tree: _ElementOrTree,
+    *,
+    encoding: str | type[str] = ...,
     method: str = ...,
-    xml_declaration: bool = ...,
+    xml_declaration: bool | None = ...,
     pretty_print: bool = ...,
     with_tail: bool = ...,
-    standalone: bool = ...,
-    doctype: str = ...,
+    standalone: bool | None = ...,
+    doctype: str | None = ...,
     exclusive: bool = ...,
     with_comments: bool = ...,
     inclusive_ns_prefixes: Any = ...,

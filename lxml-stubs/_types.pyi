@@ -81,6 +81,16 @@ _XPathVarArg = (
 # https://lxml.de/element_classes.html#custom-element-class-lookup
 _ElemClsLookupArg = Literal["element", "comment", "PI", "entity"]
 
+# serializer.pxi _findOutputMethod()
+_OutputMethodArg = Literal[
+    "html",
+    "text",
+    "xml",
+    "HTML",
+    "TEXT",
+    "XML",
+]
+
 # lxml contains many private classes implementing custom accessors
 # and mixins that almost behave like common python types.
 # It is better for function arguments to accept protocols instead.

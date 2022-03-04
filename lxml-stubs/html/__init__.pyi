@@ -32,6 +32,7 @@ from .._types import (
     _ElemClsLookupArg,
     _ElemPathArg,
     _NSMapArg,
+    _OutputMethodArg,
     _TagName,
 )
 from ..cssselect import _CSSTransArg
@@ -444,41 +445,49 @@ class LabelElement(HtmlElement):
 def html_to_xhtml(html: etree._ElementOrTree) -> None: ...
 def xhtml_to_html(xhtml: etree._ElementOrTree) -> None: ...
 
-# Encoding issue is similar to etree.tostring(). However, html
-# version is made complicated by the fact that, unlike etree one,
-# all arguments are not explicitly keyword-only. Using overload
-# with no default value would be impossible, as the two
-# arguments before it has default value. Make some sacrifice here.
-@overload
+# 1. Encoding issue is similar to etree.tostring().
+#
+# 2. Unlike etree.tostring(), all arguments here are not explicitly
+#    keyword-only. Using overload with no default value would be
+#    impossible, as the two arguments before it has default value.
+#    Need to make a choice here: enforce all arguments to be keyword-only.
+#    Less liberal code, but easier to maintain in long term for users.
+#
+# 3. Although html.tostring() does not forbid method="c14n" (or c14n2),
+#    calling tostring() this way would render almost all keyword arguments
+#    useless, defeating the purpose of existence of html.tostring().
+#    Besides, no c14n specific arguments are accepted here, so it is
+#    better to let etree.tostring() handle C14N.
+@overload  # encoding=str, encoding="unicode"
 def tostring(
     doc: etree._ElementOrTree,
     *,
     pretty_print: bool = ...,
     include_meta_content_type: bool = ...,
     encoding: type[str] | Literal["unicode"],
-    method: Any = ...,  # TODO outputmethods
+    method: _OutputMethodArg = ...,
     with_tail: bool = ...,
     doctype: str | None = ...,
 ) -> str: ...
-@overload
+@overload  # encoding="<others>", encoding=None, no encoding arg
 def tostring(
     doc: etree._ElementOrTree,
     *,
     pretty_print: bool = ...,
     include_meta_content_type: bool = ...,
     encoding: etree._KnownEncodings | None = ...,
-    method: Any = ...,  # TODO outputmethods
+    method: _OutputMethodArg = ...,
     with_tail: bool = ...,
     doctype: str | None = ...,
 ) -> bytes: ...
-@overload
+@overload  # catch all
 def tostring(
     doc: etree._ElementOrTree,
     *,
     pretty_print: bool = ...,
     include_meta_content_type: bool = ...,
     encoding: str | type,
-    method: Any = ...,  # TODO outputmethods
+    method: _OutputMethodArg = ...,
     with_tail: bool = ...,
     doctype: str | None = ...,
 ) -> _AnyStr: ...
