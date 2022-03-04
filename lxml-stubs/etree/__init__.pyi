@@ -3,7 +3,6 @@
 # Any use of `Any` below means I couldn't figure out the type.
 
 from typing import (
-    IO,
     Any,
     Callable,
     Collection,
@@ -44,6 +43,7 @@ from ._classlookup import (
     FallbackElementClassLookup as FallbackElementClassLookup,
     PIBase as PIBase,
 )
+from ._docloader import _ResolverRegistry
 from ._xmlerror import (
     ErrorDomains as ErrorDomains,
     ErrorLevels as ErrorLevels,
@@ -481,7 +481,7 @@ class XMLParser(_FeedParser):
         target: ParserTarget | None = ...,
         compact: bool = ...,
     ) -> None: ...
-    resolvers = ...  # type: _ResolverRegistry
+    resolvers: _ResolverRegistry
 
 class HTMLParser(_FeedParser):
     def __init__(
@@ -499,19 +499,6 @@ class HTMLParser(_FeedParser):
         strip_cdata: bool = ...,
         target: ParserTarget | None = ...,
     ) -> None: ...
-
-class _ResolverRegistry:
-    def add(self, resolver: Resolver) -> None: ...
-    def remove(self, resolver: Resolver) -> None: ...
-
-class Resolver:
-    def resolve(self, system_url: str, public_id: str): ...
-    def resolve_file(
-        self, f: IO[Any], context: Any, *, base_url: _AnyStr | None, close: bool
-    ): ...
-    def resolve_string(
-        self, string: _AnyStr, context: Any, *, base_url: _AnyStr | None
-    ): ...
 
 class XMLSchema(_Validator):
     def __init__(
