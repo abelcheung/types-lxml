@@ -1,9 +1,21 @@
-from typing import Any, Callable, Collection, Iterable, Mapping, TypeVar
+from os import PathLike
+from typing import (
+    Any,
+    BinaryIO,
+    Callable,
+    Collection,
+    Iterable,
+    Mapping,
+    TextIO,
+    TypeVar,
+)
 
 from typing_extensions import Literal, Protocol, TypeAlias
 
 from .etree import QName, _Element
 
+_T_contra = TypeVar("_T_contra", contravariant=True)
+_T_co = TypeVar("_T_co", covariant=True)
 _KT_co = TypeVar("_KT_co", covariant=True)
 _VT_co = TypeVar("_VT_co", covariant=True)
 
@@ -104,3 +116,13 @@ class SupportsLaxedItems(Protocol[_KT_co, _VT_co]):
     """
 
     def items(self) -> Collection[tuple[_KT_co, _VT_co]]: ...
+
+class SupportsWrite(Protocol[_T_contra]):
+    def write(self, __s: _T_contra) -> object: ...
+
+class SupportsRead(Protocol[_T_co]):
+    def read(self, __length: int = ...) -> _T_co: ...
+
+_FilePath = _AnyStr | PathLike[str] | PathLike[bytes]
+_FileReadSource = _FilePath | BinaryIO | TextIO
+_FileWriteSource = _FilePath | SupportsWrite[bytes]

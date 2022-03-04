@@ -2,7 +2,6 @@
 # This is *far* from complete, and the stubgen-generated ones crash mypy.
 # Any use of `Any` below means I couldn't figure out the type.
 
-from os import PathLike
 from typing import (
     IO,
     Any,
@@ -25,6 +24,8 @@ from .._types import (
     _AttrName,
     _AttrVal,
     _ElemPathArg,
+    _FileReadSource,
+    _FileWriteSource,
     _NonDefaultNSMapArg,
     _NSMapArg,
     _OutputMethodArg,
@@ -89,7 +90,6 @@ _KnownEncodings = Literal[
     "us-ascii",
 ]
 _ElementOrTree = _Element | _ElementTree
-_FileSource = Union[_AnyStr, IO[Any], PathLike[Any]]
 
 class _SmartStr(str):
     """Smart string is a private str subclass documented in
@@ -323,7 +323,7 @@ class _ElementTree:
     ) -> Iterable[_Element]: ...
     def write(
         self,
-        file: _FileSource,
+        file: _FileWriteSource,
         encoding: _AnyStr = ...,
         method: _OutputMethodArg | Literal["c14n", "c14n2"] = ...,
         pretty_print: bool = ...,
@@ -337,7 +337,7 @@ class _ElementTree:
     ) -> None: ...
     def write_c14n(
         self,
-        file: _FileSource,
+        file: _FileWriteSource,
         with_comments: bool = ...,
         compression: int = ...,
         inclusive_ns_prefixes: Iterable[_AnyStr] = ...,
@@ -517,7 +517,7 @@ class XMLSchema(_Validator):
     def __init__(
         self,
         etree: _ElementOrTree = ...,
-        file: _FileSource = ...,
+        file: _FileReadSource = ...,
     ) -> None: ...
     def __call__(self, etree: _ElementOrTree) -> bool: ...
 
@@ -615,7 +615,7 @@ def SubElement(
 def ElementTree(
     element: _Element = ...,
     *,
-    file: _FileSource = ...,
+    file: _FileReadSource = ...,
     parser: XMLParser = ...,
 ) -> _ElementTree: ...
 def HTML(
@@ -636,12 +636,11 @@ def cleanup_namespaces(
     keep_ns_prefixes: Iterable[_AnyStr] | None = ...,
 ) -> None: ...
 def parse(
-    source: _FileSource, parser: XMLParser = ..., base_url: _AnyStr = ...
+    source: _FileReadSource, parser: XMLParser = ..., base_url: _AnyStr = ...
 ) -> _ElementTree: ...
 def fromstring(
     text: _AnyStr, parser: XMLParser = ..., *, base_url: _AnyStr = ...
 ) -> _Element: ...
-
 @overload  # Native str, no XML declaration
 def tostring(
     element_or_tree: _ElementOrTree,
@@ -723,7 +722,9 @@ class _Validator:
     def error_log(self) -> _ErrorLog: ...
 
 class DTD(_Validator):
-    def __init__(self, file: _FileSource = ..., *, external_id: Any = ...) -> None: ...
+    def __init__(
+        self, file: _FileReadSource = ..., *, external_id: Any = ...
+    ) -> None: ...
     def __call__(self, etree: _ElementOrTree) -> bool: ...
 
 class TreeBuilder:

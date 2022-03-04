@@ -31,6 +31,7 @@ from .._types import (
     _AttrVal,
     _ElemClsLookupArg,
     _ElemPathArg,
+    _FileReadSource,
     _NSMapArg,
     _OutputMethodArg,
     _TagName,
@@ -309,7 +310,7 @@ def fromstring(
     **kw: Any,  # seems unused
 ) -> _AnyHtmlElement: ...
 def parse(
-    filename_or_url: etree._FileSource,
+    filename_or_url: _FileReadSource,
     parser: etree._BaseParser | None = ...,
     base_url: str | None = ...,
     **kw: Any,  # seems unused
