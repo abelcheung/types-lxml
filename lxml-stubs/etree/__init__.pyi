@@ -301,7 +301,7 @@ class _Element(Collection[_Element], Reversible[_Element]):
     ) -> Iterator[_Element]: ...
 
 class _ElementTree:
-    parser = ...  # type: XMLParser
+    parser: XMLParser
     @property
     def docinfo(self) -> DocInfo: ...
     def find(
