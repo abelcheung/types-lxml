@@ -20,12 +20,65 @@
     result = sel(document)
     reveal_type(result)  # N: Revealed type is "builtins.list[lxml.etree._Element]"
 
-- case: cssselect_method_for_element
+- case: etree_cssselect_method
   main: |
     from lxml import etree
     root: etree._Element
     expr: str
     result = root.cssselect(expr)
     reveal_type(result)  # N: Revealed type is "builtins.list[lxml.etree._Element]"
+    result = root.cssselect('tag', translator='xml')
+    reveal_type(result)  # N: Revealed type is "builtins.list[lxml.etree._Element]"
 
-# TODO method for HTML
+- case: etree_cssselect_bad_arg1
+  parametrized:
+  - args: expr1
+    wrong_type: bytes
+  - args: expr2
+    wrong_type: int
+  main: |
+    from lxml import etree
+    root: etree._Element
+    expr1: bytes
+    expr2: int
+    result = root.cssselect({{ args }})  # E: Argument 1 to "cssselect" of "_Element" has incompatible type "{{ wrong_type }}"; expected "str"
+
+- case: etree_cssselect_bad_arg2
+  main: |
+    from lxml import etree
+    root: etree._Element
+    result = root.cssselect('tag', 'xml')  # E: Too many positional arguments for "cssselect" of "_Element"
+    result = root.cssselect('tag', translator='junk')  # E: Argument "translator" to "cssselect" of "_Element" has incompatible type "Literal['junk']"; expected "Union[LxmlTranslator, Literal['xml'], Literal['html'], Literal['xhtml']]"
+
+- case: html_cssselect_method
+  parametrized:
+    - args: expr
+    - args: expr, translator
+  main: |
+    from lxml.html import Element
+    root = Element('div')
+    expr: str
+    # Urgh, mypy infers the type here as str, not Literal['xhtml']
+    from typing_extensions import Literal
+    translator: Literal['xhtml']
+    result = root.cssselect({{ args }})
+    reveal_type(result)  # N: Revealed type is "builtins.list[lxml.html.HtmlElement]"
+
+- case: html_cssselect_bad_arg1
+  parametrized:
+    - args: expr1
+      wrong_type: bytes
+    - args: expr2
+      wrong_type: int
+  main: |
+    from lxml.html import HtmlElement
+    elem: HtmlElement
+    expr1: bytes
+    expr2: int
+    result = elem.cssselect({{ args }})  # E: Argument 1 to "cssselect" of "HtmlMixin" has incompatible type "{{ wrong_type }}"; expected "str"
+
+- case: html_cssselect_bad_arg2
+  main: |
+    from lxml.html import HtmlElement
+    elem: HtmlElement
+    result = elem.cssselect('ul > li', 'junk')  # E: Argument 2 to "cssselect" of "HtmlMixin" has incompatible type "Literal['junk']"; expected "Union[LxmlTranslator, Literal['xml'], Literal['html'], Literal['xhtml']]"
