@@ -15,7 +15,7 @@ from typing import (
     overload,
 )
 
-from typing_extensions import Literal, Protocol, TypeGuard, final
+from typing_extensions import Literal, TypeGuard, final
 
 from .._types import (
     SupportsLaxedItems,
@@ -43,7 +43,21 @@ from ._classlookup import (
     FallbackElementClassLookup as FallbackElementClassLookup,
     PIBase as PIBase,
 )
-from ._docloader import _ResolverRegistry
+from ._parser import (
+    ETCompatXMLParser as ETCompatXMLParser,
+    HTMLParser as HTMLParser,
+    HTMLPullParser as HTMLPullParser,
+    ParseError as ParseError,
+    ParserError as ParserError,
+    ParserTarget as ParserTarget,
+    XMLParser as XMLParser,
+    XMLPullParser as XMLPullParser,
+    XMLSyntaxError as XMLSyntaxError,
+    _BaseParser as _BaseParser,
+    _FeedParser as _FeedParser,  # unused but must be present for mypy tests
+    get_default_parser as get_default_parser,
+    set_default_parser as set_default_parser,
+)
 from ._xmlerror import (
     ErrorDomains as ErrorDomains,
     ErrorLevels as ErrorLevels,
@@ -301,7 +315,8 @@ class _Element(Collection[_Element], Reversible[_Element]):
     ) -> Iterator[_Element]: ...
 
 class _ElementTree:
-    parser: XMLParser
+    @property
+    def parser(self) -> _BaseParser | None: ...
     @property
     def docinfo(self) -> DocInfo: ...
     def find(
@@ -471,76 +486,6 @@ class _XSLTResultTree(_ElementTree, SupportsBytes):
 
 class _XSLTQuotedStringParam: ...
 
-# https://lxml.de/parsing.html#the-target-parser-interface
-class ParserTarget(Protocol):
-    def comment(self, text: _AnyStr) -> None: ...
-    def close(self) -> Any: ...
-    def data(self, data: _AnyStr) -> None: ...
-    def end(self, tag: _AnyStr) -> None: ...
-    def start(self, tag: _AnyStr, attrib: dict[_AnyStr, _AnyStr]) -> None: ...
-
-class _BaseParser:
-    def copy(self) -> _BaseParser: ...
-    def makeelement(
-        self,
-        _tag: _TagName,
-        attrib: SupportsLaxedItems[str, _AnyStr] | None = ...,
-        nsmap: _NSMapArg | None = ...,
-        **_extra: _AnyStr,
-    ) -> _Element: ...
-    def setElementClassLookup(
-        self, lookup: ElementClassLookup | None = ...
-    ) -> None: ...
-    def set_element_class_lookup(
-        self, lookup: ElementClassLookup | None = ...
-    ) -> None: ...
-    @property
-    def error_log(self) -> _ErrorLog: ...
-
-class _FeedParser(_BaseParser):
-    def close(self) -> _Element: ...
-    def feed(self, data: _AnyStr) -> None: ...
-
-class XMLParser(_FeedParser):
-    def __init__(
-        self,
-        encoding: _AnyStr | None = ...,
-        attribute_defaults: bool = ...,
-        dtd_validation: bool = ...,
-        load_dtd: bool = ...,
-        no_network: bool = ...,
-        ns_clean: bool = ...,
-        recover: bool = ...,
-        schema: XMLSchema | None = ...,
-        huge_tree: bool = ...,
-        remove_blank_text: bool = ...,
-        resolve_entities: bool = ...,
-        remove_comments: bool = ...,
-        remove_pis: bool = ...,
-        strip_cdata: bool = ...,
-        collect_ids: bool = ...,
-        target: ParserTarget | None = ...,
-        compact: bool = ...,
-    ) -> None: ...
-    resolvers: _ResolverRegistry
-
-class HTMLParser(_FeedParser):
-    def __init__(
-        self,
-        encoding: _AnyStr | None = ...,
-        collect_ids: bool = ...,
-        compact: bool = ...,
-        huge_tree: bool = ...,
-        no_network: bool = ...,
-        recover: bool = ...,
-        remove_blank_text: bool = ...,
-        remove_comments: bool = ...,
-        remove_pis: bool = ...,
-        schema: XMLSchema | None = ...,
-        strip_cdata: bool = ...,
-        target: ParserTarget | None = ...,
-    ) -> None: ...
-
 class XMLSchema(_Validator):
     def __init__(
         self,
@@ -644,17 +589,17 @@ def ElementTree(
     element: _Element = ...,
     *,
     file: _FileReadSource = ...,
-    parser: XMLParser = ...,
+    parser: _BaseParser | None = ...,
 ) -> _ElementTree: ...
 def HTML(
     text: _AnyStr,
-    parser: HTMLParser | None = ...,
+    parser: _BaseParser | None = ...,
     *,
     base_url: _AnyStr | None = ...,
 ) -> _Element: ...
 def XML(
     text: _AnyStr,
-    parser: XMLParser | None = ...,
+    parser: _BaseParser | None = ...,
     *,
     base_url: _AnyStr | None = ...,
 ) -> _Element: ...
@@ -664,10 +609,10 @@ def cleanup_namespaces(
     keep_ns_prefixes: Iterable[_AnyStr] | None = ...,
 ) -> None: ...
 def parse(
-    source: _FileReadSource, parser: XMLParser = ..., base_url: _AnyStr = ...
+    source: _FileReadSource, parser: _BaseParser | None = ..., base_url: _AnyStr = ...
 ) -> _ElementTree: ...
 def fromstring(
-    text: _AnyStr, parser: XMLParser = ..., *, base_url: _AnyStr = ...
+    text: _AnyStr, parser: _BaseParser | None = ..., *, base_url: _AnyStr = ...
 ) -> _Element: ...
 @overload  # Native str, no XML declaration
 def tostring(
@@ -736,11 +681,6 @@ class LxmlError(Error):
 
 class DocumentInvalid(LxmlError): ...
 class LxmlSyntaxError(LxmlError, SyntaxError): ...
-
-class ParseError(LxmlSyntaxError):
-    position: tuple[int, int]
-
-class XMLSyntaxError(ParseError): ...
 
 class _Validator:
     def assert_(self, etree: _ElementOrTree) -> None: ...
