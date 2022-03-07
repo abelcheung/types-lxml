@@ -69,3 +69,10 @@
       )
     )
     reveal_type(page)  # N: Revealed type is "lxml.objectify.ObjectifiedElement"
+
+- case: objectified_element_iteration
+  main: |
+      from lxml import objectify
+      doc = objectify.fromstring("<doc><el />< el/></doc>")
+      for el in doc:
+        reveal_type(el)  # N: Revealed type is "lxml.objectify.ObjectifiedElement*"

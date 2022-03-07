@@ -1,9 +1,11 @@
-from typing import Any, Callable, Mapping
+from typing import Any, Callable, Collection, Iterator, Mapping, Reversible
 
 from ._types import _AnyStr, _NSMapArg
 from .etree import ElementBase, QName, XMLParser, _ElemFactory
 
 class ObjectifiedElement(ElementBase):
+    def __iter__(self) -> Iterator[ObjectifiedElement]: ...
+    def __reversed__(self) -> Iterator[ObjectifiedElement]: ...
     def __getattr__(self, __k: str) -> ObjectifiedElement: ...
 
 def fromstring(
