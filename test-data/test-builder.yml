@@ -26,19 +26,20 @@
     E = ElementMaker({{ args }})
     reveal_type(E)  # N: Revealed type is "{{ rt }}"
 
+- case: builder_dunders
+  main: |
+    from lxml.builder import E
+    reveal_type(E.__str__())  # N: Revealed type is "builtins.str"
+
 - case: builder_create_elements
   parametrized:
     - method: foo
-      rt: "lxml.etree._Element*"
     - method: BAR
-      rt: "lxml.etree._Element*"
     - method: __nonExistent__
-      rt: "lxml.etree._Element*"
-    - method: __str__
-      rt: builtins.str
   main: |
     from lxml.builder import E
-    reveal_type(E.{{ method }}())  # N: Revealed type is "{{ rt }}"
+    reveal_type(E.{{ method }})  # N: Revealed type is "def (*Any, **Any) -> lxml.etree._Element"
+    reveal_type(E.{{ method }}())  # N: Revealed type is "lxml.etree._Element*"
 
 # Directly taken from lxml.builder docstring example
 - case: builder_complex_example
@@ -69,3 +70,35 @@
       )
     )
     reveal_type(page)  # N: Revealed type is "lxml.etree._Element*"
+
+- case: html_builder_create_elements
+  parametrized:
+    - method: abbr
+    - method: H5
+    - method: __nonExistent__
+  main: |
+    from lxml.html.builder import E
+    reveal_type(E.{{ method }})  # N: Revealed type is "def (*Any, **Any) -> lxml.html.HtmlElement"
+    reveal_type(E.{{ method }}())  # N: Revealed type is "lxml.html.HtmlElement*"
+
+- case: html_builder_existing_tag
+  main: |
+    from lxml.html.builder import TABLE, TR, TD
+    reveal_type(TD)  # N: Revealed type is "def (*Any, **Any) -> lxml.html.HtmlElement"
+    reveal_type(TD("content", id="cell"))  # N: Revealed type is "lxml.html.HtmlElement"
+    result = TABLE(TR(TD("content")))
+    reveal_type(result)  # N: Revealed type is "lxml.html.HtmlElement"
+
+# Modified from html.builder docstring example
+- case: html_builder_complex_example
+  main: |
+    from lxml.html.builder import *
+    html = HTML(
+      HEAD( TITLE("Hello World") ),
+      BODY( CLASS("main"),
+        H1("Hello World !"),
+        A("Welcome", ATTR([("href", "http://welcome.home")])),
+        id="content",
+      )
+    )
+    reveal_type(html)  # N: Revealed type is "lxml.html.HtmlElement"
