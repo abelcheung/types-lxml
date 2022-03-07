@@ -2,6 +2,7 @@
 # This is *far* from complete, and the stubgen-generated ones crash mypy.
 # Any use of `Any` below means I couldn't figure out the type.
 
+from abc import ABCMeta, abstractmethod
 from typing import (
     Any,
     Callable,
@@ -69,6 +70,12 @@ from ._xmlerror import (
     _ErrorLog,
     clear_error_log as clear_error_log,
     use_global_python_log as use_global_python_log,
+)
+from ._xmlschema import (
+    XMLSchema as XMLSchema,
+    XMLSchemaError as XMLSchemaError,
+    XMLSchemaParseError as XMLSchemaParseError,
+    XMLSchemaValidateError as XMLSchemaValidateError,
 )
 from ._xpath import (
     ETXPath as ETXPath,
@@ -486,15 +493,6 @@ class _XSLTResultTree(_ElementTree, SupportsBytes):
     def __bytes__(self) -> bytes: ...
 
 class _XSLTQuotedStringParam: ...
-
-class XMLSchema(_Validator):
-    def __init__(
-        self,
-        etree: _ElementOrTree = ...,
-        file: _FileReadSource = ...,
-    ) -> None: ...
-    def __call__(self, etree: _ElementOrTree) -> bool: ...
-
 class XSLTAccessControl: ...
 
 class XSLT:
@@ -683,12 +681,16 @@ class LxmlError(Error):
 class DocumentInvalid(LxmlError): ...
 class LxmlSyntaxError(LxmlError, SyntaxError): ...
 
-class _Validator:
+class _Validator(metaclass=ABCMeta):
     def assert_(self, etree: _ElementOrTree) -> None: ...
     def assertValid(self, etree: _ElementOrTree) -> None: ...
     def validate(self, etree: _ElementOrTree) -> bool: ...
     @property
     def error_log(self) -> _ErrorLog: ...
+    # all methods implicitly require a concrete __call__()
+    # implementation in subclasses in order to be usable
+    @abstractmethod
+    def __call__(self, etree: _ElementOrTree) -> bool: ...
 
 class DTD(_Validator):
     def __init__(

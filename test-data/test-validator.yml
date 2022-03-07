@@ -1,0 +1,81 @@
+- case: xmlschema_create
+  parametrized:
+    - args: elem
+    - args: "tree, attribute_defaults=False"
+    - args: "elem, file=None"
+    - args: file=filename
+    - args: file=path
+    - args: "file=fileio, attribute_defaults=True"
+  main: |
+    from pathlib import PosixPath
+    from io import StringIO
+    from lxml import etree
+    elem: etree._Element
+    tree: etree._ElementTree
+    filename: str
+    fileio: StringIO
+    path: PosixPath
+    result = etree.XMLSchema({{ args }})
+    reveal_type(result)  # N: Revealed type is "lxml.etree._xmlschema.XMLSchema"
+
+- case: xmlschema_create_badarg
+  expect_fail: true
+  parametrized:
+    - args: null
+    - args: None
+    - args: "None, file=None"
+    - args: "elem, filename"
+    - args: "elem, badarg=1"
+    - args: "file=filename, badarg=1"
+  main: |
+    from lxml import etree
+    elem: etree._Element
+    filename: str
+    result = etree.XMLSchema({{ args }})
+
+- case: xmlschema_methods
+  parametrized:
+    - method: validate
+      args: elem
+      rt: builtins.bool
+    - method: validate
+      args: tree
+      rt: builtins.bool
+    - method: assertValid
+      args: elem
+      rt: None
+    - method: assert_
+      args: tree
+      rt: None
+  main: |
+    from lxml import etree
+    elem: etree._Element
+    tree: etree._ElementTree
+    schema: etree.XMLSchema
+    reveal_type(schema.{{ method }}({{ args }}))  # N: Revealed type is "{{ rt }}"
+
+- case: xmlschema_call
+  parametrized:
+    - args: elem
+    - args: tree
+    - args: etree=elem
+  main: |
+    from lxml import etree
+    elem: etree._Element
+    tree: etree._ElementTree
+    schema: etree.XMLSchema
+    reveal_type(schema({{ args }}))  # N: Revealed type is "builtins.bool"
+
+- case: xmlschema_call_badarg
+  expect_fail: true
+  parametrized:
+    - args: null
+    - args: None
+    - args: "elem, badarg=1"
+    - args: "elem, tree"
+  main: |
+    from lxml import etree
+    elem: etree._Element
+    tree: etree._ElementTree
+    schema: etree.XMLSchema
+    _ = schema({{ args }})
