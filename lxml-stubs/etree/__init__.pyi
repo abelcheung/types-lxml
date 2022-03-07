@@ -45,7 +45,7 @@ from ._classlookup import (
     FallbackElementClassLookup as FallbackElementClassLookup,
     PIBase as PIBase,
 )
-from ._parser import (
+from ._parser import (  # _FeedParser unused but must be present for mypy tests
     ETCompatXMLParser as ETCompatXMLParser,
     HTMLParser as HTMLParser,
     HTMLPullParser as HTMLPullParser,
@@ -56,7 +56,7 @@ from ._parser import (
     XMLPullParser as XMLPullParser,
     XMLSyntaxError as XMLSyntaxError,
     _BaseParser as _BaseParser,
-    _FeedParser as _FeedParser,  # unused but must be present for mypy tests
+    _FeedParser as _FeedParser,
     get_default_parser as get_default_parser,
     set_default_parser as set_default_parser,
 )
