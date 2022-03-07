@@ -9,3 +9,63 @@
         from lxml import objectify
         xyz = objectify.fromstring("<doc><xyz/></doc>").xyz
         reveal_type(xyz)  # N: Revealed type is "lxml.objectify.ObjectifiedElement"
+
+- case: builder_default_element_factory
+  main: |
+    from lxml.objectify import E
+    reveal_type(E)  # N: Revealed type is "lxml.objectify.ElementMaker"
+
+- case: builder_custom_element_factory
+  parametrized:
+    - args: namespace=ns
+    - args: makeelement=ObjectifiedElement
+    - args: namespace=ns, nsmap=map
+  main: |
+    from typing import Dict
+    from lxml.objectify import ObjectifiedElement, ElementMaker
+    ns: str
+    map: Dict[str, str]
+    E = ElementMaker({{ args }})
+    reveal_type(E)  # N: Revealed type is "lxml.objectify.ElementMaker"
+
+- case: builder_create_elements
+  parametrized:
+    - method: foo
+      rt: lxml.objectify.ObjectifiedElement
+    - method: BAR
+      rt: lxml.objectify.ObjectifiedElement
+    - method: __nonExistent__
+      rt: lxml.objectify.ObjectifiedElement
+    - method: __str__
+      rt: builtins.str
+  main: |
+    from lxml.objectify import E
+    reveal_type(E.{{ method }}())  # N: Revealed type is "{{ rt }}"
+
+- case: builder_complex_example
+  main: |
+    from lxml.objectify import E
+
+    A = E.a
+    I = E.i
+    B = E.b
+
+    def CLASS(v):
+      return {'class': v}
+
+    page = (
+      E.html(
+        E.head(
+          E.title("This is a sample document")
+        ),
+        E.body(
+          E.h1("Hello!", CLASS("title")),
+          E.p("This is a paragraph with ", B("bold"), " text in it!"),
+          E.p("This is another paragraph, with a ",
+              A("link", href="http://www.python.org"), "."),
+          E.p("Here are some reserved characters: <spam&egg>."),
+          E.p("Paragraph with style.", style="color: blue;"),
+        )
+      )
+    )
+    reveal_type(page)  # N: Revealed type is "lxml.objectify.ObjectifiedElement"
