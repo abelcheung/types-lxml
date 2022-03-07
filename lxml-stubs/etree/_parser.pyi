@@ -1,5 +1,5 @@
 from abc import ABCMeta, abstractmethod
-from typing import Any, Iterable, Iterator, Mapping, Protocol, TypeVar
+from typing import Any, Iterable, Iterator, Protocol, TypeVar
 
 from .._types import SupportsLaxedItems, _AnyStr, _NSMapArg, _TagName
 from . import (
@@ -37,10 +37,12 @@ class XMLSyntaxError(ParseError): ...
 class ParserError(LxmlError): ...
 
 class ParserTarget(Protocol, metaclass=ABCMeta):
-    """This is a stub-only protocol class for parser target interface.
+    """This is a stub-only class representing parser target interface.
 
-    It can be imported into code for quick method autofill for some IDEs,
-    like:
+    - Because almost all methods are optional, ParserTarget should be
+      explicitly inherited in code for type checking. See TreeBuilder
+      and the snippet example below.
+    - Some IDEs can do method signature autocompletion. See notes below.
 
     ```python
     if TYPE_CHECKING:
@@ -49,21 +51,26 @@ class ParserTarget(Protocol, metaclass=ABCMeta):
         ParserTarget = object
 
     class MyParserTarget(ParserTarget):
-        def data(self, data: str) -> None: ...
+        def start(self,  # 3 argument form is not autocompleted
+            tag: str,
+            attrib: _Attrib,
+            nsmap: Mapping[str, str] = ...,
+        ) -> None: ...
     ```
 
     Notes
     -----
     - Only `close()` is mandatory. In extreme case, a vanilla class instance
-      with noop `close()` is a valid null parser target.
-    - `start()` can take either 2 or 3 extra arguments. If there is no
-      intention to support nsmap argument, please remove manually.
+      with noop `close()` is a valid null parser target that does nothing.
+    - `start()` can take either 2 or 3 extra arguments, but 3rd argument
+      must be entered manually after autocompletion, with following
+      signature: `nsmap: Mapping[str, str]`.
     - Some methods are undocumented. They are included in stub nonetheless.
 
     See Also
     --------
-    - [Official document](https://lxml.de/parsing.html#the-target-parser-interface)
     - `_PythonSaxParserTarget()` in `src/lxml/parsertarget.pxi`
+    - [Target parser official document](https://lxml.de/parsing.html#the-target-parser-interface)
     """
 
     @abstractmethod
@@ -71,16 +78,13 @@ class ParserTarget(Protocol, metaclass=ABCMeta):
     def comment(self, text: str) -> None: ...
     def data(self, data: str) -> None: ...
     def end(self, tag: str) -> None: ...
-    def start(
-        self,
-        tag: str,
-        attrib: _Attrib,
-        nsmap: Mapping[str, str] = ...,
-    ) -> None: ...
+    # Base class can only use 2-argument form, in case where
+    # start() for inherited class uses 2 arguments too
+    def start(self, tag: str, attrib: _Attrib) -> None: ...
     # Methods below are undocumented. Lxml has described
     # 'start-ns' and 'end-ns' events however.
     def pi(self, target: str, data: str | None) -> None: ...
-    # Default namespace prefix is '' here, not None
+    # Default namespace prefix is empty string, not None
     def start_ns(self, prefix: str, uri: str) -> None: ...
     def end_ns(self, prefix: str) -> None: ...
     def doctype(

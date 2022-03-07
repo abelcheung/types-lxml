@@ -45,13 +45,6 @@
     string = etree.tostring(etree.Element("foo"), encoding="{{ val }}")
     reveal_type(string)  # N: Revealed type is "{{ rt }}"
 
-- case: etree_treebuilder_implements_parsertarget
-  main: |
-    # this test does no explicit checks; it should pass
-    # if mypy doesn't raise an "Incompatible types in assignment"
-    from lxml import etree
-    target: etree.ParserTarget = etree.TreeBuilder()
-
 - case: etree_HTML_returns_element
   main: |
     from lxml import etree
