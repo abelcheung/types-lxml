@@ -1,14 +1,20 @@
 - case: builder_default_element_factory
   main: |
     from lxml.builder import E
-    reveal_type(E)  # N: Revealed type is "lxml.builder.ElementMaker"
+    reveal_type(E)  # N: Revealed type is "lxml.builder.ElementMaker[lxml.etree._Element]"
 
 - case: builder_custom_element_factory
   parametrized:
     - args: namespace=ns
+      rt: lxml.builder.ElementMaker[lxml.etree._Element]
     - args: makeelement=etree.Element
+      rt: lxml.builder.ElementMaker[lxml.etree._Element*]
+    - args: makeelement=etree.Comment
+      rt: lxml.builder.ElementMaker[lxml.etree._Comment*]
     - args: namespace=ns, nsmap=map
+      rt: lxml.builder.ElementMaker[lxml.etree._Element]
     - args: typemap=typemap
+      rt: lxml.builder.ElementMaker[lxml.etree._Element]
   main: |
     from typing import Dict
     from lxml.builder import ElementMaker
@@ -18,16 +24,16 @@
     def add_text(elem: etree._Element, item: str) -> None: ...
     typemap = {str: add_text}
     E = ElementMaker({{ args }})
-    reveal_type(E)  # N: Revealed type is "lxml.builder.ElementMaker"
+    reveal_type(E)  # N: Revealed type is "{{ rt }}"
 
 - case: builder_create_elements
   parametrized:
     - method: foo
-      rt: lxml.etree._Element
+      rt: "lxml.etree._Element*"
     - method: BAR
-      rt: lxml.etree._Element
+      rt: "lxml.etree._Element*"
     - method: __nonExistent__
-      rt: lxml.etree._Element
+      rt: "lxml.etree._Element*"
     - method: __str__
       rt: builtins.str
   main: |
@@ -62,4 +68,4 @@
         )
       )
     )
-    reveal_type(page)  # N: Revealed type is "lxml.etree._Element"
+    reveal_type(page)  # N: Revealed type is "lxml.etree._Element*"
