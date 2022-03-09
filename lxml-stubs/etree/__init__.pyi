@@ -303,6 +303,7 @@ class _Element(Collection[_Element], Reversible[_Element]):
     def xpath(
         self,
         _path: _AnyStr,
+        *,
         namespaces: _NonDefaultNSMapArg | None = ...,
         extensions: _XPathExtFuncArg | None = ...,
         smart_strings: bool = ...,
@@ -638,7 +639,9 @@ def cleanup_namespaces(
     keep_ns_prefixes: Iterable[_AnyStr] | None = ...,
 ) -> None: ...
 def parse(
-    source: _FileReadSource, parser: _BaseParser | None = ..., base_url: _AnyStr = ...
+    source: _FileReadSource,
+    parser: _BaseParser | None = ...,
+    base_url: _AnyStr | None = ...,
 ) -> _ElementTree: ...
 def fromstring(
     text: _AnyStr, parser: _BaseParser | None = ..., *, base_url: _AnyStr = ...
