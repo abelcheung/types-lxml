@@ -327,23 +327,15 @@ class _ElementTree:
     def parser(self) -> _BaseParser | None: ...
     @property
     def docinfo(self) -> DocInfo: ...
-    def find(
-        self, path: str, namespaces: _NSMapArg | None = ...
-    ) -> _Element | None: ...
-    def findtext(
+    def parse(
         self,
-        path: str,
-        default: str | None = ...,
-        namespaces: _NSMapArg | None = ...,
-    ) -> str | None: ...
-    def findall(
-        self, path: str, namespaces: _NSMapArg | None = ...
-    ) -> list[_Element]: ...
-    def getpath(self, element: _Element) -> str: ...
-    def getroot(self) -> _Element: ...
-    def iter(
-        self, tag: _TagSelector | None = ..., *tags: _TagSelector
-    ) -> Iterable[_Element]: ...
+        source: _FileReadSource,
+        parser: _BaseParser | None = ...,
+        *,
+        base_url: _AnyStr | None,
+    ) -> None: ...
+    def _setroot(self, root: _Element) -> None: ...
+    def getroot(self) -> _Element: ...  # TODO specialization
     @overload  # method=c14n
     def write(
         self,
@@ -397,7 +389,62 @@ class _ElementTree:
         inclusive_ns_prefixes: Iterable[_AnyStr] | None = ...,
         strip_text: bool = ...,
     ) -> None: ...
-    def write_c14n(
+    def getpath(self, element: _Element) -> str: ...
+    def getelementpath(self, element: _Element) -> str: ...
+    # Following ET methods calls the same method on root node,
+    # so signature should be the same as _Element ones
+    def iter(
+        self, tag: _TagSelector | None = ..., *tags: _TagSelector
+    ) -> Iterator[_Element]: ...
+    def find(
+        self, path: _ElemPathArg, namespaces: _NSMapArg | None = ...
+    ) -> _Element | None: ...
+    @overload
+    def findtext(
+        self,
+        path: _ElemPathArg,
+        *,
+        namespaces: _NSMapArg | None = ...,
+    ) -> str | None: ...
+    @overload
+    def findtext(
+        self,
+        path: _ElemPathArg,
+        default: _T,
+        namespaces: _NSMapArg | None = ...,
+    ) -> str | _T: ...
+    def findall(
+        self, path: _ElemPathArg, namespaces: _NSMapArg | None = ...
+    ) -> list[_Element]: ...
+    def iterfind(
+        self, path: _ElemPathArg, namespaces: _NSMapArg | None = ...
+    ) -> Iterator[_Element]: ...
+    def xpath(
+        self,
+        _path: _AnyStr,
+        *,
+        namespaces: _NonDefaultNSMapArg | None = ...,
+        extensions: _XPathExtFuncArg | None = ...,
+        smart_strings: bool = ...,
+        **_variables: _XPathVarArg,
+    ) -> _XPathObject: ...
+    def xslt(
+        self,
+        _xslt: _ElementOrTree,
+        extensions: Any = ...,  # TODO XSLT extension type
+        access_control: XSLTAccessControl | None = ...,
+        **_kw: Any,
+    ) -> _ElementTree: ...
+    def relaxng(self, relaxng: _ElementOrTree) -> bool: ...
+    def xmlschema(self, xmlschema: _ElementOrTree) -> bool: ...
+    def xinclude(self) -> None: ...
+    #
+    # Deprecated methods
+    #
+    def getiterator(  # = iter()
+        self, tag: _TagSelector | None = ..., *tags: _TagSelector
+    ) -> _Element: ...
+    def write_c14n(  # merged into write()
         self,
         file: _FileWriteSource,
         *,
@@ -406,23 +453,6 @@ class _ElementTree:
         compression: int | None = ...,
         inclusive_ns_prefixes: Iterable[_AnyStr] | None = ...,
     ) -> None: ...
-    def _setroot(self, root: _Element) -> None: ...
-    def xinclude(self) -> None: ...
-    def xpath(
-        self,
-        _path: _AnyStr,
-        namespaces: _NonDefaultNSMapArg | None = ...,
-        extensions: _XPathExtFuncArg | None = ...,
-        smart_strings: bool = ...,
-        **_variables: _XPathVarArg,
-    ) -> _XPathObject: ...
-    def xslt(
-        self,
-        _xslt: XSLT,
-        extensions: Any = ...,
-        access_control: XSLTAccessControl | None = ...,
-        **_variables: Any,
-    ) -> _ElementTree: ...
 
 # Behaves like MutableMapping but deviates a lot in details
 @final

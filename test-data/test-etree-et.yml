@@ -1,0 +1,180 @@
+- case: et_properties
+  parametrized:
+    - prop: parser
+      rt: "Union[lxml.etree._parser._BaseParser, None]"
+    - prop: docinfo
+      rt: "lxml.etree.DocInfo"
+  main: |
+    from lxml.etree import _ElementTree
+    et: _ElementTree
+    reveal_type(et.{{ prop }})  # N: Revealed type is "{{ rt }}"
+    et.{{ prop }} = et.{{ prop }}  # E: Property "{{ prop }}" defined in "_ElementTree" is read-only
+
+- case: et_no_arg_or_return_methods
+  main: |
+    from lxml.etree import _ElementTree, _Element
+    root: _Element
+    et: _ElementTree
+    r = et.xinclude()  # E: "xinclude" of "_ElementTree" does not return a value
+    r = et._setroot(root)  # E: "_setroot" of "_ElementTree" does not return a value
+    reveal_type(et.getroot())  # N: Revealed type is "lxml.etree._Element"
+    et._setroot(et)  # E: Argument 1 to "_setroot" of "_ElementTree" has incompatible type "_ElementTree"; expected "_Element"
+
+- case: et_no_arg_or_return_methods_toomanyargs
+  parametrized:
+    - method: xinclude
+      kwds: None
+    - method: _setroot
+      kwds: root, None
+    - method: getroot
+      kwds: root
+  main: |
+    from lxml.etree import _ElementTree, _Element
+    root: _Element
+    et: _ElementTree
+    et.{{ method }}({{ kwds }})  # E: Too many arguments for "{{ method }}" of "_ElementTree"
+
+- case: et_getpath_methods
+  parametrized:
+    - method: getpath
+    - method: getelementpath
+  main: |
+    from lxml.etree import _ElementTree, _Element
+    root: _Element
+    et: _ElementTree
+    r = et.{{ method }}(root)
+    reveal_type(r)  # N: Revealed type is "builtins.str"
+    r = et.{{ method }}()  # E: Missing positional argument "element" in call to "{{ method }}" of "_ElementTree"
+    r = et.{{ method }}(et)  # E: Argument 1 to "{{ method }}" of "_ElementTree" has incompatible type "_ElementTree"; expected "_Element"
+    r = et.{{ method }}(root, None)  # E: Too many arguments for "{{ method }}" of "_ElementTree"
+
+- case: et_validate_methods
+  parametrized:
+    - method: relaxng
+    - method: xmlschema
+  main: |
+    from lxml.etree import _ElementTree, _Element
+    root: _Element
+    et: _ElementTree
+    r = et.{{ method }}(root)
+    reveal_type(r)  # N: Revealed type is "builtins.bool"
+    r = et.{{ method }}(et)
+    reveal_type(r)  # N: Revealed type is "builtins.bool"
+    r = et.{{ method }}()  # E: Missing positional argument "{{ method }}" in call to "{{ method }}" of "_ElementTree"
+    r = et.{{ method }}(None)  # E: Argument 1 to "{{ method }}" of "_ElementTree" has incompatible type "None"; expected "Union[_Element, _ElementTree]"
+
+- case: et_elementpath_methods
+  parametrized:
+    - method: find
+      args: path
+      rt: Union[lxml.etree._Element, None]
+    - method: find
+      args: tag
+      rt: Union[lxml.etree._Element, None]
+    - method: find
+      args: path=path
+      rt: Union[lxml.etree._Element, None]
+    - method: find
+      args: path, nsmap
+      rt: Union[lxml.etree._Element, None]
+    - method: find
+      args: tag, namespaces=nsmap
+      rt: Union[lxml.etree._Element, None]
+    - method: findall
+      args: path
+      rt: builtins.list[lxml.etree._Element]
+    - method: findall
+      args: tag
+      rt: builtins.list[lxml.etree._Element]
+    - method: findall
+      args: path=path
+      rt: builtins.list[lxml.etree._Element]
+    - method: findall
+      args: path, nsmap
+      rt: builtins.list[lxml.etree._Element]
+    - method: findall
+      args: tag, namespaces=nsmap
+      rt: builtins.list[lxml.etree._Element]
+    - method: iterfind
+      args: path
+      rt: typing.Iterator[lxml.etree._Element]
+    - method: iterfind
+      args: tag
+      rt: typing.Iterator[lxml.etree._Element]
+    - method: iterfind
+      args: path=path
+      rt: typing.Iterator[lxml.etree._Element]
+    - method: iterfind
+      args: path, nsmap
+      rt: typing.Iterator[lxml.etree._Element]
+    - method: iterfind
+      args: tag, namespaces=nsmap
+      rt: typing.Iterator[lxml.etree._Element]
+  main: |
+    from lxml import etree
+    et: etree._ElementTree
+    path: str
+    s: str
+    tag: etree.QName
+    nsmap = {None: s, s: s}
+    result = et.{{ method }}({{ args }})
+    reveal_type(result)  # N: Revealed type is "{{ rt }}"
+
+- case: et_elementpath_methods_badarg
+  parametrized:
+    - method: find
+    - method: findall
+    - method: iterfind
+  main: |
+    from lxml import etree
+    et: etree._ElementTree
+    ok_path: str
+    bad_path: bytes
+    bad_nsmap = {'a': 1}
+    _ = et.{{ method }}(bad_path)  # E: Argument 1 to "{{ method }}" of "_ElementTree" has incompatible type "bytes"; expected "Union[str, QName]"
+    _ = et.{{ method }}(ok_path, bad_nsmap)  # E: Argument 2 to "{{ method }}" of "_ElementTree" has incompatible type "Dict[str, int]"; expected "Optional[Union[Mapping[None, Union[str, bytes]], Mapping[str, Union[str, bytes]], Mapping[Optional[str], Union[str, bytes]]]]"
+    _ = et.{{ method }}(ok_path, None, 1)  # E: Too many arguments for "{{ method }}" of "_ElementTree"
+    _ = et.{{ method }}(ok_path, badarg=True)  # E: Unexpected keyword argument "badarg" for "{{ method }}" of "_ElementTree"
+
+- case: et_method_findtext
+  parametrized:
+    - args: path
+      rt: Union[builtins.str, None]
+    - args: tag
+      rt: Union[builtins.str, None]
+    - args: path=path
+      rt: Union[builtins.str, None]
+    - args: path, default1
+      rt: Union[builtins.str, builtins.int*]
+    - args: path, default1, nsmap
+      rt: Union[builtins.str, builtins.int*]
+    - args: tag, namespaces=nsmap
+      rt: Union[builtins.str, None]
+    - args: path=tag, default=default2
+      rt: builtins.str
+  main: |
+    from lxml import etree
+    et: etree._ElementTree
+    path: str
+    s: str
+    tag: etree.QName
+    default1: int
+    default2: str
+    nsmap = {None: s, s: s}
+    result = et.findtext({{ args }})
+    reveal_type(result)  # N: Revealed type is "{{ rt }}"
+
+- case: element_method_findtext_badarg
+  expect_fail: true
+  parametrized:
+    - args: bad_path
+    - args: "ok_path, namespaces=bad_nsmap"
+    - args: "ok_path, '', None, 1"
+    - args: "ok_path, badarg=True"
+  main: |
+    from lxml import etree
+    et: etree._ElementTree
+    ok_path: str
+    bad_path: bytes
+    bad_nsmap = {'a': 1}
+    _ = et.findtext({{ args }})
