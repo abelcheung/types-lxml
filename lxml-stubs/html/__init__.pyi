@@ -37,6 +37,7 @@ from .._types import (
     _TagName,
 )
 from ..cssselect import _CSSTransArg
+from ..etree._xmlschema import XMLSchema
 
 _T = TypeVar("_T")
 
@@ -284,7 +285,7 @@ class HtmlElementClassLookup(etree.CustomElementClassLookup):
 # fromstring(text, parser, *, base_url)
 def document_fromstring(
     html: _AnyStr,
-    parser: etree._BaseParser | None = ...,
+    parser: _FeedParser | None = ...,
     ensure_head_body: bool = ...,
     *,
     base_url: str | None = ...,
@@ -293,25 +294,25 @@ def fragments_fromstring(
     html: _AnyStr,
     no_leading_text: bool = ...,
     base_url: str | None = ...,
-    parser: etree._BaseParser | None = ...,
+    parser: _FeedParser | None = ...,
     **kw: Any,  # seems unused
 ) -> list[_AnyHtmlElement]: ...
 def fragment_fromstring(
     html: _AnyStr,
     create_parent: bool = ...,
     base_url: str | None = ...,
-    parser: etree._BaseParser | None = ...,
+    parser: _FeedParser | None = ...,
     **kw: Any,  # seems unused
 ) -> _AnyHtmlElement: ...
 def fromstring(
     html: _AnyStr,
     base_url: str | None = ...,
-    parser: etree._BaseParser | None = ...,
+    parser: _FeedParser | None = ...,
     **kw: Any,  # seems unused
 ) -> _AnyHtmlElement: ...
 def parse(
     filename_or_url: _FileReadSource,
-    parser: etree._BaseParser | None = ...,
+    parser: _FeedParser | None = ...,
     base_url: str | None = ...,
     **kw: Any,  # seems unused
 ) -> etree._ElementTree: ...
@@ -498,8 +499,67 @@ def open_in_browser(
     doc: etree._ElementOrTree, encoding: str | type[str] | None = ...
 ) -> None: ...
 
-class HTMLParser(etree.HTMLParser): ...
-class XHTMLParser(etree.XMLParser): ...
+# Custom parser target support is stripped here, otherwise it would
+# completely nullify element lookup behavior of html.HTMLParser,
+# as if etree.HTMLParser is used. Same applies to XHTMLParser below.
+class HTMLParser(etree.HTMLParser[HtmlElement]):
+    # Copies etree.HTMLParser.__init__, with target arg stripped
+    def __init__(
+        self,
+        *,
+        encoding: _AnyStr | None = ...,
+        collect_ids: bool = ...,
+        compact: bool = ...,
+        huge_tree: bool = ...,
+        no_network: bool = ...,
+        recover: bool = ...,
+        remove_blank_text: bool = ...,
+        remove_comments: bool = ...,
+        remove_pis: bool = ...,
+        schema: XMLSchema | None = ...,
+        strip_cdata: bool = ...,
+    ) -> None: ...
+    def makeelement(
+        self,
+        _tag: _TagName,
+        attrib: SupportsLaxedItems[str, _AnyStr] | None = ...,
+        nsmap: _NSMapArg | None = ...,
+        **_extra: _AnyStr,
+    ) -> HtmlElement: ...
+    @property
+    def target(self) -> None: ...
+
+class XHTMLParser(etree.XMLParser[HtmlElement]):
+    # Copies etree.XMLParser.__init__, with target arg stripped
+    def __init__(
+        self,
+        *,
+        encoding: _AnyStr | None = ...,
+        attribute_defaults: bool = ...,
+        dtd_validation: bool = ...,
+        load_dtd: bool = ...,
+        no_network: bool = ...,
+        ns_clean: bool = ...,
+        recover: bool = ...,
+        schema: XMLSchema | None = ...,
+        huge_tree: bool = ...,
+        remove_blank_text: bool = ...,
+        resolve_entities: bool = ...,
+        remove_comments: bool = ...,
+        remove_pis: bool = ...,
+        strip_cdata: bool = ...,
+        collect_ids: bool = ...,
+        compact: bool = ...,
+    ) -> None: ...
+    def makeelement(
+        self,
+        _tag: _TagName,
+        attrib: SupportsLaxedItems[str, _AnyStr] | None = ...,
+        nsmap: _NSMapArg | None = ...,
+        **_extra: _AnyStr,
+    ) -> HtmlElement: ...
+    @property
+    def target(self) -> None: ...
 
 html_parser: HTMLParser
 xhtml_parser: XHTMLParser

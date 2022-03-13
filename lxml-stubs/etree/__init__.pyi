@@ -55,7 +55,6 @@ from ._parser import (  # _FeedParser unused but must be present for mypy tests
     XMLParser as XMLParser,
     XMLPullParser as XMLPullParser,
     XMLSyntaxError as XMLSyntaxError,
-    _BaseParser as _BaseParser,
     _FeedParser as _FeedParser,
     get_default_parser as get_default_parser,
     set_default_parser as set_default_parser,
@@ -325,13 +324,13 @@ class _Element(Collection[_Element], Reversible[_Element]):
 
 class _ElementTree:
     @property
-    def parser(self) -> _BaseParser | None: ...
+    def parser(self) -> _FeedParser | None: ...
     @property
     def docinfo(self) -> DocInfo: ...
     def parse(
         self,
         source: _FileReadSource,
-        parser: _BaseParser | None = ...,
+        parser: _FeedParser | None = ...,
         *,
         base_url: _AnyStr | None,
     ) -> None: ...
@@ -619,17 +618,17 @@ def ElementTree(
     element: _Element = ...,
     *,
     file: _FileReadSource = ...,
-    parser: _BaseParser | None = ...,
+    parser: _FeedParser | None = ...,
 ) -> _ElementTree: ...
 def HTML(
     text: _AnyStr,
-    parser: _BaseParser | None = ...,
+    parser: _FeedParser | None = ...,
     *,
     base_url: _AnyStr | None = ...,
 ) -> _Element: ...
 def XML(
     text: _AnyStr,
-    parser: _BaseParser | None = ...,
+    parser: _FeedParser | None = ...,
     *,
     base_url: _AnyStr | None = ...,
 ) -> _Element: ...
@@ -640,11 +639,11 @@ def cleanup_namespaces(
 ) -> None: ...
 def parse(
     source: _FileReadSource,
-    parser: _BaseParser | None = ...,
+    parser: _FeedParser | None = ...,
     base_url: _AnyStr | None = ...,
 ) -> _ElementTree: ...
 def fromstring(
-    text: _AnyStr, parser: _BaseParser | None = ..., *, base_url: _AnyStr = ...
+    text: _AnyStr, parser: _FeedParser | None = ..., *, base_url: _AnyStr = ...
 ) -> _Element: ...
 @overload  # Native str, no XML declaration
 def tostring(
@@ -731,12 +730,12 @@ class DTD(_Validator):
     ) -> None: ...
     def __call__(self, etree: _ElementOrTree) -> bool: ...
 
-class TreeBuilder(ParserTarget):
+class TreeBuilder(ParserTarget[_Element]):
     def __init__(
         self,
         *,
         element_factory: _ElemFactory[_Element] | None = ...,
-        parser: _BaseParser | None = ...,
+        parser: _FeedParser | None = ...,
         comment_factory: _ElemFactory[_Comment] | None = ...,
         pi_factory: _ElemFactory[_ProcessingInstruction] | None = ...,
         insert_comments: bool = ...,

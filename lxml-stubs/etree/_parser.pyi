@@ -1,5 +1,5 @@
-from abc import ABCMeta, abstractmethod
-from typing import Any, Iterable, Iterator, Protocol, TypeVar
+from abc import abstractmethod
+from typing import Any, Generic, Iterable, Iterator, Protocol, TypeVar, overload
 
 from .._types import SupportsLaxedItems, _AnyStr, _NSMapArg, _TagName
 from . import (
@@ -15,6 +15,9 @@ from ._docloader import _ResolverRegistry
 from ._xmlerror import _ErrorLog
 
 Self = TypeVar("Self")
+_T_co = TypeVar("_T_co", covariant=True)
+# The basic parsers bundled in lxml.etree
+_DefEtreeParsers = XMLParser[_T_co] | HTMLParser[_T_co]
 
 class ParseError(LxmlSyntaxError):
     lineno: int
@@ -36,7 +39,7 @@ class ParseError(LxmlSyntaxError):
 class XMLSyntaxError(ParseError): ...
 class ParserError(LxmlError): ...
 
-class ParserTarget(Protocol, metaclass=ABCMeta):
+class ParserTarget(Protocol[_T_co]):
     """This is a stub-only class representing parser target interface.
 
     - Because almost all methods are optional, ParserTarget should be
@@ -44,18 +47,32 @@ class ParserTarget(Protocol, metaclass=ABCMeta):
       and the snippet example below.
     - Some IDEs can do method signature autocompletion. See notes below.
 
+    Example
+    -------
     ```python
-    if TYPE_CHECKING:
-        from lxml.etree import ParserTarget
-    else:
-        ParserTarget = object
+    from lxml import etree
+    if not TYPE_CHECKING:
+        etree.ParserTarget = object
 
-    class MyParserTarget(ParserTarget):
+    class MyParserTarget(etree.ParserTarget):
+        def __init__(self) -> None: ...
         def start(self,  # 3 argument form is not autocompleted
-            tag: str,
-            attrib: _Attrib,
-            nsmap: Mapping[str, str] = ...,
+            tag: str, attrib: _Attrib, nsmap: Mapping[str, str] = ...,
         ) -> None: ...
+            # Do something
+        def close(self) -> str:
+            return "something"
+
+    parser = etree.HTMLParser()  # type is HTMLParser[_Element]
+    result = parser.close()  # _Element
+
+    t1 = MyParserTarget()
+    parser = etree.HTMLParser(target=t1)  # mypy -> HTMLParser[Any]
+                                          # pyright -> HTMLParser[Unknown]
+
+    t2 = cast("etree.ParserTarget[str]", MyParserTarget())
+    parser = etree.HTMLParser(target=t2)  # HTMLParser[str]
+    result = parser.close()  # str
     ```
 
     Notes
@@ -74,7 +91,7 @@ class ParserTarget(Protocol, metaclass=ABCMeta):
     """
 
     @abstractmethod
-    def close(self) -> Any: ...
+    def close(self) -> _T_co: ...
     def comment(self, text: str) -> None: ...
     def data(self, data: str) -> None: ...
     def end(self, tag: str) -> None: ...
@@ -94,9 +111,9 @@ class ParserTarget(Protocol, metaclass=ABCMeta):
         system_id: str | None,
     ) -> None: ...
 
-class _BaseParser:
-    @property
-    def target(self) -> ParserTarget | None: ...
+# Includes most stuff in _BaseParser; when custom parser target is used,
+# _CustomParserTargetMixin below enlists specialized methods and properties
+class _FeedParser:
     @property
     def error_log(self) -> _ErrorLog: ...
     @property
@@ -111,23 +128,25 @@ class _BaseParser:
         nsmap: _NSMapArg | None = ...,
         **_extra: _AnyStr,
     ) -> _Element: ...
-    # Marked as deprecated, identical to snake case method
-    def setElementClassLookup(
-        self, lookup: ElementClassLookup | None = ...
-    ) -> None: ...
     def set_element_class_lookup(
         self, lookup: ElementClassLookup | None = ...
     ) -> None: ...
-
-class _FeedParser(_BaseParser):
     @property
     def feed_error_log(self) -> _ErrorLog: ...
-    def close(self) -> _Element: ...
     def feed(self, data: _AnyStr) -> None: ...
 
-class XMLParser(_FeedParser):
-    def __init__(
-        self,
+# Contains specialized properties and methods from _BaseParser and _FeedParser,
+# when custom parser target is used. Only applies to basic parsers defined
+# in lxml.etree.
+class _CustomParserTargetMixin(Generic[_T_co]):
+    @property
+    def target(self) -> ParserTarget[_T_co] | None: ...
+    def close(self) -> _T_co: ...
+
+class XMLParser(_CustomParserTargetMixin[_T_co], _FeedParser):
+    @overload
+    def __new__(
+        cls,
         *,
         encoding: _AnyStr | None = ...,
         attribute_defaults: bool = ...,
@@ -144,14 +163,36 @@ class XMLParser(_FeedParser):
         remove_pis: bool = ...,
         strip_cdata: bool = ...,
         collect_ids: bool = ...,
-        target: ParserTarget | None = ...,
+        target: ParserTarget[_T_co],
         compact: bool = ...,
-    ) -> None: ...
-    resolvers: _ResolverRegistry
+    ) -> XMLParser[_T_co]: ...
+    @overload
+    def __new__(
+        cls,
+        *,
+        encoding: _AnyStr | None = ...,
+        attribute_defaults: bool = ...,
+        dtd_validation: bool = ...,
+        load_dtd: bool = ...,
+        no_network: bool = ...,
+        ns_clean: bool = ...,
+        recover: bool = ...,
+        schema: XMLSchema | None = ...,
+        huge_tree: bool = ...,
+        remove_blank_text: bool = ...,
+        resolve_entities: bool = ...,
+        remove_comments: bool = ...,
+        remove_pis: bool = ...,
+        strip_cdata: bool = ...,
+        collect_ids: bool = ...,
+        target: None = ...,
+        compact: bool = ...,
+    ) -> XMLParser[_Element]: ...
 
-class XMLPullParser(XMLParser):
-    def __init__(
-        self,
+class XMLPullParser(XMLParser[_T_co]):
+    @overload
+    def __new__(
+        cls,
         events: Iterable[str] | None = ...,
         *,
         tag: _TagSelector = ...,
@@ -172,21 +213,17 @@ class XMLPullParser(XMLParser):
         remove_pis: bool = ...,
         strip_cdata: bool = ...,
         collect_ids: bool = ...,
-        target: ParserTarget | None = ...,
+        target: ParserTarget[_T_co],
         compact: bool = ...,
-    ) -> None: ...
-    # The iterated items from pull parser events may return anything.
-    # Even etree.TreeBuilder, which produce element nodes by default, allows
-    # overriding factory functions via arguments to generate anything.
-    # Same applies to HTMLPullParser below.
-    def read_events(self) -> Iterator[tuple[str, Any]]: ...
-
-# ET compatible parser should be nearly identical to XMLParser
-# in nature, but somehow doesn't have 'collect_ids' argument
-class ETCompatXMLParser(XMLParser):
-    def __init__(
-        self,
+    ) -> XMLPullParser[_T_co]: ...
+    @overload
+    def __new__(
+        cls,
+        events: Iterable[str] | None = ...,
         *,
+        tag: _TagSelector = ...,
+        base_url: _AnyStr | None = ...,
+        # All arguments from XMLParser
         encoding: _AnyStr | None = ...,
         attribute_defaults: bool = ...,
         dtd_validation: bool = ...,
@@ -201,16 +238,66 @@ class ETCompatXMLParser(XMLParser):
         remove_comments: bool = ...,
         remove_pis: bool = ...,
         strip_cdata: bool = ...,
-        target: ParserTarget | None = ...,
+        collect_ids: bool = ...,
+        target: None = ...,
         compact: bool = ...,
-    ) -> None: ...
+    ) -> XMLPullParser[_Element]: ...
+    # The iterated items from pull parser events may return anything.
+    # Even etree.TreeBuilder, which produce element nodes by default, allows
+    # overriding factory functions via arguments to generate anything.
+    # Same applies to HTMLPullParser below.
+    def read_events(self) -> Iterator[tuple[str, Any]]: ...
 
-def set_default_parser(parser: _BaseParser | None) -> None: ...
-def get_default_parser() -> _BaseParser | None: ...
+# This is XMLParser with some preset keyword arguments, and without
+# 'collect_ids' argument. Removing those keywords here, otherwise
+# ETCompatXMLParser has no reason to exist.
+class ETCompatXMLParser(XMLParser[_T_co]):
+    @overload
+    def __new__(
+        cls,
+        *,
+        encoding: _AnyStr | None = ...,
+        attribute_defaults: bool = ...,
+        dtd_validation: bool = ...,
+        load_dtd: bool = ...,
+        no_network: bool = ...,
+        ns_clean: bool = ...,
+        recover: bool = ...,
+        schema: XMLSchema | None = ...,
+        huge_tree: bool = ...,
+        remove_blank_text: bool = ...,
+        resolve_entities: bool = ...,
+        strip_cdata: bool = ...,
+        target: ParserTarget[_T_co],
+        compact: bool = ...,
+    ) -> ETCompatXMLParser[_T_co]: ...
+    @overload
+    def __new__(
+        cls,
+        *,
+        encoding: _AnyStr | None = ...,
+        attribute_defaults: bool = ...,
+        dtd_validation: bool = ...,
+        load_dtd: bool = ...,
+        no_network: bool = ...,
+        ns_clean: bool = ...,
+        recover: bool = ...,
+        schema: XMLSchema | None = ...,
+        huge_tree: bool = ...,
+        remove_blank_text: bool = ...,
+        resolve_entities: bool = ...,
+        strip_cdata: bool = ...,
+        target: None = ...,
+        compact: bool = ...,
+    ) -> ETCompatXMLParser[_Element]: ...
 
-class HTMLParser(_FeedParser):
-    def __init__(
-        self,
+def set_default_parser(parser: _DefEtreeParsers[Any] | None) -> None: ...
+def get_default_parser() -> _DefEtreeParsers[Any]: ...
+
+class HTMLParser(_CustomParserTargetMixin[_T_co], _FeedParser):
+    @overload
+    def __new__(
+        cls,
         *,
         encoding: _AnyStr | None = ...,
         collect_ids: bool = ...,
@@ -223,12 +310,30 @@ class HTMLParser(_FeedParser):
         remove_pis: bool = ...,
         schema: XMLSchema | None = ...,
         strip_cdata: bool = ...,
-        target: ParserTarget | None = ...,
-    ) -> None: ...
+        target: ParserTarget[_T_co],
+    ) -> HTMLParser[_T_co]: ...
+    @overload
+    def __new__(
+        cls,
+        *,
+        encoding: _AnyStr | None = ...,
+        collect_ids: bool = ...,
+        compact: bool = ...,
+        huge_tree: bool = ...,
+        no_network: bool = ...,
+        recover: bool = ...,
+        remove_blank_text: bool = ...,
+        remove_comments: bool = ...,
+        remove_pis: bool = ...,
+        schema: XMLSchema | None = ...,
+        strip_cdata: bool = ...,
+        target: None = ...,
+    ) -> HTMLParser[_Element]: ...
 
-class HTMLPullParser(HTMLParser):
-    def __init__(
-        self,
+class HTMLPullParser(HTMLParser[_T_co]):
+    @overload
+    def __new__(
+        cls,
         events: Iterable[str] | None = ...,
         *,
         tag: _TagSelector = ...,
@@ -240,11 +345,32 @@ class HTMLPullParser(HTMLParser):
         remove_pis: bool = ...,
         strip_cdata: bool = ...,
         no_network: bool = ...,
-        target: ParserTarget | None = ...,
+        target: ParserTarget[_T_co],
         schema: XMLSchema | None = ...,
         recover: bool = ...,
         compact: bool = ...,
         collect_ids: bool = ...,
         huge_tree: bool = ...,
-    ) -> None: ...
+    ) -> HTMLPullParser[_T_co]: ...
+    @overload
+    def __new__(
+        cls,
+        events: Iterable[str] | None = ...,
+        *,
+        tag: _TagSelector = ...,
+        base_url: _AnyStr | None = ...,
+        # All arguments from HTMLParser
+        encoding: _AnyStr | None = ...,
+        remove_blank_text: bool = ...,
+        remove_comments: bool = ...,
+        remove_pis: bool = ...,
+        strip_cdata: bool = ...,
+        no_network: bool = ...,
+        target: None = ...,
+        schema: XMLSchema | None = ...,
+        recover: bool = ...,
+        compact: bool = ...,
+        collect_ids: bool = ...,
+        huge_tree: bool = ...,
+    ) -> HTMLPullParser[_Element]: ...
     def read_events(self) -> Iterator[tuple[str, Any]]: ...
