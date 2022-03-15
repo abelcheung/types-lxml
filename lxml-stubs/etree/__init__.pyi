@@ -55,7 +55,7 @@ from ._parser import (  # _FeedParser unused but must be present for mypy tests
     XMLParser as XMLParser,
     XMLPullParser as XMLPullParser,
     XMLSyntaxError as XMLSyntaxError,
-    _FeedParser as _FeedParser,
+    _DefEtreeParsers,
     get_default_parser as get_default_parser,
     set_default_parser as set_default_parser,
 )
@@ -92,6 +92,7 @@ from ._xpath import (
 
 _T = TypeVar("_T")
 _ET = TypeVar("_ET", bound=_Element)
+_T_co = TypeVar("_T_co", covariant=True)
 
 # Note that _TagSelector filters element type not by classes,
 # but checks for element _factory functions_ instead
@@ -324,13 +325,13 @@ class _Element(Collection[_Element], Reversible[_Element]):
 
 class _ElementTree:
     @property
-    def parser(self) -> _FeedParser | None: ...
+    def parser(self) -> _DefEtreeParsers[_Element] | None: ...
     @property
     def docinfo(self) -> DocInfo: ...
     def parse(
         self,
         source: _FileReadSource,
-        parser: _FeedParser | None = ...,
+        parser: _DefEtreeParsers[_Element] | None = ...,
         *,
         base_url: _AnyStr | None,
     ) -> None: ...
@@ -614,21 +615,54 @@ def SubElement(
     nsmap: _NSMapArg | None = ...,
     **_extra: _AnyStr,
 ) -> _Element: ...
+@overload  # from element, parser ignored
+def ElementTree(element: _Element) -> _ElementTree: ...
+@overload  # from file source, custom parser
 def ElementTree(
-    element: _Element = ...,
+    element: None = ...,
     *,
-    file: _FileReadSource = ...,
-    parser: _FeedParser | None = ...,
+    file: _FileReadSource,
+    parser: _DefEtreeParsers[_T_co],
+) -> _T_co: ...
+@overload  # from file source, default parser
+def ElementTree(
+    element: None = ...,
+    *,
+    file: _FileReadSource,
+    parser: None = ...,
 ) -> _ElementTree: ...
+@overload  # empty tree, parser must produce valid element
+def ElementTree(
+    element: None = ...,
+    *,
+    file: None = ...,
+    parser: _DefEtreeParsers[_Element] | None = ...,
+) -> _ElementTree: ...
+@overload
 def HTML(
     text: _AnyStr,
-    parser: _FeedParser | None = ...,
+    parser: _DefEtreeParsers[_T_co],
+    *,
+    base_url: _AnyStr | None = ...,
+) -> _T_co: ...
+@overload
+def HTML(
+    text: _AnyStr,
+    parser: None = ...,
     *,
     base_url: _AnyStr | None = ...,
 ) -> _Element: ...
+@overload
 def XML(
     text: _AnyStr,
-    parser: _FeedParser | None = ...,
+    parser: _DefEtreeParsers[_T_co],
+    *,
+    base_url: _AnyStr | None = ...,
+) -> _T_co: ...
+@overload
+def XML(
+    text: _AnyStr,
+    parser: None = ...,
     *,
     base_url: _AnyStr | None = ...,
 ) -> _Element: ...
@@ -637,13 +671,33 @@ def cleanup_namespaces(
     top_nsmap: _NSMapArg | None = ...,
     keep_ns_prefixes: Iterable[_AnyStr] | None = ...,
 ) -> None: ...
+@overload
 def parse(
     source: _FileReadSource,
-    parser: _FeedParser | None = ...,
+    parser: _DefEtreeParsers[_T_co],
+    *,
+    base_url: _AnyStr | None = ...,
+) -> _T_co: ...
+@overload
+def parse(
+    source: _FileReadSource,
+    parser: None = ...,
+    *,
     base_url: _AnyStr | None = ...,
 ) -> _ElementTree: ...
+@overload
 def fromstring(
-    text: _AnyStr, parser: _FeedParser | None = ..., *, base_url: _AnyStr = ...
+    text: _AnyStr,
+    parser: _DefEtreeParsers[_T_co],
+    *,
+    base_url: _AnyStr = ...,
+) -> _T_co: ...
+@overload
+def fromstring(
+    text: _AnyStr,
+    parser: None = ...,
+    *,
+    base_url: _AnyStr = ...,
 ) -> _Element: ...
 @overload  # Native str, no XML declaration
 def tostring(
@@ -735,7 +789,7 @@ class TreeBuilder(ParserTarget[_Element]):
         self,
         *,
         element_factory: _ElemFactory[_Element] | None = ...,
-        parser: _FeedParser | None = ...,
+        parser: _DefEtreeParsers[_Element] | None = ...,
         comment_factory: _ElemFactory[_Comment] | None = ...,
         pi_factory: _ElemFactory[_ProcessingInstruction] | None = ...,
         insert_comments: bool = ...,

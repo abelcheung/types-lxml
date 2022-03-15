@@ -285,7 +285,7 @@ class HtmlElementClassLookup(etree.CustomElementClassLookup):
 # fromstring(text, parser, *, base_url)
 def document_fromstring(
     html: _AnyStr,
-    parser: _FeedParser | None = ...,
+    parser: HTMLParser | XHTMLParser | None = ...,
     ensure_head_body: bool = ...,
     *,
     base_url: str | None = ...,
@@ -294,25 +294,25 @@ def fragments_fromstring(
     html: _AnyStr,
     no_leading_text: bool = ...,
     base_url: str | None = ...,
-    parser: _FeedParser | None = ...,
+    parser: HTMLParser | XHTMLParser | None = ...,
     **kw: Any,  # seems unused
 ) -> list[_AnyHtmlElement]: ...
 def fragment_fromstring(
     html: _AnyStr,
     create_parent: bool = ...,
     base_url: str | None = ...,
-    parser: _FeedParser | None = ...,
+    parser: HTMLParser | XHTMLParser | None = ...,
     **kw: Any,  # seems unused
 ) -> _AnyHtmlElement: ...
 def fromstring(
     html: _AnyStr,
     base_url: str | None = ...,
-    parser: _FeedParser | None = ...,
+    parser: HTMLParser | XHTMLParser | None = ...,
     **kw: Any,  # seems unused
 ) -> _AnyHtmlElement: ...
 def parse(
     filename_or_url: _FileReadSource,
-    parser: _FeedParser | None = ...,
+    parser: HTMLParser | XHTMLParser | None = ...,
     base_url: str | None = ...,
     **kw: Any,  # seems unused
 ) -> etree._ElementTree: ...
