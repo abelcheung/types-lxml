@@ -176,7 +176,7 @@
     badurl: bytes
     elem.make_links_absolute(badurl)  # E: Argument 1 to "make_links_absolute" of "HtmlMixin" has incompatible type "bytes"; expected "Optional[str]"
     elem.make_links_absolute(url, 2, None)  # E: Argument 2 to "make_links_absolute" of "HtmlMixin" has incompatible type "int"; expected "bool"
-    elem.make_links_absolute(handle_failures='badval')  # E: Argument "handle_failures" to "make_links_absolute" of "HtmlMixin" has incompatible type "Literal['badval']"; expected "Optional[Union[Literal['ignore'], Literal['discard']]]"
+    elem.make_links_absolute(handle_failures='badval')  # E: Argument "handle_failures" to "make_links_absolute" of "HtmlMixin" has incompatible type "Literal['badval']"; expected "Optional[Literal['ignore', 'discard']]"
     elem.make_links_absolute(badarg=1)  # E: Unexpected keyword argument "badarg" for "make_links_absolute" of "HtmlMixin"
     elem.make_links_absolute(url, True, 'discard', None)  # E: Too many arguments for "make_links_absolute" of "HtmlMixin"
 
@@ -185,7 +185,7 @@
     from lxml.html import HtmlElement
     elem: HtmlElement
     elem.resolve_base_href()
-    elem.resolve_base_href(b'ignore')  # E: Argument 1 to "resolve_base_href" of "HtmlMixin" has incompatible type "Literal[b'ignore']"; expected "Optional[Union[Literal['ignore'], Literal['discard']]]"
+    elem.resolve_base_href(b'ignore')  # E: Argument 1 to "resolve_base_href" of "HtmlMixin" has incompatible type "Literal[b'ignore']"; expected "Optional[Literal['ignore', 'discard']]"
     elem.resolve_base_href(handle_failures='discard')
     elem.resolve_base_href(badarg=1)  # E: Unexpected keyword argument "badarg" for "resolve_base_href" of "HtmlMixin"
     elem.resolve_base_href(None, None)  # E: Too many arguments for "resolve_base_href" of "HtmlMixin"

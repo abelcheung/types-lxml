@@ -10,7 +10,7 @@
     - val: elem[:2]
       rt: builtins.list[lxml.etree._Element]
     - val: iter(elem)
-      rt: typing.Iterator[lxml.etree._Element*]
+      rt: typing.Iterator*[lxml.etree._Element]
     - val: reversed(elem)
       rt: builtins.reversed[lxml.etree._Element*]
   main: |
