@@ -1,5 +1,5 @@
 from abc import abstractmethod
-from typing import Any, Generic, Iterable, Iterator, Protocol, TypeVar, overload
+from typing import Any, Callable, Generic, Iterable, Iterator, Protocol, TypeVar, overload
 
 from .._types import SupportsLaxedItems, _AnyStr, _NSMapArg, _TagName
 from . import (
@@ -7,7 +7,6 @@ from . import (
     LxmlError,
     LxmlSyntaxError,
     XMLSchema,
-    _Attrib,
     _Element,
     _TagSelector,
 )
@@ -95,9 +94,10 @@ class ParserTarget(Protocol[_T_co]):
     def comment(self, text: str) -> None: ...
     def data(self, data: str) -> None: ...
     def end(self, tag: str) -> None: ...
-    # Base class can only use 2-argument form, in case where
-    # start() for inherited class uses 2 arguments too
-    def start(self, tag: str, attrib: _Attrib) -> None: ...
+    # FIXME start() is particularly troublesome, as it could be in either
+    # 2 argument or 3 argument form. Both @overload and union of callable
+    # won't stop mypy from complaining about incompatibility.
+    start: Callable[..., None]
     # Methods below are undocumented. Lxml has described
     # 'start-ns' and 'end-ns' events however.
     def pi(self, target: str, data: str | None) -> None: ...
