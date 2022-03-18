@@ -1,5 +1,14 @@
 from abc import abstractmethod
-from typing import Any, Callable, Generic, Iterable, Iterator, Protocol, TypeVar, overload
+from typing import (
+    Any,
+    Callable,
+    Generic,
+    Iterable,
+    Iterator,
+    Protocol,
+    TypeVar,
+    overload,
+)
 
 from .._types import SupportsLaxedItems, _AnyStr, _NSMapArg, _TagName
 from . import (
