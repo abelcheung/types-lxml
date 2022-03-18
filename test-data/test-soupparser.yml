@@ -1,0 +1,67 @@
+- case: fromstring
+  parametrized:
+    - args: content
+    - args: "data=fileio, beautifulsoup=BeautifulSoup"
+    - args: "content, BeautifulSoup, html_parser.makeelement"
+    - args: "fileio, makeelement=html_parser.makeelement"
+  main: |
+    from lxml.html.soupparser import fromstring
+    from bs4 import BeautifulSoup
+    from lxml.html import html_parser
+    content: str
+    fileio = open('file', 'r')
+    result = fromstring({{ args }})
+    reveal_type(result)  # N: Revealed type is "lxml.html.HtmlElement"
+
+- case: parse
+  parametrized:
+    - args: fileio
+    - args: "file=filename, beautifulsoup=BeautifulSoup"
+    - args: "fileio, BeautifulSoup, xhtml_parser.makeelement"
+    - args: "filename, makeelement=xhtml_parser.makeelement"
+  main: |
+    from lxml.html.soupparser import parse
+    from bs4 import BeautifulSoup
+    from lxml.html import xhtml_parser
+    fileio = open('file', 'r')
+    filename: str
+    result = parse({{ args }})
+    reveal_type(result)  # N: Revealed type is "lxml.etree._ElementTree"
+
+- case: convert_tree
+  main: |
+    from lxml.html.soupparser import convert_tree
+    from bs4 import BeautifulSoup
+    parsed: BeautifulSoup
+    result = convert_tree(parsed)
+    reveal_type(result)  # N: Revealed type is "builtins.list[lxml.html.HtmlElement]"
+
+- case: noarg
+  parametrized:
+    - func: fromstring
+    - func: parse
+    - func: convert_tree
+  main: |
+    from lxml.html import soupparser as sp
+    sp.{{ func }}()  # ER: Missing positional argument .+
+
+- case: badargs
+  expect_fail: true
+  parametrized:
+    - func: fromstring
+      args: 1
+    - func: fromstring
+      args: fileio, _Element
+    - func: parse
+      args: 1
+    - func: parse
+      args: fileio, _Element
+    - func: convert_tree
+      args: fileio
+  main: |
+    from lxml.html import soupparser as sp
+    from lxml.etree import _Element
+    from bs4 import BeautifulSoup
+    from io import StringIO
+    fileio: StringIO
+    sp.{{ func }}({{ args }})
