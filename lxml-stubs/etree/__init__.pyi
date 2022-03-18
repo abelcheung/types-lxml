@@ -113,6 +113,14 @@ _KnownEncodings = Literal[
 ]
 _ElementOrTree = _Element | _ElementTree
 
+DEBUG: int
+LIBXSLT_VERSION: tuple[int, int, int]
+LIBXSLT_COMPILED_VERSION: tuple[int, int, int]
+LIBXML_VERSION: tuple[int, int, int]
+LIBXML_COMPILED_VERSION: tuple[int, int, int]
+LXML_VERSION: tuple[int, int, int, int]
+__version__: str
+
 class _SmartStr(str):
     """Smart string is a private str subclass documented in
     [return types](https://lxml.de/xpathxslt.html#xpath-return-values)
