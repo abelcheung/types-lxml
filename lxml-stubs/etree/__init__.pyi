@@ -324,12 +324,12 @@ class _Element(Collection[_Element], Reversible[_Element]):
         translator: _CSSTransArg = ...,
     ) -> list[_Element]: ...
     # Following methods marked as deprecated upstream
-    def getchildren(self) -> list[_Element]: ...  # = list(self)
-    def getiterator(
-        self,
-        tag: _TagSelector | None,
-        *tags: _TagSelector,
-    ) -> Iterator[_Element]: ...
+    # def getchildren(self) -> list[_Element]: ...  # = list(self)
+    # def getiterator(
+    #     self,
+    #     tag: _TagSelector | None,
+    #     *tags: _TagSelector,
+    # ) -> Iterator[_Element]: ...
 
 class _ElementTree:
     @property
@@ -450,9 +450,9 @@ class _ElementTree:
     #
     # Deprecated methods
     #
-    def getiterator(  # = iter()
-        self, tag: _TagSelector | None = ..., *tags: _TagSelector
-    ) -> _Element: ...
+    # def getiterator(  # = iter()
+    #     self, tag: _TagSelector | None = ..., *tags: _TagSelector
+    # ) -> _Element: ...
     def write_c14n(  # merged into write()
         self,
         file: _FileWriteSource,
