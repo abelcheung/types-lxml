@@ -16,3 +16,12 @@ and download wheel files (with file extension `.whl`). Wheel files can
 be installed with `pip` in similar way to upstream release:
 
     pip install lxml_stubs-xxxxxxx-py3-none-any.whl
+
+## Special notes
+There are two special stub-only classes that do not exist in lxml:
+
+1. lxml.etree.ParserTarget
+2. lxml.etree._SmartStr
+
+They are intended as helpers when writing code, wrapped under
+`if TYPE_CHECKING: ...`. Please consult their docstring for detail.
