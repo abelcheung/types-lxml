@@ -1,4 +1,4 @@
-- case: et_properties
+- case: properties
   parametrized:
     - prop: parser
       rt: "Union[lxml.etree._parser.XMLParser[lxml.etree._Element], lxml.etree._parser.HTMLParser[lxml.etree._Element], None]"
@@ -10,7 +10,7 @@
     reveal_type(et.{{ prop }})  # N: Revealed type is "{{ rt }}"
     et.{{ prop }} = et.{{ prop }}  # E: Property "{{ prop }}" defined in "_ElementTree" is read-only
 
-- case: et_no_arg_or_return_methods
+- case: no_arg_or_return_methods
   main: |
     from lxml.etree import _ElementTree, _Element
     root: _Element
@@ -20,7 +20,7 @@
     reveal_type(et.getroot())  # N: Revealed type is "lxml.etree._Element"
     et._setroot(et)  # E: Argument 1 to "_setroot" of "_ElementTree" has incompatible type "_ElementTree"; expected "_Element"
 
-- case: et_no_arg_or_return_methods_toomanyargs
+- case: no_arg_or_return_methods_toomanyargs
   parametrized:
     - method: xinclude
       kwds: None
@@ -34,7 +34,7 @@
     et: _ElementTree
     et.{{ method }}({{ kwds }})  # E: Too many arguments for "{{ method }}" of "_ElementTree"
 
-- case: et_getpath_methods
+- case: getpath_family
   parametrized:
     - method: getpath
     - method: getelementpath
@@ -48,7 +48,7 @@
     r = et.{{ method }}(et)  # E: Argument 1 to "{{ method }}" of "_ElementTree" has incompatible type "_ElementTree"; expected "_Element"
     r = et.{{ method }}(root, None)  # E: Too many arguments for "{{ method }}" of "_ElementTree"
 
-- case: et_validate_methods
+- case: validate_family
   parametrized:
     - method: relaxng
     - method: xmlschema
@@ -63,7 +63,7 @@
     r = et.{{ method }}()  # E: Missing positional argument "{{ method }}" in call to "{{ method }}" of "_ElementTree"
     r = et.{{ method }}(None)  # E: Argument 1 to "{{ method }}" of "_ElementTree" has incompatible type "None"; expected "Union[_Element, _ElementTree]"
 
-- case: et_elementpath_methods
+- case: elementpath_family
   parametrized:
     - method: find
       args: path
@@ -120,7 +120,7 @@
     result = et.{{ method }}({{ args }})
     reveal_type(result)  # N: Revealed type is "{{ rt }}"
 
-- case: et_elementpath_methods_badarg
+- case: elementpath_family_badarg
   parametrized:
     - method: find
     - method: findall
@@ -136,7 +136,7 @@
     _ = et.{{ method }}(ok_path, None, 1)  # E: Too many arguments for "{{ method }}" of "_ElementTree"
     _ = et.{{ method }}(ok_path, badarg=True)  # E: Unexpected keyword argument "badarg" for "{{ method }}" of "_ElementTree"
 
-- case: et_method_findtext
+- case: findtext
   parametrized:
     - args: path
       rt: Union[builtins.str, None]
@@ -164,7 +164,7 @@
     result = et.findtext({{ args }})
     reveal_type(result)  # N: Revealed type is "{{ rt }}"
 
-- case: element_method_findtext_badarg
+- case: findtext_badarg
   expect_fail: true
   parametrized:
     - args: bad_path
@@ -178,3 +178,228 @@
     bad_path: bytes
     bad_nsmap = {'a': 1}
     _ = et.findtext({{ args }})
+
+- case: parse
+  parametrized:
+    - args: filename
+    - args: fileio, parser=parser1
+    - args: source=filename, parser=None
+    - args: fileio, parser2, base_url=url
+  main: |
+    from lxml import etree
+    tree: etree._ElementTree
+    filename: str
+    fileio = open('file', 'r')
+    parser1: etree.XMLParser[etree._Element]
+    parser2: etree.HTMLParser[etree._Element]
+    url: str
+    tree.parse({{ args }})
+
+- case: parse_badarg
+  expect_fail: true
+  parametrized:
+    - args: None
+    - args: parser=None
+    - args: filename, 1
+    - args: filename, parser1, url
+  main: |
+    from lxml import etree
+    tree: etree._ElementTree
+    filename: str
+    parser1: etree.XMLParser[etree._Element]
+    url: str
+    tree.parse({{ args }})
+
+- case: iter_noargs
+  main: |
+    from lxml import etree
+    tree: etree._ElementTree
+    reveal_type(tree.iter())  # N: Revealed type is "typing.Iterator[lxml.etree._Element]"
+
+- case: iter
+  parametrized:
+    - args: tag3
+    - args: tag=tag2
+    - args: factory1, tag1, factory2, tag2
+  main: |
+    from lxml import etree
+    tree: etree._ElementTree
+    tag1: str
+    tag2: bytes
+    tag3: etree.QName
+    factory1 = etree.Comment
+    factory2 = etree.Entity
+    reveal_type(tree.iter({{ args }}))  # N: Revealed type is "typing.Iterator[lxml.etree._Element]"
+
+- case: iter_badarg
+  expect_fail: true
+  parametrized:
+    - args: 1
+    - args: badarg=tag
+    - args: tag, tag, 1
+  main: |
+    from lxml import etree
+    tree: etree._ElementTree
+    tag: str
+    tree.iter({{ args }})
+
+- case: write_filearg
+  parametrized:
+    - filearg: s
+    - filearg: file=b
+    - filearg: file=sp
+    - filearg: bp
+    - filearg: fio
+  main: |
+    from os import PathLike
+    from lxml import etree
+    tree: etree._ElementTree
+    s: str
+    b: bytes
+    sp: PathLike[str]
+    bp: PathLike[bytes]
+    fio = open('file', 'wb')
+    tree.write({{ filearg }})
+
+- case: write_method_c14n
+  parametrized:
+    - kwds: exclusive=True
+    - kwds: with_comments=False
+    - kwds: compression=None
+    - kwds: inclusive_ns_prefixes=None
+    - kwds: compression=9
+    - kwds: "inclusive_ns_prefixes=('ns1', 'ns2')"
+  main: |
+    from lxml import etree
+    tree: etree._ElementTree
+    filename: str
+    tree.write(filename, method="c14n", {{ kwds }})
+
+- case: write_method_c14n2
+  parametrized:
+    - kwds: with_comments=True
+    - kwds: compression=None
+    - kwds: strip_text=True
+    - kwds: compression=8
+  main: |
+    from lxml import etree
+    tree: etree._ElementTree
+    fileio = open('file', 'wb')
+    tree.write(file=fileio, method="c14n2", {{ kwds }})
+
+- case: write_other_methods
+  parametrized:
+    - kwds: "method='xml', encoding='ASCII'"
+    - kwds: "method='html', encoding='utf8'"
+    - kwds: "method='text', compression=2"
+    - kwds: "method='XML', doctype=None"
+    - kwds: "method='HTML', doctype=doctype"
+    - kwds: "method='TEXT', compression=None"
+    - kwds: "xml_declaration=True"
+    - kwds: "with_tail=True"
+    - kwds: "standalone=True"
+    - kwds: "pretty_print=True"
+  main: |
+    from lxml import etree
+    tree: etree._ElementTree
+    filename: str
+    doctype: str
+    tree.write(filename, {{ kwds }})
+
+- case: write_noarg
+  expect_fail: true
+  main: |
+    from lxml import etree
+    tree: etree._ElementTree
+    tree.write()
+
+- case: write_badarg
+  expect_fail: true
+  parametrized:
+    - args: None
+    - args: file=strio
+    - args: "filename, 'junk'"
+    - args: "file=filename, wrongarg=1"
+    - args: "filename, method='junk'"
+    # Wrong type
+    - args: "filename, encoding=o"
+    - args: "filename, xml_declaration=o"
+    - args: "filename, pretty_print=o"
+    - args: "filename, standalone=o"
+    - args: "filename, compression=o"
+    - args: "filename, doctype=o"
+    - args: "filename, method='c14n', exclusive=o"
+    - args: "filename, method='c14n', inclusive_ns_prefixes=o"
+    - args: "filename, method='c14n2', with_comments=o"
+    - args: "filename, method='c14n2', strip_text=o"
+    # Following combinations explicitly raise exceptions
+    - args: "filename, method='c14n', encoding='ascii'"
+    - args: "filename, method='c14n', xml_declaration=True"
+    - args: "filename, method='c14n2', encoding='utf8'"
+    - args: "filename, method='c14n2', xml_declaration=True"
+    - args: "filename, with_comments=False"
+    - args: "filename, method='xml', with_comments=False"
+    - args: "filename, method='html', with_comments=False"
+    - args: "filename, method='text', with_comments=False"
+    # Following combinations have no effect during runtime,
+    # and disallowed in stub
+    - args: "filename, method='c14n', strip_text=True"
+    - args: "filename, method='c14n', standalone=True"
+    - args: "filename, method='c14n2', exclusive=True"
+    - args: "filename, method='c14n2', pretty_print=True"
+    - args: "filename, method='xml', inclusive_ns_prefixes=['ns1']"
+    - args: "filename, method='html', strip_text=True"
+    - args: "filename, method='text', exclusive=True"
+  main: |
+    from pathlib import Path
+    from lxml import etree
+    tree: etree._ElementTree
+    strio = open('file', 'w')
+    filename: str
+    o: object
+    tree.write({{ args }})
+
+- case: xpath
+  parametrized:
+    - kwds: namespaces=None
+    - kwds: namespaces=ns
+    - kwds: extensions=None
+    - kwds: extensions=ext2
+    - kwds: smart_string=True
+    - kwds: var=1
+    - kwds: "namespaces=ns, extensions=ext1, smart_string=False"
+  main: |
+    from lxml import etree
+    tree: etree._ElementTree
+    xpath_expr: str
+    s: str
+    ns = {s: s}
+    def extfunc1(context, a) -> str: ...
+    def extfunc2(context, a, b) -> int: ...
+    ext1 = [{(None, s): extfunc1}]
+    ext2 = {(s, s): extfunc2}
+    result = tree.xpath(xpath_expr, {{ kwds }})
+
+- case: xpath_noarg
+  main: |
+    from lxml import etree
+    tree: etree._ElementTree
+    tree.xpath()  # ER: Missing positional argument .+
+
+- case: xpath_badarg
+  expect_fail: true
+  parametrized:
+    - args: path=expr
+    - args: "expr, namespaces=badns"
+    - args: "expr, extensions=badext"
+  main: |
+    from lxml import etree
+    tree: etree._ElementTree
+    expr: str
+    s: str
+    badns = {s: 1}
+    def extfunc1(context, a) -> str: ...
+    badext = [{badns: extfunc1}]
+    tree.xpath({{ args }})
+
+# TODO xslt()

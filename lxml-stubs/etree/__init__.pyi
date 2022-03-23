@@ -341,10 +341,19 @@ class _ElementTree:
         source: _FileReadSource,
         parser: _DefEtreeParsers[_Element] | None = ...,
         *,
-        base_url: _AnyStr | None,
+        base_url: _AnyStr | None = ...,
     ) -> None: ...
     def _setroot(self, root: _Element) -> None: ...
     def getroot(self) -> _Element: ...  # TODO specialization
+    # Special notes for write()
+    # BUG: exception for the following combination
+    #      - file argument is file name or path like, and
+    #      - method is 'c14n2', and
+    #      - no compression
+    # There are quite many combination of keyword arguments
+    # that have no effect. But it's a bit too complex to handle
+    # in stub, so keep it simple and only divide keyword usage
+    # by writing method as documented.
     @overload  # method=c14n
     def write(
         self,
@@ -371,32 +380,14 @@ class _ElementTree:
         self,
         file: _FileWriteSource,
         *,
-        encoding: str | type[str] | None = ...,
-        method: _OutputMethodArg,
+        encoding: str | None = ...,  # unicode not allowed
+        method: _OutputMethodArg = ...,
         pretty_print: bool = ...,
         xml_declaration: bool | None = ...,
         with_tail: bool = ...,
         standalone: bool | None = ...,
         doctype: str | None = ...,
         compression: int | None = ...,
-    ) -> None: ...
-    @overload  # catch all
-    def write(
-        self,
-        file: _FileWriteSource,
-        *,
-        encoding: str | type[str] | None = ...,
-        method: _OutputMethodArg | Literal["c14n", "c14n2"] = ...,
-        pretty_print: bool = ...,
-        xml_declaration: bool | None = ...,
-        with_tail: bool = ...,
-        standalone: bool = ...,
-        doctype: str | None = ...,
-        compression: int | None = ...,
-        exclusive: bool = ...,
-        with_comments: bool = ...,
-        inclusive_ns_prefixes: Iterable[_AnyStr] | None = ...,
-        strip_text: bool = ...,
     ) -> None: ...
     def getpath(self, element: _Element) -> str: ...
     def getelementpath(self, element: _Element) -> str: ...
