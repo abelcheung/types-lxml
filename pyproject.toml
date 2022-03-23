@@ -7,7 +7,7 @@ name = 'lxml-stubs'
 dynamic = ['version']
 description = 'Type annotations for lxml'
 readme = 'README.md'
-requires-python = '>=3.6'
+requires-python = '>=3.7'
 license-expression = 'Apache-2.0'
 dependencies = [ # version dependency uncertain
     'lxml',
@@ -22,11 +22,10 @@ maintainers = [
     { name = 'Abel Cheung', email = 'abelcheung@gmail.com' },
 ]
 classifiers = [
-    'Development Status :: 2 - Pre-Alpha',
+    'Development Status :: 3 - Alpha',
     'Programming Language :: Python',
     'Intended Audience :: Developers',
     'Programming Language :: Python :: 3 :: Only',
-    'Programming Language :: Python :: 3.6',
     'Programming Language :: Python :: 3.7',
     'Programming Language :: Python :: 3.8',
     'Programming Language :: Python :: 3.9',
