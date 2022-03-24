@@ -20,8 +20,8 @@ be installed with `pip` in similar way to upstream release:
 ## Special notes
 There are two special stub-only classes that do not exist in lxml:
 
-1. lxml.etree.ParserTarget
-2. lxml.etree._SmartStr
+1. `lxml.etree.ParserTarget`
+2. `lxml.etree._SmartStr`
 
 They are intended as helpers when writing code, wrapped under
 `if TYPE_CHECKING: ...`. Please consult their docstring for detail.

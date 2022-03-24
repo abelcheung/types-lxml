@@ -33,6 +33,9 @@ class CSSSelector(XPath):
         namespaces: _NonDefaultNSMapArg | None = ...,
         translator: _CSSTransArg = ...,
     ) -> None: ...
+    # cssselect package doesn't support pseudo element in current state,
+    # and seems dormant after GSoC change. Probably safe to say
+    # selector would only generate normal elements.
     def __call__(  # type: ignore[override]
         self,
         _etree_or_element: _ElementOrTree,

@@ -6,8 +6,7 @@ from typing_extensions import final
 
 from .._types import _AnyStr
 
-# mypy barking -- Variable "typing_extensions.Self" is not valid as a type
-# with mypy 0.930 and typing_extensions 4.1.1
+# Pyright and pytypes have implemented typing.Self, but not for mypy
 Self = TypeVar("Self")
 
 @final

@@ -1,7 +1,3 @@
-# Hand-written stub for lxml.etree as used by mypy.report.
-# This is *far* from complete, and the stubgen-generated ones crash mypy.
-# Any use of `Any` below means I couldn't figure out the type.
-
 from abc import ABCMeta, abstractmethod
 from typing import (
     Any,
@@ -45,7 +41,7 @@ from ._classlookup import (
     FallbackElementClassLookup as FallbackElementClassLookup,
     PIBase as PIBase,
 )
-from ._parser import (  # _FeedParser unused but must be present for mypy tests
+from ._parser import (
     ETCompatXMLParser as ETCompatXMLParser,
     HTMLParser as HTMLParser,
     HTMLPullParser as HTMLPullParser,

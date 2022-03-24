@@ -14,9 +14,9 @@ dependencies = [ # version dependency uncertain
 ]
 keywords = ['lxml', 'typing', 'stubs']
 authors = [
+    { name = 'Jelle Zijlstra', email = 'jelle.zijlstra@gmail.com' },
     { name = 'Michael van Tellingen', email = 'michaelvantellingen@gmail.com' },
     { name = 'Stefan Behnel', email = 'gh@behnel.de' },
-    { name = 'Jelle Zijlstra', email = 'jelle.zijlstra@gmail.com' },
 ]
 maintainers = [
     { name = 'Abel Cheung', email = 'abelcheung@gmail.com' },
