@@ -1,8 +1,9 @@
 from typing import Any
 
+from _typeshed import SupportsRead
 from bs4 import BeautifulSoup
 
-from .._types import SupportsRead, _AnyStr
+from .._types import _AnyStr
 from ..etree import _ElementTree, _ElemFactory
 from . import HtmlElement
 

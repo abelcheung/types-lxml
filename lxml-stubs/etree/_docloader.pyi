@@ -1,9 +1,10 @@
 from abc import ABCMeta, abstractmethod
 from typing import Any, TypeVar
 
+from _typeshed import SupportsRead
 from typing_extensions import final
 
-from .._types import SupportsRead, _AnyStr
+from .._types import _AnyStr
 
 # mypy barking -- Variable "typing_extensions.Self" is not valid as a type
 # with mypy 0.930 and typing_extensions 4.1.1

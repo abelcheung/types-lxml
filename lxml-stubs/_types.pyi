@@ -10,6 +10,7 @@ from typing import (
     TypeVar,
 )
 
+from _typeshed import SupportsWrite
 from typing_extensions import Literal, Protocol, TypeAlias
 
 from .etree import QName, _Element
@@ -116,12 +117,6 @@ class SupportsLaxedItems(Protocol[_KT_co, _VT_co]):
     """
 
     def items(self) -> Collection[tuple[_KT_co, _VT_co]]: ...
-
-class SupportsWrite(Protocol[_T_contra]):
-    def write(self, __s: _T_contra) -> object: ...
-
-class SupportsRead(Protocol[_T_co]):
-    def read(self, __length: int = ...) -> _T_co: ...
 
 _FilePath = _AnyStr | PathLike[str] | PathLike[bytes]
 _FileReadSource = _FilePath | BinaryIO | TextIO
