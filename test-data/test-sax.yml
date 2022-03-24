@@ -1,0 +1,113 @@
+- case: handler_constructor_noarg
+  main: |
+    from lxml.sax import ElementTreeContentHandler
+    h = ElementTreeContentHandler()
+    reveal_type(h)  # N: Revealed type is "lxml.sax.ElementTreeContentHandler"
+
+- case: handler_property
+  main: |
+    from lxml.sax import ElementTreeContentHandler
+    h: ElementTreeContentHandler
+    reveal_type(h.etree)  # N: Revealed type is "lxml.etree._ElementTree"
+    h.etree = h.etree # E: Property "etree" defined in "ElementTreeContentHandler" is read-only
+
+- case: handler_constructor_goodargs
+  parametrized:
+    - args: None
+    - args: makeelement=None
+    - args: html_parser.makeelement
+  main: |
+    from lxml.sax import ElementTreeContentHandler as Handler
+    from lxml.html import html_parser
+    h = Handler({{ args }})
+    reveal_type(h)  # N: Revealed type is "lxml.sax.ElementTreeContentHandler"
+
+- case: handler_constructor_badargs
+  expect_fail: true
+  parametrized:
+    - args: 1
+    - args: p.makeelement, None
+  main: |
+    from lxml.sax import ElementTreeContentHandler as Handler
+    from lxml.etree import XMLParser, _Element
+    p: XMLparser[_Element]
+    h = Handler({{ args }})
+
+- case: producer_constructor_goodargs
+  parametrized:
+    - args: el, ch
+    - args: et, ch
+    - args: el, content_handler=ch
+    - args: element_or_tree=et, content_handler=ch
+  main: |
+    from lxml.sax import ElementTreeProducer as Producer
+    from xml.sax.handler import ContentHandler
+    from lxml.etree import _Element, _ElementTree
+    ch: ContentHandler
+    et: _ElementTree
+    el: _Element
+    p = Producer({{ args }})
+    reveal_type(p)  # N: Revealed type is "lxml.sax.ElementTreeProducer"
+
+- case: producer_constructor_badargs
+  expect_fail: true
+  parametrized:
+    - args: el
+    - args: et, ch, 1
+    - args: el, ch, badarg=None
+    - args: 1, ch
+    - args: el, 1
+  main: |
+    from lxml.sax import ElementTreeProducer as Producer
+    from xml.sax.handler import ContentHandler
+    from lxml.etree import _Element, _ElementTree
+    ch: ContentHandler
+    et: _ElementTree
+    el: _Element
+    p = Producer({{ args }})
+
+- case: producer_saxify
+  main: |
+    from lxml.sax import ElementTreeProducer as Producer
+    from xml.sax.handler import ContentHandler
+    from lxml.etree import _Element, _ElementTree
+    ch: ContentHandler
+    et: _ElementTree
+    el: _Element
+    p = Producer(el, ch)
+    _ = p.saxify()  # E: "saxify" of "ElementTreeProducer" does not return a value
+    p.saxify(1)  # E: Too many arguments for "saxify" of "ElementTreeProducer"
+
+- case: saxify_func_goodargs
+  parametrized:
+    - args: el, ch
+    - args: et, ch
+    - args: el, content_handler=ch
+    - args: element_or_tree=et, content_handler=ch
+  main: |
+    from xml.sax.handler import ContentHandler
+    from lxml.sax import saxify
+    from lxml.etree import _Element, _ElementTree
+    class MyHandler(ContentHandler): ...
+    ch: MyHandler
+    et: _ElementTree
+    el: _Element
+    _ = saxify({{ args }})  # E: "saxify" does not return a value
+
+- case: saxify_func_badargs
+  expect_fail: true
+  parametrized:
+    - args: el
+    - args: et, ch, 1
+    - args: el, ch, badarg=None
+    - args: 1, ch
+    - args: el, 1
+  main: |
+    from xml.sax.handler import ContentHandler
+    from lxml.sax import saxify
+    from lxml.etree import _Element, _ElementTree
+    class MyHandler(ContentHandler): ...
+    ch: MyHandler
+    et: _ElementTree
+    el: _Element
+    saxify({{ args }})
