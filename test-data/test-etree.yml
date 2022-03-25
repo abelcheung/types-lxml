@@ -131,11 +131,7 @@
 
 - case: docinfo_methods
   main: |
-    from lxml.etree import DocInfo, _Element, _ElementTree
-    et: _ElementTree
-    el: _Element
-    reveal_type(DocInfo(et))  # N: Revealed type is "lxml.etree.DocInfo"
-    reveal_type(DocInfo(el))  # N: Revealed type is "lxml.etree.DocInfo"
+    from lxml.etree import DocInfo
     d: DocInfo
     d.clear()
 
