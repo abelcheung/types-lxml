@@ -272,6 +272,7 @@ class _Element(Collection[_Element], Reversible[_Element]):
     def makeelement(
         self,
         _tag: _TagName,
+        /,
         # Final result is sort of like {**attrib, **_extra}
         attrib: SupportsLaxedItems[str, _AnyStr] | None = ...,
         nsmap: _NSMapArg | None = ...,
@@ -307,6 +308,7 @@ class _Element(Collection[_Element], Reversible[_Element]):
     def xpath(
         self,
         _path: _AnyStr,
+        /,
         *,
         namespaces: _NonDefaultNSMapArg | None = ...,
         extensions: _XPathExtFuncArg | None = ...,
@@ -418,6 +420,7 @@ class _ElementTree:
     def xpath(
         self,
         _path: _AnyStr,
+        /,
         *,
         namespaces: _NonDefaultNSMapArg | None = ...,
         extensions: _XPathExtFuncArg | None = ...,
@@ -427,6 +430,7 @@ class _ElementTree:
     def xslt(
         self,
         _xslt: _ElementOrTree,
+        /,
         extensions: Any = ...,  # TODO XSLT extension type
         access_control: XSLTAccessControl | None = ...,
         **_kw: Any,
@@ -532,8 +536,10 @@ class XSLT:
     def __call__(
         self,
         _input: _ElementOrTree,
+        /,
+        *,
         profile_run: bool = ...,
-        **kwargs: _AnyStr | _XSLTQuotedStringParam,
+        **kw: _AnyStr | _XSLTQuotedStringParam,
     ) -> _XSLTResultTree: ...
     @staticmethod
     def strparam(s: _AnyStr) -> _XSLTQuotedStringParam: ...
@@ -599,6 +605,7 @@ PI = ProcessingInstruction
 def Entity(name: _AnyStr) -> _Entity: ...
 def Element(  # Args identical to _Element.makeelement
     _tag: _TagName,
+    /,
     attrib: SupportsLaxedItems[str, _AnyStr] | None = ...,
     nsmap: _NSMapArg | None = ...,
     **_extra: _AnyStr,
@@ -606,6 +613,7 @@ def Element(  # Args identical to _Element.makeelement
 def SubElement(
     _parent: _Element,
     _tag: _TagName,
+    /,
     attrib: SupportsLaxedItems[str, _AnyStr] | None = ...,
     nsmap: _NSMapArg | None = ...,
     **_extra: _AnyStr,

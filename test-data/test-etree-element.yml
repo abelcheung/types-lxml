@@ -533,7 +533,7 @@
       b: b,
       s: 1,
     }
-    _ = elem.makeelement()  # E: Missing positional argument "_tag" in call to "makeelement" of "_Element"
+    _ = elem.makeelement()  # E: Too few arguments for "makeelement" of "_Element"
     _ = elem.makeelement(None)  # E: Argument 1 to "makeelement" of "_Element" has incompatible type "None"; expected "Union[str, bytes, QName]"
     _ = elem.makeelement(s, foo=1)  # E: Argument "foo" to "makeelement" of "_Element" has incompatible type "int"; expected "Union[str, bytes]"
     _ = elem.makeelement(s, bad_attrib)  # E: Argument 2 to "makeelement" of "_Element" has incompatible type "Dict[Sequence[object], object]"; expected "Optional[SupportsLaxedItems[str, Union[str, bytes]]]"

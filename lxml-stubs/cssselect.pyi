@@ -39,5 +39,6 @@ class CSSSelector(XPath):
     def __call__(
         self,
         _etree_or_element: _ElementOrTree,
+        /,
         **_variables: _XPathVarArg,
     ) -> list[_Element]: ...  # XPath() returns XPathObject

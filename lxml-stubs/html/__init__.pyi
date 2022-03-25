@@ -228,6 +228,7 @@ class HtmlElement(HtmlMixin, etree.ElementBase):  # type: ignore[misc]
     def makeelement(
         self,
         _tag: _TagName,
+        /,
         attrib: SupportsLaxedItems[str, _AnyStr] | None = ...,
         nsmap: _NSMapArg | None = ...,
         **_extra: _AnyStr,
@@ -522,6 +523,7 @@ class HTMLParser(etree.HTMLParser[HtmlElement]):
     def makeelement(
         self,
         _tag: _TagName,
+        /,
         attrib: SupportsLaxedItems[str, _AnyStr] | None = ...,
         nsmap: _NSMapArg | None = ...,
         **_extra: _AnyStr,
@@ -554,6 +556,7 @@ class XHTMLParser(etree.XMLParser[HtmlElement]):
     def makeelement(
         self,
         _tag: _TagName,
+        /,
         attrib: SupportsLaxedItems[str, _AnyStr] | None = ...,
         nsmap: _NSMapArg | None = ...,
         **_extra: _AnyStr,
@@ -567,6 +570,7 @@ xhtml_parser: XHTMLParser
 # Signature same as etree.Element
 def Element(
     _tag: _TagName,
+    /,
     attrib: SupportsLaxedItems[str, _AnyStr] | None = ...,
     nsmap: _NSMapArg | None = ...,
     **extra: _AnyStr,

@@ -384,7 +384,7 @@
   main: |
     from lxml import etree
     tree: etree._ElementTree
-    tree.xpath()  # ER: Missing positional argument .+
+    tree.xpath()  # E: Too few arguments for "xpath" of "_ElementTree"
 
 - case: xpath_badarg
   expect_fail: true
