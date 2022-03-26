@@ -6,10 +6,7 @@ on:
       - '.gitignore'
       - 'README.md'
       - 'LICENSE'
-    branches-ignore:
-      - master
-    tags:
-      - 20**
+  pull_request:
 
 jobs:
   build:
