@@ -3,6 +3,7 @@ from typing import (
     Any,
     Callable,
     Collection,
+    Generic,
     Iterable,
     Iterator,
     Mapping,
@@ -13,6 +14,7 @@ from typing import (
     overload,
 )
 
+from lxml.html import HtmlElement
 from typing_extensions import Literal, TypeGuard, final
 
 from .._types import (
@@ -87,8 +89,12 @@ from ._xpath import (
 #
 
 _T = TypeVar("_T")
-_ET = TypeVar("_ET", bound=_Element)
 _T_co = TypeVar("_T_co", covariant=True)
+_ET = TypeVar("_ET", bound=_Element)
+# Assumes ElementTree contains a coherent tree (either all XML nodes
+# or all HTML nodes). Theorectically possible to construct a hybrid tree
+# that contains both type of node, but this is rarely useful at all
+_ETree_T = TypeVar("_ETree_T", _Element, HtmlElement)
 
 # Note that _TagSelector filters element type not by classes,
 # but checks for element _factory functions_ instead
@@ -107,7 +113,8 @@ _KnownEncodings = Literal[
     "US-ASCII",
     "us-ascii",
 ]
-_ElementOrTree = _Element | _ElementTree
+_ElementOrXMLTree = _Element | _ElementTree[_Element]
+_ElementOrAnyTree = _Element | _ElementTree[Any]
 
 DEBUG: int
 LIBXSLT_VERSION: tuple[int, int, int]
@@ -258,7 +265,7 @@ class _Element(Collection[_Element], Reversible[_Element]):
         *tags: _TagSelector,
         reversed: bool = ...,
     ) -> Iterator[_Element]: ...
-    def getroottree(self) -> _ElementTree: ...
+    def getroottree(self) -> _ElementTree[_Element]: ...
     def iter(
         self, tag: _TagSelector | None = ..., *tags: _TagSelector
     ) -> Iterator[_Element]: ...
@@ -328,7 +335,9 @@ class _Element(Collection[_Element], Reversible[_Element]):
     #     *tags: _TagSelector,
     # ) -> Iterator[_Element]: ...
 
-class _ElementTree:
+# ET definition is now specialized, indicating whether it contains
+# a tree of XML elements or tree of HTML elements.
+class _ElementTree(Generic[_ETree_T]):
     @property
     def parser(self) -> _DefEtreeParsers[_Element] | None: ...
     @property
@@ -341,7 +350,7 @@ class _ElementTree:
         base_url: _AnyStr | None = ...,
     ) -> None: ...
     def _setroot(self, root: _Element) -> None: ...
-    def getroot(self) -> _Element: ...  # TODO specialization
+    def getroot(self) -> _ETree_T: ...
     # Special notes for write()
     # BUG: exception for the following combination
     #      - file argument is file name or path like, and
@@ -388,14 +397,19 @@ class _ElementTree:
     ) -> None: ...
     def getpath(self, element: _Element) -> str: ...
     def getelementpath(self, element: _Element) -> str: ...
-    # Following ET methods calls the same method on root node,
-    # so signature should be the same as _Element ones
+    # FIXME _ElementTree.iter() signature is incorrect for HTML tree.
+    # For basic XML _Element it is fine, but HTML comment, entity etc
+    # do _not_ inherit from HtmlElement, so should be union
     def iter(
         self, tag: _TagSelector | None = ..., *tags: _TagSelector
-    ) -> Iterator[_Element]: ...
+    ) -> Iterator[_ETree_T]: ...
+    #
+    # ElementPath methods calls the same method on root node,
+    # so signature should be the same as _Element ones
+    #
     def find(
         self, path: _ElemPathArg, namespaces: _NSMapArg | None = ...
-    ) -> _Element | None: ...
+    ) -> _ETree_T | None: ...
     @overload
     def findtext(
         self,
@@ -412,10 +426,10 @@ class _ElementTree:
     ) -> str | _T: ...
     def findall(
         self, path: _ElemPathArg, namespaces: _NSMapArg | None = ...
-    ) -> list[_Element]: ...
+    ) -> list[_ETree_T]: ...
     def iterfind(
         self, path: _ElemPathArg, namespaces: _NSMapArg | None = ...
-    ) -> Iterator[_Element]: ...
+    ) -> Iterator[_ETree_T]: ...
     def xpath(
         self,
         _path: _AnyStr,
@@ -428,14 +442,14 @@ class _ElementTree:
     ) -> _XPathObject: ...
     def xslt(
         self,
-        _xslt: _ElementOrTree,
+        _xslt: _ElementOrXMLTree,
         /,
         extensions: Any = ...,  # TODO XSLT extension type
         access_control: XSLTAccessControl | None = ...,
         **_kw: Any,
-    ) -> _ElementTree: ...
-    def relaxng(self, relaxng: _ElementOrTree) -> bool: ...
-    def xmlschema(self, xmlschema: _ElementOrTree) -> bool: ...
+    ) -> _ElementTree[_Element]: ...
+    def relaxng(self, relaxng: _ElementOrXMLTree) -> bool: ...
+    def xmlschema(self, xmlschema: _ElementOrXMLTree) -> bool: ...
     def xinclude(self) -> None: ...
     #
     # Deprecated methods
@@ -518,7 +532,7 @@ class QName:
     def __le__(self, other: _TagName) -> bool: ...
     def __lt__(self, other: _TagName) -> bool: ...
 
-class _XSLTResultTree(_ElementTree, SupportsBytes):
+class _XSLTResultTree(_ElementTree[_Element], SupportsBytes):
     def __bytes__(self) -> bytes: ...
 
 class _XSLTQuotedStringParam: ...
@@ -527,14 +541,14 @@ class XSLTAccessControl: ...
 class XSLT:
     def __init__(
         self,
-        xslt_input: _ElementOrTree,
-        extensions: Any = ...,
+        xslt_input: _ElementOrXMLTree,
+        extensions: Any = ...,  # TODO XSLT extension type
         regexp: bool = ...,
         access_control: XSLTAccessControl = ...,
     ) -> None: ...
     def __call__(
         self,
-        _input: _ElementOrTree,
+        _input: _ElementOrXMLTree,
         /,
         *,
         profile_run: bool = ...,
@@ -618,7 +632,7 @@ def SubElement(
     **_extra: _AnyStr,
 ) -> _Element: ...
 @overload  # from element, parser ignored
-def ElementTree(element: _Element) -> _ElementTree: ...
+def ElementTree(element: _ETree_T) -> _ElementTree[_ETree_T]: ...
 @overload  # from file source, custom parser
 def ElementTree(
     element: None = ...,
@@ -632,14 +646,14 @@ def ElementTree(
     *,
     file: _FileReadSource,
     parser: None = ...,
-) -> _ElementTree: ...
+) -> _ElementTree[_Element]: ...
 @overload  # empty tree, parser must produce valid element
 def ElementTree(
     element: None = ...,
     *,
     file: None = ...,
-    parser: _DefEtreeParsers[_Element] | None = ...,
-) -> _ElementTree: ...
+    parser: _DefEtreeParsers[_ETree_T] | None = ...,
+) -> _ElementTree[_ETree_T]: ...
 @overload
 def HTML(
     text: _AnyStr,
@@ -669,7 +683,7 @@ def XML(
     base_url: _AnyStr | None = ...,
 ) -> _Element: ...
 def cleanup_namespaces(
-    tree_or_element: _ElementOrTree,
+    tree_or_element: _ElementOrAnyTree,
     top_nsmap: _NSMapArg | None = ...,
     keep_ns_prefixes: Iterable[_AnyStr] | None = ...,
 ) -> None: ...
@@ -686,7 +700,7 @@ def parse(
     parser: None = ...,
     *,
     base_url: _AnyStr | None = ...,
-) -> _ElementTree: ...
+) -> _ElementTree[_Element]: ...
 @overload
 def fromstring(
     text: _AnyStr,
@@ -703,7 +717,7 @@ def fromstring(
 ) -> _Element: ...
 @overload  # Native str, no XML declaration
 def tostring(
-    element_or_tree: _ElementOrTree,
+    element_or_tree: _ElementOrAnyTree,
     *,
     encoding: type[str] | Literal["unicode"],
     method: _OutputMethodArg = ...,
@@ -714,7 +728,7 @@ def tostring(
 ) -> str: ...
 @overload  # byte str, no XML declaration
 def tostring(
-    element_or_tree: _ElementOrTree,
+    element_or_tree: _ElementOrAnyTree,
     *,
     encoding: _KnownEncodings | None = ...,
     method: _OutputMethodArg = ...,
@@ -729,7 +743,7 @@ def tostring(
 # some arguments would even raise exception outright if specified.
 @overload  # method="c14n"
 def tostring(
-    element_or_tree: _ElementOrTree,
+    element_or_tree: _ElementOrAnyTree,
     *,
     method: Literal["c14n"],
     exclusive: bool = ...,
@@ -738,7 +752,7 @@ def tostring(
 ) -> bytes: ...
 @overload  # method="c14n2"
 def tostring(
-    element_or_tree: _ElementOrTree,
+    element_or_tree: _ElementOrAnyTree,
     *,
     method: Literal["c14n2"],
     with_comments: bool = ...,
@@ -746,7 +760,7 @@ def tostring(
 ) -> bytes: ...
 @overload  # catch all
 def tostring(
-    element_or_tree: _ElementOrTree,
+    element_or_tree: _ElementOrAnyTree,
     *,
     encoding: str | type[str] = ...,
     method: str = ...,
@@ -770,21 +784,21 @@ class DocumentInvalid(LxmlError): ...
 class LxmlSyntaxError(LxmlError, SyntaxError): ...
 
 class _Validator(metaclass=ABCMeta):
-    def assert_(self, etree: _ElementOrTree) -> None: ...
-    def assertValid(self, etree: _ElementOrTree) -> None: ...
-    def validate(self, etree: _ElementOrTree) -> bool: ...
+    def assert_(self, etree: _ElementOrAnyTree) -> None: ...
+    def assertValid(self, etree: _ElementOrAnyTree) -> None: ...
+    def validate(self, etree: _ElementOrAnyTree) -> bool: ...
     @property
     def error_log(self) -> _ErrorLog: ...
     # all methods implicitly require a concrete __call__()
     # implementation in subclasses in order to be usable
     @abstractmethod
-    def __call__(self, etree: _ElementOrTree) -> bool: ...
+    def __call__(self, etree: _ElementOrAnyTree) -> bool: ...
 
 class DTD(_Validator):
     def __init__(
         self, file: _FileReadSource = ..., *, external_id: Any = ...
     ) -> None: ...
-    def __call__(self, etree: _ElementOrTree) -> bool: ...
+    def __call__(self, etree: _ElementOrAnyTree) -> bool: ...
 
 class TreeBuilder(ParserTarget[_Element]):
     def __init__(

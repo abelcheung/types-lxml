@@ -2,7 +2,7 @@
 # Internal classes and functions from lxml/xpath.pxi
 #
 
-from typing import overload
+from typing import Any, overload
 
 from .._types import (
     _AnyStr,
@@ -11,7 +11,7 @@ from .._types import (
     _XPathObject,
     _XPathVarArg,
 )
-from . import LxmlError, LxmlSyntaxError, _Element, _ElementOrTree, _ElementTree
+from . import LxmlError, LxmlSyntaxError, _Element, _ElementOrAnyTree, _ElementTree
 from ._xmlerror import _ErrorLog
 
 # TODO Belongs to extensions.pxi, to be moved
@@ -34,7 +34,7 @@ class XPath(_XPathEvaluatorBase):
         smart_strings: bool = ...,
     ) -> None: ...
     def __call__(
-        self, _etree_or_element: _ElementOrTree, /, **_variables: _XPathVarArg
+        self, _etree_or_element: _ElementOrAnyTree, /, **_variables: _XPathVarArg
     ) -> _XPathObject: ...
     @property
     def path(self) -> str: ...
@@ -59,14 +59,16 @@ class XPathElementEvaluator(_XPathEvaluatorBase):
         regexp: bool = ...,
         smart_strings: bool = ...,
     ) -> None: ...
-    def __call__(self, _path: _AnyStr, /, **_variables: _XPathVarArg) -> _XPathObject: ...
+    def __call__(
+        self, _path: _AnyStr, /, **_variables: _XPathVarArg
+    ) -> _XPathObject: ...
     def register_namespace(self, prefix: _AnyStr, uri: _AnyStr) -> None: ...
     def register_namespaces(self, namespaces: _NonDefaultNSMapArg | None) -> None: ...
 
 class XPathDocumentEvaluator(XPathElementEvaluator):
     def __init__(
         self,
-        etree: _ElementTree,
+        etree: _ElementTree[Any],
         *,
         namespaces: _NonDefaultNSMapArg | None = ...,
         extensions: _XPathExtFuncArg | None = ...,
@@ -85,7 +87,7 @@ def XPathEvaluator(
 ) -> XPathElementEvaluator: ...
 @overload
 def XPathEvaluator(
-    etree_or_element: _ElementTree,
+    etree_or_element: _ElementTree[Any],
     *,
     namespaces: _NonDefaultNSMapArg | None = ...,
     extensions: _XPathExtFuncArg | None = ...,
@@ -94,7 +96,7 @@ def XPathEvaluator(
 ) -> XPathDocumentEvaluator: ...
 @overload
 def XPathEvaluator(
-    etree_or_element: _ElementOrTree,
+    etree_or_element: _ElementOrAnyTree,
     *,
     namespaces: _NonDefaultNSMapArg | None = ...,
     extensions: _XPathExtFuncArg | None = ...,

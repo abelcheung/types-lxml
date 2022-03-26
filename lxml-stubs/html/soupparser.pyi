@@ -18,7 +18,7 @@ def parse(
     beautifulsoup: type[BeautifulSoup] | None = ...,
     makeelement: _ElemFactory[HtmlElement] | None = ...,
     **bsargs: Any
-) -> _ElementTree: ...
+) -> _ElementTree[HtmlElement]: ...
 def convert_tree(
     beautiful_soup_tree: BeautifulSoup,
     makeelement: _ElemFactory[HtmlElement] | None = ...,

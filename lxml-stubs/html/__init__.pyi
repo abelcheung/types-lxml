@@ -21,7 +21,7 @@ from typing import (
     overload,
 )
 
-from typing_extensions import Literal
+from typing_extensions import Literal, TypeAlias
 
 from .. import etree
 from .._types import (
@@ -43,6 +43,8 @@ _T = TypeVar("_T")
 
 _HANDLE_FAILURES = Literal["ignore", "discard"]
 _FormValues = list[tuple[str, str]]
+_HtmlElemOrTree: TypeAlias = HtmlElement | etree._ElementTree[HtmlElement]
+
 XHTML_NAMESPACE: str
 
 class Classes(MutableSet[str]):
@@ -233,6 +235,7 @@ class HtmlElement(HtmlMixin, etree.ElementBase):  # type: ignore[misc]
         nsmap: _NSMapArg | None = ...,
         **_extra: _AnyStr,
     ) -> HtmlElement: ...
+    def getroottree(self) -> etree._ElementTree[HtmlElement]: ...  # type: ignore[override]
     #
     # ElementPath API in lxml doesn't include Comment and such in result
     # https://bugs.launchpad.net/lxml/+bug/1921675
@@ -251,9 +254,14 @@ class HtmlElement(HtmlMixin, etree.ElementBase):  # type: ignore[misc]
         namespaces: _NSMapArg | None = ...,
     ) -> Iterator[HtmlElement]: ...
 
-class HtmlComment(HtmlMixin, etree.CommentBase): ...  # type: ignore[misc]
-class HtmlEntity(HtmlMixin, etree.EntityBase): ...  # type: ignore[misc]
-class HtmlProcessingInstruction(HtmlMixin, etree.PIBase): ...  # type: ignore[misc]
+class HtmlComment(HtmlMixin, etree.CommentBase):  # type: ignore[misc]
+    def getroottree(self) -> etree._ElementTree[HtmlElement]: ...  # type: ignore[override]
+
+class HtmlEntity(HtmlMixin, etree.EntityBase):  # type: ignore[misc]
+    def getroottree(self) -> etree._ElementTree[HtmlElement]: ...  # type: ignore[override]
+
+class HtmlProcessingInstruction(HtmlMixin, etree.PIBase):  # type: ignore[misc]
+    def getroottree(self) -> etree._ElementTree[HtmlElement]: ...  # type: ignore[override]
 
 _AnyHtmlElement = HtmlComment | HtmlElement | HtmlEntity | HtmlProcessingInstruction
 
@@ -316,7 +324,7 @@ def parse(
     parser: HTMLParser | XHTMLParser | None = ...,
     base_url: str | None = ...,
     **kw: Any,  # seems unused
-) -> etree._ElementTree: ...
+) -> etree._ElementTree[HtmlElement]: ...
 
 #
 # Form handling
@@ -445,8 +453,8 @@ class LabelElement(HtmlElement):
     @for_element.setter
     def for_element(self, __v: HtmlElement) -> None: ...
 
-def html_to_xhtml(html: etree._ElementOrTree) -> None: ...
-def xhtml_to_html(xhtml: etree._ElementOrTree) -> None: ...
+def html_to_xhtml(html: _HtmlElemOrTree) -> None: ...
+def xhtml_to_html(xhtml: _HtmlElemOrTree) -> None: ...
 
 # 1. Encoding issue is similar to etree.tostring().
 #
@@ -463,7 +471,7 @@ def xhtml_to_html(xhtml: etree._ElementOrTree) -> None: ...
 #    better to let etree.tostring() handle C14N.
 @overload  # encoding=str, encoding="unicode"
 def tostring(
-    doc: etree._ElementOrTree,
+    doc: _HtmlElemOrTree,
     *,
     pretty_print: bool = ...,
     include_meta_content_type: bool = ...,
@@ -472,9 +480,9 @@ def tostring(
     with_tail: bool = ...,
     doctype: str | None = ...,
 ) -> str: ...
-@overload  # encoding="<others>", encoding=None, no encoding arg
+@overload  # encoding="..." / None, no encoding arg
 def tostring(
-    doc: etree._ElementOrTree,
+    doc: _HtmlElemOrTree,
     *,
     pretty_print: bool = ...,
     include_meta_content_type: bool = ...,
@@ -485,7 +493,7 @@ def tostring(
 ) -> bytes: ...
 @overload  # catch all
 def tostring(
-    doc: etree._ElementOrTree,
+    doc: _HtmlElemOrTree,
     *,
     pretty_print: bool = ...,
     include_meta_content_type: bool = ...,
@@ -497,7 +505,7 @@ def tostring(
 
 # Intended for debugging only
 def open_in_browser(
-    doc: etree._ElementOrTree, encoding: str | type[str] | None = ...
+    doc: _HtmlElemOrTree, encoding: str | type[str] | None = ...
 ) -> None: ...
 
 # Custom parser target support is stripped here, otherwise it would
