@@ -22,47 +22,61 @@
     ext2 = {(s, s): extfunc2}
     result = XPath({{ args }})
 
-- case: xpath_create_evaluator_for_element
+- case: create_evaluator_matched
+  parametrized:
+    - ev_type: XPathElementEvaluator
+      arg: root
+    - ev_type: XPathDocumentEvaluator
+      arg: tree
   main: |
     from lxml import etree
-    s: str
-    root = etree.XML(s)
-    f = open("myfile.txt", "r")
-    doc = etree.parse(f)
-    evaluator = etree.XPathElementEvaluator(root)
-    reveal_type(evaluator)  # N: Revealed type is "lxml.etree._xpath.XPathElementEvaluator"
-    evaluator = etree.XPathElementEvaluator(doc)  # E: Argument 1 to "XPathElementEvaluator" has incompatible type "_ElementTree"; expected "_Element"
+    root: etree._Element
+    tree: etree._ElementTree[etree._Element]
+    evaluator = etree.{{ ev_type }}({{ arg }})
+    reveal_type(evaluator)  # N: Revealed type is "lxml.etree._xpath.{{ ev_type }}"
 
-- case: xpath_create_evaluator_for_document
+- case: create_evaluator_mismatch
+  parametrized:
+    - evaluator_t: XPathElementEvaluator
+      arg: tree
+      wrong_t: "_ElementTree[_Element]"
+      expect_t: _Element
+    - evaluator_t: XPathDocumentEvaluator
+      arg: root
+      wrong_t: _Element
+      expect_t: "_ElementTree[Any]"
+    - evaluator_t: XPathElementEvaluator
+      arg: 1
+      wrong_t: int
+      expect_t: "_Element"
+    - evaluator_t: XPathDocumentEvaluator
+      arg: 1
+      wrong_t: int
+      expect_t: "_ElementTree[Any]"
   main: |
     from lxml import etree
-    s: str
-    root = etree.XML(s)
-    f = open("myfile.txt", "r")
-    doc = etree.parse(f)
-    evaluator = etree.XPathDocumentEvaluator(doc)
-    reveal_type(evaluator)  # N: Revealed type is "lxml.etree._xpath.XPathDocumentEvaluator"
-    evaluator = etree.XPathDocumentEvaluator(root)  # E: Argument 1 to "XPathDocumentEvaluator" has incompatible type "_Element"; expected "_ElementTree"
+    root: etree._Element
+    tree: etree._ElementTree[etree._Element]
+    _ = etree.{{ evaluator_t }}({{ arg }})  # E: Argument 1 to "{{ evaluator_t }}" has incompatible type "{{ wrong_t }}"; expected "{{ expect_t }}"
 
-- case: xpath_create_evaluator_autodetect
+- case: create_evaluator_autodetect
   parametrized:
     - arg: root
       rt: lxml.etree._xpath.XPathElementEvaluator
-    - arg: doc
+    - arg: tree
       rt: lxml.etree._xpath.XPathDocumentEvaluator
   main: |
     from lxml import etree
     root: etree._Element
-    doc: etree._ElementTree
+    tree: etree._ElementTree[etree._Element]
     evaluator = etree.XPathEvaluator({{ arg }})
     reveal_type(evaluator)  # N: Revealed type is "{{ rt }}"
 
 - case: xpath_create_evaluator_bad_type
   expect_fail: true  # No overload variant
-  regex: no
   main: |
     from lxml import etree
-    evaluator = etree.XPathEvaluator('fail_here')  # NR: Revealed type is .+
+    evaluator = etree.XPathEvaluator('fail_here')
 
 - case: xpath_evaluation_result
   main: |

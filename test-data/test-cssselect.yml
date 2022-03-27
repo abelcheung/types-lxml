@@ -12,13 +12,22 @@
     reveal_type({{ val }})  # N: Revealed type is "{{ rt }}"
 
 - case: cssselect_evaluation_of_selector
+  parametrized:
+    - input_type: _Element
+      rt: lxml.etree._Element
+    - input_type: "_ElementTree[_Element]"
+      rt: lxml.etree._Element
+    - input_type: HtmlElement
+      rt: lxml.html.HtmlElement
+    - input_type: "_ElementTree[HtmlElement]"
+      rt: lxml.html.HtmlElement
   main: |
-    from lxml import etree
+    from lxml.etree import _Element, _ElementTree
+    from lxml.html import HtmlElement
     from lxml.cssselect import CSSSelector
     sel: CSSSelector
-    document: etree._Element
-    result = sel(document)
-    reveal_type(result)  # N: Revealed type is "builtins.list[lxml.etree._Element]"
+    input: {{ input_type }}
+    reveal_type(sel(input))  # N: Revealed type is "builtins.list[{{ rt }}]"
 
 - case: etree_cssselect_method
   main: |

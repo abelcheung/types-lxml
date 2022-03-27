@@ -91,9 +91,9 @@
     - args: "file=fileio, parser=p4"
       rt: "lxml.etree._Element*"
     - args: "parser=p3"
-      rt: "lxml.etree._ElementTree"
+      rt: "lxml.etree._ElementTree[lxml.etree._Element*]"
     - args: "file=None, parser=p4"
-      rt: "lxml.etree._ElementTree"
+      rt: "lxml.etree._ElementTree[lxml.etree._Element*]"
   main: |
     from typing import List
     from lxml import etree

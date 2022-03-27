@@ -548,7 +548,7 @@
     - method: getprevious
       rt: Union[lxml.etree._Element, None]
     - method: getroottree
-      rt: lxml.etree._ElementTree
+      rt: "lxml.etree._ElementTree[lxml.etree._Element]"
   main: |
     from lxml import etree
     elem: etree._Element

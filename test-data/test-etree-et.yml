@@ -14,11 +14,11 @@
   main: |
     from lxml.etree import _ElementTree, _Element
     root: _Element
-    et: _ElementTree
+    et: _ElementTree[_Element]
     r = et.xinclude()  # E: "xinclude" of "_ElementTree" does not return a value
     r = et._setroot(root)  # E: "_setroot" of "_ElementTree" does not return a value
-    reveal_type(et.getroot())  # N: Revealed type is "lxml.etree._Element"
-    et._setroot(et)  # E: Argument 1 to "_setroot" of "_ElementTree" has incompatible type "_ElementTree"; expected "_Element"
+    reveal_type(et.getroot())  # N: Revealed type is "lxml.etree._Element*"
+    et._setroot(et)  # E: Argument 1 to "_setroot" of "_ElementTree" has incompatible type "_ElementTree[_Element]"; expected "_Element"
 
 - case: no_arg_or_return_methods_toomanyargs
   parametrized:
@@ -41,11 +41,11 @@
   main: |
     from lxml.etree import _ElementTree, _Element
     root: _Element
-    et: _ElementTree
+    et: _ElementTree[_Element]
     r = et.{{ method }}(root)
     reveal_type(r)  # N: Revealed type is "builtins.str"
     r = et.{{ method }}()  # E: Missing positional argument "element" in call to "{{ method }}" of "_ElementTree"
-    r = et.{{ method }}(et)  # E: Argument 1 to "{{ method }}" of "_ElementTree" has incompatible type "_ElementTree"; expected "_Element"
+    r = et.{{ method }}(et)  # E: Argument 1 to "{{ method }}" of "_ElementTree" has incompatible type "_ElementTree[_Element]"; expected "_Element"
     r = et.{{ method }}(root, None)  # E: Too many arguments for "{{ method }}" of "_ElementTree"
 
 - case: validate_family
@@ -55,64 +55,64 @@
   main: |
     from lxml.etree import _ElementTree, _Element
     root: _Element
-    et: _ElementTree
+    et: _ElementTree[_Element]
     r = et.{{ method }}(root)
     reveal_type(r)  # N: Revealed type is "builtins.bool"
     r = et.{{ method }}(et)
     reveal_type(r)  # N: Revealed type is "builtins.bool"
     r = et.{{ method }}()  # E: Missing positional argument "{{ method }}" in call to "{{ method }}" of "_ElementTree"
-    r = et.{{ method }}(None)  # E: Argument 1 to "{{ method }}" of "_ElementTree" has incompatible type "None"; expected "Union[_Element, _ElementTree]"
+    r = et.{{ method }}(None)  # E: Argument 1 to "{{ method }}" of "_ElementTree" has incompatible type "None"; expected "Union[_Element, _ElementTree[_Element]]"
 
 - case: elementpath_family
   parametrized:
     - method: find
       args: path
-      rt: Union[lxml.etree._Element, None]
+      rt: "Union[lxml.etree._Element*, None]"
     - method: find
       args: tag
-      rt: Union[lxml.etree._Element, None]
+      rt: "Union[lxml.etree._Element*, None]"
     - method: find
       args: path=path
-      rt: Union[lxml.etree._Element, None]
+      rt: "Union[lxml.etree._Element*, None]"
     - method: find
       args: path, nsmap
-      rt: Union[lxml.etree._Element, None]
+      rt: "Union[lxml.etree._Element*, None]"
     - method: find
       args: tag, namespaces=nsmap
-      rt: Union[lxml.etree._Element, None]
+      rt: "Union[lxml.etree._Element*, None]"
     - method: findall
       args: path
-      rt: builtins.list[lxml.etree._Element]
+      rt: "builtins.list[lxml.etree._Element*]"
     - method: findall
       args: tag
-      rt: builtins.list[lxml.etree._Element]
+      rt: "builtins.list[lxml.etree._Element*]"
     - method: findall
       args: path=path
-      rt: builtins.list[lxml.etree._Element]
+      rt: "builtins.list[lxml.etree._Element*]"
     - method: findall
       args: path, nsmap
-      rt: builtins.list[lxml.etree._Element]
+      rt: "builtins.list[lxml.etree._Element*]"
     - method: findall
       args: tag, namespaces=nsmap
-      rt: builtins.list[lxml.etree._Element]
+      rt: "builtins.list[lxml.etree._Element*]"
     - method: iterfind
       args: path
-      rt: typing.Iterator[lxml.etree._Element]
+      rt: "typing.Iterator[lxml.etree._Element*]"
     - method: iterfind
       args: tag
-      rt: typing.Iterator[lxml.etree._Element]
+      rt: "typing.Iterator[lxml.etree._Element*]"
     - method: iterfind
       args: path=path
-      rt: typing.Iterator[lxml.etree._Element]
+      rt: "typing.Iterator[lxml.etree._Element*]"
     - method: iterfind
       args: path, nsmap
-      rt: typing.Iterator[lxml.etree._Element]
+      rt: "typing.Iterator[lxml.etree._Element*]"
     - method: iterfind
       args: tag, namespaces=nsmap
-      rt: typing.Iterator[lxml.etree._Element]
+      rt: "typing.Iterator[lxml.etree._Element*]"
   main: |
     from lxml import etree
-    et: etree._ElementTree
+    et: etree._ElementTree[etree._Element]
     path: str
     s: str
     tag: etree.QName
@@ -127,12 +127,12 @@
     - method: iterfind
   main: |
     from lxml import etree
-    et: etree._ElementTree
+    et: etree._ElementTree[etree._Element]
     ok_path: str
     bad_path: bytes
     bad_nsmap = {'a': 1}
     _ = et.{{ method }}(bad_path)  # E: Argument 1 to "{{ method }}" of "_ElementTree" has incompatible type "bytes"; expected "Union[str, QName]"
-    _ = et.{{ method }}(ok_path, bad_nsmap)  # E: Argument 2 to "{{ method }}" of "_ElementTree" has incompatible type "Dict[str, int]"; expected "Optional[Union[Mapping[None, Union[str, bytes]], Mapping[str, Union[str, bytes]], Mapping[Optional[str], Union[str, bytes]]]]"
+    _ = et.{{ method }}(ok_path, bad_nsmap)  # E: Argument 2 to "{{ method }}" of "_ElementTree" has incompatible type "Dict[str, int]"; expected "Union[Mapping[None, Union[str, bytes]], Mapping[str, Union[str, bytes]], Mapping[Optional[str], Union[str, bytes]], None]"
     _ = et.{{ method }}(ok_path, None, 1)  # E: Too many arguments for "{{ method }}" of "_ElementTree"
     _ = et.{{ method }}(ok_path, badarg=True)  # E: Unexpected keyword argument "badarg" for "{{ method }}" of "_ElementTree"
 
@@ -210,11 +210,19 @@
     url: str
     tree.parse({{ args }})
 
+# FIXME fix iter() for _ElementTree[HtmlElement], see stub comment
+
 - case: iter_noargs
+  parametrized:
+    - subtype: _Element
+      itr_t: "lxml.etree._Element*"
+    - subtype: HtmlElement
+      itr_t: "lxml.html.HtmlElement*"
   main: |
-    from lxml import etree
-    tree: etree._ElementTree
-    reveal_type(tree.iter())  # N: Revealed type is "typing.Iterator[lxml.etree._Element]"
+    from lxml.etree import _Element, _ElementTree
+    from lxml.html import HtmlElement
+    tree: _ElementTree[{{ subtype }}]
+    reveal_type(tree.iter())  # N: Revealed type is "typing.Iterator[{{ itr_t }}]"
 
 - case: iter
   parametrized:
@@ -223,13 +231,13 @@
     - args: factory1, tag1, factory2, tag2
   main: |
     from lxml import etree
-    tree: etree._ElementTree
+    tree: etree._ElementTree[etree._Element]
     tag1: str
     tag2: bytes
     tag3: etree.QName
     factory1 = etree.Comment
     factory2 = etree.Entity
-    reveal_type(tree.iter({{ args }}))  # N: Revealed type is "typing.Iterator[lxml.etree._Element]"
+    reveal_type(tree.iter({{ args }}))  # N: Revealed type is "typing.Iterator[lxml.etree._Element*]"
 
 - case: iter_badarg
   expect_fail: true
