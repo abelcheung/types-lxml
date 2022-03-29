@@ -1,0 +1,55 @@
+name: Publish releases
+
+on:
+  workflow_run:
+    workflows: [Build and test]
+    types: [completed]
+
+jobs:
+  release:
+    if: >
+      github.event.workflow_run.conclusion == 'success' &&
+      github.event.workflow_run.event == 'push' &&
+      startsWith(github.event.workflow_run.head_branch, '20')
+    runs-on: ubuntu-latest
+    steps:
+
+    - name: Download artifact from previous workflow
+      uses: dawidd6/action-download-artifact@v2
+      with:
+        workflow: test.yml
+        name: dist
+        path: dist
+        check_artifacts: true
+
+    - name: Publish draft GitHub release
+      uses: softprops/action-gh-release@v1
+      with:
+        fail_on_unmatched_files: true
+        draft: true
+        files: |
+          dist/*.whl
+          dist/*.tar.gz
+
+    - name: Publish to Test PyPI
+      if: >
+        contains(github.event.workflow_run.head_branch, 'dev') ||
+        contains(github.event.workflow_run.head_branch, 'pre')
+      uses: pypa/gh-action-pypi-publish@release/v1
+      with:
+        user: __token__
+        password: ${{ secrets.testpypi_token }}
+        repository_url: https://test.pypi.org/legacy/
+        verbose: true
+        print_hash: true
+
+    - name: Publish to PyPI
+      if: >
+        ! contains(github.event.workflow_run.head_branch, 'dev') &&
+        ! contains(github.event.workflow_run.head_branch, 'pre')
+      uses: pypa/gh-action-pypi-publish@release/v1
+      with:
+        user: __token__
+        password: ${{ secrets.pypi_token }}
+        verbose: true
+        print_hash: true
