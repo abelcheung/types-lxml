@@ -24,7 +24,7 @@ Head over to [release page](../../releases) and get wheel file (with extension `
 There are two special stub-only classes that do not exist as concrete class in `lxml`:
 
 1. `lxml.etree.ParserTarget`
-2. `lxml.etree._SmartStr`
+2. `lxml.etree.SmartStr`
 
 They are intended as helpers when writing code, wrapped under
 `if TYPE_CHECKING: ...`. Please consult their docstring in stub files for detail,

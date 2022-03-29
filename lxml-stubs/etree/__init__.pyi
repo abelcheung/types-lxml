@@ -124,15 +124,15 @@ LIBXML_COMPILED_VERSION: tuple[int, int, int]
 LXML_VERSION: tuple[int, int, int, int]
 __version__: str
 
-class _SmartStr(str):
+class SmartStr(str):
     """Smart string is a private str subclass documented in
     [return types](https://lxml.de/xpathxslt.html#xpath-return-values)
     of XPath evaluation result. This stub-only class can be utilized like:
 
     ```python
     if TYPE_CHECKING:
-        from lxml.etree import _SmartStr
-    def is_smart_str(s: str) -> TypeGuard[_SmartStr]:
+        from lxml.etree import SmartStr
+    def is_smart_str(s: str) -> TypeGuard[SmartStr]:
         return hasattr(s, 'getparent')
     if is_smart_str(result):
         parent = result.getparent() # identified as lxml.etree._Element
