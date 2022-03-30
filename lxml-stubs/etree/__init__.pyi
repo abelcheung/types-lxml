@@ -43,6 +43,12 @@ from ._classlookup import (
     FallbackElementClassLookup as FallbackElementClassLookup,
     PIBase as PIBase,
 )
+from ._cleanup import (
+    cleanup_namespaces as cleanup_namespaces,
+    strip_attributes as strip_attributes,
+    strip_elements as strip_elements,
+    strip_tags as strip_tags,
+)
 from ._parser import (
     ETCompatXMLParser as ETCompatXMLParser,
     HTMLParser as HTMLParser,
@@ -682,11 +688,6 @@ def XML(
     *,
     base_url: _AnyStr | None = ...,
 ) -> _Element: ...
-def cleanup_namespaces(
-    tree_or_element: _ElementOrAnyTree,
-    top_nsmap: _NSMapArg | None = ...,
-    keep_ns_prefixes: Iterable[_AnyStr] | None = ...,
-) -> None: ...
 @overload
 def parse(
     source: _FileReadSource,
