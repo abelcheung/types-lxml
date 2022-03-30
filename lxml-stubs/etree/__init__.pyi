@@ -716,6 +716,16 @@ def fromstring(
     *,
     base_url: _AnyStr = ...,
 ) -> _Element: ...
+@overload
+def fromstringlist(
+    strings: Iterable[_AnyStr],
+    parser: _DefEtreeParsers[_T_co],
+) -> _T_co: ...
+@overload
+def fromstringlist(
+    strings: Iterable[_AnyStr],
+    parser: None = ...,
+) -> _Element: ...
 @overload  # Native str, no XML declaration
 def tostring(
     element_or_tree: _ElementOrAnyTree,
@@ -818,3 +828,8 @@ class TreeBuilder(ParserTarget[_Element]):
     ) -> None: ...
 
 def iselement(element: Any) -> TypeGuard[_Element]: ...
+
+# Debugging only
+def dump(
+    elem: _Element, *, pretty_print: bool = ..., with_tail: bool = ...
+) -> None: ...
