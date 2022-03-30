@@ -1,26 +1,102 @@
-- case: xpath_create_simple
+- case: xpath_construct_simple
   main: |
     from lxml import etree
     expr: str
     xpath = etree.XPath(expr)
     reveal_type(xpath)  # N: Revealed type is "lxml.etree._xpath.XPath"
+    reveal_type(xpath.path)  # N: Revealed type is "builtins.str"
+    xpath.path = xpath.path  # E: Property "path" defined in "XPath" is read-only
 
-- case: xpath_create_args
+- case: xpath_construct_goodargs
   parametrized:
-    - args: expr, regexp=True, smart_strings=False
-    - args: path=expr, namespaces=ns
-    - args: expr, extensions=ext1
-    - args: expr, regexp=False, extensions=ext2, namespaces=ns
+    - args: s, regexp=True, smart_strings=False
+    - args: path=b, namespaces=ns
+    - args: s, extensions=ext1
+    - args: b, regexp=False, extensions=ext2, namespaces=ns
   main: |
     from lxml.etree import XPath
-    expr: str
     s: str
+    b: bytes
     ns = {s: s}
     def extfunc1(context, a) -> str: ...
     def extfunc2(context, a, b) -> int: ...
     ext1 = [{(None, s): extfunc1}]
     ext2 = {(s, s): extfunc2}
     result = XPath({{ args }})
+
+- case: xpath_construct_badargs
+  expect_fail: true
+  parametrized:
+    - args: None
+    - args: "s, None"
+    - args: "b, badarg=None"
+    - args: "s, namespaces={s: 1}"
+    - args: "b, extensions=badext"
+    - args: "s, regexp=o"
+    - args: "b, smart_string=o"
+  main: |
+    from lxml.etree import XPath
+    s: str
+    b: bytes
+    o: object
+    def extfunc(context, a) -> str: ...
+    badext = {(None, None): extfunc}
+    _ = XPath({{ args }})
+
+- case: etxpath_construct_simple
+  main: |
+    from lxml import etree
+    expr: str
+    xpath = etree.ETXPath(expr)
+    reveal_type(xpath)  # N: Revealed type is "lxml.etree._xpath.ETXPath"
+    reveal_type(xpath.path)  # N: Revealed type is "builtins.str"
+    xpath.path = xpath.path  # E: Property "path" defined in "XPath" is read-only
+
+- case: etxpath_construct_goodargs
+  parametrized:
+    - args: s, regexp=True, smart_strings=False
+    - args: path=b
+    - args: s, extensions=ext1
+    - args: b, regexp=False, extensions=ext2
+  main: |
+    from lxml.etree import ETXPath
+    s: str
+    b: bytes
+    def extfunc1(context, a) -> str: ...
+    def extfunc2(context, a, b) -> int: ...
+    ext1 = [{(None, s): extfunc1}]
+    ext2 = {(s, s): extfunc2}
+    result = ETXPath({{ args }})
+
+- case: etxpath_construct_badargs
+  expect_fail: true
+  parametrized:
+    - args: None
+    - args: "s, None"
+    - args: "b, badarg=None"
+    - args: "s, extensions=badext"
+    - args: "b, regexp=o"
+    - args: "s, smart_string=o"
+  main: |
+    from lxml.etree import ETXPath
+    s: str
+    b: bytes
+    o: object
+    def extfunc(context, a) -> str: ...
+    badext = {(None, None): extfunc}
+    _ = ETXPath({{ args }})
+
+- case: xpath_evaluation_result
+  parametrized:
+    - cls: etree.XPath
+    - cls: etree.ETXPath
+  main: |
+    from lxml import etree
+    s: str
+    xpath: {{ cls }}
+    root: etree._Element
+    result = xpath(root)
+    reveal_type(result)  # N: Revealed type is "Any"
 
 - case: create_evaluator_matched
   parametrized:
@@ -72,17 +148,21 @@
     evaluator = etree.XPathEvaluator({{ arg }})
     reveal_type(evaluator)  # N: Revealed type is "{{ rt }}"
 
-- case: xpath_create_evaluator_bad_type
+- case: create_evaluator_bad_type
   expect_fail: true  # No overload variant
   main: |
     from lxml import etree
     evaluator = etree.XPathEvaluator('fail_here')
 
-- case: xpath_evaluation_result
+- case: evaluator_result
+  parametrized:
+    - ev: elem_ev
+    - ev: doc_ev
   main: |
     from lxml import etree
-    s: str
-    xpath: etree.XPath
-    document = etree.XML(s)
-    result = xpath(document)
-    reveal_type(result)  # N: Revealed type is "Any"
+    elem_ev: etree.XPathElementEvaluator
+    doc_ev: etree.XPathDocumentEvaluator
+    path: str
+    bpath: bytes
+    reveal_type({{ ev }}(path))  # N: Revealed type is "Any"
+    reveal_type({{ ev }}(bpath))  # N: Revealed type is "Any"

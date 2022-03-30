@@ -216,3 +216,46 @@
     elem.rewrite_links(bad_func)  # E: Argument 1 to "rewrite_links" of "HtmlMixin" has incompatible type "Callable[[bytes], Any]"; expected "Callable[[str], Optional[str]]"
     elem.rewrite_links(repl_func, 'badval')  # E: Argument 2 to "rewrite_links" of "HtmlMixin" has incompatible type "str"; expected "bool"
     elem.rewrite_links(repl_func, True, badbase)  # E: Argument 3 to "rewrite_links" of "HtmlMixin" has incompatible type "bytes"; expected "Optional[str]"
+
+- case: xpath
+  parametrized:
+    - kwds: namespaces=None
+    - kwds: namespaces=ns
+    - kwds: extensions=None
+    - kwds: extensions=ext2
+    - kwds: smart_string=True
+    - kwds: var=1
+    - kwds: "namespaces=ns, extensions=ext1, smart_string=False"
+  main: |
+    from lxml.html import HtmlElement
+    root: HtmlElement
+    xpath_expr: str
+    s: str
+    ns = {s: s}
+    def extfunc1(context, a) -> str: ...
+    def extfunc2(context, a, b) -> int: ...
+    ext1 = [{(None, s): extfunc1}]
+    ext2 = {(s, s): extfunc2}
+    result = root.xpath(xpath_expr, {{ kwds }})
+
+- case: xpath_noarg
+  main: |
+    from lxml.html import HtmlElement
+    root: HtmlElement
+    root.xpath()  # E: Too few arguments for "xpath" of "_Element"
+
+- case: xpath_badarg
+  expect_fail: true
+  parametrized:
+    - args: path=expr
+    - args: "expr, namespaces=badns"
+    - args: "expr, extensions=badext"
+  main: |
+    from lxml.html import HtmlElement
+    root: HtmlElement
+    expr: str
+    s: str
+    badns = {s: 1}
+    def extfunc1(context, a) -> str: ...
+    badext = [{badns: extfunc1}]
+    root.xpath({{ args }})
