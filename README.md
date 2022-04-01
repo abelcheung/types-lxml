@@ -1,4 +1,6 @@
-[![Testing](https://github.com/abelcheung/types-lxml/actions/workflows/test.yml/badge.svg)](https://github.com/abelcheung/types-lxml/actions/workflows/test.yml/badge.svg)
+[![PyPI version](https://img.shields.io/pypi/v/types-lxml.svg)](https://pypi.org/project/types-lxml/)
+![Supported Python](https://img.shields.io/pypi/pyversions/types-lxml.svg)
+![Wheel](https://img.shields.io/pypi/wheel/types-lxml.svg)
 
 This repository contains [external type annotations](https://peps.python.org/pep-0561/) for [`lxml`](http://lxml.de/). It can be used by type-checking tools (currently supporting [`mypy`](https://pypi.org/project/mypy/) and [`pyright`](https://github.com/Microsoft/pyright)) to check code that uses `lxml`, or used within IDEs like [VSCode](https://code.visualstudio.com/) or [PyCharm](https://www.jetbrains.com/pycharm/) to facilitate development.
 
