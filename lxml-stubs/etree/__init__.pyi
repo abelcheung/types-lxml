@@ -49,6 +49,12 @@ from ._cleanup import (
     strip_elements as strip_elements,
     strip_tags as strip_tags,
 )
+from ._dtd import (
+    DTD as DTD,
+    DTDError as DTDError,
+    DTDParseError as DTDParseError,
+    DTDValidateError as DTDValidateError,
+)
 from ._parser import (
     ETCompatXMLParser as ETCompatXMLParser,
     HTMLParser as HTMLParser,
@@ -803,12 +809,6 @@ class _Validator(metaclass=ABCMeta):
     # all methods implicitly require a concrete __call__()
     # implementation in subclasses in order to be usable
     @abstractmethod
-    def __call__(self, etree: _ElementOrAnyTree) -> bool: ...
-
-class DTD(_Validator):
-    def __init__(
-        self, file: _FileReadSource = ..., *, external_id: Any = ...
-    ) -> None: ...
     def __call__(self, etree: _ElementOrAnyTree) -> bool: ...
 
 class TreeBuilder(ParserTarget[_Element]):
