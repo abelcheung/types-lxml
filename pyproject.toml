@@ -5,7 +5,7 @@ build-backend = 'pdm.pep517.api'
 [project]
 name = 'types-lxml'
 dynamic = ['version']
-description = 'Type annotations for lxml'
+description = 'Type annotations for lxml striving for completeness'
 readme = 'README.md'
 requires-python = '>=3.8'
 license-expression = 'Apache-2.0'
@@ -34,7 +34,6 @@ classifiers = [
 
 [project.urls]
 homepage = 'https://github.com/abelcheung/types-lxml'
-repository = 'https://github.com/abelcheung/types-lxml'
 
 [tool.pdm]
 version = {use_scm = true}
