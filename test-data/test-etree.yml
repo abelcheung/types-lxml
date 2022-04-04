@@ -148,9 +148,9 @@
     - prop: doctype
       rt: builtins.str
     - prop: internalDTD
-      rt: Union[lxml.etree.DTD, None]
+      rt: Union[lxml.etree._dtd.DTD, None]
     - prop: externalDTD
-      rt: Union[lxml.etree.DTD, None]
+      rt: Union[lxml.etree._dtd.DTD, None]
   main: |
     from lxml.etree import DocInfo
     d: DocInfo
