@@ -6,6 +6,7 @@ from typing import (
     Generic,
     Iterable,
     Iterator,
+    Literal,
     Mapping,
     Reversible,
     SupportsBytes,
@@ -15,7 +16,7 @@ from typing import (
 )
 
 from lxml.html import HtmlElement
-from typing_extensions import Literal, TypeGuard
+from typing_extensions import TypeGuard
 
 from .._types import (
     SupportsLaxedItems,

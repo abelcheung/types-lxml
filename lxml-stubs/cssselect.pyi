@@ -1,6 +1,4 @@
-from typing import overload
-
-from typing_extensions import Literal
+from typing import Literal, overload
 
 from ._types import _NonDefaultNSMapArg, _XPathVarArg
 from .etree import XPath, _Element, _ElementOrXMLTree

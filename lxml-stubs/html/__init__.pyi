@@ -14,6 +14,7 @@ from typing import (
     Collection,
     Iterable,
     Iterator,
+    Literal,
     MutableMapping,
     MutableSet,
     NoReturn,
@@ -21,7 +22,7 @@ from typing import (
     overload,
 )
 
-from typing_extensions import Literal, TypeAlias
+from typing_extensions import TypeAlias
 
 from .. import etree
 from .._types import (

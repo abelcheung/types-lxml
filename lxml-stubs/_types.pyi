@@ -5,13 +5,15 @@ from typing import (
     Callable,
     Collection,
     Iterable,
+    Literal,
     Mapping,
+    Protocol,
     TextIO,
     TypeVar,
 )
 
 from _typeshed import SupportsWrite
-from typing_extensions import Literal, Protocol, TypeAlias
+from typing_extensions import TypeAlias
 
 from .etree import QName, _Element
 
