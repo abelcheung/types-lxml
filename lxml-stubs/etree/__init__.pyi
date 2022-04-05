@@ -15,7 +15,7 @@ from typing import (
     overload,
 )
 
-from lxml.html import HtmlElement
+from ..html import HtmlElement
 from typing_extensions import TypeGuard
 
 from .._types import (

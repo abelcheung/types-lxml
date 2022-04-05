@@ -1,6 +1,6 @@
 from typing import Iterable, Pattern, TypeVar, Union, overload
 
-from ..etree import _ElementTree, _ElemFactory, _Element
+from ..etree import _Element, _ElementTree, _ElemFactory
 from . import HtmlElement
 
 _DT = TypeVar("_DT", str, bytes, HtmlElement, _ElementTree[HtmlElement])

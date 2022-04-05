@@ -62,14 +62,11 @@
 - case: html_cssselect_method
   parametrized:
     - args: expr
-    - args: expr, translator
+    - args: expr, 'xhtml'
   main: |
     from lxml.html import Element
     root = Element('div')
     expr: str
-    # Urgh, mypy infers the type here as str, not Literal['xhtml']
-    from typing_extensions import Literal
-    translator: Literal['xhtml']
     result = root.cssselect({{ args }})
     reveal_type(result)  # N: Revealed type is "builtins.list[lxml.html.HtmlElement]"
 
