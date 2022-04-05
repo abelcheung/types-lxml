@@ -2,14 +2,12 @@ from abc import ABCMeta, abstractmethod
 from typing import Any, TypeVar
 
 from _typeshed import SupportsRead
-from typing_extensions import final
 
 from .._types import _AnyStr
 
 # Pyright and pytypes have implemented typing.Self, but not for mypy
 Self = TypeVar("Self")
 
-@final
 class _InputDocument:
     """An opaque object without any public attributes"""
 
@@ -36,7 +34,6 @@ class Resolver(metaclass=ABCMeta):
         close: bool
     ) -> _InputDocument: ...
 
-@final
 class _ResolverRegistry:
     def add(self, resolver: Resolver) -> None: ...
     def remove(self, resolver: Resolver) -> None: ...

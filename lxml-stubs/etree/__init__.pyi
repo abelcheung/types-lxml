@@ -15,7 +15,7 @@ from typing import (
 )
 
 from lxml.html import HtmlElement
-from typing_extensions import Literal, TypeGuard, final
+from typing_extensions import Literal, TypeGuard
 
 from .._types import (
     SupportsLaxedItems,
@@ -480,7 +480,6 @@ class _ElementTree(Generic[_ETree_T]):
     ) -> None: ...
 
 # Behaves like MutableMapping but deviates a lot in details
-@final
 class _Attrib:
     @property
     def _element(self) -> _Element: ...
