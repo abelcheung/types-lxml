@@ -65,6 +65,6 @@ include = ['lxml-stubs']
 exclude = [
     '**/node_modules',
     '**/__pycache__',
-    '/.tox',
+    '.tox',
 ]
 reportPrivateUsage = false
