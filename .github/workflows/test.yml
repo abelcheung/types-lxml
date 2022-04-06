@@ -6,7 +6,6 @@ on:
       - '.gitignore'
       - 'README.md'
       - 'LICENSE'
-  pull_request:
 
 jobs:
   build:
