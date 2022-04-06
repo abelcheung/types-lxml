@@ -1,0 +1,97 @@
+- case: construct_parser
+  main: |
+    from lxml.html.html5parser import HTMLParser, html_parser
+    p = HTMLParser()
+    reveal_type(p)  # N: Revealed type is "lxml.html.html5parser.HTMLParser"
+    reveal_type(html_parser)  # N: Revealed type is "lxml.html.html5parser.HTMLParser"
+
+- case: construct_parser_goodargs
+  parametrized:
+    - args: ""
+    - args: False
+    - args: strict=True, debug=True
+    - args: True, True, debug=True
+  main: |
+    from lxml.html.html5parser import HTMLParser
+    _ = HTMLParser({{ args }})
+
+- case: construct_parser_badargs
+  expect_fail: true
+  parametrized:
+    - args: None
+    - args: badarg=None
+    - args: True, True, True, None
+    - args: namespaceHTMLElements=None
+    - args: strict=None
+    - args: debug=None
+  main: |
+    from lxml.html.html5parser import HTMLParser
+    _ = HTMLParser({{ args }})
+
+- case: func_return_types
+  parametrized:
+    - func: document_fromstring
+      param: html
+      rt: lxml.etree._Element
+    - func: fragments_fromstring
+      param: html
+      rt: "builtins.list[lxml.etree._Element]"
+    - func: fragment_fromstring
+      param: html
+      rt: lxml.etree._Element
+    - func: fromstring
+      param: html
+      rt: lxml.etree._Element
+    - func: parse
+      param: filename_url_or_file
+      rt: "lxml.etree._ElementTree[lxml.etree._Element]"
+  main: |
+    from lxml.html import html5parser
+    s: str
+    b: bytes
+    reveal_type(html5parser.{{ func }}(s))  # N: Revealed type is "{{ rt }}"
+    reveal_type(html5parser.{{ func }}({{ param }}=b))  # N: Revealed type is "{{ rt }}"
+
+- case: charset_arg_type
+  parametrized:
+    - func: document_fromstring
+    - func: fragments_fromstring
+    - func: fragment_fromstring
+    - func: fromstring
+    - func: parse
+  main: |
+    from lxml.html import html5parser
+    b: bytes
+    html5parser.{{ func }}(b, guess_charset=True)
+    html5parser.{{ func }}(b, guess_charset=None)
+    html5parser.{{ func }}(b, guess_charset=b)  # E: Argument "guess_charset" to "{{ func }}" has incompatible type "bytes"; expected "Optional[bool]"
+
+- case: parser_arg_type
+  parametrized:
+    - func: document_fromstring
+    - func: fragments_fromstring
+    - func: fragment_fromstring
+    - func: fromstring
+    - func: parse
+  main: |
+    from lxml.html import html5parser
+    class MyParser(html5parser.HTMLParser): ...
+    p: MyParser
+    b: bytes
+    html5parser.{{ func }}(b, parser=None)
+    html5parser.{{ func }}(b, parser=p)
+    html5parser.{{ func }}(b, parser=b)  # E: Argument "parser" to "{{ func }}" has incompatible type "bytes"; expected "Optional[HTMLParser]"
+
+- case: other_arg_types
+  parametrized:
+    - func: fragments_fromstring
+      param: no_leading_text
+      exp_t: bool
+    - func: fragment_fromstring
+      param: create_parent
+      exp_t: Union[bool, Union[str, bytes]]
+  main: |
+    from lxml.html import html5parser
+    b: bytes
+    html5parser.{{func}}(b, {{param}}=True)
+    html5parser.{{func}}(b, {{param}}=None)  # E: Argument "{{ param }}" to "{{ func }}" has incompatible type "None"; expected "{{ exp_t }}"

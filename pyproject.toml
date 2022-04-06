@@ -35,6 +35,9 @@ classifiers = [
 [project.urls]
 homepage = 'https://github.com/abelcheung/types-lxml'
 
+[project.optional-dependencies]
+extra = [ 'types-beautifulsoup4', 'types-html5lib' ]
+
 [tool.pdm]
 version = {use_scm = true}
 includes = [
