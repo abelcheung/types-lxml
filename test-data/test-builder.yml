@@ -1,9 +1,9 @@
-- case: builder_default_element_factory
+- case: default_element_factory
   main: |
     from lxml.builder import E
     reveal_type(E)  # N: Revealed type is "lxml.builder.ElementMaker[lxml.etree._Element]"
 
-- case: builder_custom_element_factory
+- case: custom_element_factory
   parametrized:
     - args: namespace=ns
       rt: lxml.builder.ElementMaker[lxml.etree._Element]
@@ -26,12 +26,12 @@
     E = ElementMaker({{ args }})
     reveal_type(E)  # N: Revealed type is "{{ rt }}"
 
-- case: builder_dunders
+- case: dunders
   main: |
     from lxml.builder import E
     reveal_type(E.__str__())  # N: Revealed type is "builtins.str"
 
-- case: builder_create_elements
+- case: create_elements
   parametrized:
     - method: foo
     - method: BAR
@@ -42,7 +42,7 @@
     reveal_type(E.{{ method }}())  # N: Revealed type is "lxml.etree._Element*"
 
 # Directly taken from lxml.builder docstring example
-- case: builder_complex_example
+- case: complex_example
   main: |
     from lxml.builder import E
     from lxml import etree as ET

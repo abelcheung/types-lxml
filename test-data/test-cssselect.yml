@@ -1,4 +1,4 @@
-- case: cssselect_create_selector
+- case: create_selector
   parametrized:
     - val: sel
       rt: lxml.cssselect.CSSSelector
@@ -11,7 +11,7 @@
     sel = CSSSelector('#id')
     reveal_type({{ val }})  # N: Revealed type is "{{ rt }}"
 
-- case: cssselect_evaluation_of_selector
+- case: evaluation_of_selector
   parametrized:
     - input_type: _Element
       rt: lxml.etree._Element

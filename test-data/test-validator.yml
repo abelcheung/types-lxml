@@ -69,7 +69,7 @@
 - case: xmlschema_call_badarg
   expect_fail: true
   parametrized:
-    - args: null
+    - args: ""
     - args: None
     - args: "elem, badarg=1"
     - args: "elem, tree"

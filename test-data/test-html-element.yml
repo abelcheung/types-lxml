@@ -1,4 +1,4 @@
-- case: html_element_mixin_properties_ro
+- case: mixin_properties_ro
   parametrized:
     - prop: classes
       rt: lxml.html.Classes
@@ -17,18 +17,17 @@
     elem: HtmlElement
     reveal_type(elem.{{ prop }})  # N: Revealed type is "{{ rt }}"
 
-- case: html_element_mixin_properties_rw
+- case: mixin_properties_rw
   main: |
     from lxml.html import HtmlElement, LabelElement
     elem: HtmlElement
     elem.classes = elem.classes
     elem.classes = {'cls1', 'cls2'}  # E: Incompatible types in assignment (expression has type "Set[str]", variable has type "Classes")
-    # Cheating here! Actually LabelElement can't be created this way
     label: LabelElement
     elem.label = label
     elem.label = elem  # E: Incompatible types in assignment (expression has type "HtmlElement", variable has type "Optional[LabelElement]")
 
-- case: html_element_mixin_properties_bad
+- case: mixin_properties_bad
   main: |
     from lxml.html import HtmlElement
     elem: HtmlElement
@@ -43,29 +42,28 @@
     main:5: error: "HtmlElement" has no attribute "badprop"
     main:6: error: "HtmlElement" has no attribute "badprop"
 
-- case: html_element_mixin_method_set1
+- case: mixin_method_set1
   parametrized:
-  - args: val0, val0
-  - args: val0, val1
-  - args: val0, val2
-  - args: val0, val3
-  - args: val0
-  - args: val1, val0
-  - args: val1, val1
-  - args: val1
-  - args: val3, val0
-  - args: val3, val3
-  - args: val3
+  - args: s, s
+  - args: s, b
+  - args: s, None
+  - args: s, qn
+  - args: s
+  - args: b, s
+  - args: b, b
+  - args: b
+  - args: qn, s
+  - args: qn, qn
+  - args: qn
   main: |
     from lxml import etree, html
-    val0: str
-    val1: bytes
-    val2 = None
-    val3: etree.QName
+    s: str
+    b: bytes
+    qn: etree.QName
     elem: html.HtmlElement
     elem.set({{ args }})
 
-- case: html_element_mixin_method_set2
+- case: mixin_method_set2
   parametrized:
   - args: goodarg, badarg0
     pos: 2
@@ -83,7 +81,7 @@
     elem: HtmlElement
     elem.set({{ args }})  # E: Argument {{ pos }} to "set" of "HtmlMixin" has incompatible type "{{ wrong_type }}"; expected "{{ exp_type }}"
 
-- case: html_element_mixin_method_drop_
+- case: mixin_method_drop_
   parametrized:
   - func: drop_tree
   - func: drop_tag
@@ -92,39 +90,37 @@
     elem: HtmlElement
     elem.{{ func }}()
 
-- case: html_element_mixin_method_find_rel_links
+- case: mixin_method_find_rel_links
   main: |
     from lxml.html import HtmlElement
     elem: HtmlElement
     result = elem.find_rel_links('stylesheet')
     reveal_type(result)  # N: Revealed type is "builtins.list[lxml.html.HtmlElement]"
 
-- case: html_element_mixin_method_find_class
+- case: mixin_method_find_class
   parametrized:
-  - args: arg0
-  - args: arg1
+  - args: s
+  - args: b
   main: |
     from lxml.html import HtmlElement
     elem: HtmlElement
-    arg0 = 'cls'
-    arg1 = b'cls'
+    s: str
+    b: bytes
     result = elem.find_class({{ args }})
 
-- case: html_element_mixin_method_get_element_by_id1
+- case: mixin_method_get_element_by_id
   parametrized:
-  - args: arg0
-    rt: lxml.html.HtmlElement
-  - args: arg1
-    rt: lxml.html.HtmlElement
+  - args: s
+  - args: b
   main: |
     from lxml.html import HtmlElement
     elem: HtmlElement
-    arg0: str
-    arg1: bytes
+    s: str
+    b: bytes
     result = elem.get_element_by_id({{ args }})
-    reveal_type(result)  # N: Revealed type is "{{ rt }}"
+    reveal_type(result)  # N: Revealed type is "lxml.html.HtmlElement"
 
-- case: html_element_mixin_method_get_element_by_id2
+- case: mixin_method_get_element_by_id_badargs
   expect_fail: true
   parametrized:
   - args: arg0
@@ -137,7 +133,7 @@
     {{ args }}: {{ wrong_type }}
     result = elem.get_element_by_id({{ args }})
 
-- case: html_element_mixin_method_text_content
+- case: mixin_method_text_content
   main: |
     from lxml.html import HtmlElement
     elem: HtmlElement
@@ -145,7 +141,7 @@
     reveal_type(result)  # N: Revealed type is "builtins.str"
     result = elem.text_content(None)  # E: Too many arguments for "text_content" of "HtmlMixin"
 
-- case: html_element_mixin_method_iterlinks
+- case: mixin_method_iterlinks
   main: |
     from lxml.html import HtmlElement
     elem: HtmlElement
@@ -153,9 +149,9 @@
     reveal_type(result)  # N: Revealed type is "typing.Iterator[Tuple[lxml.html.HtmlElement, Union[builtins.str, None], builtins.str, builtins.int]]"
     result = elem.iterlinks(None)  # E: Too many arguments for "iterlinks" of "HtmlMixin"
 
-- case: html_element_mixin_method_make_links_absolute1
+- case: mixin_method_make_links_absolute1
   parametrized:
-  - args: null
+  - args: ""
   - args: url
   - args: url, False
   - args: None, True, None
@@ -165,10 +161,10 @@
   main: |
     from lxml.html import HtmlElement
     elem: HtmlElement
-    url = 'http://foo.bar'
+    url: str
     elem.make_links_absolute({{ args }})
 
-- case: html_element_mixin_method_make_links_absolute2
+- case: mixin_method_make_links_absolute2
   main: |
     from lxml.html import HtmlElement
     elem: HtmlElement
@@ -180,7 +176,7 @@
     elem.make_links_absolute(badarg=1)  # E: Unexpected keyword argument "badarg" for "make_links_absolute" of "HtmlMixin"
     elem.make_links_absolute(url, True, 'discard', None)  # E: Too many arguments for "make_links_absolute" of "HtmlMixin"
 
-- case: html_element_mixin_method_resolve_base_href
+- case: mixin_method_resolve_base_href
   main: |
     from lxml.html import HtmlElement
     elem: HtmlElement
@@ -190,7 +186,7 @@
     elem.resolve_base_href(badarg=1)  # E: Unexpected keyword argument "badarg" for "resolve_base_href" of "HtmlMixin"
     elem.resolve_base_href(None, None)  # E: Too many arguments for "resolve_base_href" of "HtmlMixin"
 
-- case: html_element_mixin_method_rewrite_links1
+- case: mixin_method_rewrite_links1
   parametrized:
   - args: repl_func
   - args: repl_func, resolve_base_href=False
@@ -205,7 +201,7 @@
       return href[1:]
     elem.rewrite_links({{ args }})
 
-- case: html_element_mixin_method_rewrite_links2
+- case: mixin_method_rewrite_links2
   main: |
     from lxml.html import HtmlElement
     elem: HtmlElement

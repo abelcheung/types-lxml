@@ -15,27 +15,27 @@
 - case: handler_constructor_goodargs
   parametrized:
     - args: None
-      handler_sub: "lxml.etree._Element"
-      et_sub     : "lxml.etree._Element*"
+      el_type: lxml.etree._Element
+      infer: false
     - args: makeelement=None
-      handler_sub: "lxml.etree._Element"
-      et_sub     : "lxml.etree._Element*"
+      el_type: lxml.etree._Element
+      infer: false
     - args: html.html_parser.makeelement
-      handler_sub: "lxml.html.HtmlElement*"
-      et_sub     : "lxml.html.HtmlElement*"
+      el_type: lxml.html.HtmlElement
+      infer: true
     - args: html.xhtml_parser.makeelement
-      handler_sub: "lxml.html.HtmlElement*"
-      et_sub     : "lxml.html.HtmlElement*"
+      el_type: lxml.html.HtmlElement
+      infer: true
     - args: p.makeelement
-      handler_sub: "lxml.etree._Element*"
-      et_sub     : "lxml.etree._Element*"
+      el_type: lxml.etree._Element
+      infer: true
   main: |
     from lxml.sax import ElementTreeContentHandler
     from lxml import etree, html
     p = etree.XMLParser()
     h = ElementTreeContentHandler({{ args }})
-    reveal_type(h)  # N: Revealed type is "lxml.sax.ElementTreeContentHandler[{{ handler_sub }}]"
-    reveal_type(h.etree)  # N: Revealed type is "lxml.etree._ElementTree[{{ et_sub }}]"
+    reveal_type(h)  # N: Revealed type is "lxml.sax.ElementTreeContentHandler[{{ el_type }}{{#infer}}*{{/infer}}]"
+    reveal_type(h.etree)  # N: Revealed type is "lxml.etree._ElementTree[{{ el_type }}*]"
 
 - case: handler_constructor_badargs
   expect_fail: true
@@ -56,13 +56,13 @@
     - args: element_or_tree=et, content_handler=ch
   main: |
     from typing import Any
-    from lxml.sax import ElementTreeProducer as Producer
+    from lxml.sax import ElementTreeProducer
     from xml.sax.handler import ContentHandler
     from lxml.etree import _Element, _ElementTree
     ch: ContentHandler
     et: _ElementTree[Any]
     el: _Element
-    p = Producer({{ args }})
+    p = ElementTreeProducer({{ args }})
     reveal_type(p)  # N: Revealed type is "lxml.sax.ElementTreeProducer"
 
 - case: producer_constructor_badargs
@@ -75,24 +75,24 @@
     - args: el, 1
   main: |
     from typing import Any
-    from lxml.sax import ElementTreeProducer as Producer
+    from lxml.sax import ElementTreeProducer
     from xml.sax.handler import ContentHandler
     from lxml.etree import _Element, _ElementTree
     ch: ContentHandler
     et: _ElementTree[Any]
     el: _Element
-    p = Producer({{ args }})
+    p = ElementTreeProducer({{ args }})
 
 - case: producer_saxify
   main: |
     from typing import Any
-    from lxml.sax import ElementTreeProducer as Producer
+    from lxml.sax import ElementTreeProducer
     from xml.sax.handler import ContentHandler
     from lxml.etree import _Element, _ElementTree
     ch: ContentHandler
     et: _ElementTree[Any]
     el: _Element
-    p = Producer(el, ch)
+    p = ElementTreeProducer(el, ch)
     _ = p.saxify()  # E: "saxify" of "ElementTreeProducer" does not return a value
     p.saxify(1)  # E: Too many arguments for "saxify" of "ElementTreeProducer"
 

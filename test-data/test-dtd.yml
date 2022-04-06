@@ -51,14 +51,11 @@
   files: *INC
   parametrized:
     - prop: name
-      rt: "Union[builtins.str, None]"
     - prop: external_id
-      rt: "Union[builtins.str, None]"
     - prop: system_url
-      rt: "Union[builtins.str, None]"
   main: |
     from dtdtest import dtd
-    reveal_type(dtd.{{ prop }})  # N: Revealed type is "{{ rt }}"
+    reveal_type(dtd.{{ prop }})  # N: Revealed type is "Union[builtins.str, None]"
     dtd.{{ prop }} = dtd.{{ prop }}  # E: Property "{{ prop }}" defined in "DTD" is read-only
 
 - case: validate
@@ -118,16 +115,12 @@
   files: *INC
   parametrized:
     - prop: name
-      rt: "Union[builtins.str, None]"
     - prop: orig
-      rt: "Union[builtins.str, None]"
     - prop: content
-      rt: "Union[builtins.str, None]"
     - prop: system_url
-      rt: "Union[builtins.str, None]"
   main: |
     from dtdtest import dtd_ent
-    reveal_type(dtd_ent.{{ prop }})  # N: Revealed type is "{{ rt }}"
+    reveal_type(dtd_ent.{{ prop }})  # N: Revealed type is "Union[builtins.str, None]"
     dtd_ent.{{ prop }} = dtd_ent.{{ prop }}  # E: Property "{{ prop }}" defined in "_DTDEntityDecl" is read-only
 
 - case: dtd_element_properties

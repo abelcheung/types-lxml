@@ -5,7 +5,7 @@
     reveal_type(c)  # N: Revealed type is "lxml.html.clean.Cleaner"
     reveal_type(clean)  # N: Revealed type is "lxml.html.clean.Cleaner"
 
-# Tiresome to test each and every arguments, just pick some
+# Tiresome to test each and every argument, just pick some
 - case: cleaner_construct_goodargs
   parametrized:
     - args: "scripts=False"
@@ -109,32 +109,61 @@
     tree: _ElementTree[HtmlElement]
     reveal_type({{ func }}({{ args }}))  # N: Revealed type is "{{ rt }}"
 
-- case: html_funcs_noargs
-  expect_fail: true
-  parametrized:
-    - func: c.clean_html
-    - func: clean.clean_html
-    - func: clean.autolink_html
-    - func: clean.word_break_html
-  main: |
-    from lxml.html import clean
-    c: clean.Cleaner
-    _ = {{ func }}()
-
-- case: html_funcs_badargs
-  expect_fail: true
-  parametrized:
-    - func: c.clean_html
-    - func: clean.clean_html
-    - func: clean.autolink_html
-    - func: clean.word_break_html
+- case: clean_html_func_badargs
   main: |
     from lxml.html import HtmlElement, clean
-    c: Cleaner
     root: HtmlElement
-    _ = {{ func }}(None)
-    _ = {{ func }}(root, None)
-    _ = {{ func }}(badarg=root)
+    clean.clean_html()  # E: Too few arguments
+    clean.clean_html(None)  # E: Value of type variable "_DT" of function cannot be "None"
+    clean.clean_html(root, None)  # E: Too many arguments
+    clean.clean_html(badarg=root)  # E: Unexpected keyword argument "badarg"
+
+- case: other_html_funcs_badargs
+  parametrized:
+    - func: c.clean_html
+      name: clean_html
+      is_method: true
+    - func: clean.autolink_html
+      name: autolink_html
+      is_method: false
+    - func: clean.word_break_html
+      name: word_break_html
+      is_method: false
+  main: |
+    from lxml.html import HtmlElement, clean
+    c: clean.Cleaner
+    root: HtmlElement
+    {{ func }}()  # E: Missing positional argument "html" in call to "{{ name }}"{{#is_method}} of "Cleaner"{{/is_method}}
+    {{ func }}(None)  # E: Value of type variable "_DT" of "{{ name }}"{{#is_method}} of "Cleaner"{{/is_method}} cannot be "None"
+    {{ func }}(badarg=root)  # E: Unexpected keyword argument "badarg" for "{{ name }}"{{#is_method}} of "Cleaner"{{/is_method}}
+
+- case: html_funcs_wrong_arg_type
+  parametrized:
+    - func: autolink_html
+      param: link_regexes
+      exp_t: "Iterable[Pattern[str]]"
+    - func: autolink_html
+      param: avoid_elements
+      exp_t: "Iterable[str]"
+    - func: autolink_html
+      param: avoid_hosts
+      exp_t: "Iterable[Pattern[str]]"
+    - func: autolink_html
+      param: avoid_classes
+      exp_t: "Iterable[str]"
+    - func: word_break_html
+      param: max_width
+      exp_t: int
+    - func: word_break_html
+      param: avoid_classes
+      exp_t: "Iterable[str]"
+    - func: word_break_html
+      param: break_character
+      exp_t: str
+  main: |
+    from lxml.html import HtmlElement, clean
+    root: HtmlElement
+    clean.{{ func }}(root, {{ param }}=None)  # E: Argument "{{ param }}" to "{{ func }}" has incompatible type "None"; expected "{{ exp_t }}"
 
 - case: inplace_funcs_noargs
   parametrized:
@@ -189,10 +218,12 @@
     import re
     from lxml.html.clean import autolink
     from lxml.html import HtmlElement
-    link_re = [re.compile('x'), re.compile('x')]
-    avoid_el = ('x', 'x')
-    avoid_hosts = (re.compile('x'), re.compile('x'))
-    avoid_cls = {'x', 'y'}
+    s: str
+    pattern = re.compile(s)
+    link_re = [pattern, pattern]
+    avoid_el = (s, s)
+    avoid_hosts = (pattern, pattern)
+    avoid_cls = {s, s}
     root: HtmlElement
     _ = autolink(root, {{ args }})  # E: "autolink" does not return a value
 
@@ -207,10 +238,11 @@
     import re
     from lxml.html.clean import autolink_html
     s: str
-    link_re = [re.compile('x'), re.compile('x')]
-    avoid_el = ('x', 'x')
-    avoid_hosts = (re.compile('x'), re.compile('x'))
-    avoid_cls = {'x', 'y'}
+    pattern = re.compile(s)
+    link_re = [pattern, pattern]
+    avoid_el = (s, s)
+    avoid_hosts = (pattern, pattern)
+    avoid_cls = {s, s}
     reveal_type(autolink_html({{ args }}))  # N: Revealed type is "builtins.str*"
 
 - case: word_break_goodargs
@@ -220,7 +252,6 @@
     - args: "break_character='s'"
     - args: 40
   main: |
-    import re
     from lxml.html.clean import word_break
     from lxml.html import HtmlElement
     avoid_cls = {'x', 'y'}
@@ -234,7 +265,6 @@
     - args: "html=s, avoid_classes=avoid_cls"
     - args: "s, break_character='x'"
   main: |
-    import re
     from lxml.html.clean import word_break_html
     s: str
     avoid_cls = {'x', 'y'}

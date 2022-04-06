@@ -1,4 +1,4 @@
-- case: xpath_construct_simple
+- case: construct_simple
   main: |
     from lxml import etree
     expr: str
@@ -7,7 +7,7 @@
     reveal_type(xpath.path)  # N: Revealed type is "builtins.str"
     xpath.path = xpath.path  # E: Property "path" defined in "XPath" is read-only
 
-- case: xpath_construct_goodargs
+- case: construct_goodargs
   parametrized:
     - args: s, regexp=True, smart_strings=False
     - args: path=b, namespaces=ns
@@ -24,7 +24,7 @@
     ext2 = {(s, s): extfunc2}
     result = XPath({{ args }})
 
-- case: xpath_construct_badargs
+- case: construct_badargs
   expect_fail: true
   parametrized:
     - args: None
@@ -86,7 +86,7 @@
     badext = {(None, None): extfunc}
     _ = ETXPath({{ args }})
 
-- case: xpath_evaluation_result
+- case: evaluation_result
   parametrized:
     - cls: etree.XPath
     - cls: etree.ETXPath
