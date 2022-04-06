@@ -15,7 +15,6 @@ from typing import (
     overload,
 )
 
-from ..html import HtmlElement
 from typing_extensions import TypeGuard
 
 from .._types import (
@@ -35,6 +34,7 @@ from .._types import (
     _XPathVarArg,
 )
 from ..cssselect import _CSSTransArg
+from ..html import HtmlElement
 from ._classlookup import (
     CommentBase as CommentBase,
     CustomElementClassLookup as CustomElementClassLookup,
@@ -69,6 +69,12 @@ from ._parser import (
     _DefEtreeParsers,
     get_default_parser as get_default_parser,
     set_default_parser as set_default_parser,
+)
+from ._relaxng import (
+    RelaxNG as RelaxNG,
+    RelaxNGError as RelaxNGError,
+    RelaxNGParseError as RelaxNGParseError,
+    RelaxNGValidateError as RelaxNGValidateError,
 )
 from ._xmlerror import (
     ErrorDomains as ErrorDomains,

@@ -123,3 +123,14 @@ class SupportsLaxedItems(Protocol[_KT_co, _VT_co]):
 _FilePath = _AnyStr | PathLike[str] | PathLike[bytes]
 _FileReadSource = _FilePath | BinaryIO | TextIO
 _FileWriteSource = _FilePath | SupportsWrite[bytes]
+
+class SupportsGeturl(Protocol):
+    """Object supporting `geturl()` method
+
+    Currently include:
+    - `http.client.HTTPResponse`
+    - `urllib.parse` results
+    - `urllib.response` objects
+    """
+
+    def geturl(self) -> str: ...
