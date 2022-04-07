@@ -259,16 +259,24 @@
     elem.set({{ key }}, q)
 
 - case: method_set_badarg
+  parametrized:
+    - args: s
+      err: Missing positional argument "value" in call to "set" of "_Element"
+    - args: 1, s
+      err: Argument 1 to "set" of "_Element" has incompatible type "int"; expected "Union[str, bytes, QName]"
+    - args: "b, [s]"
+      err: Argument 2 to "set" of "_Element" has incompatible type "List[str]"; expected "Union[str, bytes, QName]"
+    - args: "s, None"
+      err: Argument 2 to "set" of "_Element" has incompatible type "None"; expected "Union[str, bytes, QName]"
+    - args: s, b, q
+      err: Too many arguments for "set" of "_Element"
   main: |
     from lxml import etree
     elem: etree._Element
     s: str
     b: bytes
     q: etree.QName
-    elem.set(s)  # E: Missing positional argument "value" in call to "set" of "_Element"
-    elem.set(1, s)  # E: Argument 1 to "set" of "_Element" has incompatible type "int"; expected "Union[str, bytes, QName]"
-    elem.set(b, [s])  # E: Argument 2 to "set" of "_Element" has incompatible type "List[str]"; expected "Union[str, bytes, QName]"
-    elem.set(s, b, q)  # E: Too many arguments for "set" of "_Element"
+    elem.set({{ args }})  # E: {{{ err }}}
 
 - case: method_addnext_addprevious
   parametrized:
