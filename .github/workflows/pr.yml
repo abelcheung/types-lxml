@@ -21,13 +21,13 @@ jobs:
     - name: Install dependencies
       run: pip install -v types-beautifulsoup4 types-html5lib
 
-    - name: Mypy review
-      uses: tsuyoshicho/action-mypy@v3
-      with:
-        reporter: github-pr-review
-        level: warning
-        target: lxml-stubs
-        fail_on_error: true
+    # - name: Mypy review
+    #   uses: tsuyoshicho/action-mypy@v3
+    #   with:
+    #     reporter: github-pr-review
+    #     level: warning
+    #     target: lxml-stubs
+    #     fail_on_error: true
 
     - name: Pyright review
       uses: jordemort/action-pyright@v1
