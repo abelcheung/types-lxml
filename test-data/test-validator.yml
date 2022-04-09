@@ -79,3 +79,98 @@
     tree: etree._ElementTree
     schema: etree.XMLSchema
     _ = schema({{ args }})
+
+- case: relaxng_construct
+  parametrized:
+    - args: tree
+    - args: tree.getroot()
+    - args: file=s
+    - args: file=b
+    - args: file=io.FileIO(s)
+    - args: file=gzip.GzipFile(s)
+    - args: file=open(s, 'r')
+    - args: file=open(s, 'rb')
+    - args: file=pathlib.Path(s)
+  main: |
+    import gzip, io, pathlib
+    from lxml import etree
+    s: str
+    b: bytes
+    tree: etree._ElementTree[etree._Element]
+    rng = etree.RelaxNG({{ args }})
+    reveal_type(rng)  # N: Revealed type is "lxml.etree._relaxng.RelaxNG"
+
+- case: relaxng_construct_from_method
+  parametrized:
+    - args: s
+    - args: "src=s, base_url=s"
+  main: |
+    from lxml.etree import RelaxNG
+    s: str
+    rng = RelaxNG.from_rnc_string(s)
+    reveal_type(rng)  # N: Revealed type is "lxml.etree._relaxng.RelaxNG"
+
+- case: relaxng_construct_badargs
+  expect_fail: true
+  parametrized:
+    - args: ""
+      is_method: false
+    - args: s
+      is_method: false
+    - args: file=None
+      is_method: false
+    - args: file=root
+      is_method: false
+    - args: badarg=s
+      is_method: false
+    - args: ""
+      is_method: true
+    - args: 1
+      is_method: true
+    - args: None
+      is_method: true
+    - args: s, base_url=1
+      is_method: true
+    - args: badarg=s
+      is_method: true
+  main: |
+    from lxml.etree import RelaxNG, _Element
+    s: str
+    root: _Element
+    rng = RelaxNG{{#is_method}}.from_rnc_string{{/is_method}}({{ args }})
+
+- case: relaxng_call
+  parametrized:
+    - args: tree
+    - args: tree.getroot()
+    - args: etree=tree
+    - args: etree=tree.getroot()
+  main: |
+    from lxml import etree
+    tree: etree._ElementTree[etree._Element]
+    rng: etree.RelaxNG
+    reveal_type(rng.validate({{ args }}))  # N: Revealed type is "builtins.bool"
+
+- case: relaxng_call_badarg
+  expect_fail: true
+  parametrized:
+    - args: ""
+    - args: None
+    - args: tree, None
+    - args: badarg=tree
+  main: |
+    from lxml import etree
+    tree: etree._ElementTree[etree._Element]
+    rng: etree.RelaxNG
+    rng.validate({{ args }})
+
+# TODO ErrorLog type need to be fixed
+- case: relaxng_superclass
+  skip: True
+  main: |
+    from lxml.etree import RelaxNG, _Element
+    rng: RelaxNG
+    root: _Element
+    reveal_type(rng.error_log)  # N: Revealed type is "lxml.etree._xmlerror._ListErrorLog"
+    _ = rng.assertValid(root)  # E: "assertValid" of "_Validator" does not return a value
+    _ = rng.assert_(root)  # E: "assert_" of "_Validator" does not return a value
