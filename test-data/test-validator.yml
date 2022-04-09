@@ -33,53 +33,6 @@
     filename: str
     result = etree.XMLSchema({{ args }})
 
-- case: xmlschema_methods
-  parametrized:
-    - method: validate
-      args: elem
-      rt: builtins.bool
-    - method: validate
-      args: tree
-      rt: builtins.bool
-    - method: assertValid
-      args: elem
-      rt: None
-    - method: assert_
-      args: tree
-      rt: None
-  main: |
-    from lxml import etree
-    elem: etree._Element
-    tree: etree._ElementTree
-    schema: etree.XMLSchema
-    reveal_type(schema.{{ method }}({{ args }}))  # N: Revealed type is "{{ rt }}"
-
-- case: xmlschema_call
-  parametrized:
-    - args: elem
-    - args: tree
-    - args: etree=elem
-  main: |
-    from lxml import etree
-    elem: etree._Element
-    tree: etree._ElementTree
-    schema: etree.XMLSchema
-    reveal_type(schema({{ args }}))  # N: Revealed type is "builtins.bool"
-
-- case: xmlschema_call_badarg
-  expect_fail: true
-  parametrized:
-    - args: ""
-    - args: None
-    - args: "elem, badarg=1"
-    - args: "elem, tree"
-  main: |
-    from lxml import etree
-    elem: etree._Element
-    tree: etree._ElementTree
-    schema: etree.XMLSchema
-    _ = schema({{ args }})
-
 - case: relaxng_construct
   parametrized:
     - args: tree
@@ -100,14 +53,14 @@
     rng = etree.RelaxNG({{ args }})
     reveal_type(rng)  # N: Revealed type is "lxml.etree._relaxng.RelaxNG"
 
-- case: relaxng_construct_from_method
+- case: relaxng_construct_classmethod
   parametrized:
     - args: s
     - args: "src=s, base_url=s"
   main: |
     from lxml.etree import RelaxNG
     s: str
-    rng = RelaxNG.from_rnc_string(s)
+    rng = RelaxNG.from_rnc_string({{ args }})
     reveal_type(rng)  # N: Revealed type is "lxml.etree._relaxng.RelaxNG"
 
 - case: relaxng_construct_badargs
@@ -139,38 +92,100 @@
     root: _Element
     rng = RelaxNG{{#is_method}}.from_rnc_string{{/is_method}}({{ args }})
 
-- case: relaxng_call
+# This test includes __call__(), which is the underlying
+# mechanism used by validate() method
+- case: superclass_validate_method
   parametrized:
-    - args: tree
-    - args: tree.getroot()
-    - args: etree=tree
-    - args: etree=tree.getroot()
+    - obj: rng
+      args: tree
+      is_call: false
+    - obj: rng
+      args: etree=elem
+      is_call: false
+    - obj: rng
+      args: elem
+      is_call: true
+    - obj: rng
+      args: etree=tree
+      is_call: true
+    - obj: dtd
+      args: tree
+      is_call: false
+    - obj: dtd
+      args: etree=elem
+      is_call: false
+    - obj: dtd
+      args: elem
+      is_call: true
+    - obj: dtd
+      args: etree=tree
+      is_call: true
+    - obj: schema
+      args: tree
+      is_call: false
+    - obj: schema
+      args: etree=elem
+      is_call: false
+    - obj: schema
+      args: elem
+      is_call: true
+    - obj: schema
+      args: etree=tree
+      is_call: true
   main: |
     from lxml import etree
-    tree: etree._ElementTree[etree._Element]
     rng: etree.RelaxNG
-    reveal_type(rng.validate({{ args }}))  # N: Revealed type is "builtins.bool"
+    dtd: etree.DTD
+    schema: etree.XMLSchema
+    tree: etree._ElementTree[etree._Element]
+    elem: etree._Element
+    reveal_type({{ obj }}{{^is_call}}.validate{{/is_call}}({{ args }}))  # N: Revealed type is "builtins.bool"
 
-- case: relaxng_call_badarg
-  expect_fail: true
+# This test includes __call__(), which is the underlying
+# mechanism used by validate() method
+- case: superclass_validate_method_badarg
   parametrized:
-    - args: ""
-    - args: None
-    - args: tree, None
-    - args: badarg=tree
+    - obj: rng
+      cls: RelaxNG
+      is_call: true
+    - obj: dtd
+      cls: DTD
+      is_call: true
+    - obj: schema
+      cls: XMLSchema
+      is_call: true
+    - obj: rng
+      cls: RelaxNG
+      is_call: false
+    - obj: dtd
+      cls: DTD
+      is_call: false
+    - obj: schema
+      cls: XMLSchema
+      is_call: false
   main: |
     from lxml import etree
-    tree: etree._ElementTree[etree._Element]
     rng: etree.RelaxNG
-    rng.validate({{ args }})
+    dtd: etree.DTD
+    schema: etree.XMLSchema
+    tree: etree._ElementTree[etree._Element]
+    {{ obj }}{{^is_call}}.validate{{/is_call}}()  # E: Missing positional argument "etree" in call to {{#is_call}}"__call__" of "{{cls}}"{{/is_call}}{{^is_call}}"validate" of "_Validator"{{/is_call}}
+    {{ obj }}{{^is_call}}.validate{{/is_call}}(None)  # E: Argument 1 to {{#is_call}}"__call__" of "{{cls}}"{{/is_call}}{{^is_call}}"validate" of "_Validator"{{/is_call}} has incompatible type "None"; expected "Union[_Element, _ElementTree[Any]]"
+    {{ obj }}{{^is_call}}.validate{{/is_call}}(tree, None)  # E: Too many arguments for {{#is_call}}"__call__" of "{{cls}}"{{/is_call}}{{^is_call}}"validate" of "_Validator"{{/is_call}}
+    {{ obj }}{{^is_call}}.validate{{/is_call}}(badarg=tree)  # E: Unexpected keyword argument "badarg" for {{#is_call}}"__call__" of "{{cls}}"{{/is_call}}{{^is_call}}"validate" of "_Validator"{{/is_call}}
 
 # TODO ErrorLog type need to be fixed
-- case: relaxng_superclass
-  skip: True
+- case: superclass_other_methods
+  parametrized:
+    - obj: rng
+    - obj: dtd
+    - obj: schema
   main: |
-    from lxml.etree import RelaxNG, _Element
-    rng: RelaxNG
-    root: _Element
-    reveal_type(rng.error_log)  # N: Revealed type is "lxml.etree._xmlerror._ListErrorLog"
-    _ = rng.assertValid(root)  # E: "assertValid" of "_Validator" does not return a value
-    _ = rng.assert_(root)  # E: "assert_" of "_Validator" does not return a value
+    from lxml import etree
+    rng: etree.RelaxNG
+    dtd: etree.DTD
+    schema: etree.XMLSchema
+    tree: etree._ElementTree[etree._Element]
+    reveal_type({{ obj }}.error_log)  # N: Revealed type is "lxml.etree._xmlerror._ErrorLog"
+    _ = {{ obj }}.assertValid(tree)  # E: "assertValid" of "_Validator" does not return a value
+    _ = {{ obj }}.assert_(tree.getroot())  # E: "assert_" of "_Validator" does not return a value
