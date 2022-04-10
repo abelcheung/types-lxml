@@ -84,6 +84,7 @@ from ._xmlerror import (
     RelaxNGErrorTypes as RelaxNGErrorTypes,
     _BaseErrorLog,
     _ErrorLog,
+    _ListErrorLog,
     clear_error_log as clear_error_log,
     use_global_python_log as use_global_python_log,
 )
@@ -811,7 +812,7 @@ class _Validator(metaclass=ABCMeta):
     def assertValid(self, etree: _ElementOrAnyTree) -> None: ...
     def validate(self, etree: _ElementOrAnyTree) -> bool: ...
     @property
-    def error_log(self) -> _ErrorLog: ...
+    def error_log(self) -> _ListErrorLog: ...
     # all methods implicitly require a concrete __call__()
     # implementation in subclasses in order to be usable
     @abstractmethod

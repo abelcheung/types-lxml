@@ -174,7 +174,6 @@
     {{ obj }}{{^is_call}}.validate{{/is_call}}(tree, None)  # E: Too many arguments for {{#is_call}}"__call__" of "{{cls}}"{{/is_call}}{{^is_call}}"validate" of "_Validator"{{/is_call}}
     {{ obj }}{{^is_call}}.validate{{/is_call}}(badarg=tree)  # E: Unexpected keyword argument "badarg" for {{#is_call}}"__call__" of "{{cls}}"{{/is_call}}{{^is_call}}"validate" of "_Validator"{{/is_call}}
 
-# TODO ErrorLog type need to be fixed
 - case: superclass_other_methods
   parametrized:
     - obj: rng
@@ -186,6 +185,6 @@
     dtd: etree.DTD
     schema: etree.XMLSchema
     tree: etree._ElementTree[etree._Element]
-    reveal_type({{ obj }}.error_log)  # N: Revealed type is "lxml.etree._xmlerror._ErrorLog"
+    reveal_type({{ obj }}.error_log)  # N: Revealed type is "lxml.etree._xmlerror._ListErrorLog"
     _ = {{ obj }}.assertValid(tree)  # E: "assertValid" of "_Validator" does not return a value
     _ = {{ obj }}.assert_(tree.getroot())  # E: "assert_" of "_Validator" does not return a value
