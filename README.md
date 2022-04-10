@@ -4,6 +4,23 @@
 
 This repository contains [external type annotations](https://peps.python.org/pep-0561/) for [`lxml`](http://lxml.de/). It can be used by type-checking tools (currently supporting [`mypy`](https://pypi.org/project/mypy/) and [`pyright`](https://github.com/Microsoft/pyright)) to check code that uses `lxml`, or used within IDEs like [VSCode](https://code.visualstudio.com/) or [PyCharm](https://www.jetbrains.com/pycharm/) to facilitate development.
 
+## Improvements
+
+There are lots of enhancements on top of lxml-stubs:
+
+- **Main goal ①** Completes annotation for at least 90% of publicly used `lxml` API. Besides various completed classes and methods, here are currently implemented extra submodules:
+    * [x] `lxml.builder`
+    * [x] `lxml.html.builder`
+    * [x] `lxml.html.clean`
+    * [x] `lxml.html.html5parser`
+    * [x] `lxml.html.soupparser`
+    * [x] `lxml.sax`
+    * Check out [project page](https://github.com/abelcheung/types-lxml/projects/1) for future plans and progress
+- **Main goal ②** All existing contributions reviewed thoroughly, bringing coherency of annotation across the whole package
+    * [x] Guarantees error free for `pyright` basic checking mode as well
+    * [x] Much more extensive test cases
+- Modernize package building infrastructure
+
 ## Installation
 
 ### From PyPI
@@ -12,9 +29,13 @@ This is the normal choice for most people:
 
     pip install -U types-lxml
 
+If there is plan to use html submodule for external libraries (mainly `lxml.html.html5parser` and `lxml.html.soupparser`), please install `extra` dependencies instead:
+
+    pip install -U types-lxml[extra]
+
 ### From downloaded wheel file
 
-Head over to [release page](../../releases) and get wheel file (with extension `.whl`). Wheel files can be installed in the same way as PyPI package:
+Head over to [latest release in GitHub](https://github.com/abelcheung/types-lxml/releases/latest) and download wheel file (with extension `.whl`), which can be installed in the same way as PyPI package:
 
     pip install -U types-lxml*.whl
 
