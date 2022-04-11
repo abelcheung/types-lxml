@@ -2,9 +2,11 @@ name: Build and test
 
 on:
   push:
+    branches-ignore:
+      - 'dependabot/**'
     paths-ignore:
-      - '.gitignore'
-      - 'README.md'
+      - '.git*'
+      - '**.md'
       - 'LICENSE'
 
 jobs:

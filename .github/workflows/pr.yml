@@ -2,9 +2,11 @@ name: PR review
 
 on:
   pull_request:
+    branches-ignore:
+      - 'dependabot/**'
     paths-ignore:
-      - '.gitignore'
-      - 'README.md'
+      - '.git*'
+      - '**.md'
       - 'LICENSE'
 
 jobs:
