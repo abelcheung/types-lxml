@@ -30,7 +30,7 @@ jobs:
       run: tox -v -e build
 
     - name: Upload artifact
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v3
       with:
         name: dist
         path: dist/*
@@ -62,7 +62,7 @@ jobs:
       run: tox --installpkg *.tar.gz --result-json test-job-${{ strategy.job-index }}.json -v
 
     - name: Upload log artifact
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v3
       with:
         name: log
         path: test-job-*.json
