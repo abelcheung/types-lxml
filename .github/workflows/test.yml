@@ -8,6 +8,8 @@ on:
       - '.git*'
       - '**.md'
       - 'LICENSE'
+    tags:
+      - '20*'
 
 jobs:
   build:
