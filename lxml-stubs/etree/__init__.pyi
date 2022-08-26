@@ -798,6 +798,13 @@ def tostring(
     inclusive_ns_prefixes: Any = ...,
 ) -> _AnyStr: ...
 
+def indent(
+    element_or_tree: _ElementOrAnyTree,
+    space: str = ...,
+    *,
+    level: int = ...,
+) -> None: ...
+
 class Error(Exception): ...
 
 class LxmlError(Error):
