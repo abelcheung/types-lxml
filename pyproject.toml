@@ -1,5 +1,5 @@
 [build-system]
-requires = ['pdm-pep517 >= 0.12']
+requires = ['pdm-pep517 ~= 1.0']
 build-backend = 'pdm.pep517.api'
 
 [project]
@@ -8,7 +8,7 @@ dynamic = ['version']
 description = 'Type annotations for lxml striving for completeness'
 readme = 'README.md'
 requires-python = '>=3.8'
-license-expression = 'Apache-2.0'
+license = 'Apache-2.0'
 dependencies = [ # version dependency uncertain
     'lxml',
 ]
@@ -40,6 +40,8 @@ extra = [ 'types-beautifulsoup4', 'types-html5lib' ]
 
 [tool.pdm]
 version = {use_scm = true}
+
+[tool.pdm.build]
 includes = [
     'lxml-stubs/',
     'py.typed',
