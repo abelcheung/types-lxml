@@ -31,7 +31,7 @@
       rt: Union[builtins.str, builtins.int*]
     - method: pop
       args: s
-      rt: Union[builtins.str, None]
+      rt: builtins.str
     - method: pop
       args: s, 0
       rt: Union[builtins.str, builtins.int*]
