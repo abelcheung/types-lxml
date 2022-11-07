@@ -3,7 +3,7 @@
     from lxml.sax import ElementTreeContentHandler
     h = ElementTreeContentHandler()
     reveal_type(h)  # N: Revealed type is "lxml.sax.ElementTreeContentHandler[lxml.etree._Element]"
-    reveal_type(h.etree)  # N: Revealed type is "lxml.etree._ElementTree[lxml.etree._Element*]"
+    reveal_type(h.etree)  # N: Revealed type is "lxml.etree._ElementTree[lxml.etree._Element]"
 
 - case: handler_property_readonly
   main: |
@@ -34,8 +34,8 @@
     from lxml import etree, html
     p = etree.XMLParser()
     h = ElementTreeContentHandler({{ args }})
-    reveal_type(h)  # N: Revealed type is "lxml.sax.ElementTreeContentHandler[{{ el_type }}{{#infer}}*{{/infer}}]"
-    reveal_type(h.etree)  # N: Revealed type is "lxml.etree._ElementTree[{{ el_type }}*]"
+    reveal_type(h)  # N: Revealed type is "lxml.sax.ElementTreeContentHandler[{{ el_type }}{{#infer}}{{/infer}}]"
+    reveal_type(h.etree)  # N: Revealed type is "lxml.etree._ElementTree[{{ el_type }}]"
 
 - case: handler_constructor_badargs
   expect_fail: true

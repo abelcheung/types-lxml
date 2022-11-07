@@ -62,10 +62,10 @@
     from lxml import etree
     t1: etree.ParserTarget[str]
     t2: etree.ParserTarget[Optional[List[str]]]
-    reveal_type(etree.{{ parser }}(target=t1))  # N: Revealed type is "lxml.etree._parser.{{ parser }}[builtins.str*]"
+    reveal_type(etree.{{ parser }}(target=t1))  # N: Revealed type is "lxml.etree._parser.{{ parser }}[builtins.str]"
     reveal_type(etree.{{ parser }}(target=t2))  # N: Revealed type is "lxml.etree._parser.{{ parser }}[Union[builtins.list[builtins.str], None]]"
     reveal_type(etree.{{ parser }}(target=None))  # N: Revealed type is "lxml.etree._parser.{{ parser }}[lxml.etree._Element]"
-    reveal_type(etree.{{ parser }}(target=etree.TreeBuilder()))  # N: Revealed type is "lxml.etree._parser.{{ parser }}[lxml.etree._Element*]"
+    reveal_type(etree.{{ parser }}(target=etree.TreeBuilder()))  # N: Revealed type is "lxml.etree._parser.{{ parser }}[lxml.etree._Element]"
     reveal_type(etree.{{ parser }}())  # N: Revealed type is "lxml.etree._parser.{{ parser }}[lxml.etree._Element]"
 
 - case: custom_feedparser_close
@@ -78,22 +78,22 @@
     p1: {{ parser }}[Optional[List[str]]]
     p2: {{ parser }}[etree._Element]
     reveal_type(p1.close())  # N: Revealed type is "Union[builtins.list[builtins.str], None]"
-    reveal_type(p2.close())  # N: Revealed type is "lxml.etree._Element*"
+    reveal_type(p2.close())  # N: Revealed type is "lxml.etree._Element"
 
 - case: et_factory
   parametrized:
     - args: "file=filename, parser=p1"
-      rt: "builtins.str*"
+      rt: "builtins.str"
     - args: "file=fileio, parser=p2"
-      rt: "builtins.list*[builtins.str]"
+      rt: "builtins.list[builtins.str]"
     - args: "file=filename, parser=p3"
-      rt: "lxml.etree._Element*"
+      rt: "lxml.etree._Element"
     - args: "file=fileio, parser=p4"
-      rt: "lxml.etree._Element*"
+      rt: "lxml.etree._Element"
     - args: "parser=p3"
-      rt: "lxml.etree._ElementTree[lxml.etree._Element*]"
+      rt: "lxml.etree._ElementTree[lxml.etree._Element]"
     - args: "file=None, parser=p4"
-      rt: "lxml.etree._ElementTree[lxml.etree._Element*]"
+      rt: "lxml.etree._ElementTree[lxml.etree._Element]"
   main: |
     from typing import List
     from lxml import etree
@@ -122,11 +122,11 @@
 - case: fromstring
   parametrized:
     - args: "doc, p1"
-      rt: "builtins.str*"
+      rt: "builtins.str"
     - args: "doc, parser=p2"
-      rt: "builtins.list*[builtins.str]"
+      rt: "builtins.list[builtins.str]"
     - args: "text=doc, parser=p3"
-      rt: "lxml.etree._Element*"
+      rt: "lxml.etree._Element"
   main: |
     from typing import List
     from lxml import etree
@@ -141,16 +141,16 @@
   parametrized:
     - func: XML
       args: "doc, p1"
-      rt: "builtins.str*"
+      rt: "builtins.str"
     - func: HTML
       args: "doc, p2"
-      rt: "builtins.list*[builtins.str]"
+      rt: "builtins.list[builtins.str]"
     - func: XML
       args: "text=doc, parser=p3"
-      rt: "lxml.etree._Element*"
+      rt: "lxml.etree._Element"
     - func: HTML
       args: "text=doc, parser=p4"
-      rt: "lxml.etree._Element*"
+      rt: "lxml.etree._Element"
   main: |
     from typing import List
     from lxml import etree
@@ -170,10 +170,10 @@
     t = cast("etree.ParserTarget[List[str]]", Target2())
     reveal_type(t)  # N: Revealed type is "lxml.etree._parser.ParserTarget[builtins.list[builtins.str]]"
     p = etree.XMLParser(target=t)
-    reveal_type(p)  # N: Revealed type is "lxml.etree._parser.XMLParser[builtins.list*[builtins.str]]"
+    reveal_type(p)  # N: Revealed type is "lxml.etree._parser.XMLParser[builtins.list[builtins.str]]"
     content: str
     p.feed(content)
     result = p.close()
-    reveal_type(result)  # N: Revealed type is "builtins.list*[builtins.str]"
+    reveal_type(result)  # N: Revealed type is "builtins.list[builtins.str]"
     root = etree.fromstring(content, parser=p)
-    reveal_type(root)  # N: Revealed type is "builtins.list*[builtins.str]"
+    reveal_type(root)  # N: Revealed type is "builtins.list[builtins.str]"

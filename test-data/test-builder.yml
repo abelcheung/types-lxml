@@ -8,9 +8,9 @@
     - args: namespace=ns
       rt: lxml.builder.ElementMaker[lxml.etree._Element]
     - args: makeelement=etree.Element
-      rt: lxml.builder.ElementMaker[lxml.etree._Element*]
+      rt: lxml.builder.ElementMaker[lxml.etree._Element]
     - args: makeelement=etree.Comment
-      rt: lxml.builder.ElementMaker[lxml.etree._Comment*]
+      rt: lxml.builder.ElementMaker[lxml.etree._Comment]
     - args: namespace=ns, nsmap=map
       rt: lxml.builder.ElementMaker[lxml.etree._Element]
     - args: typemap=typemap
@@ -39,7 +39,7 @@
   main: |
     from lxml.builder import E
     reveal_type(E.{{ method }})  # N: Revealed type is "def (*Any, **Any) -> lxml.etree._Element"
-    reveal_type(E.{{ method }}())  # N: Revealed type is "lxml.etree._Element*"
+    reveal_type(E.{{ method }}())  # N: Revealed type is "lxml.etree._Element"
 
 # Directly taken from lxml.builder docstring example
 - case: complex_example
@@ -69,7 +69,7 @@
         )
       )
     )
-    reveal_type(page)  # N: Revealed type is "lxml.etree._Element*"
+    reveal_type(page)  # N: Revealed type is "lxml.etree._Element"
 
 - case: html_builder_create_elements
   parametrized:
@@ -79,7 +79,7 @@
   main: |
     from lxml.html.builder import E
     reveal_type(E.{{ method }})  # N: Revealed type is "def (*Any, **Any) -> lxml.html.HtmlElement"
-    reveal_type(E.{{ method }}())  # N: Revealed type is "lxml.html.HtmlElement*"
+    reveal_type(E.{{ method }}())  # N: Revealed type is "lxml.html.HtmlElement"
 
 - case: html_builder_existing_tag
   main: |

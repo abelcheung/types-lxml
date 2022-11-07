@@ -22,7 +22,7 @@ maintainers = [
     { name = 'Abel Cheung', email = 'abelcheung@gmail.com' },
 ]
 classifiers = [
-    'Development Status :: 3 - Alpha',
+    'Development Status :: 2 - Beta',
     'Programming Language :: Python',
     'Intended Audience :: Developers',
     'Programming Language :: Python :: 3 :: Only',

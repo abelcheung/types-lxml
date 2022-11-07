@@ -10,9 +10,9 @@
     - val: elem[:2]
       rt: builtins.list[lxml.etree._Element]
     - val: iter(elem)
-      rt: typing.Iterator*[lxml.etree._Element]
+      rt: typing.Iterator[lxml.etree._Element]
     - val: reversed(elem)
-      rt: builtins.reversed[lxml.etree._Element*]
+      rt: builtins.reversed[lxml.etree._Element]
   main: |
     from lxml import etree
     elem: etree._Element
@@ -220,7 +220,7 @@
     - arg: qname
       rt: Union[builtins.str, None]
     - arg: qname, 4
-      rt: Union[builtins.str, builtins.int*]
+      rt: Union[builtins.str, builtins.int]
   main: |
     from lxml import etree
     elem: etree._Element
@@ -372,9 +372,9 @@
     - args: path=path
       rt: Union[builtins.str, None]
     - args: path, default1
-      rt: Union[builtins.str, builtins.int*]
+      rt: Union[builtins.str, builtins.int]
     - args: path, default1, nsmap
-      rt: Union[builtins.str, builtins.int*]
+      rt: Union[builtins.str, builtins.int]
     - args: tag, namespaces=nsmap
       rt: Union[builtins.str, None]
     - args: path=tag, default=default2

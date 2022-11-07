@@ -17,7 +17,7 @@
     et: _ElementTree[_Element]
     r = et.xinclude()  # E: "xinclude" of "_ElementTree" does not return a value
     r = et._setroot(root)  # E: "_setroot" of "_ElementTree" does not return a value
-    reveal_type(et.getroot())  # N: Revealed type is "lxml.etree._Element*"
+    reveal_type(et.getroot())  # N: Revealed type is "lxml.etree._Element"
     et._setroot(et)  # E: Argument 1 to "_setroot" of "_ElementTree" has incompatible type "_ElementTree[_Element]"; expected "_Element"
 
 - case: no_arg_or_return_methods_toomanyargs
@@ -67,49 +67,49 @@
   parametrized:
     - method: find
       args: path
-      rt: "Union[lxml.etree._Element*, None]"
+      rt: "Union[lxml.etree._Element, None]"
     - method: find
       args: tag
-      rt: "Union[lxml.etree._Element*, None]"
+      rt: "Union[lxml.etree._Element, None]"
     - method: find
       args: path=path
-      rt: "Union[lxml.etree._Element*, None]"
+      rt: "Union[lxml.etree._Element, None]"
     - method: find
       args: path, nsmap
-      rt: "Union[lxml.etree._Element*, None]"
+      rt: "Union[lxml.etree._Element, None]"
     - method: find
       args: tag, namespaces=nsmap
-      rt: "Union[lxml.etree._Element*, None]"
+      rt: "Union[lxml.etree._Element, None]"
     - method: findall
       args: path
-      rt: "builtins.list[lxml.etree._Element*]"
+      rt: "builtins.list[lxml.etree._Element]"
     - method: findall
       args: tag
-      rt: "builtins.list[lxml.etree._Element*]"
+      rt: "builtins.list[lxml.etree._Element]"
     - method: findall
       args: path=path
-      rt: "builtins.list[lxml.etree._Element*]"
+      rt: "builtins.list[lxml.etree._Element]"
     - method: findall
       args: path, nsmap
-      rt: "builtins.list[lxml.etree._Element*]"
+      rt: "builtins.list[lxml.etree._Element]"
     - method: findall
       args: tag, namespaces=nsmap
-      rt: "builtins.list[lxml.etree._Element*]"
+      rt: "builtins.list[lxml.etree._Element]"
     - method: iterfind
       args: path
-      rt: "typing.Iterator[lxml.etree._Element*]"
+      rt: "typing.Iterator[lxml.etree._Element]"
     - method: iterfind
       args: tag
-      rt: "typing.Iterator[lxml.etree._Element*]"
+      rt: "typing.Iterator[lxml.etree._Element]"
     - method: iterfind
       args: path=path
-      rt: "typing.Iterator[lxml.etree._Element*]"
+      rt: "typing.Iterator[lxml.etree._Element]"
     - method: iterfind
       args: path, nsmap
-      rt: "typing.Iterator[lxml.etree._Element*]"
+      rt: "typing.Iterator[lxml.etree._Element]"
     - method: iterfind
       args: tag, namespaces=nsmap
-      rt: "typing.Iterator[lxml.etree._Element*]"
+      rt: "typing.Iterator[lxml.etree._Element]"
   main: |
     from lxml import etree
     et: etree._ElementTree[etree._Element]
@@ -145,9 +145,9 @@
     - args: path=path
       rt: Union[builtins.str, None]
     - args: path, default1
-      rt: Union[builtins.str, builtins.int*]
+      rt: Union[builtins.str, builtins.int]
     - args: path, default1, nsmap
-      rt: Union[builtins.str, builtins.int*]
+      rt: Union[builtins.str, builtins.int]
     - args: tag, namespaces=nsmap
       rt: Union[builtins.str, None]
     - args: path=tag, default=default2
@@ -215,9 +215,9 @@
 - case: iter_noargs
   parametrized:
     - subtype: _Element
-      itr_t: "lxml.etree._Element*"
+      itr_t: "lxml.etree._Element"
     - subtype: HtmlElement
-      itr_t: "lxml.html.HtmlElement*"
+      itr_t: "lxml.html.HtmlElement"
   main: |
     from lxml.etree import _Element, _ElementTree
     from lxml.html import HtmlElement
@@ -237,7 +237,7 @@
     tag3: etree.QName
     factory1 = etree.Comment
     factory2 = etree.Entity
-    reveal_type(tree.iter({{ args }}))  # N: Revealed type is "typing.Iterator[lxml.etree._Element*]"
+    reveal_type(tree.iter({{ args }}))  # N: Revealed type is "typing.Iterator[lxml.etree._Element]"
 
 - case: iter_badarg
   expect_fail: true

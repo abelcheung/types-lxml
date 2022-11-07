@@ -75,4 +75,4 @@
       from lxml import objectify
       doc = objectify.fromstring("<doc><el />< el/></doc>")
       for el in doc:
-        reveal_type(el)  # N: Revealed type is "lxml.objectify.ObjectifiedElement*"
+        reveal_type(el)  # N: Revealed type is "lxml.objectify.ObjectifiedElement"

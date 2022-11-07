@@ -53,52 +53,52 @@
   parametrized:
     - func: c.clean_html
       args: html=s
-      rt: "builtins.str*"
+      rt: "builtins.str"
     - func: c.clean_html
       args: b
-      rt: "builtins.bytes*"
+      rt: "builtins.bytes"
     - func: c.clean_html
       args: root
-      rt: "lxml.html.HtmlElement*"
+      rt: "lxml.html.HtmlElement"
     - func: c.clean_html
       args: tree
-      rt: "lxml.etree._ElementTree*[lxml.html.HtmlElement]"
+      rt: "lxml.etree._ElementTree[lxml.html.HtmlElement]"
     - func: clean.clean_html
       args: s
-      rt: "builtins.str*"
+      rt: "builtins.str"
     - func: clean.clean_html
       args: html=b
-      rt: "builtins.bytes*"
+      rt: "builtins.bytes"
     - func: clean.clean_html
       args: root
-      rt: "lxml.html.HtmlElement*"
+      rt: "lxml.html.HtmlElement"
     - func: clean.clean_html
       args: tree
-      rt: "lxml.etree._ElementTree*[lxml.html.HtmlElement]"
+      rt: "lxml.etree._ElementTree[lxml.html.HtmlElement]"
     - func: clean.autolink_html
       args: s
-      rt: "builtins.str*"
+      rt: "builtins.str"
     - func: clean.autolink_html
       args: b
-      rt: "builtins.bytes*"
+      rt: "builtins.bytes"
     - func: clean.autolink_html
       args: html=root
-      rt: "lxml.html.HtmlElement*"
+      rt: "lxml.html.HtmlElement"
     - func: clean.autolink_html
       args: tree
-      rt: "lxml.etree._ElementTree*[lxml.html.HtmlElement]"
+      rt: "lxml.etree._ElementTree[lxml.html.HtmlElement]"
     - func: clean.word_break_html
       args: s
-      rt: "builtins.str*"
+      rt: "builtins.str"
     - func: clean.word_break_html
       args: b
-      rt: "builtins.bytes*"
+      rt: "builtins.bytes"
     - func: clean.word_break_html
       args: root
-      rt: "lxml.html.HtmlElement*"
+      rt: "lxml.html.HtmlElement"
     - func: clean.word_break_html
       args: html=tree
-      rt: "lxml.etree._ElementTree*[lxml.html.HtmlElement]"
+      rt: "lxml.etree._ElementTree[lxml.html.HtmlElement]"
   main: |
     from lxml.html import clean, HtmlElement
     from lxml.etree import _ElementTree
@@ -243,7 +243,7 @@
     avoid_el = (s, s)
     avoid_hosts = (pattern, pattern)
     avoid_cls = {s, s}
-    reveal_type(autolink_html({{ args }}))  # N: Revealed type is "builtins.str*"
+    reveal_type(autolink_html({{ args }}))  # N: Revealed type is "builtins.str"
 
 - case: word_break_goodargs
   parametrized:
@@ -268,4 +268,4 @@
     from lxml.html.clean import word_break_html
     s: str
     avoid_cls = {'x', 'y'}
-    reveal_type(word_break_html({{ args }}))  # N: Revealed type is "builtins.str*"
+    reveal_type(word_break_html({{ args }}))  # N: Revealed type is "builtins.str"

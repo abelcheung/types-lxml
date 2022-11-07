@@ -28,13 +28,13 @@
       rt: Union[builtins.str, None]
     - method: get
       args: s, 0
-      rt: Union[builtins.str, builtins.int*]
+      rt: Union[builtins.str, builtins.int]
     - method: pop
       args: s
       rt: builtins.str
     - method: pop
       args: s, 0
-      rt: Union[builtins.str, builtins.int*]
+      rt: Union[builtins.str, builtins.int]
     - method: has_key
       args: b
       rt: builtins.bool

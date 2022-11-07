@@ -49,13 +49,13 @@
   main: |
     from lxml import etree
     document = etree.HTML("<doc></doc>", parser=etree.HTMLParser(), base_url="http://example.com/")
-    reveal_type(document)  # N: Revealed type is "lxml.etree._Element*"
+    reveal_type(document)  # N: Revealed type is "lxml.etree._Element"
 
 - case: etree_XML_returns_element
   main: |
     from lxml import etree
     document = etree.XML("<doc></doc>", parser=etree.XMLParser(), base_url="http://example.com/")
-    reveal_type(document)  # N: Revealed type is "lxml.etree._Element*"
+    reveal_type(document)  # N: Revealed type is "lxml.etree._Element"
 
 - case: etree_pyerrorlog_object
   main: |
