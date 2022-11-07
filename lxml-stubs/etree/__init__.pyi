@@ -721,14 +721,14 @@ def fromstring(
     text: _AnyStr,
     parser: _DefEtreeParsers[_T_co],
     *,
-    base_url: _AnyStr = ...,
+    base_url: _AnyStr | None = ...,
 ) -> _T_co: ...
 @overload
 def fromstring(
     text: _AnyStr,
     parser: None = ...,
     *,
-    base_url: _AnyStr = ...,
+    base_url: _AnyStr | None = ...,
 ) -> _Element: ...
 @overload
 def fromstringlist(
