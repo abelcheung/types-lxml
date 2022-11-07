@@ -13,7 +13,7 @@ def fromstring(
     # only XMLParser or subclasses usable in lxml.objectify
     parser: XMLParser[Any] | None = ...,
     *,
-    base_url: _AnyStr = ...,
+    base_url: _AnyStr | None = ...,
 ) -> ObjectifiedElement: ...
 
 class ElementMaker:
