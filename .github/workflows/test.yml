@@ -41,11 +41,12 @@ jobs:
         if-no-files-found: error
 
   test:
-    runs-on: ubuntu-22.04
-    needs: build
     strategy:
       matrix:
+        os: ['ubuntu-22.04', 'windows-2022', 'macos-11']
         python-version: ["3.8", "3.9", "3.10", "3.11"]
+    runs-on: ${{ matrix.os }}
+    needs: build
     steps:
     - uses: actions/checkout@v3
 
@@ -63,6 +64,7 @@ jobs:
       run: pip install -v tox
 
     - name: Test sdist
+      shell: bash # glob fails on Windows cmd
       run: tox --installpkg *.tar.gz --result-json test-job-${{ strategy.job-index }}.json -v
 
     - name: Upload log artifact
