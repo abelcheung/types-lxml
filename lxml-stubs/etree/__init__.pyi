@@ -798,7 +798,6 @@ def tostring(
     with_comments: bool = ...,
     inclusive_ns_prefixes: Any = ...,
 ) -> _AnyStr: ...
-
 def indent(
     element_or_tree: _ElementOrAnyTree,
     space: str = ...,

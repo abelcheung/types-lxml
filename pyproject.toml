@@ -9,7 +9,10 @@ description = 'Type annotations for lxml striving for completeness'
 readme = 'README.md'
 requires-python = '>=3.8'
 license = 'Apache-2.0'
-dependencies = [ # version dependency uncertain
+# Potentially should be lxml 4.8+ due to support for QName in
+# lxml.builder.ElementMaker tag arg, but for the majority even
+# older versions should be ok. Don't want to be too strict on this
+dependencies = [
     'lxml',
 ]
 keywords = ['lxml', 'typing', 'stubs']
@@ -22,7 +25,7 @@ maintainers = [
     { name = 'Abel Cheung', email = 'abelcheung@gmail.com' },
 ]
 classifiers = [
-    'Development Status :: 2 - Beta',
+    'Development Status :: 4 - Beta',
     'Programming Language :: Python',
     'Intended Audience :: Developers',
     'Programming Language :: Python :: 3 :: Only',
