@@ -24,13 +24,11 @@ jobs:
         check_artifacts: true
 
     - name: Publish draft GitHub release
-      uses: softprops/action-gh-release@v1
+      uses: ncipollo/release-action@v1
       with:
-        fail_on_unmatched_files: true
+        artifacts: "dist/*.whl,dist/*.tar.gz"
+        artifactErrorsFailBuild: true
         draft: true
-        files: |
-          dist/*.whl
-          dist/*.tar.gz
 
     - name: Publish to Test PyPI
       if: >
