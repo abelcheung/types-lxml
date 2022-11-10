@@ -7,10 +7,25 @@ from abc import ABCMeta, abstractmethod
 from .._types import _ElemClsLookupArg
 from . import _Comment, _Element, _Entity, _ProcessingInstruction
 
-class ElementBase(_Element): ...
-class CommentBase(_Comment): ...
-class PIBase(_ProcessingInstruction): ...
-class EntityBase(_Entity): ...
+#
+# Public element classes
+#
+# Special note from docstring:
+# Subclasses *must not* override __init__ or
+# __new__ as it is absolutely undefined when these objects will be
+# created or destroyed.  All persistent state of Elements must be
+# stored in the underlying XML.  If you really need to initialize
+# the object after creation, you can implement an ``_init(self)``
+# method that will be called directly after object creation.
+#
+class ElementBase(_Element):
+    def _init(self) -> None: ...
+class CommentBase(_Comment):
+    def _init(self) -> None: ...
+class PIBase(_ProcessingInstruction):
+    def _init(self) -> None: ...
+class EntityBase(_Entity):
+    def _init(self) -> None: ...
 
 #
 # Class lookup mechanism described in
