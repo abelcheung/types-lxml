@@ -1,25 +1,71 @@
--   case: etree_from_string_returns_element
-    main: |
-        from lxml import objectify
-        document = objectify.fromstring("<doc></doc>")
-        reveal_type(document)  # N: Revealed type is "lxml.objectify.ObjectifiedElement"
+- case: fromstring_default_arg
+  parametrized:
+    - args: s
+    - args: xml=b
+  main: |
+    s: str
+    b: bytes
+    from lxml.objectify import fromstring
+    reveal_type(fromstring({{ args }}))  # N: Revealed type is "lxml.objectify.ObjectifiedElement"
 
--   case: etree_from_string_returns_element
-    main: |
-        from lxml import objectify
-        xyz = objectify.fromstring("<doc><xyz/></doc>").xyz
-        reveal_type(xyz)  # N: Revealed type is "lxml.objectify.ObjectifiedElement"
+- case: oe_has_arbitrary_attribute
+  parametrized:
+    - attr: x
+    - attr: x.x
+    - attr: x.y.z
+  main: |
+    from lxml.objectify import ObjectifiedElement
+    doc: ObjectifiedElement
+    reveal_type(doc.{{ attr }})  # N: Revealed type is "lxml.objectify.ObjectifiedElement"
 
-- case: builder_default_element_factory
+- case: oe_is_iterable
+  main: |
+    from lxml.objectify import ObjectifiedElement
+    doc: ObjectifiedElement
+    for el in doc:
+      reveal_type(el)  # N: Revealed type is "lxml.objectify.ObjectifiedElement"
+
+- case: oe_specific_methods_no_arg
+  parametrized:
+    - method: countchildren
+      rt: builtins.int
+    - method: getchildren
+      rt: builtins.list[lxml.objectify.ObjectifiedElement]
+    - method: descendantpaths
+      rt: builtins.list[builtins.str]
+  main: |
+    from lxml.objectify import ObjectifiedElement
+    doc: ObjectifiedElement
+    reveal_type(doc.{{ method }}())  # N: Revealed type is "{{ rt }}"
+
+- case: oe_specific_methods_have_arg
+  parametrized:
+    - method: addattr
+      args: s, 1
+      rt: None
+    - method: addattr
+      args: tag=s, value=s
+      rt: None
+    - method: descendantpaths
+      args: prefix=s
+      rt: builtins.list[builtins.str]
+  main: |
+    s: str
+    from lxml.objectify import ObjectifiedElement
+    doc: ObjectifiedElement
+    reveal_type(doc.{{ method }}({{ args }}))  # N: Revealed type is "{{ rt }}"
+
+- case: elementmaker_default
   main: |
     from lxml.objectify import E
     reveal_type(E)  # N: Revealed type is "lxml.objectify.ElementMaker"
 
-- case: builder_custom_element_factory
+- case: elementmaker_customize
   parametrized:
     - args: namespace=ns
     - args: makeelement=ObjectifiedElement
     - args: namespace=ns, nsmap=map
+    - args: annotate=True
   main: |
     from typing import Dict
     from lxml.objectify import ObjectifiedElement, ElementMaker
@@ -28,7 +74,7 @@
     E = ElementMaker({{ args }})
     reveal_type(E)  # N: Revealed type is "lxml.objectify.ElementMaker"
 
-- case: builder_create_elements
+- case: elementmaker_create_elements
   parametrized:
     - method: foo
       rt: lxml.objectify.ObjectifiedElement
@@ -42,7 +88,8 @@
     from lxml.objectify import E
     reveal_type(E.{{ method }}())  # N: Revealed type is "{{ rt }}"
 
-- case: builder_complex_example
+# Modified from official doc example
+- case: elementmaker_complex_example
   main: |
     from lxml.objectify import E
 
@@ -69,10 +116,3 @@
       )
     )
     reveal_type(page)  # N: Revealed type is "lxml.objectify.ObjectifiedElement"
-
-- case: objectified_element_iteration
-  main: |
-      from lxml import objectify
-      doc = objectify.fromstring("<doc><el />< el/></doc>")
-      for el in doc:
-        reveal_type(el)  # N: Revealed type is "lxml.objectify.ObjectifiedElement"
