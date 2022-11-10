@@ -667,13 +667,20 @@ def ElementTree(
     file: _FileReadSource,
     parser: None = ...,
 ) -> _ElementTree[_Element]: ...
-@overload  # empty tree, parser must produce valid element
+@overload  # empty tree, custom parser must produce valid element
 def ElementTree(
     element: None = ...,
     *,
     file: None = ...,
-    parser: _DefEtreeParsers[_ETree_T] | None = ...,
+    parser: _DefEtreeParsers[_ETree_T],
 ) -> _ElementTree[_ETree_T]: ...
+@overload  # empty tree, default parser
+def ElementTree(
+    element: None = ...,
+    *,
+    file: None = ...,
+    parser: None = ...,
+) -> _ElementTree[_Element]: ...
 @overload
 def HTML(
     text: _AnyStr,
