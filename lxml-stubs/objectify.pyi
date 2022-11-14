@@ -1,8 +1,8 @@
 from typing import Any, Iterator
 from typing_extensions import LiteralString
 
-from ._types import _AnyStr, _NSMapArg, _TagName
-from .etree import ElementBase, XMLParser, _ElemFactory
+from ._types import SupportsLaxedItems, _AnyStr, _FileReadSource, _NSMapArg, _TagName
+from .etree import ElementBase, XMLParser, XMLSchema, _ElementTree, _ElemFactory
 
 # Exported constants
 __version__: LiteralString
@@ -22,14 +22,6 @@ class ObjectifiedElement(ElementBase):
     def __reversed__(self) -> Iterator[ObjectifiedElement]: ...
     def __getattr__(self, __k: str) -> ObjectifiedElement: ...
 
-def fromstring(
-    xml: _AnyStr,
-    # only XMLParser or subclasses usable in lxml.objectify
-    parser: XMLParser[Any] | None = ...,
-    *,
-    base_url: _AnyStr | None = ...,
-) -> ObjectifiedElement: ...
-
 class ElementMaker:
     def __init__(
         self,
@@ -48,3 +40,71 @@ class ElementMaker:
     def __getattr__(self, tag: str) -> _ElemFactory[ObjectifiedElement]: ...
 
 E: ElementMaker
+
+def set_default_parser(
+    new_parser: XMLParser[ObjectifiedElement] | None = ...,
+) -> None: ...
+def makeparser(
+    *,
+    encoding: _AnyStr | None = ...,
+    attribute_defaults: bool = ...,
+    dtd_validation: bool = ...,
+    load_dtd: bool = ...,
+    no_network: bool = ...,
+    ns_clean: bool = ...,
+    recover: bool = ...,
+    schema: XMLSchema | None = ...,
+    huge_tree: bool = ...,
+    remove_blank_text: bool = ...,
+    resolve_entities: bool = ...,
+    remove_comments: bool = ...,
+    remove_pis: bool = ...,
+    strip_cdata: bool = ...,
+    collect_ids: bool = ...,
+    compact: bool = ...,
+) -> XMLParser[ObjectifiedElement]: ...
+
+#
+# ElementTree functional API for objectify elements
+#
+
+def fromstring(
+    xml: _AnyStr,
+    parser: XMLParser[ObjectifiedElement] | None = ...,
+    *,
+    base_url: _AnyStr | None = ...,
+) -> ObjectifiedElement: ...
+XML = fromstring
+def parse(
+    source: _FileReadSource,
+    parser: XMLParser[ObjectifiedElement] | None = ...,
+    *,
+    base_url: _AnyStr | None = ...,
+) -> _ElementTree[ObjectifiedElement]: ...
+def Element(
+    _tag: _TagName,
+    /,
+    attrib: SupportsLaxedItems[str, _AnyStr] | None = ...,
+    nsmap: _NSMapArg | None = ...,
+    *,
+    _pytype: str | None = ...,
+    **__attr: _AnyStr,
+) -> ObjectifiedElement: ...
+def SubElement(
+    _parent: ObjectifiedElement,
+    _tag: _TagName,
+    /,
+    attrib: SupportsLaxedItems[str, _AnyStr] | None = ...,
+    nsmap: _NSMapArg | None = ...,
+    **__attr: _AnyStr,
+) -> ObjectifiedElement: ...
+def DataElement(
+    _value: Any,  # TODO overload for various data types
+    /,
+    attrib: SupportsLaxedItems[str, _AnyStr] | None = ...,
+    nsmap: _NSMapArg | None = ...,
+    *,
+    _pytype: str | None = ...,
+    _xsi: str | None = ...,
+    **__attr: _AnyStr,
+) -> ObjectifiedElement: ...
