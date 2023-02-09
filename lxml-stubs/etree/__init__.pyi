@@ -76,6 +76,15 @@ from ._relaxng import (
     RelaxNGParseError as RelaxNGParseError,
     RelaxNGValidateError as RelaxNGValidateError,
 )
+from ._serializer import (
+    C14NWriterTarget as C14NWriterTarget,
+    SerialisationError as SerialisationError,
+    _AsyncIncrementalFileWriter as _AsyncIncrementalFileWriter,
+    _IncrementalFileWriter as _IncrementalFileWriter,
+    canonicalize as canonicalize,
+    htmlfile as htmlfile,
+    xmlfile as xmlfile,
+)
 from ._xmlerror import (
     ErrorDomains as ErrorDomains,
     ErrorLevels as ErrorLevels,
