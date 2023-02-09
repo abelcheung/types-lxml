@@ -113,10 +113,10 @@
   main: |
     from lxml.html import HtmlElement, clean
     root: HtmlElement
-    clean.clean_html()  # E: Too few arguments
-    clean.clean_html(None)  # E: Value of type variable "_DT" of function cannot be "None"
-    clean.clean_html(root, None)  # E: Too many arguments
-    clean.clean_html(badarg=root)  # E: Unexpected keyword argument "badarg"
+    clean.clean_html()  # E: Too few arguments  [call-arg]
+    clean.clean_html(None)  # E: Value of type variable "_DT" of function cannot be "None"  [type-var]
+    clean.clean_html(root, None)  # E: Too many arguments  [call-arg]
+    clean.clean_html(badarg=root)  # E: Unexpected keyword argument "badarg"  [call-arg]
 
 - case: other_html_funcs_badargs
   parametrized:
@@ -133,9 +133,9 @@
     from lxml.html import HtmlElement, clean
     c: clean.Cleaner
     root: HtmlElement
-    {{ func }}()  # E: Missing positional argument "html" in call to "{{ name }}"{{#is_method}} of "Cleaner"{{/is_method}}
-    {{ func }}(None)  # E: Value of type variable "_DT" of "{{ name }}"{{#is_method}} of "Cleaner"{{/is_method}} cannot be "None"
-    {{ func }}(badarg=root)  # E: Unexpected keyword argument "badarg" for "{{ name }}"{{#is_method}} of "Cleaner"{{/is_method}}
+    {{ func }}()  # E: Missing positional argument "html" in call to "{{ name }}"{{#is_method}} of "Cleaner"{{/is_method}}  [call-arg]
+    {{ func }}(None)  # E: Value of type variable "_DT" of "{{ name }}"{{#is_method}} of "Cleaner"{{/is_method}} cannot be "None"  [type-var]
+    {{ func }}(badarg=root)  # E: Unexpected keyword argument "badarg" for "{{ name }}"{{#is_method}} of "Cleaner"{{/is_method}}  [call-arg]
 
 - case: html_funcs_wrong_arg_type
   parametrized:
@@ -163,7 +163,7 @@
   main: |
     from lxml.html import HtmlElement, clean
     root: HtmlElement
-    clean.{{ func }}(root, {{ param }}=None)  # E: Argument "{{ param }}" to "{{ func }}" has incompatible type "None"; expected "{{ exp_t }}"
+    clean.{{ func }}(root, {{ param }}=None)  # E: Argument "{{ param }}" to "{{ func }}" has incompatible type "None"; expected "{{ exp_t }}"  [arg-type]
 
 - case: inplace_funcs_noargs
   parametrized:
@@ -173,7 +173,7 @@
     from lxml.html.clean import autolink, word_break
     from lxml.html import HtmlElement
     root: HtmlElement
-    _ = {{ func }}(root)  # E: "{{ func }}" does not return a value
+    _ = {{ func }}(root)  # E: "{{ func }}" does not return a value  [func-returns-value]
 
 - case: inplace_funcs_badargs
   expect_fail: true
@@ -225,7 +225,7 @@
     avoid_hosts = (pattern, pattern)
     avoid_cls = {s, s}
     root: HtmlElement
-    _ = autolink(root, {{ args }})  # E: "autolink" does not return a value
+    _ = autolink(root, {{ args }})  # E: "autolink" does not return a value  [func-returns-value]
 
 - case: autolink_html_goodargs
   parametrized:
@@ -256,7 +256,7 @@
     from lxml.html import HtmlElement
     avoid_cls = {'x', 'y'}
     root: HtmlElement
-    _ = word_break(root, {{ args }})  # E: "word_break" does not return a value
+    _ = word_break(root, {{ args }})  # E: "word_break" does not return a value  [func-returns-value]
 
 - case: word_break_html_goodargs
   parametrized:

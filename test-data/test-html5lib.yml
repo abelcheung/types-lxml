@@ -64,7 +64,7 @@
     b: bytes
     html5parser.{{ func }}(b, guess_charset=True)
     html5parser.{{ func }}(b, guess_charset=None)
-    html5parser.{{ func }}(b, guess_charset=b)  # E: Argument "guess_charset" to "{{ func }}" has incompatible type "bytes"; expected "Optional[bool]"
+    html5parser.{{ func }}(b, guess_charset=b)  # E: Argument "guess_charset" to "{{ func }}" has incompatible type "bytes"; expected "Optional[bool]"  [arg-type]
 
 - case: parser_arg_type
   parametrized:
@@ -80,7 +80,7 @@
     b: bytes
     html5parser.{{ func }}(b, parser=None)
     html5parser.{{ func }}(b, parser=p)
-    html5parser.{{ func }}(b, parser=b)  # E: Argument "parser" to "{{ func }}" has incompatible type "bytes"; expected "Optional[HTMLParser]"
+    html5parser.{{ func }}(b, parser=b)  # E: Argument "parser" to "{{ func }}" has incompatible type "bytes"; expected "Optional[HTMLParser]"  [arg-type]
 
 - case: other_arg_types
   parametrized:
@@ -94,4 +94,4 @@
     from lxml.html import html5parser
     b: bytes
     html5parser.{{func}}(b, {{param}}=True)
-    html5parser.{{func}}(b, {{param}}=None)  # E: Argument "{{ param }}" to "{{ func }}" has incompatible type "None"; expected "{{ exp_t }}"
+    html5parser.{{func}}(b, {{param}}=None)  # E: Argument "{{ param }}" to "{{ func }}" has incompatible type "None"; expected "{{ exp_t }}"  [arg-type]

@@ -10,7 +10,7 @@
     from lxml.sax import ElementTreeContentHandler
     from lxml.etree import _Element
     h: ElementTreeContentHandler[_Element]
-    h.etree = h.etree # E: Property "etree" defined in "ElementTreeContentHandler" is read-only
+    h.etree = h.etree # E: Property "etree" defined in "ElementTreeContentHandler" is read-only  [misc]
 
 - case: handler_constructor_goodargs
   parametrized:
@@ -93,8 +93,8 @@
     et: _ElementTree[Any]
     el: _Element
     p = ElementTreeProducer(el, ch)
-    _ = p.saxify()  # E: "saxify" of "ElementTreeProducer" does not return a value
-    p.saxify(1)  # E: Too many arguments for "saxify" of "ElementTreeProducer"
+    _ = p.saxify()  # E: "saxify" of "ElementTreeProducer" does not return a value  [func-returns-value]
+    p.saxify(1)  # E: Too many arguments for "saxify" of "ElementTreeProducer"  [call-arg]
 
 - case: saxify_func_goodargs
   parametrized:
@@ -111,7 +111,7 @@
     ch: MyHandler
     et: _ElementTree[Any]
     el: _Element
-    _ = saxify({{ args }})  # E: "saxify" does not return a value
+    _ = saxify({{ args }})  # E: "saxify" does not return a value  [func-returns-value]
 
 - case: saxify_func_badargs
   expect_fail: true

@@ -5,7 +5,7 @@
     xpath = etree.XPath(expr)
     reveal_type(xpath)  # N: Revealed type is "lxml.etree._xpath.XPath"
     reveal_type(xpath.path)  # N: Revealed type is "builtins.str"
-    xpath.path = xpath.path  # E: Property "path" defined in "XPath" is read-only
+    xpath.path = xpath.path  # E: Property "path" defined in "XPath" is read-only  [misc]
 
 - case: construct_goodargs
   parametrized:
@@ -18,8 +18,10 @@
     s: str
     b: bytes
     ns = {s: s}
-    def extfunc1(context, a) -> str: ...
-    def extfunc2(context, a, b) -> int: ...
+    def extfunc1(context, a) -> str:
+      return ''
+    def extfunc2(context, a, b) -> int:
+      return 0
     ext1 = [{(None, s): extfunc1}]
     ext2 = {(s, s): extfunc2}
     result = XPath({{ args }})
@@ -50,7 +52,7 @@
     xpath = etree.ETXPath(expr)
     reveal_type(xpath)  # N: Revealed type is "lxml.etree._xpath.ETXPath"
     reveal_type(xpath.path)  # N: Revealed type is "builtins.str"
-    xpath.path = xpath.path  # E: Property "path" defined in "XPath" is read-only
+    xpath.path = xpath.path  # E: Property "path" defined in "XPath" is read-only  [misc]
 
 - case: etxpath_construct_goodargs
   parametrized:
@@ -62,8 +64,10 @@
     from lxml.etree import ETXPath
     s: str
     b: bytes
-    def extfunc1(context, a) -> str: ...
-    def extfunc2(context, a, b) -> int: ...
+    def extfunc1(context, a) -> str:
+      return ''
+    def extfunc2(context, a, b) -> int:
+      return 0
     ext1 = [{(None, s): extfunc1}]
     ext2 = {(s, s): extfunc2}
     result = ETXPath({{ args }})
@@ -133,7 +137,7 @@
     from lxml import etree
     root: etree._Element
     tree: etree._ElementTree[etree._Element]
-    _ = etree.{{ evaluator_t }}({{ arg }})  # E: Argument 1 to "{{ evaluator_t }}" has incompatible type "{{ wrong_t }}"; expected "{{ expect_t }}"
+    _ = etree.{{ evaluator_t }}({{ arg }})  # E: Argument 1 to "{{ evaluator_t }}" has incompatible type "{{ wrong_t }}"; expected "{{ expect_t }}"  [arg-type]
 
 - case: create_evaluator_autodetect
   parametrized:

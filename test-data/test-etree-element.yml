@@ -27,10 +27,10 @@
     del elem[2:4]
     _ = elem['junk']
   out: |
-    main:6: error: No overload variant of "__getitem__" of "_Element" matches argument type "str"
+    main:6: error: No overload variant of "__getitem__" of "_Element" matches argument type "str"  [call-overload]
     main:6: note: Possible overload variants:
-    main:6: note:     def __getitem__(self, int) -> _Element
-    main:6: note:     def __getitem__(self, slice) -> List[_Element]
+    main:6: note:     def __getitem__(self, int, /) -> _Element
+    main:6: note:     def __getitem__(self, slice, /) -> List[_Element]
 
 - case: behave_like_sequence_badarg
   parametrized:
@@ -54,7 +54,7 @@
     elem: etree._Element
     not_elem: object
     not_num: str
-    _ = elem.{{ method }}({{ args }})  # E: Argument {{ pos }} to "{{ method }}" of "_Element" has incompatible type "{{ wrong_type }}"; expected "{{ exp_type }}"
+    _ = elem.{{ method }}({{ args }})  # E: Argument {{ pos }} to "{{ method }}" of "_Element" has incompatible type "{{ wrong_type }}"; expected "{{ exp_type }}"  [arg-type]
 
 - case: behave_like_mutable_sequence
   # No reverse() and __iadd__(); __setitem__ has its own test
@@ -107,18 +107,18 @@
     from lxml import etree
     elem: etree._Element
     not_elem: object
-    elem.{{ method }}({{ args }})  # E: Argument {{ pos }} to "{{ method }}" of "_Element" has incompatible type "object"; expected "_Element"
-    elem.{{ method }}({{ too_many }})  # E: Too many arguments for "{{ method }}" of "_Element"
+    elem.{{ method }}({{ args }})  # E: Argument {{ pos }} to "{{ method }}" of "_Element" has incompatible type "object"; expected "_Element"  [arg-type]
+    elem.{{ method }}({{ too_many }})  # E: Too many arguments for "{{ method }}" of "_Element"  [call-arg]
 
 - case: behave_like_mutable_sequence_badarg_2
   main: |
     from lxml import etree
     elem: etree._Element
     not_elem: object
-    elem.extend([not_elem])  # E: List item 0 has incompatible type "object"; expected "_Element"
-    elem.extend(elem, elem)  # E: Too many arguments for "extend" of "_Element"
-    elem.clear(True, False)  # E: Too many arguments for "clear" of "_Element"
-    elem.clear(badarg=True)  # E: Unexpected keyword argument "badarg" for "clear" of "_Element"
+    elem.extend([not_elem])  # E: List item 0 has incompatible type "object"; expected "_Element"  [list-item]
+    elem.extend(elem, elem)  # E: Too many arguments for "extend" of "_Element"  [call-arg]
+    elem.clear(True, False)  # E: Too many arguments for "clear" of "_Element"  [call-arg]
+    elem.clear(badarg=True)  # E: Unexpected keyword argument "badarg" for "clear" of "_Element"  [call-arg]
   out: |
 
 - case: method_setitem
@@ -165,7 +165,7 @@
     from lxml import etree
     elem: etree._Element
     reveal_type(elem.{{ prop }})  # N: Revealed type is "{{ rt }}"
-    elem.{{ prop }} = elem.{{ prop }}  # E: Property "{{ prop }}" defined in "_Element" is read-only
+    elem.{{ prop }} = elem.{{ prop }}  # E: Property "{{ prop }}" defined in "_Element" is read-only  [misc]
 
 # Quite a few projects perform automatic property conversion under the hook,
 # lxml employs it in project-wide manner, including str/byte conversion
@@ -261,15 +261,15 @@
 - case: method_set_badarg
   parametrized:
     - args: s
-      err: Missing positional argument "value" in call to "set" of "_Element"
+      err: Missing positional argument "value" in call to "set" of "_Element"  [call-arg]
     - args: 1, s
-      err: Argument 1 to "set" of "_Element" has incompatible type "int"; expected "Union[str, bytes, QName]"
+      err: Argument 1 to "set" of "_Element" has incompatible type "int"; expected "Union[str, bytes, QName]"  [arg-type]
     - args: "b, [s]"
-      err: Argument 2 to "set" of "_Element" has incompatible type "List[str]"; expected "Union[str, bytes, QName]"
+      err: Argument 2 to "set" of "_Element" has incompatible type "List[str]"; expected "Union[str, bytes, QName]"  [arg-type]
     - args: "s, None"
-      err: Argument 2 to "set" of "_Element" has incompatible type "None"; expected "Union[str, bytes, QName]"
+      err: Argument 2 to "set" of "_Element" has incompatible type "None"; expected "Union[str, bytes, QName]"  [arg-type]
     - args: s, b, q
-      err: Too many arguments for "set" of "_Element"
+      err: Too many arguments for "set" of "_Element"  [call-arg]
   main: |
     from lxml import etree
     elem: etree._Element
@@ -286,8 +286,8 @@
     from lxml import etree
     elem: etree._Element
     elem.{{ method }}(elem)
-    elem.{{ method }}(1)  # E: Argument 1 to "{{ method }}" of "_Element" has incompatible type "int"; expected "_Element"
-    elem.{{ method }}(elem, 1)  # E: Too many arguments for "{{ method }}" of "_Element"
+    elem.{{ method }}(1)  # E: Argument 1 to "{{ method }}" of "_Element" has incompatible type "int"; expected "_Element"  [arg-type]
+    elem.{{ method }}(elem, 1)  # E: Too many arguments for "{{ method }}" of "_Element"  [call-arg]
 
 - case: method_elementpath
   # If there were support for testing matrix...
@@ -358,10 +358,10 @@
     ok_path: str
     bad_path: bytes
     bad_nsmap = {'a': 1}
-    _ = elem.{{ method }}(bad_path)  # E: Argument 1 to "{{ method }}" of "_Element" has incompatible type "bytes"; expected "Union[str, QName]"
-    _ = elem.{{ method }}(ok_path, bad_nsmap)  # E: Argument 2 to "{{ method }}" of "_Element" has incompatible type "Dict[str, int]"; expected "Optional[Union[Mapping[None, Union[str, bytes]], Mapping[str, Union[str, bytes]], Mapping[Optional[str], Union[str, bytes]]]]"
-    _ = elem.{{ method }}(ok_path, None, 1)  # E: Too many arguments for "{{ method }}" of "_Element"
-    _ = elem.{{ method }}(ok_path, badarg=True)  # E: Unexpected keyword argument "badarg" for "{{ method }}" of "_Element"
+    _ = elem.{{ method }}(bad_path)  # E: Argument 1 to "{{ method }}" of "_Element" has incompatible type "bytes"; expected "Union[str, QName]"  [arg-type]
+    _ = elem.{{ method }}(ok_path, bad_nsmap)  # E: Argument 2 to "{{ method }}" of "_Element" has incompatible type "Dict[str, int]"; expected "Optional[Union[Mapping[None, Union[str, bytes]], Mapping[str, Union[str, bytes]], Mapping[Optional[str], Union[str, bytes]]]]"  [arg-type]
+    _ = elem.{{ method }}(ok_path, None, 1)  # E: Too many arguments for "{{ method }}" of "_Element"  [call-arg]
+    _ = elem.{{ method }}(ok_path, badarg=True)  # E: Unexpected keyword argument "badarg" for "{{ method }}" of "_Element"  [call-arg]
 
 - case: method_findtext
   parametrized:
@@ -434,8 +434,8 @@
   main: |
     from lxml import etree
     elem: etree._Element
-    _ = elem.{{ method }}(123)  # E: Argument 1 to "{{ method }}" of "_Element" has incompatible type "int"; expected "Optional[Union[Union[str, bytes, QName], Callable[..., _Element]]]"
-    _ = elem.{{ method }}([etree.PI, 123])  # E: Argument 1 to "{{ method }}" of "_Element" has incompatible type "List[object]"; expected "Optional[Union[Union[str, bytes, QName], Callable[..., _Element]]]"
+    _ = elem.{{ method }}(123)  # E: Argument 1 to "{{ method }}" of "_Element" has incompatible type "int"; expected "Optional[Union[Union[str, bytes, QName], Callable[..., _Element]]]"  [arg-type]
+    _ = elem.{{ method }}([etree.PI, 123])  # E: Argument 1 to "{{ method }}" of "_Element" has incompatible type "List[object]"; expected "Optional[Union[Union[str, bytes, QName], Callable[..., _Element]]]"  [arg-type]
 
 - case: method_iter_family_special_kwd
   parametrized:
@@ -459,10 +459,10 @@
     from lxml import etree
     elem: etree._Element
     attr: str
-    result = elem.{{ method }}(123)  # E: Argument 1 to "{{ method }}" of "_Element" has incompatible type "int"; expected "Optional[Union[Union[str, bytes, QName], Callable[..., _Element]]]"
-    result = elem.{{ method }}([etree.PI, 123])  # E: Argument 1 to "{{ method }}" of "_Element" has incompatible type "List[object]"; expected "Optional[Union[Union[str, bytes, QName], Callable[..., _Element]]]"
-    result = elem.{{ method }}(attr, badarg=True)  # E: Unexpected keyword argument "badarg" for "{{ method }}" of "_Element"
-    result = elem.{{ method }}(attr, {{ kwd }}='badval')  # E: Argument "{{ kwd }}" to "{{ method }}" of "_Element" has incompatible type "str"; expected "bool"
+    result = elem.{{ method }}(123)  # E: Argument 1 to "{{ method }}" of "_Element" has incompatible type "int"; expected "Optional[Union[Union[str, bytes, QName], Callable[..., _Element]]]"  [arg-type]
+    result = elem.{{ method }}([etree.PI, 123])  # E: Argument 1 to "{{ method }}" of "_Element" has incompatible type "List[object]"; expected "Optional[Union[Union[str, bytes, QName], Callable[..., _Element]]]"  [arg-type]
+    result = elem.{{ method }}(attr, badarg=True)  # E: Unexpected keyword argument "badarg" for "{{ method }}" of "_Element"  [call-arg]
+    result = elem.{{ method }}(attr, {{ kwd }}='badval')  # E: Argument "{{ kwd }}" to "{{ method }}" of "_Element" has incompatible type "str"; expected "bool"  [arg-type]
 
 - case: method_itertext
   parametrized:
@@ -484,9 +484,9 @@
     from lxml import etree
     elem: etree._Element
     obj: object
-    _ = elem.itertext(123)  # ER: Argument 1 to "itertext" of "_Element" has incompatible type "int"; expected ".+"
-    _ = elem.itertext('tag', badarg=True)  # E: Unexpected keyword argument "badarg" for "itertext" of "_Element"
-    _ = elem.itertext('tag', with_tail=obj)  # E: Argument "with_tail" to "itertext" of "_Element" has incompatible type "object"; expected "bool"
+    _ = elem.itertext(123)  # E: Argument 1 to "itertext" of "_Element" has incompatible type "int"; expected "Optional[Union[Union[str, bytes, QName], Callable[..., _Element]]]"  [arg-type]
+    _ = elem.itertext('tag', badarg=True)  # E: Unexpected keyword argument "badarg" for "itertext" of "_Element"  [call-arg]
+    _ = elem.itertext('tag', with_tail=obj)  # E: Argument "with_tail" to "itertext" of "_Element" has incompatible type "object"; expected "bool"  [arg-type]
 
 - case: method_makeelement_args
   parametrized:
@@ -527,10 +527,10 @@
       b: b,
       s: 1,
     }
-    _ = elem.makeelement()  # E: Too few arguments for "makeelement" of "_Element"
-    _ = elem.makeelement(None)  # E: Argument 1 to "makeelement" of "_Element" has incompatible type "None"; expected "Union[str, bytes, QName]"
-    _ = elem.makeelement(s, foo=1)  # E: Argument "foo" to "makeelement" of "_Element" has incompatible type "int"; expected "Union[str, bytes]"
-    _ = elem.makeelement(s, bad_attrib)  # E: Argument 2 to "makeelement" of "_Element" has incompatible type "Dict[Sequence[object], object]"; expected "Optional[SupportsLaxedItems[str, Union[str, bytes]]]"
+    _ = elem.makeelement()  # E: Too few arguments for "makeelement" of "_Element"  [call-arg]
+    _ = elem.makeelement(None)  # E: Argument 1 to "makeelement" of "_Element" has incompatible type "None"; expected "Union[str, bytes, QName]"  [arg-type]
+    _ = elem.makeelement(s, foo=1)  # E: Argument "foo" to "makeelement" of "_Element" has incompatible type "int"; expected "Union[str, bytes]"  [arg-type]
+    _ = elem.makeelement(s, bad_attrib)  # E: Argument 2 to "makeelement" of "_Element" has incompatible type "Dict[Sequence[object], object]"; expected "Optional[SupportsLaxedItems[str, Union[str, bytes]]]"  [arg-type]
 
 # Simple methods that don't take any argument
 - case: method_others
@@ -558,7 +558,7 @@
   main: |
     from lxml import etree
     elem: etree._Element
-    _ = elem.{{ method }}('junk')  # E: Too many arguments for "{{ method }}" of "_Element"
+    _ = elem.{{ method }}('junk')  # E: Too many arguments for "{{ method }}" of "_Element"  [call-arg]
 
 - case: xpath
   parametrized:
@@ -575,8 +575,10 @@
     xpath_expr: str
     s: str
     ns = {s: s}
-    def extfunc1(context, a) -> str: ...
-    def extfunc2(context, a, b) -> int: ...
+    def extfunc1(context, a) -> str:
+      return ''
+    def extfunc2(context, a, b) -> int:
+      return 0
     ext1 = [{(None, s): extfunc1}]
     ext2 = {(s, s): extfunc2}
     result = root.xpath(xpath_expr, {{ kwds }})
@@ -585,7 +587,7 @@
   main: |
     from lxml import etree
     root: etree._Element
-    root.xpath()  # E: Too few arguments for "xpath" of "_Element"
+    root.xpath()  # E: Too few arguments for "xpath" of "_Element"  [call-arg]
 
 - case: xpath_badarg
   expect_fail: true
@@ -599,6 +601,7 @@
     expr: str
     s: str
     badns = {s: 1}
-    def extfunc1(context, a) -> str: ...
+    def extfunc1(context, a) -> str:
+      return ''
     badext = [{badns: extfunc1}]
     root.xpath({{ args }})

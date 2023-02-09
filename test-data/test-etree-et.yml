@@ -8,17 +8,17 @@
     from lxml.etree import _ElementTree
     et: _ElementTree
     reveal_type(et.{{ prop }})  # N: Revealed type is "{{ rt }}"
-    et.{{ prop }} = et.{{ prop }}  # E: Property "{{ prop }}" defined in "_ElementTree" is read-only
+    et.{{ prop }} = et.{{ prop }}  # E: Property "{{ prop }}" defined in "_ElementTree" is read-only  [misc]
 
 - case: no_arg_or_return_methods
   main: |
     from lxml.etree import _ElementTree, _Element
     root: _Element
     et: _ElementTree[_Element]
-    r = et.xinclude()  # E: "xinclude" of "_ElementTree" does not return a value
-    r = et._setroot(root)  # E: "_setroot" of "_ElementTree" does not return a value
+    r = et.xinclude()  # E: "xinclude" of "_ElementTree" does not return a value  [func-returns-value]
+    r = et._setroot(root)  # E: "_setroot" of "_ElementTree" does not return a value  [func-returns-value]
     reveal_type(et.getroot())  # N: Revealed type is "lxml.etree._Element"
-    et._setroot(et)  # E: Argument 1 to "_setroot" of "_ElementTree" has incompatible type "_ElementTree[_Element]"; expected "_Element"
+    et._setroot(et)  # E: Argument 1 to "_setroot" of "_ElementTree" has incompatible type "_ElementTree[_Element]"; expected "_Element"  [arg-type]
 
 - case: no_arg_or_return_methods_toomanyargs
   parametrized:
@@ -32,7 +32,7 @@
     from lxml.etree import _ElementTree, _Element
     root: _Element
     et: _ElementTree
-    et.{{ method }}({{ kwds }})  # E: Too many arguments for "{{ method }}" of "_ElementTree"
+    et.{{ method }}({{ kwds }})  # E: Too many arguments for "{{ method }}" of "_ElementTree"  [call-arg]
 
 - case: getpath_family
   parametrized:
@@ -44,9 +44,9 @@
     et: _ElementTree[_Element]
     r = et.{{ method }}(root)
     reveal_type(r)  # N: Revealed type is "builtins.str"
-    r = et.{{ method }}()  # E: Missing positional argument "element" in call to "{{ method }}" of "_ElementTree"
-    r = et.{{ method }}(et)  # E: Argument 1 to "{{ method }}" of "_ElementTree" has incompatible type "_ElementTree[_Element]"; expected "_Element"
-    r = et.{{ method }}(root, None)  # E: Too many arguments for "{{ method }}" of "_ElementTree"
+    r = et.{{ method }}()  # E: Missing positional argument "element" in call to "{{ method }}" of "_ElementTree"  [call-arg]
+    r = et.{{ method }}(et)  # E: Argument 1 to "{{ method }}" of "_ElementTree" has incompatible type "_ElementTree[_Element]"; expected "_Element"  [arg-type]
+    r = et.{{ method }}(root, None)  # E: Too many arguments for "{{ method }}" of "_ElementTree"  [call-arg]
 
 - case: validate_family
   parametrized:
@@ -60,8 +60,8 @@
     reveal_type(r)  # N: Revealed type is "builtins.bool"
     r = et.{{ method }}(et)
     reveal_type(r)  # N: Revealed type is "builtins.bool"
-    r = et.{{ method }}()  # E: Missing positional argument "{{ method }}" in call to "{{ method }}" of "_ElementTree"
-    r = et.{{ method }}(None)  # E: Argument 1 to "{{ method }}" of "_ElementTree" has incompatible type "None"; expected "Union[_Element, _ElementTree[_Element]]"
+    r = et.{{ method }}()  # E: Missing positional argument "{{ method }}" in call to "{{ method }}" of "_ElementTree"  [call-arg]
+    r = et.{{ method }}(None)  # E: Argument 1 to "{{ method }}" of "_ElementTree" has incompatible type "None"; expected "Union[_Element, _ElementTree[_Element]]"  [arg-type]
 
 - case: elementpath_family
   parametrized:
@@ -131,10 +131,10 @@
     ok_path: str
     bad_path: bytes
     bad_nsmap = {'a': 1}
-    _ = et.{{ method }}(bad_path)  # E: Argument 1 to "{{ method }}" of "_ElementTree" has incompatible type "bytes"; expected "Union[str, QName]"
-    _ = et.{{ method }}(ok_path, bad_nsmap)  # E: Argument 2 to "{{ method }}" of "_ElementTree" has incompatible type "Dict[str, int]"; expected "Union[Mapping[None, Union[str, bytes]], Mapping[str, Union[str, bytes]], Mapping[Optional[str], Union[str, bytes]], None]"
-    _ = et.{{ method }}(ok_path, None, 1)  # E: Too many arguments for "{{ method }}" of "_ElementTree"
-    _ = et.{{ method }}(ok_path, badarg=True)  # E: Unexpected keyword argument "badarg" for "{{ method }}" of "_ElementTree"
+    _ = et.{{ method }}(bad_path)  # E: Argument 1 to "{{ method }}" of "_ElementTree" has incompatible type "bytes"; expected "Union[str, QName]"  [arg-type]
+    _ = et.{{ method }}(ok_path, bad_nsmap)  # E: Argument 2 to "{{ method }}" of "_ElementTree" has incompatible type "Dict[str, int]"; expected "Union[Mapping[None, Union[str, bytes]], Mapping[str, Union[str, bytes]], Mapping[Optional[str], Union[str, bytes]], None]"  [arg-type]
+    _ = et.{{ method }}(ok_path, None, 1)  # E: Too many arguments for "{{ method }}" of "_ElementTree"  [call-arg]
+    _ = et.{{ method }}(ok_path, badarg=True)  # E: Unexpected keyword argument "badarg" for "{{ method }}" of "_ElementTree"  [call-arg]
 
 - case: findtext
   parametrized:
@@ -382,8 +382,10 @@
     xpath_expr: str
     s: str
     ns = {s: s}
-    def extfunc1(context, a) -> str: ...
-    def extfunc2(context, a, b) -> int: ...
+    def extfunc1(context, a) -> str:
+      return ''
+    def extfunc2(context, a, b) -> int:
+      return 0
     ext1 = [{(None, s): extfunc1}]
     ext2 = {(s, s): extfunc2}
     result = tree.xpath(xpath_expr, {{ kwds }})
@@ -392,7 +394,7 @@
   main: |
     from lxml import etree
     tree: etree._ElementTree
-    tree.xpath()  # E: Too few arguments for "xpath" of "_ElementTree"
+    tree.xpath()  # E: Too few arguments for "xpath" of "_ElementTree"  [call-arg]
 
 - case: xpath_badarg
   expect_fail: true

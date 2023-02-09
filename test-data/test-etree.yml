@@ -112,7 +112,7 @@
     from lxml.etree import QName
     qn: QName
     reveal_type(qn.{{ prop }})  # N: Revealed type is "{{ rt }}"
-    qn.{{ prop }} = ""  # E: Property "{{ prop }}" defined in "QName" is read-only
+    qn.{{ prop }} = ""  # E: Property "{{ prop }}" defined in "QName" is read-only  [misc]
 
 - case: qname_compare
   parametrized:

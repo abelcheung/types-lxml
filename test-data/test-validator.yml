@@ -169,10 +169,10 @@
     dtd: etree.DTD
     schema: etree.XMLSchema
     tree: etree._ElementTree[etree._Element]
-    {{ obj }}{{^is_call}}.validate{{/is_call}}()  # E: Missing positional argument "etree" in call to {{#is_call}}"__call__" of "{{cls}}"{{/is_call}}{{^is_call}}"validate" of "_Validator"{{/is_call}}
-    {{ obj }}{{^is_call}}.validate{{/is_call}}(None)  # E: Argument 1 to {{#is_call}}"__call__" of "{{cls}}"{{/is_call}}{{^is_call}}"validate" of "_Validator"{{/is_call}} has incompatible type "None"; expected "Union[_Element, _ElementTree[Any]]"
-    {{ obj }}{{^is_call}}.validate{{/is_call}}(tree, None)  # E: Too many arguments for {{#is_call}}"__call__" of "{{cls}}"{{/is_call}}{{^is_call}}"validate" of "_Validator"{{/is_call}}
-    {{ obj }}{{^is_call}}.validate{{/is_call}}(badarg=tree)  # E: Unexpected keyword argument "badarg" for {{#is_call}}"__call__" of "{{cls}}"{{/is_call}}{{^is_call}}"validate" of "_Validator"{{/is_call}}
+    {{ obj }}{{^is_call}}.validate{{/is_call}}()  # E: Missing positional argument "etree" in call to {{#is_call}}"__call__" of "{{cls}}"{{/is_call}}{{^is_call}}"validate" of "_Validator"{{/is_call}}  [call-arg]
+    {{ obj }}{{^is_call}}.validate{{/is_call}}(None)  # E: Argument 1 to {{#is_call}}"__call__" of "{{cls}}"{{/is_call}}{{^is_call}}"validate" of "_Validator"{{/is_call}} has incompatible type "None"; expected "Union[_Element, _ElementTree[Any]]"  [arg-type]
+    {{ obj }}{{^is_call}}.validate{{/is_call}}(tree, None)  # E: Too many arguments for {{#is_call}}"__call__" of "{{cls}}"{{/is_call}}{{^is_call}}"validate" of "_Validator"{{/is_call}}  [call-arg]
+    {{ obj }}{{^is_call}}.validate{{/is_call}}(badarg=tree)  # E: Unexpected keyword argument "badarg" for {{#is_call}}"__call__" of "{{cls}}"{{/is_call}}{{^is_call}}"validate" of "_Validator"{{/is_call}}  [call-arg]
 
 - case: superclass_other_methods
   parametrized:
@@ -186,5 +186,5 @@
     schema: etree.XMLSchema
     tree: etree._ElementTree[etree._Element]
     reveal_type({{ obj }}.error_log)  # N: Revealed type is "lxml.etree._xmlerror._ListErrorLog"
-    _ = {{ obj }}.assertValid(tree)  # E: "assertValid" of "_Validator" does not return a value
-    _ = {{ obj }}.assert_(tree.getroot())  # E: "assert_" of "_Validator" does not return a value
+    _ = {{ obj }}.assertValid(tree)  # E: "assertValid" of "_Validator" does not return a value  [func-returns-value]
+    _ = {{ obj }}.assert_(tree.getroot())  # E: "assert_" of "_Validator" does not return a value  [func-returns-value]

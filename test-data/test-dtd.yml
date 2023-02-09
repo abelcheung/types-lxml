@@ -61,7 +61,7 @@
   main: |
     from dtdtest import dtd
     reveal_type(dtd.{{ prop }})  # N: Revealed type is "Union[builtins.str, None]"
-    dtd.{{ prop }} = dtd.{{ prop }}  # E: Property "{{ prop }}" defined in "DTD" is read-only
+    dtd.{{ prop }} = dtd.{{ prop }}  # E: Property "{{ prop }}" defined in "DTD" is read-only  [misc]
 
 
 - case: dtd_methods
@@ -88,8 +88,8 @@
     - func: entities
   main: |
     from dtdtest import dtd
-    _ = dtd.{{ func }}(None)  # E: Too many arguments for "{{ func }}" of "DTD"
-    _ = dtd.{{ func }}(badarg=None)  # E: Unexpected keyword argument "badarg" for "{{ func }}" of "DTD"
+    _ = dtd.{{ func }}(None)  # E: Too many arguments for "{{ func }}" of "DTD"  [call-arg]
+    _ = dtd.{{ func }}(badarg=None)  # E: Unexpected keyword argument "badarg" for "{{ func }}" of "DTD"  [call-arg]
 
 - case: dtd_entity_properties
   files: *INC
@@ -101,7 +101,7 @@
   main: |
     from dtdtest import dtd_ent
     reveal_type(dtd_ent.{{ prop }})  # N: Revealed type is "Union[builtins.str, None]"
-    dtd_ent.{{ prop }} = dtd_ent.{{ prop }}  # E: Property "{{ prop }}" defined in "_DTDEntityDecl" is read-only
+    dtd_ent.{{ prop }} = dtd_ent.{{ prop }}  # E: Property "{{ prop }}" defined in "_DTDEntityDecl" is read-only  [misc]
 
 - case: dtd_element_properties
   files: *INC
@@ -117,7 +117,7 @@
   main: |
     from dtdtest import dtd_el
     reveal_type(dtd_el.{{ prop }})  # N: Revealed type is "{{ rt }}"
-    dtd_el.{{ prop }} = dtd_el.{{ prop }}  # E: Property "{{ prop }}" defined in "_DTDElementDecl" is read-only
+    dtd_el.{{ prop }} = dtd_el.{{ prop }}  # E: Property "{{ prop }}" defined in "_DTDElementDecl" is read-only  [misc]
 
 - case: dtd_element_methods
   files: *INC
@@ -137,8 +137,8 @@
     - func: attributes
   main: |
     from dtdtest import dtd_el
-    _ = dtd_el.{{ func }}(None)  # E: Too many arguments for "{{ func }}" of "_DTDElementDecl"
-    _ = dtd_el.{{ func }}(badarg=None)  # E: Unexpected keyword argument "badarg" for "{{ func }}" of "_DTDElementDecl"
+    _ = dtd_el.{{ func }}(None)  # E: Too many arguments for "{{ func }}" of "_DTDElementDecl"  [call-arg]
+    _ = dtd_el.{{ func }}(badarg=None)  # E: Unexpected keyword argument "badarg" for "{{ func }}" of "_DTDElementDecl"  [call-arg]
 
 - case: dtd_attrs_properties
   files: *INC
@@ -158,7 +158,7 @@
   main: |
     from dtdtest import dtd_attr
     reveal_type(dtd_attr.{{ prop }})  # N: Revealed type is "{{ rt }}"
-    dtd_attr.{{ prop }} = dtd_attr.{{ prop }}  # E: Property "{{ prop }}" defined in "_DTDAttributeDecl" is read-only
+    dtd_attr.{{ prop }} = dtd_attr.{{ prop }}  # E: Property "{{ prop }}" defined in "_DTDAttributeDecl" is read-only  [misc]
 
 - case: dtd_attrs_methods
   files: *INC
@@ -178,8 +178,8 @@
     - func: values
   main: |
     from dtdtest import dtd_attr
-    _ = dtd_attr.{{ func }}(None)  # E: Too many arguments for "{{ func }}" of "_DTDAttributeDecl"
-    _ = dtd_attr.{{ func }}(badarg=None)  # E: Unexpected keyword argument "badarg" for "{{ func }}" of "_DTDAttributeDecl"
+    _ = dtd_attr.{{ func }}(None)  # E: Too many arguments for "{{ func }}" of "_DTDAttributeDecl"  [call-arg]
+    _ = dtd_attr.{{ func }}(badarg=None)  # E: Unexpected keyword argument "badarg" for "{{ func }}" of "_DTDAttributeDecl"  [call-arg]
 
 - case: dtd_el_content_properties
   files: *INC

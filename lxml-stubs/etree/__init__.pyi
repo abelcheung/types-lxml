@@ -621,7 +621,7 @@ class _Entity(_Element):
     @property  # type: ignore[misc]
     def tag(self) -> _ElemFactory[_Entity]: ...  # type: ignore[override]
     @property  # type: ignore[misc]
-    def text(self) -> str: ...
+    def text(self) -> str: ...  # type: ignore[override]
     @property
     def name(self) -> str: ...
     @name.setter
