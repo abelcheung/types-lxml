@@ -1,6 +1,6 @@
 [build-system]
-requires = ['pdm-pep517 ~= 1.0']
-build-backend = 'pdm.pep517.api'
+requires = ['pdm-backend ~= 2.0']
+build-backend = 'pdm.backend'
 
 [project]
 name = 'types-lxml'
@@ -8,7 +8,7 @@ dynamic = ['version']
 description = 'Type annotations for lxml striving for completeness'
 readme = 'README.md'
 requires-python = '>=3.8'
-license = 'Apache-2.0'
+license = {text = 'Apache-2.0'}
 # Potentially should be lxml 4.8+ due to support for QName in
 # lxml.builder.ElementMaker tag arg, but for the majority even
 # older versions should be ok. Don't want to be too strict on this
@@ -42,10 +42,8 @@ homepage = 'https://github.com/abelcheung/types-lxml'
 [project.optional-dependencies]
 extra = [ 'types-beautifulsoup4', 'types-html5lib' ]
 
-[tool.pdm]
-version = {use_scm = true}
-
 [tool.pdm.build]
+version = {use_scm = true}
 includes = [
     'lxml-stubs/',
     'py.typed',
@@ -75,5 +73,6 @@ exclude = [
     '**/node_modules',
     '**/__pycache__',
     '.tox',
+    '.mypy_cache',
 ]
 reportPrivateUsage = false
