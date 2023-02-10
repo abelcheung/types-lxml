@@ -1,0 +1,276 @@
+- case: c14ntarget_construct
+  parametrized:
+    - args: sio.write
+    - args: write=f.write
+  main: |
+    from io import StringIO, TextIOWrapper
+    from lxml.etree import C14NWriterTarget
+    sio: StringIO
+    f: TextIOWrapper
+    target = C14NWriterTarget({{ args }})
+    reveal_type(target)  # N: Revealed type is "lxml.etree._serializer.C14NWriterTarget"
+
+- case: c14ntarget_construct_noarg
+  main: |
+    from lxml.etree import C14NWriterTarget
+    target = C14NWriterTarget()  # E: Missing positional argument "write" in call to "C14NWriterTarget"  [call-arg]
+
+- case: c14ntarget_construct_badarg
+  expect_fail: true
+  parametrized:
+    - args: sio.read
+    - args: None
+    - args: sio.write, None
+    - args: sio.write, dummy=1
+  main: |
+    from io import StringIO, TextIOWrapper
+    from lxml.etree import C14NWriterTarget
+    sio: StringIO
+    target = C14NWriterTarget({{ args }})
+
+- case: canonicalize_noarg
+  expect_fail: true
+  main: |
+    from lxml.etree import canonicalize
+    c = canonicalize()
+
+- case: canonicalize_input_ok
+  parametrized:
+  - args: s
+  - args: xml_data=s
+  # Intentionally wrong arg to demonstrate it is ignored
+  - args: s, from_file=1
+  - args: from_file=s
+  - args: None, from_file=f
+  main: |
+    from io import TextIOWrapper
+    from lxml.etree import canonicalize
+    s: str
+    f: TextIOWrapper
+    c = canonicalize({{ args }})
+    reveal_type(c)  # N: Revealed type is "builtins.str"
+
+- case: canonicalize_input_bad
+  expect_fail: true
+  parametrized:
+  - args: from_file=1
+  - args: None, from_file=1
+  - args: xml_data=None, from_file=None
+  main: |
+    from lxml.etree import canonicalize
+    c = canonicalize({{ args }})
+
+- case: canonicalize_output_ok
+  parametrized:
+  - args: s, out=None
+    ret: builtins.str
+  - args: s, out=f
+    ret: None
+  - args: s, out=sys.stdout
+    ret: None
+  main: |
+    import sys
+    from io import TextIOWrapper
+    from lxml.etree import canonicalize
+    s: str
+    f: TextIOWrapper
+    c = canonicalize({{ args }})
+    reveal_type(c)  # N: Revealed type is "{{ ret }}"
+
+- case: canonicalize_output_bad
+  expect_fail: true
+  parametrized:
+  - args: s, out=1
+  - args: s, out=s
+  main: |
+    from lxml.etree import canonicalize
+    s: str
+    c = canonicalize({{ args }})
+
+- case: c14ntarget_kw_bool_ok
+  parametrized:
+  - opt: with_comments
+  - opt: strip_text
+  - opt: rewrite_prefixes
+  main: |
+    from io import StringIO, TextIOWrapper
+    from lxml.etree import canonicalize, C14NWriterTarget
+    s: str
+    sio: StringIO
+    t = C14NWriterTarget(sio.write, {{ opt }}=False)
+    c = canonicalize(s, {{ opt }}=True)
+
+- case: c14ntarget_kw_bool_bad_1
+  parametrized:
+  - opt: with_comments
+  - opt: strip_text
+  - opt: rewrite_prefixes
+  main: |
+    from io import StringIO
+    from lxml.etree import C14NWriterTarget
+    sio: StringIO
+    t = C14NWriterTarget(sio.write, {{ opt }}=None)  # E: Argument "{{ opt }}" to "C14NWriterTarget" has incompatible type "None"; expected "bool"  [arg-type]
+
+- case: c14ntarget_kw_bool_bad_2
+  expect_fail: true
+  parametrized:
+  - opt: with_comments
+  - opt: strip_text
+  - opt: rewrite_prefixes
+  main: |
+    from lxml.etree import canonicalize
+    s: str
+    c = canonicalize(s, {{ opt }}='')
+
+- case: c14ntarget_kw_list_ok
+  parametrized:
+  - opt: qname_aware_tags
+  - opt: qname_aware_attrs
+  - opt: exclude_tags
+  - opt: exclude_attrs
+  main: |
+    from io import StringIO, TextIOWrapper
+    from lxml.etree import canonicalize, C14NWriterTarget
+    s: str
+    sio: StringIO
+    t = C14NWriterTarget(sio.write, {{ opt }}=[s])
+    t = C14NWriterTarget(sio.write, {{ opt }}=None)
+    c = canonicalize(s, {{ opt }}=[s])
+    c = canonicalize(s, {{ opt }}=None)
+
+- case: c14ntarget_kw_list_bad_1
+  parametrized:
+  - opt: qname_aware_tags
+  - opt: qname_aware_attrs
+  - opt: exclude_tags
+  - opt: exclude_attrs
+  main: |
+    from io import StringIO
+    from lxml.etree import C14NWriterTarget
+    sio: StringIO
+    t = C14NWriterTarget(sio.write, {{ opt }}=[1])  # E: List item 0 has incompatible type "int"; expected "str"  [list-item]
+    t = C14NWriterTarget(sio.write, {{ opt }}=1)  # E: Argument "{{ opt }}" to "C14NWriterTarget" has incompatible type "int"; expected "Optional[Iterable[str]]"  [arg-type]
+
+
+- case: c14ntarget_kw_list_bad_2
+  parametrized:
+  - opt: qname_aware_tags
+  - opt: qname_aware_attrs
+  - opt: exclude_tags
+  - opt: exclude_attrs
+  main: |
+    from lxml.etree import canonicalize
+    s: str
+    c = canonicalize(s, {{ opt }}=[1])  # E: List item 0 has incompatible type "int"; expected "str"  [list-item]
+
+- case: c14ntarget_kw_list_bad_3
+  expect_fail: true
+  parametrized:
+  - opt: qname_aware_tags
+  - opt: qname_aware_attrs
+  - opt: exclude_tags
+  - opt: exclude_attrs
+  main: |
+    from lxml.etree import canonicalize
+    s: str
+    sio: StringIO
+    c = canonicalize(s, {{ opt }}=1)
+
+- case: xmlfile_output_arg_ok
+  parametrized:
+  - args: s
+  - args: output_file=f
+  - args: p
+  main: |
+    from io import BytesIO
+    from pathlib import Path
+    from lxml.etree import xmlfile
+    s: str
+    f = BytesIO()
+    p = Path(s)
+    with xmlfile({{ args }}) as xf:
+      ...
+
+- case: xmlfile_missing_arg
+  main: |
+    from lxml.etree import xmlfile
+    with xmlfile() as xf:  # E: Missing positional argument "output_file" in call to "xmlfile"  [call-arg]
+      ...
+
+- case: xmlfile_output_arg_bad
+  parametrized:
+  - args: 1
+    type: int
+  - args: None
+    type: None
+  main: |
+    from lxml.etree import xmlfile
+    with xmlfile({{ args }}) as xf:  # ER: Argument 1 to "xmlfile" has incompatible type "{{ type }}"; expected ".+"  \[arg-type\]
+      ...
+
+- case: xmlfile_kw_arg_ok
+  parametrized:
+  - args: encoding='utf-8'
+  - args: compression=2
+  - args: close=True
+  - args: buffered=True
+  main: |
+    from lxml.etree import xmlfile
+    s: str
+    with xmlfile(s, {{ args }}) as xf:
+      ...
+
+- case: xmlfile_kw_arg_bad
+  parametrized:
+  - arg: encoding
+    val: 1
+    wrong_t: int
+    right_t: Optional[Union[str, bytes]]
+  - arg: compression
+    val: s
+    wrong_t: str
+    right_t: Optional[int]
+  - arg: close
+    val: None
+    wrong_t: None
+    right_t: bool
+  - arg: buffered
+    val: s
+    wrong_t: str
+    right_t: bool
+  main: |
+    from lxml.etree import xmlfile
+    s: str
+    with xmlfile(s, {{arg}}={{val}}) as xf:  # E: Argument "{{ arg }}" to "xmlfile" has incompatible type "{{ wrong_t }}"; expected "{{ right_t }}"  [arg-type]
+      ...
+
+# Directly taken from lxml web documentation
+- case: xmlfile_example_ok_1
+  main: |
+    from io import BytesIO
+    from lxml.etree import xmlfile
+    f = BytesIO()
+    s: str
+    with xmlfile(f) as xf:
+      with xf.element(s):
+        xf.write(s)
+
+- case: xmlfile_example_ok_2
+  main: |
+    from io import BytesIO
+    from lxml.etree import xmlfile, Element
+    f = BytesIO()
+    s: str
+    with xmlfile(f) as xf:
+      with xf.element(s):
+        with xf.element(s):
+          for value in '123':
+            el = Element(s, attr=value)
+            xf.write(el)
+
+- case: xmlfile_example_bad_1
+  main: |
+    from lxml.etree import xmlfile
+    s: str
+    with xmlfile(s) as xf:
+      xf.read(s)  # E: "_IncrementalFileWriter" has no attribute "read"  [attr-defined]

@@ -28,7 +28,7 @@ class SerialisationError(LxmlError): ...
 class C14NWriterTarget:
     def __init__(
         self,
-        write: Callable,
+        write: Callable[[str], Any],
         *,
         with_comments: bool = ...,
         strip_text: bool = ...,
@@ -113,12 +113,9 @@ def canonicalize(
 #
 # Special notes:
 # 1. .method() argument can accept 'text', but it just behaves like 'xml'
-# 2. Both .element() and .method() methods actually _do_ return
-#    context manager objects. But unlike IncrementalFileWriter
-#    which provides methods for further manipulation, aforementioned
-#    context manager objects are completely opaque and have no
-#    useful attributes / methods. Set to None here, so they won't
-#    be exposed in type checking.
+# 2. Both sync/async version of .method() return the same context
+#    manager objects. For coherence, we distinguish their return type
+#    differently.
 #
 class _IncrementalFileWriter:
     def write_declaration(
