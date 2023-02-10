@@ -59,8 +59,9 @@ jobs:
       with:
         name: dist
 
+    # thread hanging in tox 4.4, tests complete but refuse to quit
     - name: Install dependencies
-      run: pip install -v tox
+      run: pip install -v "tox < 4"
 
     - name: Test sdist
       run: tox --installpkg *.tar.gz --result-json test-job-${{ strategy.job-index }}.json -v
