@@ -20,10 +20,13 @@ from . import _Comment, _Element, _Entity, _ProcessingInstruction
 #
 class ElementBase(_Element):
     def _init(self) -> None: ...
+
 class CommentBase(_Comment):
     def _init(self) -> None: ...
+
 class PIBase(_ProcessingInstruction):
     def _init(self) -> None: ...
+
 class EntityBase(_Entity):
     def _init(self) -> None: ...
 

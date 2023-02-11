@@ -17,7 +17,7 @@ class RelaxNG(_Validator):
         self,
         etree: None = ...,
         *,
-        file: _FileReadSource | SupportsGeturl | FileIO | GzipFile
+        file: _FileReadSource | SupportsGeturl | FileIO | GzipFile,
     ) -> None: ...
     def __call__(self, etree: _ElementOrAnyTree) -> bool: ...
     @classmethod

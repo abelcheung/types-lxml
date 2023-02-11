@@ -31,7 +31,7 @@ class Resolver(metaclass=ABCMeta):
         context: object,
         *,
         base_url: _AnyStr | None,
-        close: bool
+        close: bool,
     ) -> _InputDocument: ...
 
 class _ResolverRegistry:

@@ -11,13 +11,13 @@ def fromstring(
     data: _AnyStr | SupportsRead[str] | SupportsRead[bytes],
     beautifulsoup: type[BeautifulSoup] | None = ...,
     makeelement: _ElemFactory[HtmlElement] | None = ...,
-    **bsargs: Any
+    **bsargs: Any,
 ) -> HtmlElement: ...
 def parse(
     file: _AnyStr | SupportsRead[str] | SupportsRead[bytes],
     beautifulsoup: type[BeautifulSoup] | None = ...,
     makeelement: _ElemFactory[HtmlElement] | None = ...,
-    **bsargs: Any
+    **bsargs: Any,
 ) -> _ElementTree[HtmlElement]: ...
 def convert_tree(
     beautiful_soup_tree: BeautifulSoup,

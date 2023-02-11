@@ -29,18 +29,21 @@ class _DTDAttributeDecl:
     @property
     def type(
         self,
-    ) -> Literal[
-        "cdata",
-        "id",
-        "idref",
-        "idrefs",
-        "entity",
-        "entities",
-        "nmtoken",
-        "nmtokens",
-        "enumeration",
-        "notation",
-    ] | None: ...
+    ) -> (
+        Literal[
+            "cdata",
+            "id",
+            "idref",
+            "idrefs",
+            "entity",
+            "entities",
+            "nmtoken",
+            "nmtokens",
+            "enumeration",
+            "notation",
+        ]
+        | None
+    ): ...
     @property
     def default(self) -> Literal["none", "required", "implied", "fixed"] | None: ...
     @property
