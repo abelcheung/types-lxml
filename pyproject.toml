@@ -42,8 +42,10 @@ homepage = 'https://github.com/abelcheung/types-lxml'
 [project.optional-dependencies]
 extra = [ 'types-beautifulsoup4', 'types-html5lib' ]
 
+[tool.pdm.version]
+source = 'scm'
+
 [tool.pdm.build]
-version = {use_scm = true}
 includes = [
     'lxml-stubs/',
     'py.typed',
