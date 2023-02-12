@@ -1,18 +1,17 @@
 from os import PathLike
 from typing import (
     Any,
-    BinaryIO,
     Callable,
     Collection,
     Iterable,
+    IO,
     Literal,
     Mapping,
     Protocol,
-    TextIO,
     TypeVar,
 )
 
-from _typeshed import SupportsWrite
+from _typeshed import SupportsWrite, SupportsRead
 from typing_extensions import TypeAlias
 
 from .etree import QName, _Element
@@ -120,8 +119,21 @@ class SupportsLaxedItems(Protocol[_KT_co, _VT_co]):
 
     def items(self) -> Collection[tuple[_KT_co, _VT_co]]: ...
 
+# Borrow from typeshed xml.sax
+class SupportsReadClose(SupportsRead[_T_co], Protocol[_T_co]):
+    def close(self) -> None: ...
+
 _FilePath = _AnyStr | PathLike[str] | PathLike[bytes]
-_FileReadSource = _FilePath | BinaryIO | TextIO
+# _parseDocument() from parser.pxi
+# fmt: off
+_FileReadSource = (
+    _FilePath
+    | IO[str]
+    | IO[bytes]
+    | SupportsReadClose[str]
+    | SupportsReadClose[bytes]
+)
+# fmt: on
 _FileWriteSource = _FilePath | SupportsWrite[bytes]
 
 class SupportsGeturl(Protocol):
