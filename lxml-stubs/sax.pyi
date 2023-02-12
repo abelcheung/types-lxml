@@ -1,10 +1,15 @@
-from typing import Generic, TypeVar, overload
+from typing import Generic, overload
 from xml.sax.handler import ContentHandler
 
-from .etree import LxmlError, _Element, _ElementOrAnyTree, _ElementTree, _ElemFactory
-from .html import HtmlElement
+from .etree import (
+    LxmlError,
+    _Element,
+    _ElementOrAnyTree,
+    _ElementTree,
+    _ElemFactory,
+    _ETree_T,
+)
 
-_ETree_T = TypeVar("_ETree_T", _Element, HtmlElement)
 
 class SaxError(LxmlError): ...
 

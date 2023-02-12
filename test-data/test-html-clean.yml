@@ -114,7 +114,7 @@
     from lxml.html import HtmlElement, clean
     root: HtmlElement
     clean.clean_html()  # E: Too few arguments  [call-arg]
-    clean.clean_html(None)  # E: Value of type variable "_DT" of function cannot be "None"  [type-var]
+    clean.clean_html(None)  # E: Value of type variable "_HtmlDoc_T" of function cannot be "None"  [type-var]
     clean.clean_html(root, None)  # E: Too many arguments  [call-arg]
     clean.clean_html(badarg=root)  # E: Unexpected keyword argument "badarg"  [call-arg]
 
@@ -134,7 +134,7 @@
     c: clean.Cleaner
     root: HtmlElement
     {{ func }}()  # E: Missing positional argument "html" in call to "{{ name }}"{{#is_method}} of "Cleaner"{{/is_method}}  [call-arg]
-    {{ func }}(None)  # E: Value of type variable "_DT" of "{{ name }}"{{#is_method}} of "Cleaner"{{/is_method}} cannot be "None"  [type-var]
+    {{ func }}(None)  # E: Value of type variable "_HtmlDoc_T" of "{{ name }}"{{#is_method}} of "Cleaner"{{/is_method}} cannot be "None"  [type-var]
     {{ func }}(badarg=root)  # E: Unexpected keyword argument "badarg" for "{{ name }}"{{#is_method}} of "Cleaner"{{/is_method}}  [call-arg]
 
 - case: html_funcs_wrong_arg_type

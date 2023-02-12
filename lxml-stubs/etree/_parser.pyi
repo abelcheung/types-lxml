@@ -1,14 +1,7 @@
 from abc import abstractmethod
-from typing import (
-    Any,
-    Callable,
-    Generic,
-    Iterable,
-    Iterator,
-    Protocol,
-    TypeVar,
-    overload,
-)
+from typing import Any, Callable, Generic, Iterable, Iterator, Protocol, overload
+
+from _typeshed import Self, _T_co
 
 from .._types import SupportsLaxedItems, _AnyStr, _NSMapArg, _TagName
 from . import (
@@ -22,8 +15,6 @@ from . import (
 from ._docloader import _ResolverRegistry
 from ._xmlerror import _ErrorLog
 
-Self = TypeVar("Self")
-_T_co = TypeVar("_T_co", covariant=True)
 # The basic parsers bundled in lxml.etree
 _DefEtreeParsers = XMLParser[_T_co] | HTMLParser[_T_co]
 

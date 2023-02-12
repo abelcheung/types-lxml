@@ -15,6 +15,7 @@ from typing import (
     overload,
 )
 
+from _typeshed import _T, _T_co
 from typing_extensions import TypeGuard
 
 from .._types import (
@@ -117,8 +118,6 @@ from ._xpath import (
 # Basic variables and constants
 #
 
-_T = TypeVar("_T")
-_T_co = TypeVar("_T_co", covariant=True)
 _ET = TypeVar("_ET", bound=_Element)
 # Assumes ElementTree contains a coherent tree (either all XML nodes
 # or all HTML nodes). Theorectically possible to construct a hybrid tree

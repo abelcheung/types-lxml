@@ -1,25 +1,10 @@
 from os import PathLike
-from typing import (
-    Any,
-    Callable,
-    Collection,
-    Iterable,
-    IO,
-    Literal,
-    Mapping,
-    Protocol,
-    TypeVar,
-)
+from typing import IO, Any, Callable, Collection, Iterable, Literal, Mapping, Protocol
 
-from _typeshed import SupportsWrite, SupportsRead
+from _typeshed import SupportsRead, SupportsWrite, _KT_co, _T_co, _VT_co
 from typing_extensions import TypeAlias
 
 from .etree import QName, _Element
-
-_T_contra = TypeVar("_T_contra", contravariant=True)
-_T_co = TypeVar("_T_co", covariant=True)
-_KT_co = TypeVar("_KT_co", covariant=True)
-_VT_co = TypeVar("_VT_co", covariant=True)
 
 # ElementTree API is notable of canonicalizing byte / unicode input data.
 # This type alias should only be used for input arguments, while one would

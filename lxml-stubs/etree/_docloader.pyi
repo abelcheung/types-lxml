@@ -1,12 +1,10 @@
 from abc import ABCMeta, abstractmethod
-from typing import Any, TypeVar
+from typing import Any
 
-from _typeshed import SupportsRead
+from _typeshed import Self, SupportsRead
 
 from .._types import _AnyStr
 
-# Pyright and pytypes have implemented typing.Self, but not for mypy
-Self = TypeVar("Self")
 
 class _InputDocument:
     """An opaque object without any public attributes"""

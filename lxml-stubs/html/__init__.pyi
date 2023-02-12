@@ -22,6 +22,7 @@ from typing import (
     overload,
 )
 
+from _typeshed import _T
 from typing_extensions import TypeAlias
 
 from .. import etree
@@ -40,7 +41,7 @@ from .._types import (
 from ..cssselect import _CSSTransArg
 from ..etree._xmlschema import XMLSchema
 
-_T = TypeVar("_T")
+_HtmlDoc_T = TypeVar("_HtmlDoc_T", str, bytes, HtmlElement, etree._ElementTree[HtmlElement])
 
 _HANDLE_FAILURES = Literal["ignore", "discard"]
 _FormValues = list[tuple[str, str]]
@@ -145,35 +146,33 @@ class HtmlMixin:
 #    only for internal use by each function, not something to be
 #    arbitrarily changed by users.
 
-_DT = TypeVar("_DT", str, bytes, HtmlElement, etree._ElementTree)
-
 def find_rel_links(
-    doc: _DT,
+    doc: _HtmlDoc_T,
     rel: str,
 ) -> list[HtmlElement]: ...
 def find_class(
-    doc: _DT,
+    doc: _HtmlDoc_T,
     class_name: _AnyStr,
 ) -> list[HtmlElement]: ...
 def make_links_absolute(
-    doc: _DT,
+    doc: _HtmlDoc_T,
     base_url: str | None = ...,
     resolve_base_href: bool = ...,
     handle_failures: _HANDLE_FAILURES | None = ...,
-) -> _DT: ...
+) -> _HtmlDoc_T: ...
 def resolve_base_href(
-    doc: _DT,
+    doc: _HtmlDoc_T,
     handle_failures: _HANDLE_FAILURES | None = ...,
-) -> _DT: ...
+) -> _HtmlDoc_T: ...
 def iterlinks(
-    doc: _DT,
+    doc: _HtmlDoc_T,
 ) -> Iterator[tuple[HtmlElement, str | None, str, int]]: ...
 def rewrite_links(
-    doc: _DT,
+    doc: _HtmlDoc_T,
     link_repl_func: Callable[[str], str | None],
     resolve_base_href: bool = ...,
     base_href: str | None = ...,
-) -> _DT: ...
+) -> _HtmlDoc_T: ...
 
 #
 # Types of different HTML elements

@@ -4,9 +4,10 @@
 
 import enum
 from logging import Logger
-from typing import Any, Collection, Iterator, TypeVar
+from typing import Any, Collection, Iterator
 
-Self = TypeVar("Self")
+from _typeshed import Self
+
 
 class _LogEntry:
     @property
