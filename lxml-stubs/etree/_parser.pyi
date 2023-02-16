@@ -78,9 +78,7 @@ class ParserTarget(Protocol[_T_co]):
     -----
     - Only `close()` is mandatory. In extreme case, a vanilla class instance
       with noop `close()` is a valid null parser target that does nothing.
-    - `start()` can take either 2 or 3 extra arguments, but 3rd argument
-      must be entered manually after autocompletion, with following
-      signature: `nsmap: Mapping[str, str]`.
+    - `start()` can take either 2 or 3 extra arguments.
     - Some methods are undocumented. They are included in stub nonetheless.
 
     See Also
@@ -94,10 +92,12 @@ class ParserTarget(Protocol[_T_co]):
     def comment(self, text: str) -> None: ...
     def data(self, data: str) -> None: ...
     def end(self, tag: str) -> None: ...
-    # FIXME start() is particularly troublesome, as it could be in either
-    # 2 argument or 3 argument form. Both @overload and union of callable
-    # won't stop mypy from complaining about incompatibility.
-    start: Callable[..., None]
+    def start(
+        self,
+        tag: str,
+        attrib: _Attrib | Mapping[str, str] | None,
+        nsmap: Mapping[str, str] | None = ...,
+    ) -> None: ...
     # Methods below are undocumented. Lxml has described
     # 'start-ns' and 'end-ns' events however.
     def pi(self, target: str, data: str | None) -> None: ...
