@@ -119,10 +119,7 @@ from ._xpath import (
 #
 
 _ET = TypeVar("_ET", bound=_Element)
-# Assumes ElementTree contains a coherent tree (either all XML nodes
-# or all HTML nodes). Theorectically possible to construct a hybrid tree
-# that contains both type of node, but this is rarely useful at all
-_ETree_T = TypeVar("_ETree_T", _Element, HtmlElement)
+_ET_co = TypeVar("_ET_co", bound=_Element, covariant=True)
 
 # Note that _TagSelector filters element type not by classes,
 # but checks for element _factory functions_ instead
@@ -365,7 +362,7 @@ class _Element(Collection[_Element], Reversible[_Element]):
 
 # ET definition is now specialized, indicating whether it contains
 # a tree of XML elements or tree of HTML elements.
-class _ElementTree(Generic[_ETree_T]):
+class _ElementTree(Generic[_ET_co]):
     @property
     def parser(self) -> _DefEtreeParsers[_Element] | None: ...
     @property
@@ -378,7 +375,7 @@ class _ElementTree(Generic[_ETree_T]):
         base_url: _AnyStr | None = ...,
     ) -> None: ...
     def _setroot(self, root: _Element) -> None: ...
-    def getroot(self) -> _ETree_T: ...
+    def getroot(self) -> _ET_co: ...
     # Special notes for write()
     # BUG: exception for the following combination
     #      - file argument is file name or path like, and
@@ -430,14 +427,14 @@ class _ElementTree(Generic[_ETree_T]):
     # do _not_ inherit from HtmlElement, so should be union
     def iter(
         self, tag: _TagSelector | None = ..., *tags: _TagSelector
-    ) -> Iterator[_ETree_T]: ...
+    ) -> Iterator[_ET_co]: ...
     #
     # ElementPath methods calls the same method on root node,
     # so signature should be the same as _Element ones
     #
     def find(
         self, path: _ElemPathArg, namespaces: _NSMapArg | None = ...
-    ) -> _ETree_T | None: ...
+    ) -> _ET_co | None: ...
     @overload
     def findtext(
         self,
@@ -454,10 +451,10 @@ class _ElementTree(Generic[_ETree_T]):
     ) -> str | _T: ...
     def findall(
         self, path: _ElemPathArg, namespaces: _NSMapArg | None = ...
-    ) -> list[_ETree_T]: ...
+    ) -> list[_ET_co]: ...
     def iterfind(
         self, path: _ElemPathArg, namespaces: _NSMapArg | None = ...
-    ) -> Iterator[_ETree_T]: ...
+    ) -> Iterator[_ET_co]: ...
     def xpath(
         self,
         _path: _AnyStr,
@@ -660,14 +657,14 @@ def SubElement(
     **_extra: _AnyStr,
 ) -> _Element: ...
 @overload  # from element, parser ignored
-def ElementTree(element: _ETree_T) -> _ElementTree[_ETree_T]: ...
+def ElementTree(element: _ET) -> _ElementTree[_ET]: ...
 @overload  # from file source, custom parser
 def ElementTree(
     element: None = ...,
     *,
     file: _FileReadSource,
-    parser: _DefEtreeParsers[_T_co],
-) -> _T_co: ...
+    parser: _DefEtreeParsers[_ET_co],
+) -> _ElementTree[_ET_co]: ...
 @overload  # from file source, default parser
 def ElementTree(
     element: None = ...,
@@ -675,27 +672,18 @@ def ElementTree(
     file: _FileReadSource,
     parser: None = ...,
 ) -> _ElementTree[_Element]: ...
-@overload  # empty tree, custom parser must produce valid element
-def ElementTree(
-    element: None = ...,
-    *,
-    file: None = ...,
-    parser: _DefEtreeParsers[_ETree_T],
-) -> _ElementTree[_ETree_T]: ...
-@overload  # empty tree, default parser
-def ElementTree(
-    element: None = ...,
-    *,
-    file: None = ...,
-    parser: None = ...,
-) -> _ElementTree[_Element]: ...
+
+# FIXME Missing case: element = file = None,
+# parser must use custom target that generates something
+# even when there is no input data. Low priority.
+
 @overload
 def HTML(
     text: _AnyStr,
-    parser: _DefEtreeParsers[_T_co],
+    parser: HTMLParser[_ET_co],
     *,
     base_url: _AnyStr | None = ...,
-) -> _T_co: ...
+) -> _ET_co: ...
 @overload
 def HTML(
     text: _AnyStr,
@@ -706,10 +694,10 @@ def HTML(
 @overload
 def XML(
     text: _AnyStr,
-    parser: _DefEtreeParsers[_T_co],
+    parser: XMLParser[_ET_co],
     *,
     base_url: _AnyStr | None = ...,
-) -> _T_co: ...
+) -> _ET_co: ...
 @overload
 def XML(
     text: _AnyStr,
@@ -720,10 +708,10 @@ def XML(
 @overload
 def parse(
     source: _FileReadSource,
-    parser: _DefEtreeParsers[_T_co],
+    parser: _DefEtreeParsers[_ET_co],
     *,
     base_url: _AnyStr | None = ...,
-) -> _T_co: ...
+) -> _ElementTree[_ET_co]: ...
 @overload
 def parse(
     source: _FileReadSource,
@@ -734,10 +722,10 @@ def parse(
 @overload
 def fromstring(
     text: _AnyStr,
-    parser: _DefEtreeParsers[_T_co],
+    parser: _DefEtreeParsers[_ET_co],
     *,
     base_url: _AnyStr | None = ...,
-) -> _T_co: ...
+) -> _ET_co: ...
 @overload
 def fromstring(
     text: _AnyStr,
@@ -748,8 +736,8 @@ def fromstring(
 @overload
 def fromstringlist(
     strings: Iterable[_AnyStr],
-    parser: _DefEtreeParsers[_T_co],
-) -> _T_co: ...
+    parser: _DefEtreeParsers[_ET_co],
+) -> _ET_co: ...
 @overload
 def fromstringlist(
     strings: Iterable[_AnyStr],

@@ -528,14 +528,6 @@ class HTMLParser(etree.HTMLParser[HtmlElement]):
         schema: XMLSchema | None = ...,
         strip_cdata: bool = ...,
     ) -> None: ...
-    def makeelement(
-        self,
-        _tag: _TagName,
-        /,
-        attrib: SupportsLaxedItems[str, _AnyStr] | None = ...,
-        nsmap: _NSMapArg | None = ...,
-        **_extra: _AnyStr,
-    ) -> HtmlElement: ...
     @property
     def target(self) -> None: ...
 
@@ -561,14 +553,6 @@ class XHTMLParser(etree.XMLParser[HtmlElement]):
         collect_ids: bool = ...,
         compact: bool = ...,
     ) -> None: ...
-    def makeelement(
-        self,
-        _tag: _TagName,
-        /,
-        attrib: SupportsLaxedItems[str, _AnyStr] | None = ...,
-        nsmap: _NSMapArg | None = ...,
-        **_extra: _AnyStr,
-    ) -> HtmlElement: ...
     @property
     def target(self) -> None: ...
 
