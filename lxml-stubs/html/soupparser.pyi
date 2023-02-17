@@ -1,6 +1,6 @@
+from _typeshed import SupportsRead
 from typing import Any
 
-from _typeshed import SupportsRead
 from bs4 import BeautifulSoup
 
 from .._types import _AnyStr

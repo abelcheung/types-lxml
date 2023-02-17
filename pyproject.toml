@@ -68,6 +68,11 @@ testpaths = [
 [tool.isort]
 profile = 'black'
 combine_as_imports = true
+skip = [".git", ".github", ".venv", ".tox"]
+extra_standard_library = [
+    "typing_extensions",
+    "_typeshed",
+]
 
 [tool.pyright]
 include = ['lxml-stubs']

@@ -8,6 +8,7 @@
 # Making it absolutely "correct" harms most users by losing context.
 #
 
+from _typeshed import _T
 from typing import (
     Any,
     Callable,
@@ -21,8 +22,6 @@ from typing import (
     TypeVar,
     overload,
 )
-
-from _typeshed import _T
 from typing_extensions import TypeAlias
 
 from .. import etree
@@ -41,7 +40,9 @@ from .._types import (
 from ..cssselect import _CSSTransArg
 from ..etree._xmlschema import XMLSchema
 
-_HtmlDoc_T = TypeVar("_HtmlDoc_T", str, bytes, HtmlElement, etree._ElementTree[HtmlElement])
+_HtmlDoc_T = TypeVar(
+    "_HtmlDoc_T", str, bytes, HtmlElement, etree._ElementTree[HtmlElement]
+)
 
 _HANDLE_FAILURES = Literal["ignore", "discard"]
 _FormValues = list[tuple[str, str]]

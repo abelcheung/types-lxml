@@ -3,11 +3,9 @@
 #
 
 import enum
+from _typeshed import Self
 from logging import Logger
 from typing import Any, Collection, Iterator
-
-from _typeshed import Self
-
 
 class _LogEntry:
     @property

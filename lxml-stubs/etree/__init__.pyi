@@ -1,3 +1,4 @@
+from _typeshed import _T, _T_co
 from abc import ABCMeta, abstractmethod
 from typing import (
     Any,
@@ -14,8 +15,6 @@ from typing import (
     Union,
     overload,
 )
-
-from _typeshed import _T, _T_co
 from typing_extensions import TypeGuard
 
 from .._types import (

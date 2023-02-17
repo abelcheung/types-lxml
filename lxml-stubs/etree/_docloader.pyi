@@ -1,10 +1,8 @@
+from _typeshed import Self, SupportsRead
 from abc import ABCMeta, abstractmethod
 from typing import Any
 
-from _typeshed import Self, SupportsRead
-
 from .._types import _AnyStr
-
 
 class _InputDocument:
     """An opaque object without any public attributes"""

@@ -1,7 +1,6 @@
+from _typeshed import _T, Self, _T_co
 from abc import abstractmethod
 from typing import Any, Generic, Iterable, Iterator, Mapping, Protocol
-
-from _typeshed import _T, Self, _T_co
 
 from .._types import SupportsLaxedItems, _AnyStr, _NSMapArg, _TagName
 from . import (

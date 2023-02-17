@@ -1,7 +1,6 @@
+from _typeshed import SupportsRead, SupportsWrite, _KT_co, _T_co, _VT_co
 from os import PathLike
 from typing import IO, Any, Callable, Collection, Iterable, Literal, Mapping, Protocol
-
-from _typeshed import SupportsRead, SupportsWrite, _KT_co, _T_co, _VT_co
 from typing_extensions import TypeAlias
 
 from .etree import QName, _Element
