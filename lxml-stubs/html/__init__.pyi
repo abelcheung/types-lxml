@@ -509,31 +509,59 @@ def open_in_browser(
     doc: _HtmlElemOrTree, encoding: str | type[str] | None = ...
 ) -> None: ...
 
-# Custom parser target support is stripped here, otherwise it would
-# completely nullify element lookup behavior of html.HTMLParser,
-# as if etree.HTMLParser is used. Same applies to XHTMLParser below.
 class HTMLParser(etree.HTMLParser[HtmlElement]):
-    # Copies etree.HTMLParser.__init__, with target arg stripped
+    """An HTML parser configured to return ``lxml.html`` Element
+    objects.
+
+    Notes
+    -----
+    1. The ``target`` parameter is stripped from ``__init__`` definition.  If custom parser target argument were used in ``html.HTMLParser``, its element lookup behavior would be completely nullified, behaving as if ``etree.HTMLParser`` is used, which makes this subclass meaningless.
+    2. This subclass is not specialized, unlike the ``etree`` counterpart.  They are designed to always handle ``HtmlElement``; for generating other kinds of ``_Elements``, one should use etree parsers with ``set_element_class_lookup()`` method instead.  In that case, see ``_FeedParser.set_element_class_lookup()`` for more info.
+    """
+
     def __init__(
         self,
         *,
         encoding: _AnyStr | None = ...,
-        collect_ids: bool = ...,
-        compact: bool = ...,
-        huge_tree: bool = ...,
-        no_network: bool = ...,
-        recover: bool = ...,
         remove_blank_text: bool = ...,
         remove_comments: bool = ...,
         remove_pis: bool = ...,
-        schema: XMLSchema | None = ...,
         strip_cdata: bool = ...,
+        no_network: bool = ...,
+        schema: XMLSchema | None = ...,
+        recover: bool = ...,
+        compact: bool = ...,
+        default_doctype: bool = ...,
+        collect_ids: bool = ...,
+        huge_tree: bool = ...,
     ) -> None: ...
     @property
     def target(self) -> None: ...
 
 class XHTMLParser(etree.XMLParser[HtmlElement]):
-    # Copies etree.XMLParser.__init__, with target arg stripped
+    """An XML parser configured to return ``lxml.html`` Element
+    objects.
+
+    Note that this parser is not really XHTML aware unless you let it
+    load a DTD that declares the HTML entities.  To do this, make sure
+    you have the XHTML DTDs installed in your catalogs, and create the
+    parser like this::
+
+        >>> parser = XHTMLParser(load_dtd=True)
+
+    If you additionally want to validate the document, use this::
+
+        >>> parser = XHTMLParser(dtd_validation=True)
+
+    For catalog support, see http://www.xmlsoft.org/catalog.html.
+
+    Notes
+    -----
+    1. The ``target`` parameter is stripped from ``__init__`` definition.  If custom parser target argument were used in ``html.XHTMLParser``, its element lookup behavior would be completely nullified, behaving as if ``etree.HTMLParser`` is used, which makes this subclass meaningless.
+    2. This subclass is not specialized, unlike the ``etree`` counterpart.  They are designed to always handle ``HtmlElement``; for generating other kinds of ``_Elements``, one should use etree parsers with ``set_element_class_lookup()`` method instead.  In that case, see ``_FeedParser.set_element_class_lookup()`` for more info.
+
+    """
+
     def __init__(
         self,
         *,
