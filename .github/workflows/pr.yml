@@ -12,6 +12,9 @@ on:
 jobs:
   type_checkers:
     runs-on: ubuntu-22.04
+    permissions:
+      contents: read
+      pull-requests: write
     steps:
     - uses: actions/checkout@v3
 
@@ -24,17 +27,27 @@ jobs:
       run: pip install -v types-beautifulsoup4 types-html5lib
 
     - name: Mypy review
+      id: mypy
       uses: tsuyoshicho/action-mypy@v3
       with:
         reporter: github-pr-review
         level: warning
-        target: lxml-stubs
+        workdir: lxml-stubs
         fail_on_error: true
+        ignore_note: true
 
     - name: Pyright review
+      id: pyright
+      if: success() || steps.mypy.conclusion == 'failure'
       uses: jordemort/action-pyright@v1
       with:
         reporter: github-pr-review
         level: warning
-        pyright_flags: lxml-stubs
+        workdir: lxml-stubs
         fail_on_error: true
+
+  all_tests:
+    needs: type_checkers
+    uses: ./.github/workflows/test_inc.yml
+    with:
+      gitref: ${{ github.ref }}
