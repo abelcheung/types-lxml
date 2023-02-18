@@ -1,8 +1,7 @@
 from typing import Literal, overload
 
 from ._types import _NonDefaultNSMapArg, _XPathVarArg
-from .etree import XPath, _Element, _ElementOrXMLTree
-from .html import HtmlElement, _HtmlElemOrTree
+from .etree import XPath, _ET, _ElementTree
 
 _CSSTransArg = LxmlTranslator | Literal["xml", "html", "xhtml"]
 
@@ -34,20 +33,21 @@ class CSSSelector(XPath):
         namespaces: _NonDefaultNSMapArg | None = ...,
         translator: _CSSTransArg = ...,
     ) -> None: ...
-    # cssselect package doesn't support pseudo element in current state,
-    # and seems dormant after GSoC change. Probably safe to say
-    # selector would only generate normal elements.
-    @overload
-    def __call__(  # type: ignore[misc]
-        self,
-        _etree_or_element: _HtmlElemOrTree,
-        /,
-        **_variables: _XPathVarArg,
-    ) -> list[HtmlElement]: ...
+    # It is safe to assume cssselect always selects element
+    # representable in original element tree, because CSS expression
+    # is transformed into XPath via css_to_xpath() which doesn't support
+    # pseudo-element by default.
     @overload
     def __call__(
         self,
-        _etree_or_element: _ElementOrXMLTree,
+        _etree_or_element: _ET,
         /,
         **_variables: _XPathVarArg,
-    ) -> list[_Element]: ...
+    ) -> list[_ET]: ...
+    @overload
+    def __call__(
+        self,
+        _etree_or_element: _ElementTree[_ET],
+        /,
+        **_variables: _XPathVarArg,
+    ) -> list[_ET]: ...
