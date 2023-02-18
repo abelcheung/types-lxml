@@ -153,7 +153,7 @@
     obj: object
     elem[{{ idx }}] = {{ val }}
 
-- case: element_read_only_properties
+- case: ro_properties
   parametrized:
     - prop: attrib
       rt: lxml.etree._Attrib
@@ -161,6 +161,8 @@
       rt: Union[builtins.str, None]
     - prop: nsmap
       rt: builtins.dict[Union[builtins.str, None], builtins.str]
+    - prop: sourceline
+      rt: Union[builtins.int, None]
   main: |
     from lxml import etree
     elem: etree._Element
@@ -187,9 +189,6 @@
     - prop: tail
       rt: Union[builtins.str, None]
       arg_type: str
-    - prop: sourceline
-      rt: Union[builtins.int, None]
-      arg_type: int
   main: |
     from lxml import etree
     elem: etree._Element

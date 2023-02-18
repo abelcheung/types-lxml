@@ -213,15 +213,14 @@ class _Element(Collection[_Element], Reversible[_Element]):
     #
     # _Element-only properties
     # Following props are marked as read-only in comment,
-    # but 'sourceline' and 'base' provide __set__ method
-    # --- and they do work.
+    # but 'sourceline' and 'base' provide __set__ method.
+    # However, we only implement rw property for base, as
+    # modifying sourceline is meaningless.
     #
     @property
     def prefix(self) -> str | None: ...
     @property
     def sourceline(self) -> int | None: ...
-    @sourceline.setter
-    def sourceline(self, value: int) -> None: ...
     @property
     def nsmap(self) -> dict[str | None, str]: ...
     @property
