@@ -31,13 +31,11 @@ from .._types import (
     _AttrName,
     _AttrVal,
     _ElemClsLookupArg,
-    _ElemPathArg,
     _FileReadSource,
     _NSMapArg,
     _OutputMethodArg,
     _TagName,
 )
-from ..cssselect import _CSSTransArg
 from ..etree._xmlschema import XMLSchema
 
 _HtmlDoc_T = TypeVar(
@@ -69,6 +67,10 @@ class Classes(MutableSet[str]):
     def update(self, values: Iterable[str]) -> None: ...
     def toggle(self, value: str) -> bool: ...
 
+# NOTE: .cssselect() in HtmlMixin is different from _Element with missing star
+# This causes grievance for mypy, which complains the incompatible signature
+# for HtmlElement and EACH AND EVERY subclasses. Let's stop the nonsense by
+# promoting the usage in _Element.
 class HtmlMixin:
     classes: Classes
     label: LabelElement | None
@@ -104,11 +106,6 @@ class HtmlMixin:
     # text_content() returns smart string by default. It is suggested
     # to use etree.SmartStr (stub-only class) to do type narrowing.
     def text_content(self) -> str: ...
-    # Note the difference of return type from _Element.cssselect
-    # as well as lack of star
-    def cssselect(
-        self, expr: str, translator: _CSSTransArg = ...
-    ) -> list[HtmlElement]: ...
     #
     # Link functions
     #
@@ -178,93 +175,18 @@ def rewrite_links(
 #
 # Types of different HTML elements
 #
+class HtmlElement(HtmlMixin, etree.ElementBase): ...
 
-# 1. Type checkers always compare methods from all subclasses,
-# the inheritance order doesn't stop checkers from complaining.
-# Both mypy and pyright consider the overriding of cssselect() and set()
-# too distorted and complain very loudly in multiple places,
-# including _all_ elements that inherit from HtmlElement.
-#
-# 2. Many methods overrided to return HTML elements.
-# It is not a simple return type replacement though, since
-# XML and HTML elements have different inheritance structure (!),
-# and some operations only make sense on subset of HTML elements.
-# Methods (beyond basic accessor) not overrided:
-# addnext, addprevious, replace, getroottree, itertext, findtext, xpath
-class HtmlElement(HtmlMixin, etree.ElementBase):  # type: ignore[misc]
-    @overload  # type: ignore[override]
-    def __getitem__(self, x: int) -> _AnyHtmlElement: ...
-    @overload
-    def __getitem__(self, x: slice) -> list[_AnyHtmlElement]: ...
-    def __iter__(self) -> Iterator[_AnyHtmlElement]: ...
-    def __reversed__(self) -> Iterator[_AnyHtmlElement]: ...
-    def getparent(self) -> _AnyHtmlElement | None: ...
-    def getnext(self) -> _AnyHtmlElement | None: ...
-    def getprevious(self) -> _AnyHtmlElement | None: ...
-    def itersiblings(
-        self,
-        tag: etree._TagSelector | None = ...,
-        *tags: etree._TagSelector,
-        preceding: bool = ...,
-    ) -> Iterator[_AnyHtmlElement]: ...
-    def iterancestors(
-        self,
-        tag: etree._TagSelector | None = ...,
-        *tags: etree._TagSelector,
-    ) -> Iterator[_AnyHtmlElement]: ...
-    def iterdescendants(
-        self,
-        tag: etree._TagSelector | None = ...,
-        *tags: etree._TagSelector,
-    ) -> Iterator[_AnyHtmlElement]: ...
-    def iterchildren(
-        self,
-        tag: etree._TagSelector | None = ...,
-        *tags: etree._TagSelector,
-        reversed: bool = ...,
-    ) -> Iterator[_AnyHtmlElement]: ...
-    def iter(
-        self,
-        tag: etree._TagSelector | None = ...,
-        *tags: etree._TagSelector,
-    ) -> Iterator[_AnyHtmlElement]: ...
-    def makeelement(
-        self,
-        _tag: _TagName,
-        /,
-        attrib: SupportsLaxedItems[str, _AnyStr] | None = ...,
-        nsmap: _NSMapArg | None = ...,
-        **_extra: _AnyStr,
-    ) -> HtmlElement: ...
-    def getroottree(self) -> etree._ElementTree[HtmlElement]: ...  # type: ignore[override]
-    #
-    # ElementPath API in lxml doesn't include Comment and such in result
-    # https://bugs.launchpad.net/lxml/+bug/1921675
-    #
-    def find(
-        self, path: _ElemPathArg, namespaces: _NSMapArg | None = ...
-    ) -> HtmlElement | None: ...
-    def findall(  # type: ignore[override]
-        self,
-        path: _ElemPathArg,
-        namespaces: _NSMapArg | None = ...,
-    ) -> list[HtmlElement]: ...
-    def iterfind(
-        self,
-        path: _ElemPathArg,
-        namespaces: _NSMapArg | None = ...,
-    ) -> Iterator[HtmlElement]: ...
-
-class HtmlComment(HtmlMixin, etree.CommentBase):  # type: ignore[misc]
+class HtmlComment(HtmlMixin, etree.CommentBase):
     def getroottree(self) -> etree._ElementTree[HtmlElement]: ...  # type: ignore[override]
 
-class HtmlEntity(HtmlMixin, etree.EntityBase):  # type: ignore[misc]
+class HtmlEntity(HtmlMixin, etree.EntityBase):
     def getroottree(self) -> etree._ElementTree[HtmlElement]: ...  # type: ignore[override]
 
-class HtmlProcessingInstruction(HtmlMixin, etree.PIBase):  # type: ignore[misc]
+class HtmlProcessingInstruction(HtmlMixin, etree.PIBase):
     def getroottree(self) -> etree._ElementTree[HtmlElement]: ...  # type: ignore[override]
 
-_AnyHtmlElement = HtmlComment | HtmlElement | HtmlEntity | HtmlProcessingInstruction
+_AnyHtmlElement = HtmlComment | HtmlElement
 
 _AnyInputElement = InputElement | SelectElement | TextareaElement
 
