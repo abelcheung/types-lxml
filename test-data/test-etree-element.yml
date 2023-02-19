@@ -358,7 +358,7 @@
     bad_path: bytes
     bad_nsmap = {'a': 1}
     _ = elem.{{ method }}(bad_path)  # E: Argument 1 to "{{ method }}" of "_Element" has incompatible type "bytes"; expected "Union[str, QName]"  [arg-type]
-    _ = elem.{{ method }}(ok_path, bad_nsmap)  # E: Argument 2 to "{{ method }}" of "_Element" has incompatible type "Dict[str, int]"; expected "Optional[Union[Mapping[None, Union[str, bytes]], Mapping[str, Union[str, bytes]], Mapping[Optional[str], Union[str, bytes]]]]"  [arg-type]
+    _ = elem.{{ method }}(ok_path, bad_nsmap)  # ER: Argument 2 to "{{ method }}" of "_Element" has incompatible type "Dict\[str, int]"; expected "Union\[.+, None]"  \[arg-type]
     _ = elem.{{ method }}(ok_path, None, 1)  # E: Too many arguments for "{{ method }}" of "_Element"  [call-arg]
     _ = elem.{{ method }}(ok_path, badarg=True)  # E: Unexpected keyword argument "badarg" for "{{ method }}" of "_Element"  [call-arg]
 
@@ -433,8 +433,8 @@
   main: |
     from lxml import etree
     elem: etree._Element
-    _ = elem.{{ method }}(123)  # E: Argument 1 to "{{ method }}" of "_Element" has incompatible type "int"; expected "Optional[Union[Union[str, bytes, QName], Callable[..., _Element]]]"  [arg-type]
-    _ = elem.{{ method }}([etree.PI, 123])  # E: Argument 1 to "{{ method }}" of "_Element" has incompatible type "List[object]"; expected "Optional[Union[Union[str, bytes, QName], Callable[..., _Element]]]"  [arg-type]
+    _ = elem.{{ method }}(123)  # E: Argument 1 to "{{ method }}" of "_Element" has incompatible type "int"; expected "Union[str, bytes, QName, Callable[..., _Element], None]"  [arg-type]
+    _ = elem.{{ method }}([etree.PI, 123])  # E: Argument 1 to "{{ method }}" of "_Element" has incompatible type "List[object]"; expected "Union[str, bytes, QName, Callable[..., _Element], None]"  [arg-type]
 
 - case: method_iter_family_special_kwd
   parametrized:
@@ -458,8 +458,8 @@
     from lxml import etree
     elem: etree._Element
     attr: str
-    result = elem.{{ method }}(123)  # E: Argument 1 to "{{ method }}" of "_Element" has incompatible type "int"; expected "Optional[Union[Union[str, bytes, QName], Callable[..., _Element]]]"  [arg-type]
-    result = elem.{{ method }}([etree.PI, 123])  # E: Argument 1 to "{{ method }}" of "_Element" has incompatible type "List[object]"; expected "Optional[Union[Union[str, bytes, QName], Callable[..., _Element]]]"  [arg-type]
+    result = elem.{{ method }}(123)  # E: Argument 1 to "{{ method }}" of "_Element" has incompatible type "int"; expected "Union[str, bytes, QName, Callable[..., _Element], None]"  [arg-type]
+    result = elem.{{ method }}([etree.PI, 123])  # E: Argument 1 to "{{ method }}" of "_Element" has incompatible type "List[object]"; expected "Union[str, bytes, QName, Callable[..., _Element], None]"  [arg-type]
     result = elem.{{ method }}(attr, badarg=True)  # E: Unexpected keyword argument "badarg" for "{{ method }}" of "_Element"  [call-arg]
     result = elem.{{ method }}(attr, {{ kwd }}='badval')  # E: Argument "{{ kwd }}" to "{{ method }}" of "_Element" has incompatible type "str"; expected "bool"  [arg-type]
 

@@ -62,7 +62,7 @@
 - case: html_cssselect_method
   parametrized:
     - args: expr
-    - args: expr, 'xhtml'
+    - args: expr, translator='xhtml'
   main: |
     from lxml.html import Element
     root = Element('div')
@@ -81,10 +81,10 @@
     elem: HtmlElement
     expr1: bytes
     expr2: int
-    result = elem.cssselect({{ args }})  # E: Argument 1 to "cssselect" of "HtmlMixin" has incompatible type "{{ wrong_type }}"; expected "str"  [arg-type]
+    result = elem.cssselect({{ args }})  # E: Argument 1 to "cssselect" of "_Element" has incompatible type "{{ wrong_type }}"; expected "str"  [arg-type]
 
 - case: html_cssselect_bad_arg2
   main: |
     from lxml.html import HtmlElement
     elem: HtmlElement
-    result = elem.cssselect('ul > li', 'junk')  # E: Argument 2 to "cssselect" of "HtmlMixin" has incompatible type "Literal['junk']"; expected "Union[LxmlTranslator, Literal['xml', 'html', 'xhtml']]"  [arg-type]
+    result = elem.cssselect('ul > li', translator='junk')  # E: Argument "translator" to "cssselect" of "_Element" has incompatible type "Literal['junk']"; expected "Union[LxmlTranslator, Literal['xml', 'html', 'xhtml']]"  [arg-type]
