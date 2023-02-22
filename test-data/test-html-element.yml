@@ -36,8 +36,8 @@
     result = elem.badprop
     elem.badprop = 'foobar'
   out: |
-    main:3: error: Property "head" defined in "HtmlMixin" is read-only  [misc]
-    main:4: error: Property "head" defined in "HtmlMixin" is read-only  [misc]
+    main:3: error: Property "head" defined in "HtmlElement" is read-only  [misc]
+    main:4: error: Property "head" defined in "HtmlElement" is read-only  [misc]
     main:4: error: Incompatible types in assignment (expression has type "None", variable has type "HtmlElement")  [assignment]
     main:5: error: "HtmlElement" has no attribute "badprop"  [attr-defined]
     main:6: error: "HtmlElement" has no attribute "badprop"  [attr-defined]
@@ -79,7 +79,7 @@
     badarg0: int
     badarg1: object
     elem: HtmlElement
-    elem.set({{ args }})  # E: Argument {{ pos }} to "set" of "HtmlMixin" has incompatible type "{{ wrong_type }}"; expected "{{ exp_type }}"  [arg-type]
+    elem.set({{ args }})  # E: Argument {{ pos }} to "set" of "HtmlElement" has incompatible type "{{ wrong_type }}"; expected "{{ exp_type }}"  [arg-type]
 
 - case: mixin_method_drop_
   parametrized:
@@ -139,7 +139,7 @@
     elem: HtmlElement
     result = elem.text_content()
     reveal_type(result)  # N: Revealed type is "builtins.str"
-    result = elem.text_content(None)  # E: Too many arguments for "text_content" of "HtmlMixin"  [call-arg]
+    result = elem.text_content(None)  # E: Too many arguments for "text_content" of "HtmlElement"  [call-arg]
 
 - case: mixin_method_iterlinks
   main: |
@@ -147,7 +147,7 @@
     elem: HtmlElement
     result = elem.iterlinks()
     reveal_type(result)  # N: Revealed type is "typing.Iterator[Tuple[lxml.html.HtmlElement, Union[builtins.str, None], builtins.str, builtins.int]]"
-    result = elem.iterlinks(None)  # E: Too many arguments for "iterlinks" of "HtmlMixin"  [call-arg]
+    result = elem.iterlinks(None)  # E: Too many arguments for "iterlinks" of "HtmlElement"  [call-arg]
 
 - case: mixin_method_make_links_absolute1
   parametrized:
@@ -170,21 +170,21 @@
     elem: HtmlElement
     url: str
     badurl: bytes
-    elem.make_links_absolute(badurl)  # E: Argument 1 to "make_links_absolute" of "HtmlMixin" has incompatible type "bytes"; expected "Optional[str]"  [arg-type]
-    elem.make_links_absolute(url, 2, None)  # E: Argument 2 to "make_links_absolute" of "HtmlMixin" has incompatible type "int"; expected "bool"  [arg-type]
-    elem.make_links_absolute(handle_failures='badval')  # E: Argument "handle_failures" to "make_links_absolute" of "HtmlMixin" has incompatible type "Literal['badval']"; expected "Optional[Literal['ignore', 'discard']]"  [arg-type]
-    elem.make_links_absolute(badarg=1)  # E: Unexpected keyword argument "badarg" for "make_links_absolute" of "HtmlMixin"  [call-arg]
-    elem.make_links_absolute(url, True, 'discard', None)  # E: Too many arguments for "make_links_absolute" of "HtmlMixin"  [call-arg]
+    elem.make_links_absolute(badurl)  # E: Argument 1 to "make_links_absolute" of "HtmlElement" has incompatible type "bytes"; expected "Optional[str]"  [arg-type]
+    elem.make_links_absolute(url, 2, None)  # E: Argument 2 to "make_links_absolute" of "HtmlElement" has incompatible type "int"; expected "bool"  [arg-type]
+    elem.make_links_absolute(handle_failures='badval')  # E: Argument "handle_failures" to "make_links_absolute" of "HtmlElement" has incompatible type "Literal['badval']"; expected "Optional[Literal['ignore', 'discard']]"  [arg-type]
+    elem.make_links_absolute(badarg=1)  # E: Unexpected keyword argument "badarg" for "make_links_absolute" of "HtmlElement"  [call-arg]
+    elem.make_links_absolute(url, True, 'discard', None)  # E: Too many arguments for "make_links_absolute" of "HtmlElement"  [call-arg]
 
 - case: mixin_method_resolve_base_href
   main: |
     from lxml.html import HtmlElement
     elem: HtmlElement
     elem.resolve_base_href()
-    elem.resolve_base_href(b'ignore')  # E: Argument 1 to "resolve_base_href" of "HtmlMixin" has incompatible type "Literal[b'ignore']"; expected "Optional[Literal['ignore', 'discard']]"  [arg-type]
+    elem.resolve_base_href(b'ignore')  # E: Argument 1 to "resolve_base_href" of "HtmlElement" has incompatible type "Literal[b'ignore']"; expected "Optional[Literal['ignore', 'discard']]"  [arg-type]
     elem.resolve_base_href(handle_failures='discard')
-    elem.resolve_base_href(badarg=1)  # E: Unexpected keyword argument "badarg" for "resolve_base_href" of "HtmlMixin"  [call-arg]
-    elem.resolve_base_href(None, None)  # E: Too many arguments for "resolve_base_href" of "HtmlMixin"  [call-arg]
+    elem.resolve_base_href(badarg=1)  # E: Unexpected keyword argument "badarg" for "resolve_base_href" of "HtmlElement"  [call-arg]
+    elem.resolve_base_href(None, None)  # E: Too many arguments for "resolve_base_href" of "HtmlElement"  [call-arg]
 
 - case: mixin_method_rewrite_links1
   parametrized:
@@ -209,10 +209,10 @@
     def bad_func(href: bytes): ...
     def repl_func(href: str) -> str:
       return ''
-    elem.rewrite_links()  # E: Missing positional argument "link_repl_func" in call to "rewrite_links" of "HtmlMixin"  [call-arg]
-    elem.rewrite_links(bad_func)  # E: Argument 1 to "rewrite_links" of "HtmlMixin" has incompatible type "Callable[[bytes], Any]"; expected "Callable[[str], Optional[str]]"  [arg-type]
-    elem.rewrite_links(repl_func, 'badval')  # E: Argument 2 to "rewrite_links" of "HtmlMixin" has incompatible type "str"; expected "bool"  [arg-type]
-    elem.rewrite_links(repl_func, True, badbase)  # E: Argument 3 to "rewrite_links" of "HtmlMixin" has incompatible type "bytes"; expected "Optional[str]"  [arg-type]
+    elem.rewrite_links()  # E: Missing positional argument "link_repl_func" in call to "rewrite_links" of "HtmlElement"  [call-arg]
+    elem.rewrite_links(bad_func)  # E: Argument 1 to "rewrite_links" of "HtmlElement" has incompatible type "Callable[[bytes], Any]"; expected "Callable[[str], Optional[str]]"  [arg-type]
+    elem.rewrite_links(repl_func, 'badval')  # E: Argument 2 to "rewrite_links" of "HtmlElement" has incompatible type "str"; expected "bool"  [arg-type]
+    elem.rewrite_links(repl_func, True, badbase)  # E: Argument 3 to "rewrite_links" of "HtmlElement" has incompatible type "bytes"; expected "Optional[str]"  [arg-type]
 
 - case: xpath
   parametrized:

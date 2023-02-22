@@ -61,13 +61,18 @@
 
 - case: html_cssselect_method
   parametrized:
-    - args: expr
-    - args: expr, translator='xhtml'
+    - elem: el
+      args: expr
+    - elem: el
+      args: expr, translator='xhtml'
+    - elem: form
+      args: expr
   main: |
-    from lxml.html import Element
-    root = Element('div')
+    from lxml.html import HtmlElement, FormElement
     expr: str
-    result = root.cssselect({{ args }})
+    el: HtmlElement
+    form: FormElement
+    result = {{ elem }}.cssselect({{ args }})
     reveal_type(result)  # N: Revealed type is "builtins.list[lxml.html.HtmlElement]"
 
 - case: html_cssselect_bad_arg1
@@ -79,12 +84,12 @@
   main: |
     from lxml.html import HtmlElement
     elem: HtmlElement
-    expr1: bytes
-    expr2: int
-    result = elem.cssselect({{ args }})  # E: Argument 1 to "cssselect" of "_Element" has incompatible type "{{ wrong_type }}"; expected "str"  [arg-type]
+    {{ args }}: {{ wrong_type }}
+    result = elem.cssselect({{ args }})  # E: Argument 1 to "cssselect" of "HtmlElement" has incompatible type "{{ wrong_type }}"; expected "str"  [arg-type]
 
 - case: html_cssselect_bad_arg2
   main: |
     from lxml.html import HtmlElement
     elem: HtmlElement
-    result = elem.cssselect('ul > li', translator='junk')  # E: Argument "translator" to "cssselect" of "_Element" has incompatible type "Literal['junk']"; expected "Union[LxmlTranslator, Literal['xml', 'html', 'xhtml']]"  [arg-type]
+    expr: str
+    result = elem.cssselect(expr, translator='junk')  # ER: Argument "translator" to "cssselect" of "HtmlElement" has incompatible type "Literal\['junk']"; expected "Union\[.+]"  \[arg-type]

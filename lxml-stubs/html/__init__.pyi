@@ -31,16 +31,18 @@ from .._types import (
     _AttrName,
     _AttrVal,
     _ElemClsLookupArg,
+    _ElemPathArg,
     _FileReadSource,
     _NSMapArg,
     _OutputMethodArg,
     _TagName,
 )
-from ..etree._xmlschema import XMLSchema
+from ..cssselect import _CSSTransArg
 
 _HtmlDoc_T = TypeVar(
     "_HtmlDoc_T", str, bytes, HtmlElement, etree._ElementTree[HtmlElement]
 )
+_HtmlElemParser = etree.XMLParser[HtmlElement] | etree.HTMLParser[HtmlElement]
 
 _HANDLE_FAILURES = Literal["ignore", "discard"]
 _FormValues = list[tuple[str, str]]
@@ -67,11 +69,38 @@ class Classes(MutableSet[str]):
     def update(self, values: Iterable[str]) -> None: ...
     def toggle(self, value: str) -> bool: ...
 
-# NOTE: .cssselect() in HtmlMixin is different from _Element with missing star
-# This causes grievance for mypy, which complains the incompatible signature
-# for HtmlElement and EACH AND EVERY subclasses. Let's stop the nonsense by
-# promoting the usage in _Element.
-class HtmlMixin:
+#
+# Here are some of the biggest difference between html stub and source,
+# in order of importance.
+#
+# 1. Coerce HtmlComment etc to inherit from HtmlElement, instead of HtmlMixin.
+# This is for simplifying return type of various ElementPath / ElementTree
+# methods (like iter and findall). Instead of handling a long unioned list of
+# possible element types, one can now just handle HtmlElement.
+# This change doesn't make other content only element types suffer too much;
+# most existing methods / properties already aren't applicable to them.
+# See comment on etree.__ContentOnlyElement.
+#
+# 2. Don't expose the notion of HtmlMixin here. The convention of prepending
+# underscore for private classes is only selectively followed in lxml, and
+# HtmlMixin is one of the exceptions.
+#
+# 3. HtmlMixin.cssselect() differs by a missing star from _Element counterpart.
+# This causes grievance for mypy, which jumps up and down screaming about
+# incompatible signature for HtmlElement and EACH AND EVERY subclasses.
+# Let's stop the nonsense by promoting the usage in _Element.
+#
+# 4. Remove HtmlProcessingInstruction from this world. It has never been seen
+# in real life; mozilla also explicitly says it won't be supported.
+# https://developer.mozilla.org/en-US/docs/Web/API/ProcessingInstruction
+#
+class HtmlElement(etree.ElementBase):
+    #
+    # HtmlMixin properties and methods
+    #
+    # NOTE: set() differs from _Element.set() -- value has default, can accept None,
+    # which means boolean attribute without value, like <option selected>
+    #
     classes: Classes
     label: LabelElement | None
     @property
@@ -82,15 +111,12 @@ class HtmlMixin:
     def body(self) -> HtmlElement: ...
     @property
     def head(self) -> HtmlElement: ...
-    # Differs from _Element.set(): value has default, can accept None
-    # (boolean attribute without value)
     def set(self, key: _AttrName, value: _AttrVal | None = ...) -> None: ...
     def drop_tree(self) -> None: ...
     def drop_tag(self) -> None: ...
     def find_rel_links(
         self,
-        # Can be bytes, but guaranteed to not match any element on py3
-        rel: str,
+        rel: str,  # Can be bytes, but never match anything on py3
     ) -> list[HtmlElement]: ...
     def find_class(
         self,
@@ -107,7 +133,7 @@ class HtmlMixin:
     # to use etree.SmartStr (stub-only class) to do type narrowing.
     def text_content(self) -> str: ...
     #
-    # Link functions
+    # HtmlMixin Link functions
     #
     def make_links_absolute(
         self,
@@ -127,6 +153,85 @@ class HtmlMixin:
         resolve_base_href: bool = ...,
         base_href: str | None = ...,
     ) -> None: ...
+    # Overriding of most _Element methods
+    #
+    # Subclassing of _Element should not go beyond HtmlElement. For example,
+    # while children of HtmlElement are mostly HtmlElement, FormElement never
+    # contains FormElement as child.
+    @overload
+    def __getitem__(self, __x: int) -> HtmlElement: ...
+    @overload
+    def __getitem__(self, __x: slice) -> list[HtmlElement]: ...
+    @overload
+    def __setitem__(self, __x: int, __v: HtmlElement) -> None: ...
+    @overload
+    def __setitem__(self, __x: slice, __v: Iterable[HtmlElement]) -> None: ...
+    def __iter__(self) -> Iterator[HtmlElement]: ...
+    def __reversed__(self) -> Iterator[HtmlElement]: ...
+    def append(self, element: HtmlElement) -> None: ...
+    def extend(self, elements: Iterable[HtmlElement]) -> None: ...
+    def insert(self, index: int, element: HtmlElement) -> None: ...
+    def remove(self, element: HtmlElement) -> None: ...
+    def index(
+        self, child: HtmlElement, start: int | None = ..., end: int | None = ...
+    ) -> int: ...
+    def addnext(self, element: HtmlElement) -> None: ...
+    def addprevious(self, element: HtmlElement) -> None: ...
+    def replace(self, old_element: HtmlElement, new_element: HtmlElement) -> None: ...
+    def getparent(self) -> HtmlElement | None: ...
+    def getnext(self) -> HtmlElement | None: ...
+    def getprevious(self) -> HtmlElement | None: ...
+    def itersiblings(
+        self,
+        tag: etree._TagSelector | None = ...,
+        *tags: etree._TagSelector,
+        preceding: bool = ...,
+    ) -> Iterator[HtmlElement]: ...
+    def iterancestors(
+        self, tag: etree._TagSelector | None = ..., *tags: etree._TagSelector
+    ) -> Iterator[HtmlElement]: ...
+    def iterdescendants(
+        self, tag: etree._TagSelector | None = ..., *tags: etree._TagSelector
+    ) -> Iterator[HtmlElement]: ...
+    def iterchildren(
+        self,
+        tag: etree._TagSelector | None = ...,
+        *tags: etree._TagSelector,
+        reversed: bool = ...,
+    ) -> Iterator[HtmlElement]: ...
+    def getroottree(self) -> etree._ElementTree[HtmlElement]: ...
+    def iter(
+        self, tag: etree._TagSelector | None = ..., *tags: etree._TagSelector
+    ) -> Iterator[HtmlElement]: ...
+    def itertext(
+        self,
+        tag: etree._TagSelector | None = ...,
+        *tags: etree._TagSelector,
+        with_tail: bool = ...,
+    ) -> Iterator[str]: ...
+    def makeelement(
+        self,
+        _tag: _TagName,
+        /,
+        attrib: SupportsLaxedItems[str, _AnyStr] | None = ...,
+        nsmap: _NSMapArg | None = ...,
+        **_extra: _AnyStr,
+    ) -> HtmlElement: ...
+    def find(
+        self, path: _ElemPathArg, namespaces: _NSMapArg | None = ...
+    ) -> HtmlElement | None: ...
+    def findall(
+        self, path: _ElemPathArg, namespaces: _NSMapArg | None = ...
+    ) -> list[HtmlElement]: ...
+    def iterfind(
+        self, path: _ElemPathArg, namespaces: _NSMapArg | None = ...
+    ) -> Iterator[HtmlElement]: ...
+    def cssselect(
+        self,
+        expr: str,
+        *,
+        translator: _CSSTransArg = ...,
+    ) -> list[HtmlElement]: ...
 
 # These are HtmlMixin methods converted to standard functions,
 # with element or HTML string as first argument followed by all
@@ -173,20 +278,11 @@ def rewrite_links(
 ) -> _HtmlDoc_T: ...
 
 #
-# Types of different HTML elements
+# Types of different HTML elements, note the absence of
+# HtmlProcessingInstruction
 #
-class HtmlElement(HtmlMixin, etree.ElementBase): ...
-
-class HtmlComment(HtmlMixin, etree.CommentBase):
-    def getroottree(self) -> etree._ElementTree[HtmlElement]: ...  # type: ignore[override]
-
-class HtmlEntity(HtmlMixin, etree.EntityBase):
-    def getroottree(self) -> etree._ElementTree[HtmlElement]: ...  # type: ignore[override]
-
-class HtmlProcessingInstruction(HtmlMixin, etree.PIBase):
-    def getroottree(self) -> etree._ElementTree[HtmlElement]: ...  # type: ignore[override]
-
-_AnyHtmlElement = HtmlComment | HtmlElement
+class HtmlComment(HtmlElement, etree.CommentBase): ...
+class HtmlEntity(HtmlElement, etree.EntityBase): ...
 
 _AnyInputElement = InputElement | SelectElement | TextareaElement
 
@@ -207,7 +303,7 @@ class HtmlElementClassLookup(etree.CustomElementClassLookup):
         document: Any,  # argument unused
         namespace: str | None,
         name: str | None,
-    ) -> type[_AnyHtmlElement] | None: ...
+    ) -> type[HtmlElement] | None: ...
 
 #
 # parsing functions
@@ -217,7 +313,7 @@ class HtmlElementClassLookup(etree.CustomElementClassLookup):
 # fromstring(text, parser, *, base_url)
 def document_fromstring(
     html: _AnyStr,
-    parser: HTMLParser | XHTMLParser | None = ...,
+    parser: _HtmlElemParser | None = ...,
     ensure_head_body: bool = ...,
     *,
     base_url: str | None = ...,
@@ -226,25 +322,25 @@ def fragments_fromstring(
     html: _AnyStr,
     no_leading_text: bool = ...,
     base_url: str | None = ...,
-    parser: HTMLParser | XHTMLParser | None = ...,
+    parser: _HtmlElemParser | None = ...,
     **kw: Any,  # seems unused
-) -> list[_AnyHtmlElement]: ...
+) -> list[HtmlElement]: ...
 def fragment_fromstring(
     html: _AnyStr,
     create_parent: bool = ...,
     base_url: str | None = ...,
-    parser: HTMLParser | XHTMLParser | None = ...,
+    parser: _HtmlElemParser | None = ...,
     **kw: Any,  # seems unused
-) -> _AnyHtmlElement: ...
+) -> HtmlElement: ...
 def fromstring(
     html: _AnyStr,
     base_url: str | None = ...,
-    parser: HTMLParser | XHTMLParser | None = ...,
+    parser: _HtmlElemParser | None = ...,
     **kw: Any,  # seems unused
-) -> _AnyHtmlElement: ...
+) -> HtmlElement: ...
 def parse(
     filename_or_url: _FileReadSource,
-    parser: HTMLParser | XHTMLParser | None = ...,
+    parser: _HtmlElemParser | None = ...,
     base_url: str | None = ...,
     **kw: Any,  # seems unused
 ) -> etree._ElementTree[HtmlElement]: ...
@@ -317,10 +413,10 @@ class InputMixin:
     @name.setter
     def name(self, __v: _AnyStr | None) -> None: ...
 
-class TextareaElement(InputMixin, HtmlElement):  # type: ignore[misc]
+class TextareaElement(InputMixin, HtmlElement):
     value: str
 
-class SelectElement(InputMixin, HtmlElement):  # type: ignore[misc]
+class SelectElement(InputMixin, HtmlElement):
     multiple: bool
     @property
     def value(self) -> str | MultipleSelectOptions: ...
@@ -363,7 +459,7 @@ class CheckboxValues(MutableSet[str]):
     def add(self, value: str) -> None: ...
     def discard(self, item: str) -> None: ...
 
-class InputElement(InputMixin, HtmlElement):  # type: ignore[misc]
+class InputElement(InputMixin, HtmlElement):
     type: str
     value: str | None
     checked: bool
@@ -450,7 +546,7 @@ class HTMLParser(etree.HTMLParser[HtmlElement]):
         remove_pis: bool = ...,
         strip_cdata: bool = ...,
         no_network: bool = ...,
-        schema: XMLSchema | None = ...,
+        schema: etree.XMLSchema | None = ...,
         recover: bool = ...,
         compact: bool = ...,
         default_doctype: bool = ...,
@@ -494,7 +590,7 @@ class XHTMLParser(etree.XMLParser[HtmlElement]):
         no_network: bool = ...,
         ns_clean: bool = ...,
         recover: bool = ...,
-        schema: XMLSchema | None = ...,
+        schema: etree.XMLSchema | None = ...,
         huge_tree: bool = ...,
         remove_blank_text: bool = ...,
         resolve_entities: bool = ...,
