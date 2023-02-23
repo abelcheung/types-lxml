@@ -27,6 +27,7 @@ from typing_extensions import TypeAlias
 from .. import etree
 from .._types import (
     SupportsLaxedItems,
+    Unused,
     _AnyStr,
     _AttrName,
     _AttrVal,
@@ -300,8 +301,8 @@ class HtmlElementClassLookup(etree.CustomElementClassLookup):
     def lookup(
         self,
         node_type: _ElemClsLookupArg | None,
-        document: Any,  # argument unused
-        namespace: str | None,
+        document: Unused,
+        namespace: Unused,
         name: str | None,
     ) -> type[HtmlElement] | None: ...
 
@@ -323,26 +324,26 @@ def fragments_fromstring(
     no_leading_text: bool = ...,
     base_url: str | None = ...,
     parser: _HtmlElemParser | None = ...,
-    **kw: Any,  # seems unused
+    **kw: Unused,
 ) -> list[HtmlElement]: ...
 def fragment_fromstring(
     html: _AnyStr,
     create_parent: bool = ...,
     base_url: str | None = ...,
     parser: _HtmlElemParser | None = ...,
-    **kw: Any,  # seems unused
+    **kw: Unused,
 ) -> HtmlElement: ...
 def fromstring(
     html: _AnyStr,
     base_url: str | None = ...,
     parser: _HtmlElemParser | None = ...,
-    **kw: Any,  # seems unused
+    **kw: Unused,
 ) -> HtmlElement: ...
 def parse(
     filename_or_url: _FileReadSource,
     parser: _HtmlElemParser | None = ...,
     base_url: str | None = ...,
-    **kw: Any,  # seems unused
+    **kw: Unused,
 ) -> etree._ElementTree[HtmlElement]: ...
 
 #

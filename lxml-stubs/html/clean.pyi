@@ -2,6 +2,7 @@ from typing import Iterable, Pattern, Union, overload
 
 from ..etree import _Element, _ElementTree, _ElemFactory
 from . import HtmlElement, _HtmlDoc_T
+from .._types import Unused
 
 # Version of tag selector that doesn't support QName helper
 _HTagSelector = Union[str, bytes, _ElemFactory[_Element]]
@@ -89,14 +90,14 @@ def autolink_html(
 def word_break(
     el: HtmlElement,
     max_width: int = ...,
-    avoid_elements: Iterable[str] = ...,  # This arg is a dud
+    avoid_elements: Unused = ...,
     avoid_classes: Iterable[str] = ...,
     break_character: str = ...,
 ) -> None: ...
 def word_break_html(
     html: _HtmlDoc_T,
     max_width: int = ...,
-    avoid_elements: Iterable[str] = ...,  # This arg is a dud
+    avoid_elements: Unused = ...,
     avoid_classes: Iterable[str] = ...,
     break_character: str = ...,
 ) -> _HtmlDoc_T: ...

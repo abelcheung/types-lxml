@@ -5,6 +5,9 @@ from typing_extensions import TypeAlias
 
 from .etree import QName, _Element
 
+# Dup but deviate from recent _typeshed
+Unused: TypeAlias = Any
+
 # ElementTree API is notable of canonicalizing byte / unicode input data.
 # This type alias should only be used for input arguments, while one would
 # expect plain str in return type for most part of API (except a few places),
