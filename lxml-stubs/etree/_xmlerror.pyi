@@ -3,9 +3,9 @@
 #
 
 import enum
-from _typeshed import Self
 from logging import Logger
 from typing import Any, Collection, Iterator
+from typing_extensions import Self
 
 class _LogEntry:
     @property
@@ -34,7 +34,7 @@ class _LogEntry:
 class _BaseErrorLog:
     @property
     def last_error(self) -> _LogEntry: ...
-    def copy(self: Self) -> Self: ...
+    def copy(self) -> Self: ...
     def receive(self, log_entry: _LogEntry) -> None: ...
 
 # Immutable list-like

@@ -1,6 +1,7 @@
-from _typeshed import Self, SupportsRead
+from _typeshed import SupportsRead
 from abc import ABCMeta, abstractmethod
 from typing import Any
+from typing_extensions import Self
 
 from .._types import _AnyStr
 
@@ -33,7 +34,7 @@ class Resolver(metaclass=ABCMeta):
 class _ResolverRegistry:
     def add(self, resolver: Resolver) -> None: ...
     def remove(self, resolver: Resolver) -> None: ...
-    def copy(self: Self) -> Self: ...
+    def copy(self) -> Self: ...
     def resolve(
         self, system_url: str, public_id: str, context: object
     ) -> _InputDocument: ...

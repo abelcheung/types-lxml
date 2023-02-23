@@ -1,6 +1,7 @@
-from _typeshed import _T, Self, _T_co
+from _typeshed import _T, _T_co
 from abc import abstractmethod
 from typing import Any, Generic, Iterable, Iterator, Mapping, Protocol
+from typing_extensions import Self
 
 from .._types import SupportsLaxedItems, _AnyStr, _NSMapArg, _TagName
 from . import (
@@ -120,7 +121,7 @@ class _FeedParser(Generic[_ET_co]):
     def resolvers(self) -> _ResolverRegistry: ...
     @property
     def version(self) -> str: ...
-    def copy(self: Self) -> Self: ...
+    def copy(self) -> Self: ...
     def makeelement(
         self,
         _tag: _TagName,
