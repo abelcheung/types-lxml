@@ -1,7 +1,12 @@
 from typing import Any, Iterator
+from typing_extensions import LiteralString
 
 from ._types import _AnyStr, _NSMapArg, _TagName
 from .etree import ElementBase, XMLParser, _ElemFactory
+
+# Exported constants
+__version__: LiteralString
+PYTYPE_ATTRIBUTE: LiteralString
 
 class ObjectifiedElement(ElementBase):
     @property  # type: ignore[misc]

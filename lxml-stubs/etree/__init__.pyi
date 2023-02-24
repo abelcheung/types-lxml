@@ -13,7 +13,7 @@ from typing import (
     Union,
     overload,
 )
-from typing_extensions import Self, TypeGuard
+from typing_extensions import LiteralString, Self, TypeGuard
 
 from .._types import (
     SupportsLaxedItems,
@@ -143,7 +143,7 @@ LIBXSLT_COMPILED_VERSION: tuple[int, int, int]
 LIBXML_VERSION: tuple[int, int, int]
 LIBXML_COMPILED_VERSION: tuple[int, int, int]
 LXML_VERSION: tuple[int, int, int, int]
-__version__: str
+__version__: LiteralString
 
 class SmartStr(str):
     """Smart string is a private str subclass documented in

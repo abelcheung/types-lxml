@@ -22,7 +22,7 @@ from typing import (
     TypeVar,
     overload,
 )
-from typing_extensions import TypeAlias
+from typing_extensions import LiteralString, TypeAlias
 
 from .. import etree
 from .._types import (
@@ -49,7 +49,7 @@ _HANDLE_FAILURES = Literal["ignore", "discard"]
 _FormValues = list[tuple[str, str]]
 _HtmlElemOrTree: TypeAlias = HtmlElement | etree._ElementTree[HtmlElement]
 
-XHTML_NAMESPACE: str
+XHTML_NAMESPACE: LiteralString
 
 class Classes(MutableSet[str]):
     # Theorectically, the internal structure need not be _Attrib,
