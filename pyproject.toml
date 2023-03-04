@@ -9,11 +9,9 @@ description = 'Type annotations for lxml striving for completeness'
 readme = 'README.md'
 requires-python = '>=3.8'
 license = {text = 'Apache-2.0'}
-# Potentially should be lxml 4.8+ due to support for QName in
-# lxml.builder.ElementMaker tag arg, but for the majority even
-# older versions should be ok. Don't want to be too strict on this
 dependencies = [
-    'lxml',
+    'types-beautifulsoup4',
+    'typing_extensions ~= 4.4'
 ]
 keywords = ['lxml', 'typing', 'stubs']
 authors = [
@@ -40,7 +38,14 @@ classifiers = [
 homepage = 'https://github.com/abelcheung/types-lxml'
 
 [project.optional-dependencies]
-extra = [ 'types-beautifulsoup4', 'types-html5lib' ]
+dev = [
+    'pytest-mypy-plugins ~= 1.10, != 1.10.0',
+    'black',
+    'isort',
+    'mypy ~= 1.0',
+    'pyright ~= 1.1',
+    'lxml',
+]
 
 [tool.pdm.version]
 source = 'scm'
