@@ -5,8 +5,8 @@
     - prop: docinfo
       rt: "lxml.etree.DocInfo"
   main: |
-    from lxml.etree import _ElementTree
-    et: _ElementTree
+    from lxml.etree import _ElementTree, _Element
+    et: _ElementTree[_Element]
     reveal_type(et.{{ prop }})  # N: Revealed type is "{{ rt }}"
     et.{{ prop }} = et.{{ prop }}  # E: Property "{{ prop }}" defined in "_ElementTree" is read-only  [misc]
 

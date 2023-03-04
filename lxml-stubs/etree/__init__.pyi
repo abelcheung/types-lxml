@@ -3,7 +3,6 @@ from abc import ABCMeta, abstractmethod
 from typing import (
     Any,
     Callable,
-    Collection,
     Generic,
     Iterable,
     Iterator,
@@ -189,7 +188,7 @@ class DocInfo:
 # The base of _Element is *almost* an amalgam of MutableSequence[_Element]
 # plus mixin methods for _Attrib.
 # Extra methods follow the order of _Element source approximately
-class _Element(Collection[_Element]):
+class _Element:
     #
     # Common properties
     #
@@ -285,7 +284,7 @@ class _Element(Collection[_Element]):
         *tags: _TagSelector,
         reversed: bool = ...,
     ) -> Iterator[Self]: ...
-    def getroottree(self: _ET) -> _ElementTree[_ET]: ...
+    def getroottree(self) -> _ElementTree[Self]: ...
     def iter(
         self, tag: _TagSelector | None = ..., *tags: _TagSelector
     ) -> Iterator[Self]: ...
@@ -359,16 +358,19 @@ class _Element(Collection[_Element]):
 # a tree of XML elements or tree of HTML elements.
 class _ElementTree(Generic[_ET_co]):
     @property
-    def parser(self) -> _DefEtreeParsers[_Element] | None: ...
+    def parser(self) -> _DefEtreeParsers[_ET_co] | None: ...
     @property
     def docinfo(self) -> DocInfo: ...
     def parse(
         self,
         source: _FileReadSource,
-        parser: _DefEtreeParsers[_Element] | None = ...,
+        parser: _DefEtreeParsers[_ET_co] | None = ...,
         *,
         base_url: _AnyStr | None = ...,
     ) -> None: ...
+    # Changes root node; in terms of typing, this means changing
+    # specialization of ElementTree. This is not expressible in
+    # current typing system.
     def _setroot(self, root: _Element) -> None: ...
     def getroot(self) -> _ET_co: ...
     # Special notes for write()
@@ -415,11 +417,8 @@ class _ElementTree(Generic[_ET_co]):
         doctype: str | None = ...,
         compression: int | None = ...,
     ) -> None: ...
-    def getpath(self, element: _Element) -> str: ...
-    def getelementpath(self, element: _Element) -> str: ...
-    # FIXME _ElementTree.iter() signature is incorrect for HTML tree.
-    # For basic XML _Element it is fine, but HTML comment, entity etc
-    # do _not_ inherit from HtmlElement, so should be union
+    def getpath(self: _ElementTree[_ET], element: _ET) -> str: ...
+    def getelementpath(self: _ElementTree[_ET], element: _ET) -> str: ...
     def iter(
         self, tag: _TagSelector | None = ..., *tags: _TagSelector
     ) -> Iterator[_ET_co]: ...
@@ -596,7 +595,7 @@ class __ContentOnlyElement(_Element):
     # Useful properties
     #
     @property  # type: ignore[misc]
-    def tag(self: _ET) -> _ElemFactory[_ET]: ...  # type: ignore[override]
+    def tag(self) -> _ElemFactory[Self]: ...  # type: ignore[override]
     @property
     def text(self) -> str | None: ...
     @text.setter
@@ -672,13 +671,13 @@ def Element(  # Args identical to _Element.makeelement
     **_extra: _AnyStr,
 ) -> _Element: ...
 def SubElement(
-    _parent: _Element,
+    _parent: _ET,
     _tag: _TagName,
     /,
     attrib: SupportsLaxedItems[str, _AnyStr] | None = ...,
     nsmap: _NSMapArg | None = ...,
     **_extra: _AnyStr,
-) -> _Element: ...
+) -> _ET: ...
 @overload  # from element, parser ignored
 def ElementTree(element: _ET) -> _ElementTree[_ET]: ...
 @overload  # from file source, custom parser
