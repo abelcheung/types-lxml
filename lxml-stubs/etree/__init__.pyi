@@ -346,13 +346,9 @@ class _Element:
         *,
         translator: _CSSTransArg = ...,
     ) -> list[Self]: ...
-    # Following methods marked as deprecated upstream
-    # def getchildren(self) -> list[_Element]: ...  # = list(self)
-    # def getiterator(
-    #     self,
-    #     tag: _TagSelector | None,
-    #     *tags: _TagSelector,
-    # ) -> Iterator[_Element]: ...
+    # TODO Use @deprecated from typing_extensions 4.5
+    def getchildren(self) -> list[Self]: ...
+    getiterator = iter  # Can @deprecated be used here?
 
 # ET definition is now specialized, indicating whether it contains
 # a tree of XML elements or tree of HTML elements.
@@ -470,12 +466,7 @@ class _ElementTree(Generic[_ET_co]):
     def relaxng(self, relaxng: _ElementOrXMLTree) -> bool: ...
     def xmlschema(self, xmlschema: _ElementOrXMLTree) -> bool: ...
     def xinclude(self) -> None: ...
-    #
-    # Deprecated methods
-    #
-    # def getiterator(  # = iter()
-    #     self, tag: _TagSelector | None = ..., *tags: _TagSelector
-    # ) -> _Element: ...
+    getiterator = iter  # TODO Can @deprecated be used here?
     def write_c14n(  # merged into write()
         self,
         file: _FileWriteSource,
