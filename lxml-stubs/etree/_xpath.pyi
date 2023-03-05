@@ -2,7 +2,8 @@
 # Internal classes and functions from lxml/xpath.pxi
 #
 
-from typing import Any, overload
+from abc import abstractmethod
+from typing import Any, Protocol, overload
 
 from .._types import (
     _AnyStr,
@@ -18,10 +19,15 @@ from ._xmlerror import _ErrorLog
 class XPathError(LxmlError): ...
 class XPathSyntaxError(LxmlSyntaxError, XPathError): ...
 
-class _XPathEvaluatorBase:
+class _XPathEvaluatorBase(Protocol):
     @property
     def error_log(self) -> _ErrorLog: ...
-    # evaluate() is deprecated
+    @abstractmethod
+    def __call__(
+        self, _arg: Any, /, **_variables: _XPathVarArg
+    ) -> _XPathObject: ...
+    # Too complex to re-enable evaluate() here, which is deprecated anyway
+    # evaluate = __call__
 
 class XPath(_XPathEvaluatorBase):
     def __init__(
