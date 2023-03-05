@@ -405,7 +405,7 @@
     bad_nsmap = {'a': 1}
     _ = elem.findtext({{ args }})
 
-- case: method_iter_family_no_kwd
+- case: method_iter_family_goodarg
   parametrized:
     - method: iter
     - method: iterancestors
@@ -425,30 +425,61 @@
     _ = elem.{{ method }}(tag1)
     _ = elem.{{ method }}(factory1, tag2)
 
-- case: method_iter_family_no_kwd_badarg
+- case: method_iter_family_badarg
+  expect_fail: true
   parametrized:
     - method: iter
+      args: 1
+    - method: iter
+      args: tag, 1
+    - method: iter
+      args: badarg=tag
     - method: iterancestors
+      args: 1
+    - method: iterancestors
+      args: tag, 1
+    - method: iterancestors
+      args: badarg=tag
     - method: iterdescendants
+      args: 1
+    - method: iterdescendants
+      args: tag, 1
+    - method: iterdescendants
+      args: badarg=tag
+    - method: itersiblings
+      args: 1
+    - method: itersiblings
+      args: tag, 1
+    - method: itersiblings
+      args: badarg=tag
+    - method: iterchildren
+      args: 1
+    - method: iterchildren
+      args: tag, 1
+    - method: iterchildren
+      args: badarg=tag
   main: |
     from lxml import etree
     elem: etree._Element
-    _ = elem.{{ method }}(123)  # E: Argument 1 to "{{ method }}" of "_Element" has incompatible type "int"; expected "Union[str, bytes, QName, Callable[..., _Element], None]"  [arg-type]
-    _ = elem.{{ method }}([etree.PI, 123])  # E: Argument 1 to "{{ method }}" of "_Element" has incompatible type "List[object]"; expected "Union[str, bytes, QName, Callable[..., _Element], None]"  [arg-type]
+    tag: str
+    _ = elem.{{ method }}({{ args }})
 
 - case: method_iter_family_special_kwd
   parametrized:
     - method: itersiblings
-      kwd: preceding
+      args: tag1, tag2, preceding=True
     - method: iterchildren
-      kwd: reversed
+      args: tag1, tag2, reversed=True
   main: |
     from lxml import etree
     elem: etree._Element
-    attr: str
-    result = elem.{{ method }}(attr, {{ kwd }}=True)
+    tag1: str
+    tag2: etree.QName
+    result = elem.{{ method }}({{ args }})
+    reveal_type(result)  # N: Revealed type is "typing.Iterator[lxml.etree._Element]"
 
 - case: method_iter_family_special_kwd_badarg
+  expect_fail: true
   parametrized:
     - method: itersiblings
       kwd: preceding
@@ -457,11 +488,8 @@
   main: |
     from lxml import etree
     elem: etree._Element
-    attr: str
-    result = elem.{{ method }}(123)  # E: Argument 1 to "{{ method }}" of "_Element" has incompatible type "int"; expected "Union[str, bytes, QName, Callable[..., _Element], None]"  [arg-type]
-    result = elem.{{ method }}([etree.PI, 123])  # E: Argument 1 to "{{ method }}" of "_Element" has incompatible type "List[object]"; expected "Union[str, bytes, QName, Callable[..., _Element], None]"  [arg-type]
-    result = elem.{{ method }}(attr, badarg=True)  # E: Unexpected keyword argument "badarg" for "{{ method }}" of "_Element"  [call-arg]
-    result = elem.{{ method }}(attr, {{ kwd }}='badval')  # E: Argument "{{ kwd }}" to "{{ method }}" of "_Element" has incompatible type "str"; expected "bool"  [arg-type]
+    tag: str
+    result = elem.{{ method }}(tag, {{ kwd }}='badval')
 
 - case: method_itertext
   parametrized:
