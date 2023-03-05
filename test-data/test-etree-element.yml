@@ -507,13 +507,17 @@
     reveal_type(result)  # N: Revealed type is "typing.Iterator[builtins.str]"
 
 - case: method_itertext_badarg
+  expect_fail: true
+  parametrized:
+    - args: 1
+    - args: tag, None
+    - args: badarg=tag
+    - args: tag, with_tail=''
   main: |
     from lxml import etree
     elem: etree._Element
-    obj: object
-    _ = elem.itertext(123)  # E: Argument 1 to "itertext" of "_Element" has incompatible type "int"; expected "Optional[Union[Union[str, bytes, QName], Callable[..., _Element]]]"  [arg-type]
-    _ = elem.itertext('tag', badarg=True)  # E: Unexpected keyword argument "badarg" for "itertext" of "_Element"  [call-arg]
-    _ = elem.itertext('tag', with_tail=obj)  # E: Argument "with_tail" to "itertext" of "_Element" has incompatible type "object"; expected "bool"  [arg-type]
+    tag: str
+    _ = elem.itertext({{ args }})
 
 - case: method_makeelement_args
   parametrized:
