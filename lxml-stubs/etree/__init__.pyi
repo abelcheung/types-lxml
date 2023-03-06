@@ -10,6 +10,7 @@ from typing import (
     SupportsBytes,
     TypeVar,
     Union,
+    final,
     overload,
 )
 from typing_extensions import LiteralString, Self, TypeGuard
@@ -113,8 +114,29 @@ from ._xpath import (
 # Basic variables and constants
 #
 
-_ET = TypeVar("_ET", bound=_Element)
-_ET_co = TypeVar("_ET_co", bound=_Element, covariant=True)
+# It is unknown if mypy will ever implemenet PEP 696; therefore,
+# pyright will enjoy shorthand while mypy doesn't,
+# while more specialization of classes are to be implemeneted,
+# such as _Attrib -> _Attrib[_Element]
+#
+# XXX Here is the trick:
+# 1. mypy claims it doesn't understand MYPY variable, but actually
+#    it does, and skips over to else block
+# 2. pyright truly does not understand MYPY variable. Under default
+#    behavior, it sort of merges definition of both blocks. With
+#    compatible enough definition, it doesn't modify the desired result.
+# 3. Replace MYPY with any name, and mypy will break.
+#
+# While pyright supports defining constants in config, it is not
+# reasonable to ask all pyright users to modify their own config.
+#
+if not MYPY:  # type: ignore
+    _ET = TypeVar("_ET", bound=_Element, default=_Element)
+    _ET_co = TypeVar("_ET_co", bound=_Element, default=_Element, covariant=True)
+else:
+    _ET = TypeVar("_ET", bound=_Element)  # pyright: ignore[reportConstantRedefinition]
+    _ET_co = TypeVar("_ET_co", bound=_Element, covariant=True)
+
 
 # Note that _TagSelector filters element type not by classes,
 # but checks for element _factory functions_ instead
@@ -144,26 +166,25 @@ LIBXML_COMPILED_VERSION: tuple[int, int, int]
 LXML_VERSION: tuple[int, int, int, int]
 __version__: LiteralString
 
-class SmartStr(str):
+@final
+class _ElementUnicodeResult(str, Generic[_ET]):
     """Smart string is a private str subclass documented in
     [return types](https://lxml.de/xpathxslt.html#xpath-return-values)
-    of XPath evaluation result. This stub-only class can be utilized like:
+    of XPath evaluation result.
 
-    ```python
-    if TYPE_CHECKING:
-        from lxml.etree import SmartStr
-    def is_smart_str(s: str) -> TypeGuard[SmartStr]:
-        return hasattr(s, 'getparent')
-    if is_smart_str(result):
-        parent = result.getparent() # identified as lxml.etree._Element
-    ```
+    Please [visit wiki page](https://github.com/abelcheung/types-lxml/wiki/Smart-string-usage)
+    on description and how to use it in you code.
     """
 
-    is_attribute: bool
-    is_tail: bool
-    is_text: bool
-    attrname: str | None
-    def getparent(self) -> _Element | None: ...
+    @property
+    def is_attribute(self) -> bool: ...
+    @property
+    def is_tail(self) -> bool: ...
+    @property
+    def is_text(self) -> bool: ...
+    @property
+    def attrname(self) -> str | None: ...
+    def getparent(self: _ElementUnicodeResult[_ET]) -> _ET | None: ...
 
 class DocInfo:
     @property

@@ -44,14 +44,13 @@ Head over to [latest release in GitHub](https://github.com/abelcheung/types-lxml
     pip install -U git+https://github.com/abelcheung/types-lxml.git
 
 ## Special notes
-There are two special stub-only classes that do not exist as concrete class in `lxml`:
-
-1. `lxml.etree.ParserTarget`
-2. `lxml.etree.SmartStr`
-
-They are intended as helpers when writing code, wrapped under
-`if TYPE_CHECKING: ...`. Please consult their docstring in stub files for detail,
-or if you are using IDEs, the docstring might have been formatted nicely for reference.
+There is now only one stub-only classes that do not exist as concrete class in
+`lxml` &mdash; `lxml.etree.ParserTarget`.
+[`SmartStr`](https://github.com/abelcheung/types-lxml/wiki/Smart-string-usage),
+which used to be user friendly naming of XPath string selection result `str`
+subclass, is reverted to original concrete class name after March 2023.
+Please consult their docstring in stub files for more detail; for IDE users,
+the docstring may have already been formatted nicely for reference.
 
 ![Stub docstring in PyCharm Documentation Tool](https://user-images.githubusercontent.com/83110/160575574-c20b29d0-ddda-40d4-82e3-724f59663d7e.png)
 

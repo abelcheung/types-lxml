@@ -170,3 +170,44 @@
     reveal_type(d.{{ prop }})  # N: Revealed type is "{{ rt }}"
     s: str
     d.{{ prop }} = s
+
+- case: smartstring_properties_type
+  parametrized:
+    - prop: is_attribute
+      rt: builtins.bool
+    - prop: is_tail
+      rt: builtins.bool
+    - prop: is_text
+      rt: builtins.bool
+    - prop: attrname
+      rt: Union[builtins.str, None]
+  main: |
+    from lxml.etree import _ElementUnicodeResult
+    s: _ElementUnicodeResult
+    reveal_type(s.{{ prop }})  # N: Revealed type is "{{ rt }}"
+
+- case: smartstring_properties_ro
+  parametrized:
+    - prop: is_attribute
+      val: True
+    - prop: is_tail
+      val: False
+    - prop: is_text
+      val: True
+    - prop: attrname
+      val: "'foo'"
+  main: |
+    from lxml.etree import _ElementUnicodeResult
+    s: _ElementUnicodeResult
+    s.{{ prop }} = {{ val }}  # E: Property "{{ prop }}" defined in "_ElementUnicodeResult" is read-only  [misc]
+
+- case: smartstring_getparent
+  main: |
+    from lxml.etree import _ElementUnicodeResult, _Element
+    from lxml.html import HtmlElement
+    s: _ElementUnicodeResult[_Element]
+    p1 = s.getparent()
+    reveal_type(p1)  # N: Revealed type is "Union[lxml.etree._Element, None]"
+    h: HtmlElement
+    p2 = h.text_content().getparent()
+    reveal_type(p2)  # N: Revealed type is "Union[lxml.html.HtmlElement, None]"

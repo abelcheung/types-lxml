@@ -22,7 +22,7 @@ from typing import (
     TypeVar,
     overload,
 )
-from typing_extensions import LiteralString, TypeAlias
+from typing_extensions import LiteralString, Self, TypeAlias
 
 from .. import etree
 from .._types import (
@@ -130,9 +130,11 @@ class HtmlElement(etree.ElementBase):
     def get_element_by_id(self, id: _AnyStr) -> HtmlElement: ...
     @overload
     def get_element_by_id(self, id: _AnyStr, default: _T) -> HtmlElement | _T: ...
-    # text_content() returns smart string by default. It is suggested
-    # to use etree.SmartStr (stub-only class) to do type narrowing.
-    def text_content(self) -> str: ...
+    # text_content() uses XPath behind the scene, and smart string
+    # subscript should point to original element type
+    # XXX But acutally the result is always None, as it uses XPath
+    # string() to merge text content and destroy element heritage info
+    def text_content(self) -> etree._ElementUnicodeResult[Self]: ...
     #
     # HtmlMixin Link functions
     #
