@@ -11,7 +11,6 @@ requires-python = '>=3.8'
 license = {text = 'Apache-2.0'}
 dependencies = [
     'types-beautifulsoup4',
-    'typing_extensions ~= 4.4'
 ]
 keywords = ['lxml', 'typing', 'stubs']
 authors = [
@@ -42,7 +41,7 @@ dev = [
     'pytest-mypy-plugins ~= 1.10, != 1.10.0',
     'black',
     'isort',
-    'mypy ~= 1.0',
+    'mypy == 1.1.*',
     'pyright ~= 1.1',
     'lxml',
 ]
@@ -80,10 +79,10 @@ extra_standard_library = [
 
 [tool.pyright]
 include = ['lxml-stubs']
-exclude = [
-    '**/node_modules',
-    '**/__pycache__',
-    '.tox',
-    '.mypy_cache',
-]
 reportPrivateUsage = false
+
+[tool.mypy]
+packages = 'lxml-stubs'
+strict = true
+show_error_context = true
+pretty = true
