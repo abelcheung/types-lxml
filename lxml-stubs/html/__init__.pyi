@@ -19,7 +19,6 @@ from ._form import (
     RadioGroup as RadioGroup,
     SelectElement as SelectElement,
     TextareaElement as TextareaElement,
-    open_http_urllib as open_http_urllib,
     submit_form as submit_form,
 )
 from ._funcs import (

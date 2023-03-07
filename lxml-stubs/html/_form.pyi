@@ -34,7 +34,9 @@ class FieldsDict(MutableMapping[str, str]):
     def __init__(self, inputs: InputGetter) -> None: ...
     def __getitem__(self, __k: str) -> str: ...
     def __setitem__(self, __k: str, __v: str) -> None: ...
-    def __delitem__(self, __k: Any) -> Never: ...
+    # Use Never for argument to issue early warning that
+    # __delitem__ can't be used
+    def __delitem__(self, __k: Never) -> Never: ...
     def __iter__(self) -> Iterator[str]: ...
     def __len__(self) -> int: ...
 
@@ -126,14 +128,8 @@ def submit_form(
     extra_values: _FormValues | SupportsLaxedItems[str, str] | None = ...,
     # open_http(method, url, values)
     open_http: Callable[[str, str, _FormValues], Any] | None = ...,
-) -> Any: ...
+) -> Any: ...  # result depends on open_http callback used
 
-# fallback function for open_http
-def open_http_urllib(
-    method: str,
-    url: str,
-    # Actually any structure acceptable by urllib.parse.urlencode() is fine.
-    # But this func is generally only used with submit_form, there is not
-    # much reason to support all of the data types.
-    values: _FormValues,
-) -> Any: ...
+# No need to annotate open_http_urllib.
+# Only intended as callback func object in submit_form() argument,
+# and already used as default if open_http argument is absent.
