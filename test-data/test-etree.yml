@@ -207,7 +207,7 @@
     from lxml.html import HtmlElement
     s: _ElementUnicodeResult[_Element]
     p1 = s.getparent()
-    reveal_type(p1)  # N: Revealed type is "Union[lxml.etree._Element, None]"
+    reveal_type(p1)  # NR: Revealed type is "Union\[[\w\.]+\._Element, None]"
     h: HtmlElement
     p2 = h.text_content().getparent()
-    reveal_type(p2)  # N: Revealed type is "Union[lxml.html.HtmlElement, None]"
+    reveal_type(p2)  # NR: Revealed type is "Union\[[\w\.]+\.HtmlElement, None]"

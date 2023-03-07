@@ -11,7 +11,7 @@
     content: str
     fileio = open('file', 'r')
     result = fromstring({{ args }})
-    reveal_type(result)  # N: Revealed type is "lxml.html.HtmlElement"
+    reveal_type(result)  # NR: Revealed type is "[\w\.]+\.HtmlElement"
 
 - case: parse
   parametrized:
@@ -26,7 +26,7 @@
     fileio = open('file', 'r')
     filename: str
     result = parse({{ args }})
-    reveal_type(result)  # N: Revealed type is "lxml.etree._ElementTree[lxml.html.HtmlElement]"
+    reveal_type(result)  # NR: Revealed type is "[\w\.]+\._ElementTree\[[\w\.]+\.HtmlElement]"
 
 - case: convert_tree
   main: |
@@ -34,7 +34,7 @@
     from bs4 import BeautifulSoup
     parsed: BeautifulSoup
     result = convert_tree(parsed)
-    reveal_type(result)  # N: Revealed type is "builtins.list[lxml.html.HtmlElement]"
+    reveal_type(result)  # NR: Revealed type is "builtins\.list\[[\w\.]+\.HtmlElement]"
 
 - case: noarg
   parametrized:

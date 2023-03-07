@@ -15,27 +15,22 @@
 - case: handler_constructor_goodargs
   parametrized:
     - args: None
-      el_type: lxml.etree._Element
-      infer: false
+      el_type: '[\w\.]+\._Element'
     - args: makeelement=None
-      el_type: lxml.etree._Element
-      infer: false
+      el_type: '[\w\.]+\._Element'
     - args: html.html_parser.makeelement
-      el_type: lxml.html.HtmlElement
-      infer: true
+      el_type: '[\w\.]+\.HtmlElement'
     - args: html.xhtml_parser.makeelement
-      el_type: lxml.html.HtmlElement
-      infer: true
+      el_type: '[\w\.]+\.HtmlElement'
     - args: p.makeelement
-      el_type: lxml.etree._Element
-      infer: true
+      el_type: '[\w\.]+\._Element'
   main: |
     from lxml.sax import ElementTreeContentHandler
     from lxml import etree, html
     p = etree.XMLParser()
     h = ElementTreeContentHandler({{ args }})
-    reveal_type(h)  # N: Revealed type is "lxml.sax.ElementTreeContentHandler[{{ el_type }}{{#infer}}{{/infer}}]"
-    reveal_type(h.etree)  # N: Revealed type is "lxml.etree._ElementTree[{{ el_type }}]"
+    reveal_type(h)  # NR: Revealed type is "[\w\.]+\.ElementTreeContentHandler\[{{ el_type }}]"
+    reveal_type(h.etree)  # NR: Revealed type is "[\w\.]+\._ElementTree\[{{ el_type }}]"
 
 - case: handler_constructor_badargs
   expect_fail: true

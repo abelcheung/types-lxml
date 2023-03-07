@@ -1,8 +1,9 @@
 from typing import Iterable, Pattern, Union, overload
 
-from ..etree import _Element, _ElementTree, _ElemFactory
-from . import HtmlElement, _HtmlDoc_T
 from .._types import Unused
+from ..etree import _Element, _ElementTree, _ElemFactory
+from . import HtmlElement
+from ._funcs import _HtmlDoc_T
 
 # Version of tag selector that doesn't support QName helper
 _HTagSelector = Union[str, bytes, _ElemFactory[_Element]]

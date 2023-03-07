@@ -14,20 +14,20 @@
 - case: evaluation_of_selector
   parametrized:
     - input_type: _Element
-      rt: lxml.etree._Element
+      rt: '[\w\.]+\._Element'
     - input_type: "_ElementTree[_Element]"
-      rt: lxml.etree._Element
+      rt: '[\w\.]+\._Element'
     - input_type: HtmlElement
-      rt: lxml.html.HtmlElement
+      rt: '[\w\.]+\.HtmlElement'
     - input_type: "_ElementTree[HtmlElement]"
-      rt: lxml.html.HtmlElement
+      rt: '[\w\.]+\.HtmlElement'
   main: |
     from lxml.etree import _Element, _ElementTree
     from lxml.html import HtmlElement
     from lxml.cssselect import CSSSelector
     sel: CSSSelector
     input: {{ input_type }}
-    reveal_type(sel(input))  # N: Revealed type is "builtins.list[{{ rt }}]"
+    reveal_type(sel(input))  # NR: Revealed type is "builtins.list\[{{ rt }}]"
 
 - case: etree_cssselect_method
   main: |
@@ -73,7 +73,7 @@
     el: HtmlElement
     form: FormElement
     result = {{ elem }}.cssselect({{ args }})
-    reveal_type(result)  # N: Revealed type is "builtins.list[lxml.html.HtmlElement]"
+    reveal_type(result)  # NR: Revealed type is "builtins\.list\[[\w\.]+\.HtmlElement]"
 
 - case: html_cssselect_bad_arg1
   parametrized:

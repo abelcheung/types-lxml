@@ -210,19 +210,17 @@
     url: str
     tree.parse({{ args }})
 
-# FIXME fix iter() for _ElementTree[HtmlElement], see stub comment
-
 - case: iter_noargs
   parametrized:
     - subtype: _Element
-      itr_t: "lxml.etree._Element"
+      itr_t: '[\w\.]+\._Element'
     - subtype: HtmlElement
-      itr_t: "lxml.html.HtmlElement"
+      itr_t: '[\w\.]+\.HtmlElement'
   main: |
     from lxml.etree import _Element, _ElementTree
     from lxml.html import HtmlElement
     tree: _ElementTree[{{ subtype }}]
-    reveal_type(tree.iter())  # N: Revealed type is "typing.Iterator[{{ itr_t }}]"
+    reveal_type(tree.iter())  # NR: Revealed type is "typing\.Iterator\[{{ itr_t }}]"
 
 - case: iter
   parametrized:

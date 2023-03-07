@@ -53,52 +53,52 @@
   parametrized:
     - func: c.clean_html
       args: html=s
-      rt: "builtins.str"
+      rt: 'builtins\.str'
     - func: c.clean_html
       args: b
-      rt: "builtins.bytes"
+      rt: 'builtins\.bytes'
     - func: c.clean_html
       args: root
-      rt: "lxml.html.HtmlElement"
+      rt: '[\w\.]+\.HtmlElement'
     - func: c.clean_html
       args: tree
-      rt: "lxml.etree._ElementTree[lxml.html.HtmlElement]"
+      rt: '[\w\.]+\._ElementTree\[[\w\.]+\.HtmlElement]'
     - func: clean.clean_html
       args: s
-      rt: "builtins.str"
+      rt: 'builtins\.str'
     - func: clean.clean_html
       args: html=b
-      rt: "builtins.bytes"
+      rt: 'builtins\.bytes'
     - func: clean.clean_html
       args: root
-      rt: "lxml.html.HtmlElement"
+      rt: '[\w\.]+\.HtmlElement'
     - func: clean.clean_html
       args: tree
-      rt: "lxml.etree._ElementTree[lxml.html.HtmlElement]"
+      rt: '[\w\.]+\._ElementTree\[[\w\.]+\.HtmlElement]'
     - func: clean.autolink_html
       args: s
-      rt: "builtins.str"
+      rt: 'builtins\.str'
     - func: clean.autolink_html
       args: b
-      rt: "builtins.bytes"
+      rt: 'builtins\.bytes'
     - func: clean.autolink_html
       args: html=root
-      rt: "lxml.html.HtmlElement"
+      rt: '[\w\.]+\.HtmlElement'
     - func: clean.autolink_html
       args: tree
-      rt: "lxml.etree._ElementTree[lxml.html.HtmlElement]"
+      rt: '[\w\.]+\._ElementTree\[[\w\.]+\.HtmlElement]'
     - func: clean.word_break_html
       args: s
-      rt: "builtins.str"
+      rt: 'builtins\.str'
     - func: clean.word_break_html
       args: b
-      rt: "builtins.bytes"
+      rt: 'builtins\.bytes'
     - func: clean.word_break_html
       args: root
-      rt: "lxml.html.HtmlElement"
+      rt: '[\w\.]+\.HtmlElement'
     - func: clean.word_break_html
       args: html=tree
-      rt: "lxml.etree._ElementTree[lxml.html.HtmlElement]"
+      rt: '[\w\.]+\._ElementTree\[[\w\.]+\.HtmlElement]'
   main: |
     from lxml.html import clean, HtmlElement
     from lxml.etree import _ElementTree
@@ -107,7 +107,7 @@
     b: bytes
     root: HtmlElement
     tree: _ElementTree[HtmlElement]
-    reveal_type({{ func }}({{ args }}))  # N: Revealed type is "{{ rt }}"
+    reveal_type({{ func }}({{ args }}))  # NR: Revealed type is "{{ rt }}"
 
 - case: clean_html_func_badargs
   main: |

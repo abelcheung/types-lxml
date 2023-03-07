@@ -1,21 +1,21 @@
 - case: mixin_properties_ro
   parametrized:
     - prop: classes
-      rt: lxml.html.Classes
+      rt: '[\w\.]+\.Classes'
     - prop: label
-      rt: Union[lxml.html.LabelElement, None]
+      rt: 'Union\[[\w\.]+\.LabelElement, None]'
     - prop: base_url
-      rt: Union[builtins.str, None]
+      rt: 'Union\[builtins\.str, None]'
     - prop: forms
-      rt: builtins.list[lxml.html.FormElement]
+      rt: 'builtins.list\[[\w\.]+\.FormElement]'
     - prop: body
-      rt: lxml.html.HtmlElement
+      rt: '[\w\.]+\.HtmlElement'
     - prop: head
-      rt: lxml.html.HtmlElement
+      rt: '[\w\.]+\.HtmlElement'
   main: |
     from lxml.html import HtmlElement
     elem: HtmlElement
-    reveal_type(elem.{{ prop }})  # N: Revealed type is "{{ rt }}"
+    reveal_type(elem.{{ prop }})  # NR: Revealed type is "{{ rt }}"
 
 - case: mixin_properties_rw
   main: |
@@ -95,7 +95,7 @@
     from lxml.html import HtmlElement
     elem: HtmlElement
     result = elem.find_rel_links('stylesheet')
-    reveal_type(result)  # N: Revealed type is "builtins.list[lxml.html.HtmlElement]"
+    reveal_type(result)  # NR: Revealed type is "builtins.list\[[\w\.]+\.HtmlElement]"
 
 - case: mixin_method_find_class
   parametrized:
@@ -118,7 +118,7 @@
     s: str
     b: bytes
     result = elem.get_element_by_id({{ args }})
-    reveal_type(result)  # N: Revealed type is "lxml.html.HtmlElement"
+    reveal_type(result)  # NR: Revealed type is "[\w\.]+\.HtmlElement"
 
 - case: mixin_method_get_element_by_id_badargs
   expect_fail: true
@@ -138,7 +138,7 @@
     from lxml.html import HtmlElement
     elem: HtmlElement
     result = elem.text_content()
-    reveal_type(result)  # N: Revealed type is "lxml.etree._ElementUnicodeResult[lxml.html.HtmlElement]"
+    reveal_type(result)  # NR: Revealed type is "[\w\.]+\._ElementUnicodeResult\[[\w\.]+\.HtmlElement]"
     result = elem.text_content(None)  # E: Too many arguments for "text_content" of "HtmlElement"  [call-arg]
 
 - case: mixin_method_iterlinks
@@ -146,7 +146,7 @@
     from lxml.html import HtmlElement
     elem: HtmlElement
     result = elem.iterlinks()
-    reveal_type(result)  # N: Revealed type is "typing.Iterator[Tuple[lxml.html.HtmlElement, Union[builtins.str, None], builtins.str, builtins.int]]"
+    reveal_type(result)  # NR: Revealed type is "typing\.Iterator\[Tuple\[[\w\.]+\.HtmlElement, Union\[builtins\.str, None], builtins\.str, builtins\.int]]"
     result = elem.iterlinks(None)  # E: Too many arguments for "iterlinks" of "HtmlElement"  [call-arg]
 
 - case: mixin_method_make_links_absolute1
