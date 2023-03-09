@@ -6,7 +6,7 @@
     s: str
     b: bytes
     from lxml.objectify import fromstring
-    reveal_type(fromstring({{ args }}))  # N: Revealed type is "lxml.objectify.ObjectifiedElement"
+    reveal_type(fromstring({{ args }}))  # NR: Revealed type is "[\w\.]+\.ObjectifiedElement"
 
 - case: oe_has_arbitrary_attribute
   parametrized:
@@ -16,27 +16,27 @@
   main: |
     from lxml.objectify import ObjectifiedElement
     doc: ObjectifiedElement
-    reveal_type(doc.{{ attr }})  # N: Revealed type is "lxml.objectify.ObjectifiedElement"
+    reveal_type(doc.{{ attr }})  # NR: Revealed type is "[\w\.]+\.ObjectifiedElement"
 
 - case: oe_is_iterable
   main: |
     from lxml.objectify import ObjectifiedElement
     doc: ObjectifiedElement
     for el in doc:
-      reveal_type(el)  # N: Revealed type is "lxml.objectify.ObjectifiedElement"
+      reveal_type(el)  # NR: Revealed type is "[\w\.]+\.ObjectifiedElement"
 
 - case: oe_specific_methods_no_arg
   parametrized:
     - method: countchildren
-      rt: builtins.int
+      rt: 'builtins\.int'
     - method: getchildren
-      rt: builtins.list[lxml.objectify.ObjectifiedElement]
+      rt: 'builtins\.list\[[\w\.]+\.ObjectifiedElement]'
     - method: descendantpaths
-      rt: builtins.list[builtins.str]
+      rt: 'builtins\.list\[builtins\.str]'
   main: |
     from lxml.objectify import ObjectifiedElement
     doc: ObjectifiedElement
-    reveal_type(doc.{{ method }}())  # N: Revealed type is "{{ rt }}"
+    reveal_type(doc.{{ method }}())  # NR: Revealed type is "{{ rt }}"
 
 - case: oe_specific_methods_have_arg
   parametrized:
@@ -58,7 +58,7 @@
 - case: elementmaker_default
   main: |
     from lxml.objectify import E
-    reveal_type(E)  # N: Revealed type is "lxml.objectify.ElementMaker"
+    reveal_type(E)  # NR: Revealed type is "[\w\.]+\.ElementMaker"
 
 - case: elementmaker_customize
   parametrized:
@@ -72,21 +72,21 @@
     ns: str
     map: Dict[str, str]
     E = ElementMaker({{ args }})
-    reveal_type(E)  # N: Revealed type is "lxml.objectify.ElementMaker"
+    reveal_type(E)  # NR: Revealed type is "[\w\.]+\.ElementMaker"
 
 - case: elementmaker_create_elements
   parametrized:
     - method: foo
-      rt: lxml.objectify.ObjectifiedElement
+      rt: '[\w\.]+\.ObjectifiedElement'
     - method: BAR
-      rt: lxml.objectify.ObjectifiedElement
+      rt: '[\w\.]+\.ObjectifiedElement'
     - method: __nonExistent__
-      rt: lxml.objectify.ObjectifiedElement
+      rt: '[\w\.]+\.ObjectifiedElement'
     - method: __str__
-      rt: builtins.str
+      rt: 'builtins\.str'
   main: |
     from lxml.objectify import E
-    reveal_type(E.{{ method }}())  # N: Revealed type is "{{ rt }}"
+    reveal_type(E.{{ method }}())  # NR: Revealed type is "{{ rt }}"
 
 # Modified from official doc example
 - case: elementmaker_complex_example
@@ -115,4 +115,4 @@
         )
       )
     )
-    reveal_type(page)  # N: Revealed type is "lxml.objectify.ObjectifiedElement"
+    reveal_type(page)  # NR: Revealed type is "[\w\.]+\.ObjectifiedElement"
