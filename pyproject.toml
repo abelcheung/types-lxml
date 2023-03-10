@@ -42,7 +42,7 @@ dev = [
     'black',
     'isort',
     'mypy == 1.1.*',
-    'pyright ~= 1.1',
+    'pyright >= 1.1.288',
     'lxml',
 ]
 
