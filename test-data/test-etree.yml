@@ -61,7 +61,7 @@
   main: |
     from lxml import etree
     obj = etree.PyErrorLog()
-    reveal_type(obj)  # N: Revealed type is "lxml.etree._xmlerror.PyErrorLog"
+    reveal_type(obj)  # NR: Revealed type is "[\w\.]+\.PyErrorLog"
     reveal_type(obj.level_map)  # N: Revealed type is "builtins.dict[builtins.int, builtins.int]"
 
 - case: etree_error_log_struct
@@ -71,7 +71,7 @@
     s: str
     document = etree.XML(s, parser=parser)
     last_err = parser.error_log.last_error
-    reveal_type(last_err.level)  # N: Revealed type is "builtins.int"
+    reveal_type(last_err.level)  # NR: Revealed type is "[\w\.]+\.ErrorLevels"
     reveal_type(last_err.filename)  # N: Revealed type is "Union[builtins.str, None]"
 
 - case: qname_create_ok
