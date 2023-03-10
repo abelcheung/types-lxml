@@ -14,6 +14,7 @@ from .._types import (
 )
 from . import LxmlError, LxmlSyntaxError, _Element, _ElementOrAnyTree, _ElementTree
 from ._xmlerror import _ErrorLog
+from .._types import deprecated
 
 # TODO Belongs to extensions.pxi, to be moved
 class XPathError(LxmlError): ...
@@ -23,11 +24,11 @@ class _XPathEvaluatorBase(Protocol):
     @property
     def error_log(self) -> _ErrorLog: ...
     @abstractmethod
-    def __call__(
-        self, _arg: Any, /, **_variables: _XPathVarArg
-    ) -> _XPathObject: ...
-    # Too complex to re-enable evaluate() here, which is deprecated anyway
-    # evaluate = __call__
+    def __call__(self, _arg: Any, /, **__var: _XPathVarArg) -> _XPathObject: ...
+    # evaluate() should have been abstract like __call__(), but requiring all
+    # subclasses to add deprecated method is idiocy
+    @deprecated('Since v2.0 (2008); call the object directly')
+    def evaluate(self, _arg: Any, /, **__var: _XPathVarArg) -> _XPathObject: ...
 
 class XPath(_XPathEvaluatorBase):
     def __init__(

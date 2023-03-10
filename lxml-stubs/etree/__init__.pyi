@@ -30,6 +30,7 @@ from .._types import (
     _XPathExtFuncArg,
     _XPathObject,
     _XPathVarArg,
+    deprecated,
 )
 from ..cssselect import _CSSTransArg
 from ._classlookup import (
@@ -364,9 +365,12 @@ class _Element:
         *,
         translator: _CSSTransArg = ...,
     ) -> list[Self]: ...
-    # TODO Use @deprecated from typing_extensions 4.5
+    @deprecated('Since v2.0 (2008); use list(element) or iterate over element')
     def getchildren(self) -> list[Self]: ...
-    getiterator = iter  # Can @deprecated be used here?
+    # Should have been overloaded for accuracy, but we can turn a blind eye
+    # for something that is marked deprecated for 15 years
+    @deprecated('Since v2.0 (2008); renamed to .iter()')
+    def getiterator(self, tag: _TagSelector | None = ..., *tags: _TagSelector) -> Iterator[Self]: ...
 
 # ET definition is now specialized, indicating whether it contains
 # a tree of XML elements or tree of HTML elements.
@@ -388,14 +392,24 @@ class _ElementTree(Generic[_ET_co]):
     def _setroot(self, root: _Element) -> None: ...
     def getroot(self) -> _ET_co: ...
     # Special notes for write()
-    # BUG: exception for the following combination
-    #      - file argument is file name or path like, and
-    #      - method is 'c14n2', and
-    #      - no compression
-    # There are quite many combination of keyword arguments
-    # that have no effect. But it's a bit too complex to handle
-    # in stub, so keep it simple and only divide keyword usage
-    # by writing method as documented.
+    # For write(), there are quite many combination of keyword
+    # arguments that have no effect. But it's a bit too complex
+    # to handle in stub, so keep it simple and only divide
+    # keyword usage by writing method as documented.
+    # For example, following combination raises exception in lxml:
+    #     - file argument is file name or path like, and
+    #     - method is 'c14n2', and
+    #     - no compression
+    #
+    @overload  # deprecated usage of docstring param
+    @deprecated('Since v3.8.0; use "doctype" parameter instead')
+    def write(
+        self,
+        file: Any,
+        *,
+        docstring: str,
+        __kw: Any,
+    ) -> None: ...
     @overload  # method=c14n
     def write(
         self,
@@ -485,8 +499,12 @@ class _ElementTree(Generic[_ET_co]):
     def relaxng(self, relaxng: _ElementOrXMLTree) -> bool: ...
     def xmlschema(self, xmlschema: _ElementOrXMLTree) -> bool: ...
     def xinclude(self) -> None: ...
-    getiterator = iter  # TODO Can @deprecated be used here?
-    def write_c14n(  # merged into write()
+    # Should have been overloaded for accuracy, but we can turn a blind eye
+    # for something that is marked deprecated for 15 years
+    @deprecated('Since v2.0 (2008); renamed to .iter()')
+    def getiterator(self, tag: _TagSelector | None = ..., *tags: _TagSelector) -> Iterator[_ET_co]: ...
+    @deprecated('Since v4.4; use .write() with method="c14n" argument')
+    def write_c14n(
         self,
         file: _FileWriteSource,
         *,
@@ -838,6 +856,18 @@ def indent(
     space: str = ...,
     *,
     level: int = ...,
+) -> None: ...
+
+@deprecated('For ElementTree 1.3 compat only; result is tostring() output wrapped inside a list')
+def tostringlist(element_or_tree: _ElementOrAnyTree, *args: Any, **__kw: Any) -> list[str]: ...
+@deprecated('Since v3.3.2; use tostring() with encoding="unicode" argument')
+def tounicode(
+    element_or_tree: _ElementOrAnyTree,
+    *,
+    method: str,
+    pretty_print: bool = ...,
+    with_tail: bool = ...,
+    doctype: str | None = ...,
 ) -> None: ...
 
 class Error(Exception): ...

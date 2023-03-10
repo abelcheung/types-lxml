@@ -3,7 +3,7 @@ from abc import abstractmethod
 from typing import Any, Generic, Iterable, Iterator, Mapping, Protocol
 from typing_extensions import Self
 
-from .._types import SupportsLaxedItems, _AnyStr, _NSMapArg, _TagName
+from .._types import SupportsLaxedItems, _AnyStr, _NSMapArg, _TagName, deprecated
 from . import (
     ElementClassLookup,
     LxmlError,
@@ -157,6 +157,8 @@ class _FeedParser(Generic[_ET_co]):
         ```
         """
         ...
+    @deprecated('Since v2.0 (2008); renamed to set_element_class_lookup()')
+    def setElementClassLookup(self, lookup: ElementClassLookup | None = ...) -> None: ...
     @property
     def feed_error_log(self) -> _ErrorLog: ...
     def feed(self, data: _AnyStr) -> None: ...
