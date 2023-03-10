@@ -40,7 +40,7 @@ class ElementMaker(Generic[_ET_co]):
         # interpretable by the default typemap (that is str, CDATA and dict)
         # as children, the typemap can be expanded to make sure items of any
         # type are accepted.
-        *children: Any,
+        *children: object,
         **attrib: str,
     ) -> _ET_co: ...
     # __getattr__ here is special. ElementMaker is a factory that generates

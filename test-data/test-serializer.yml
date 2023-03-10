@@ -38,9 +38,7 @@
   parametrized:
   - args: s
   - args: xml_data=s
-  # Intentionally wrong arg to demonstrate it is ignored
-  - args: s, from_file=1
-  - args: from_file=s
+  - args: from_file=f
   - args: None, from_file=f
   main: |
     from io import TextIOWrapper

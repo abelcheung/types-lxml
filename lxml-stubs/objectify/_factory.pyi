@@ -124,7 +124,7 @@ def DataElement(
 ) -> _e.FloatElement: ...
 @overload  # pytype None
 def DataElement(
-    _value: Any,
+    _value: object,
     /,
     attrib: SupportsLaxedItems[str, _AnyStr] | None = ...,
     nsmap: _NSMapArg | None = ...,
@@ -135,7 +135,7 @@ def DataElement(
 ) -> _e.NoneElement: ...
 @overload  # pytype str
 def DataElement(
-    _value: Any,
+    _value: object,
     /,
     attrib: SupportsLaxedItems[str, _AnyStr] | None = ...,
     nsmap: _NSMapArg | None = ...,
@@ -146,7 +146,7 @@ def DataElement(
 ) -> _e.StringElement: ...
 @overload  # pytype bool
 def DataElement(
-    _value: Any,
+    _value: object,
     /,
     attrib: SupportsLaxedItems[str, _AnyStr] | None = ...,
     nsmap: _NSMapArg | None = ...,
@@ -157,7 +157,7 @@ def DataElement(
 ) -> _e.BoolElement: ...
 @overload  # pytype int
 def DataElement(
-    _value: Any,
+    _value: object,
     /,
     attrib: SupportsLaxedItems[str, _AnyStr] | None = ...,
     nsmap: _NSMapArg | None = ...,
@@ -168,7 +168,7 @@ def DataElement(
 ) -> _e.IntElement: ...
 @overload  # pytype float
 def DataElement(
-    _value: Any,
+    _value: object,
     /,
     attrib: SupportsLaxedItems[str, _AnyStr] | None = ...,
     nsmap: _NSMapArg | None = ...,
@@ -179,7 +179,7 @@ def DataElement(
 ) -> _e.FloatElement: ...
 @overload  # Generic fallback
 def DataElement(
-    _value: Any,
+    _value: object,
     /,
     attrib: SupportsLaxedItems[str, _AnyStr] | None = ...,
     nsmap: _NSMapArg | None = ...,

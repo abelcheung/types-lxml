@@ -48,7 +48,7 @@ class InputGetter(Collection[_AnyInputElement]):
     # __getitem__ is special here: for checkbox group and radio group,
     # it returns special list-like object instead of HtmlElement
     def __getitem__(
-        self, name: str
+        self, __k: str
     ) -> _AnyInputElement | RadioGroup | CheckboxGroup: ...
     def keys(self) -> list[str]: ...
     def items(

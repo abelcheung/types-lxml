@@ -30,7 +30,7 @@ class ParseError(LxmlSyntaxError):
     position: tuple[int, int]
     def __init__(
         self,
-        message: Any,
+        message: object,
         code: int,
         line: int,
         column: int,
