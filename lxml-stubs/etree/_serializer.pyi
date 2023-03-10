@@ -6,6 +6,7 @@ from typing import (
     Callable,
     ContextManager,
     Iterable,
+    final,
     overload,
 )
 
@@ -114,6 +115,7 @@ def canonicalize(
 #    manager objects. For coherence, we distinguish their return type
 #    differently.
 #
+@final
 class _IncrementalFileWriter:
     def write_declaration(
         self,
@@ -140,6 +142,7 @@ class _IncrementalFileWriter:
         **_extra: _AnyStr,
     ) -> ContextManager[None]: ...
 
+@final
 class _AsyncIncrementalFileWriter:
     async def write_declaration(
         self,

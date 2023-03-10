@@ -4,9 +4,10 @@
 
 import enum
 from logging import Logger
-from typing import Any, Collection, Iterator
+from typing import Any, Collection, Iterator, final
 from typing_extensions import Self
 
+@final
 class _LogEntry:
     @property
     def doamin(self) -> int: ...
