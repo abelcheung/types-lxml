@@ -15,7 +15,7 @@ from . import (
     _TagSelector,
 )
 from ._docloader import _ResolverRegistry
-from ._xmlerror import _ErrorLog
+from ._xmlerror import _ListErrorLog
 
 # The basic parsers bundled in lxml.etree
 _DefEtreeParsers = XMLParser[_ET_co] | HTMLParser[_ET_co]
@@ -116,7 +116,7 @@ class ParserTarget(Protocol[_T_co]):
 # Includes most stuff in _BaseParser
 class _FeedParser(Generic[_ET_co]):
     @property
-    def error_log(self) -> _ErrorLog: ...
+    def error_log(self) -> _ListErrorLog: ...
     @property
     def resolvers(self) -> _ResolverRegistry: ...
     @property
@@ -160,7 +160,7 @@ class _FeedParser(Generic[_ET_co]):
     @deprecated('Since v2.0 (2008); renamed to set_element_class_lookup()')
     def setElementClassLookup(self, lookup: ElementClassLookup | None = ...) -> None: ...
     @property
-    def feed_error_log(self) -> _ErrorLog: ...
+    def feed_error_log(self) -> _ListErrorLog: ...
     def feed(self, data: _AnyStr) -> None: ...
 
 # FIXME: Custom parser target support is temporarily abandoned,

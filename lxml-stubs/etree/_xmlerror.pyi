@@ -5,7 +5,7 @@
 import enum
 from logging import Logger
 from typing import Collection, Iterator, final
-from typing_extensions import Self, Never
+from typing_extensions import Self
 
 @final
 class _LogEntry:
@@ -35,10 +35,12 @@ class _LogEntry:
 class _BaseErrorLog:
     @property
     def last_error(self) -> _LogEntry: ...
-    def copy(self) -> Self: ...
+    # copy() method is originally under _BaseErrorLog class. However
+    # PyErrorLog overrides it with a dummy version, denoting it
+    # shouldn't be used. So move copy() to the only other subclass
+    # inherited from _BaseErrorLog, that is _ListErrorLog.
     def receive(self, log_entry: _LogEntry) -> None: ...
 
-# Immutable list-like
 class _ListErrorLog(_BaseErrorLog, Collection[_LogEntry]):
     def __iter__(self) -> Iterator[_LogEntry]: ...
     def __len__(self) -> int: ...
@@ -51,14 +53,27 @@ class _ListErrorLog(_BaseErrorLog, Collection[_LogEntry]):
     def filter_from_fatals(self) -> _ListErrorLog: ...
     def filter_from_errors(self) -> _ListErrorLog: ...
     def filter_from_warnings(self) -> _ListErrorLog: ...
-
-# Context manager behavior is internal to cython, not usable in python code
-# so drop it altogether
-class _ErrorLog(_ListErrorLog):
     def clear(self) -> None: ...
+    # Context manager behavior is internal to cython, not usable
+    # in python code, so dropped altogether.
+    # copy() is originally implemented in _BaseErrorLog, see
+    # comment there for more info.
+    def copy(self) -> Self: ...
 
-class _DomainErrorLog(_ErrorLog): ...
-class _RotatingErrorLog(_ErrorLog): ...
+# The interaction between _ListErrorLog and _ErrorLog is interesting.
+# _ListErrorLog is the base class, and unlikely to be instantiated
+# directly. _ErrorLog class instantiates _ListErrorLog object, and
+# patches it with extra runtime methods.
+# Here we merge all extra _ErrorLog methods into _ListErrorLog,
+# and make _Errorlog a function instead. Mypy become ferocious when
+# the idea of returning different object via __new__() comes up
+def _ErrorLog() -> _ListErrorLog: ...
+
+class _RotatingErrorLog(_ListErrorLog): ...
+
+# Maybe there's some sort of hidden commercial version of lxml
+# that supports _DomainErrorLog? Anyway, the class in open source
+# lxml is entirely broken and not touched since 2006.
 
 def clear_error_log() -> None: ...
 
@@ -67,8 +82,7 @@ class PyErrorLog(_BaseErrorLog):
     def level_map(self) -> dict[int, int]: ...
     def __init__(self, logger_name: str | None = ..., logger: Logger = ...) -> None: ...
     # copy() is disallowed, implementation chooses to fail in a
-    # silent way (return dummy object, that is)
-    def copy(self) -> Never: ...
+    # silent way by returning dummy object. We skip it altogether.
     def log(self, log_entry: _LogEntry, message: str, *args: object) -> None: ...
 
 def use_global_python_log(log: PyErrorLog) -> None: ...

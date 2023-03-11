@@ -90,7 +90,6 @@ from ._xmlerror import (
     PyErrorLog as PyErrorLog,
     RelaxNGErrorTypes as RelaxNGErrorTypes,
     _BaseErrorLog,
-    _ErrorLog,
     _ListErrorLog,
     clear_error_log as clear_error_log,
     use_global_python_log as use_global_python_log,
@@ -604,7 +603,7 @@ class XSLT:
     @staticmethod
     def strparam(s: _AnyStr) -> _XSLTQuotedStringParam: ...
     @property
-    def error_log(self) -> _ErrorLog: ...
+    def error_log(self) -> _ListErrorLog: ...
 
 #
 # Element types and content node types
@@ -874,7 +873,9 @@ class Error(Exception): ...
 
 class LxmlError(Error):
     def __init__(self, message: object, error_log: _BaseErrorLog | None = ...) -> None: ...
-    error_log: _BaseErrorLog = ...
+    # Even when LxmlError is initiated with PyErrorLog, it fools
+    # error_log property by creating a dummy _ListErrorLog object
+    error_log: _ListErrorLog
 
 class DocumentInvalid(LxmlError): ...
 class LxmlSyntaxError(LxmlError, SyntaxError): ...

@@ -13,7 +13,7 @@ from .._types import (
     _XPathVarArg,
 )
 from . import LxmlError, LxmlSyntaxError, _Element, _ElementOrAnyTree, _ElementTree
-from ._xmlerror import _ErrorLog
+from ._xmlerror import _ListErrorLog
 from .._types import deprecated
 
 # TODO Belongs to extensions.pxi, to be moved
@@ -22,7 +22,7 @@ class XPathSyntaxError(LxmlSyntaxError, XPathError): ...
 
 class _XPathEvaluatorBase(Protocol):
     @property
-    def error_log(self) -> _ErrorLog: ...
+    def error_log(self) -> _ListErrorLog: ...
     @abstractmethod
     def __call__(self, _arg: Any, /, **__var: _XPathVarArg) -> _XPathObject: ...
     # evaluate() should have been abstract like __call__(), but requiring all
