@@ -3,7 +3,7 @@
 #
 
 from _typeshed import _T
-from typing import Any, Iterable, overload
+from typing import Iterable, overload
 from .._types import _AnyStr, _FileReadSource
 from ._element import ObjectifiedElement, ObjectifiedDataElement
 from .. import etree

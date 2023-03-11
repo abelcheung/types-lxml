@@ -90,7 +90,7 @@ def DataElement(
     **__attr: _AnyStr,
 ) -> _e.StringElement: ...
 @overload  # native type bool
-def DataElement(
+def DataElement(  # pyright: ignore[reportOverlappingOverload]
     _value: bool,
     /,
     attrib: SupportsLaxedItems[str, _AnyStr] | None = ...,

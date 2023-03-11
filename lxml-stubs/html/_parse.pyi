@@ -11,22 +11,22 @@ _HtmlElemParser: TypeAlias = etree._parser._DefEtreeParsers[HtmlElement]
 # Parser
 #
 
+# Stub version before March 2023 used to omit 'target' parameter, which
+# would nullify default HTML element lookup behavior, degenerating html
+# submodule parsers into etree ones. Since it is decided to not support
+# custom target parser for now, we just add back 'target' parameter for
+# coherence. Same for XHTMLParser below.
 class HTMLParser(etree.HTMLParser[HtmlElement]):
     """An HTML parser configured to return ``lxml.html`` Element
     objects.
 
     Notes
     -----
-    1. The ``target`` parameter is stripped from ``__init__`` definition.
-       If custom parser target argument were used in ``html.HTMLParser``,
-       its element lookup behavior would be completely nullified,
-       behaving as if ``etree.HTMLParser`` is used,
-       which makes this subclass meaningless.
-    2. This subclass is not specialized, unlike the ``etree`` counterpart.
-       They are designed to always handle ``HtmlElement``;
-       for generating other kinds of ``_Elements``, one should use
-       etree parsers with ``set_element_class_lookup()`` method instead.
-       In that case, see ``_FeedParser.set_element_class_lookup()`` for more info.
+    This subclass is not specialized, unlike the ``etree`` counterpart.
+    They are designed to always handle ``HtmlElement``;
+    for generating other kinds of ``_Elements``, one should use
+    etree parsers with ``set_element_class_lookup()`` method instead.
+    In that case, see ``_FeedParser.set_element_class_lookup()`` for more info.
     """
 
     def __init__(
@@ -38,6 +38,7 @@ class HTMLParser(etree.HTMLParser[HtmlElement]):
         remove_pis: bool = ...,
         strip_cdata: bool = ...,
         no_network: bool = ...,
+        target: etree.ParserTarget[Any] | None = ...,
         schema: etree.XMLSchema | None = ...,
         recover: bool = ...,
         compact: bool = ...,
@@ -54,16 +55,11 @@ class XHTMLParser(etree.XMLParser[HtmlElement]):
 
     Notes
     -----
-    1. The ``target`` parameter is stripped from ``__init__`` definition.
-       If custom parser target argument were used in ``html.XHTMLParser``,
-       its element lookup behavior would be completely nullified,
-       behaving as if ``etree.HTMLParser`` is used,
-       which makes this subclass meaningless.
-    2. This subclass is not specialized, unlike the ``etree`` counterpart.
-       They are designed to always handle ``HtmlElement``;
-       for generating other kinds of ``_Elements``, one should use
-       etree parsers with ``set_element_class_lookup()`` method instead.
-       In that case, see ``_FeedParser.set_element_class_lookup()`` for more info.
+    This subclass is not specialized, unlike the ``etree`` counterpart.
+    They are designed to always handle ``HtmlElement``;
+    for generating other kinds of ``_Elements``, one should use
+    etree parsers with ``set_element_class_lookup()`` method instead.
+    In that case, see ``_FeedParser.set_element_class_lookup()`` for more info.
 
     Original doc
     ------------
@@ -89,6 +85,7 @@ class XHTMLParser(etree.XMLParser[HtmlElement]):
         dtd_validation: bool = ...,
         load_dtd: bool = ...,
         no_network: bool = ...,
+        target: etree.ParserTarget[Any] | None = ...,
         ns_clean: bool = ...,
         recover: bool = ...,
         schema: etree.XMLSchema | None = ...,
