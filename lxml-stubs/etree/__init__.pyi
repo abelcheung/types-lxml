@@ -7,7 +7,6 @@ from typing import (
     Iterable,
     Iterator,
     Literal,
-    SupportsBytes,
     TypeVar,
     Union,
     final,
@@ -109,6 +108,18 @@ from ._xpath import (
     XPathEvaluator as XPathEvaluator,
     XPathSyntaxError as XPathSyntaxError,
 )
+from ._xslt import (
+    LIBXSLT_COMPILED_VERSION as LIBXSLT_COMPILED_VERSION,
+    LIBXSLT_VERSION as LIBXSLT_VERSION,
+    XSLT as XSLT,
+    XSLTAccessControl as XSLTAccessControl,
+    XSLTApplyError as XSLTApplyError,
+    XSLTError as XSLTError,
+    XSLTExtensionError as XSLTExtensionError,
+    XSLTParseError as XSLTParseError,
+    XSLTSaveError as XSLTSaveError,
+    _XSLTResultTree as _XSLTResultTree,
+)
 
 #
 # Basic variables and constants
@@ -159,8 +170,6 @@ _ElementOrXMLTree = _Element | _ElementTree[_Element]
 _ElementOrAnyTree = _Element | _ElementTree[Any]
 
 DEBUG: int
-LIBXSLT_VERSION: tuple[int, int, int]
-LIBXSLT_COMPILED_VERSION: tuple[int, int, int]
 LIBXML_VERSION: tuple[int, int, int]
 LIBXML_COMPILED_VERSION: tuple[int, int, int]
 LXML_VERSION: tuple[int, int, int, int]
@@ -577,33 +586,6 @@ class QName:
     def __gt__(self, other: _TagName) -> bool: ...
     def __le__(self, other: _TagName) -> bool: ...
     def __lt__(self, other: _TagName) -> bool: ...
-
-class _XSLTResultTree(_ElementTree[_Element], SupportsBytes):
-    def __bytes__(self) -> bytes: ...
-
-class _XSLTQuotedStringParam: ...
-class XSLTAccessControl: ...
-
-class XSLT:
-    def __init__(
-        self,
-        xslt_input: _ElementOrXMLTree,
-        extensions: Any = ...,  # TODO XSLT extension type
-        regexp: bool = ...,
-        access_control: XSLTAccessControl = ...,
-    ) -> None: ...
-    def __call__(
-        self,
-        _input: _ElementOrXMLTree,
-        /,
-        *,
-        profile_run: bool = ...,
-        **kw: _AnyStr | _XSLTQuotedStringParam,
-    ) -> _XSLTResultTree: ...
-    @staticmethod
-    def strparam(s: _AnyStr) -> _XSLTQuotedStringParam: ...
-    @property
-    def error_log(self) -> _ListErrorLog: ...
 
 #
 # Element types and content node types
