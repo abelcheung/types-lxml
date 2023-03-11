@@ -3,9 +3,11 @@
 #
 
 from abc import ABCMeta, abstractmethod
+from typing import final
 
-from .._types import _ElemClsLookupArg
+from .._types import SupportsLaxedItems, _AnyStr, _ElemClsLookupArg, _NSMapArg
 from . import _Comment, _Element, _Entity, _ProcessingInstruction
+
 
 #
 # Public element classes
@@ -19,15 +21,29 @@ from . import _Comment, _Element, _Entity, _ProcessingInstruction
 # method that will be called directly after object creation.
 #
 class ElementBase(_Element):
+    @final
+    def __init__(
+        self,
+        *children: object,
+        attrib: SupportsLaxedItems[str, _AnyStr] | None = ...,
+        nsmap: _NSMapArg | None = ...,
+        **_extra: _AnyStr,
+    ) -> None: ...
     def _init(self) -> None: ...
 
 class CommentBase(_Comment):
+    @final
+    def __init__(self, text: _AnyStr | None = ...) -> None: ...
     def _init(self) -> None: ...
 
 class PIBase(_ProcessingInstruction):
+    @final
+    def __init__(self, target: _AnyStr, text: _AnyStr | None = ...) -> None: ...
     def _init(self) -> None: ...
 
 class EntityBase(_Entity):
+    @final
+    def __init__(self, name: _AnyStr) -> None: ...
     def _init(self) -> None: ...
 
 #
