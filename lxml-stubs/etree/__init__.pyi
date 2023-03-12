@@ -93,6 +93,12 @@ from ._xmlerror import (
     clear_error_log as clear_error_log,
     use_global_python_log as use_global_python_log,
 )
+from ._xmlid import (
+    XMLDTDID as XMLDTDID,
+    XMLID as XMLID,
+    _IDDict as _IDDict,
+    parseid as parseid,
+)
 from ._xmlschema import (
     XMLSchema as XMLSchema,
     XMLSchemaError as XMLSchemaError,
