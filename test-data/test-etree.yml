@@ -135,41 +135,57 @@
     d: DocInfo
     d.clear()
 
-- case: docinfo_ro_properties
+- case: docinfo_properties_read
   parametrized:
     - prop: root_name
-      rt: Union[builtins.str, None]
+      rt: 'builtins\.str'
+      optional: true
     - prop: xml_version
-      rt: Union[builtins.str, None]
+      rt: 'builtins\.str'
+      optional: true
     - prop: encoding
-      rt: Union[builtins.str, None]
+      rt: 'builtins\.str'
+      optional: true
     - prop: standalone
-      rt: Union[builtins.bool, None]
+      rt: 'builtins\.bool'
+      optional: true
     - prop: doctype
-      rt: builtins.str
+      rt: 'builtins\.str'
+      optional: false
     - prop: internalDTD
-      rt: Union[lxml.etree._dtd.DTD, None]
+      rt: '[\w\.]+\.DTD'
+      optional: true
     - prop: externalDTD
-      rt: Union[lxml.etree._dtd.DTD, None]
+      rt: '[\w\.]+\.DTD'
+      optional: true
+    - prop: public_id
+      rt: 'builtins\.str'
+      optional: true
+    - prop: system_url
+      rt: 'builtins\.str'
+      optional: true
+    - prop: URL
+      rt: 'builtins\.str'
+      optional: true
   main: |
     from lxml.etree import DocInfo
     d: DocInfo
-    reveal_type(d.{{ prop }})  # N: Revealed type is "{{ rt }}"
+    reveal_type(d.{{ prop }})  # NR: Revealed type is "{{#optional}}Union\[{{/optional}}{{rt}}{{#optional}}, None]{{/optional}}"
 
-- case: docinfo_rw_properties
+- case: docinfo_properties_write
   parametrized:
     - prop: public_id
-      rt: Union[builtins.str, None]
-    - prop: system_id
-      rt: Union[builtins.str, None]
+    - prop: system_url
     - prop: URL
-      rt: Union[builtins.str, None]
   main: |
     from lxml.etree import DocInfo
     d: DocInfo
-    reveal_type(d.{{ prop }})  # N: Revealed type is "{{ rt }}"
     s: str
+    b: bytes
     d.{{ prop }} = s
+    # BUG The 6th anniversary of issue python/mypy#3004
+    # d.{{ prop }} = b
+    d.{{ prop }} = None
 
 - case: smartstring_properties_type
   parametrized:
