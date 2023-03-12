@@ -2,7 +2,7 @@ from typing import Any, ClassVar, final
 from typing_extensions import TypedDict
 
 from .._types import _AnyStr
-from . import LxmlError, _Element, _ElementOrXMLTree, _ElementTree
+from . import LxmlError, _Element, _ElementOrTree, _ElementTree
 from ._serializer import SerialisationError
 from ._xmlerror import _ListErrorLog
 
@@ -106,14 +106,14 @@ class XSLT:
     """
     def __init__(
         self,
-        xslt_input: _ElementOrXMLTree,
+        xslt_input: _ElementOrTree,
         extensions: Any = ...,  # TODO XSLT extension type
         regexp: bool = ...,
         access_control: XSLTAccessControl | None = ...,
     ) -> None: ...
     def __call__(
         self,
-        _input: _ElementOrXMLTree,
+        _input: _ElementOrTree,
         /,
         *,
         profile_run: bool = ...,

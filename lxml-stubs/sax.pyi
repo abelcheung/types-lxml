@@ -4,7 +4,7 @@ from xml.sax.handler import ContentHandler
 from .etree import (
     LxmlError,
     _Element,
-    _ElementOrAnyTree,
+    _ElementOrTree,
     _ElementTree,
     _ElemFactory,
     _ET_co,
@@ -30,13 +30,13 @@ class ElementTreeContentHandler(Generic[_ET_co], ContentHandler):
 class ElementTreeProducer:
     def __init__(
         self,
-        element_or_tree: _ElementOrAnyTree,
+        element_or_tree: _ElementOrTree,
         content_handler: ContentHandler,
     ) -> None: ...
     def saxify(self) -> None: ...
 
 # = ElementTreeProducer(args).saxify()
 def saxify(
-    element_or_tree: _ElementOrAnyTree,
+    element_or_tree: _ElementOrTree,
     content_handler: ContentHandler,
 ) -> None: ...

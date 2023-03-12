@@ -1,7 +1,7 @@
 from typing import overload
 
 from .._types import _FileReadSource
-from . import LxmlError, _ElementOrAnyTree, _ElementOrXMLTree, _Validator
+from . import LxmlError, _ElementOrTree, _Validator
 
 class XMLSchemaError(LxmlError): ...
 class XMLSchemaParseError(XMLSchemaError): ...
@@ -12,7 +12,7 @@ class XMLSchema(_Validator):
     @overload
     def __init__(
         self,
-        etree: _ElementOrXMLTree,
+        etree: _ElementOrTree,
         *,
         file: None = ...,
         attribute_defaults: bool = ...,
@@ -25,4 +25,4 @@ class XMLSchema(_Validator):
         file: _FileReadSource,
         attribute_defaults: bool = ...,
     ) -> None: ...
-    def __call__(self, etree: _ElementOrAnyTree) -> bool: ...
+    def __call__(self, etree: _ElementOrTree) -> bool: ...

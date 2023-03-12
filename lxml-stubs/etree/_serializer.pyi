@@ -19,7 +19,7 @@ from .._types import (
     _OutputMethodArg,
     _TagName,
 )
-from . import LxmlError, _Element, _ElementOrAnyTree
+from . import LxmlError, _Element, _ElementOrTree
 
 class SerialisationError(LxmlError): ...
 
@@ -52,7 +52,7 @@ class C14NWriterTarget:
 # options keyword arguments come from C14NWriterTarget.__init__
 @overload
 def canonicalize(
-    xml_data: _AnyStr | _ElementOrAnyTree,
+    xml_data: _AnyStr | _ElementOrTree,
     *,
     out: SupportsWrite[str],
     with_comments: bool = ...,
@@ -79,7 +79,7 @@ def canonicalize(
 ) -> None: ...
 @overload
 def canonicalize(
-    xml_data: _AnyStr | _ElementOrAnyTree,
+    xml_data: _AnyStr | _ElementOrTree,
     *,
     out: None = ...,
     with_comments: bool = ...,

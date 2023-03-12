@@ -12,7 +12,7 @@ from typing import (
     final,
     overload,
 )
-from typing_extensions import LiteralString, Self, TypeGuard
+from typing_extensions import LiteralString, Self, TypeAlias, TypeGuard
 
 from .._types import (
     SupportsLaxedItems,
@@ -172,8 +172,7 @@ _KnownEncodings = Literal[
     "US-ASCII",
     "us-ascii",
 ]
-_ElementOrXMLTree = _Element | _ElementTree[_Element]
-_ElementOrAnyTree = _Element | _ElementTree[Any]
+_ElementOrTree: TypeAlias = _Element | _ElementTree[_Element]
 
 DEBUG: int
 LIBXML_VERSION: tuple[int, int, int]
@@ -395,8 +394,13 @@ class _Element:
     @deprecated('Since v2.0 (2008); renamed to .iter()')
     def getiterator(self, tag: _TagSelector | None = ..., *tags: _TagSelector) -> Iterator[Self]: ...
 
-# ET definition is now specialized, indicating whether it contains
-# a tree of XML elements or tree of HTML elements.
+# ET class notation is specialized, indicating the type of element
+# it is holding (e.g. XML element, HTML element or Objectified
+# Element).
+# Although it is also possible to be an empty tree containing no
+# element, the absolute majority of lxml API will fail to work.
+# It is considered harmful to support such corner case, which
+# adds much complexity without any benefit.
 class _ElementTree(Generic[_ET_co]):
     @property
     def parser(self) -> _DefEtreeParsers[_ET_co] | None: ...
@@ -513,14 +517,14 @@ class _ElementTree(Generic[_ET_co]):
     ) -> _XPathObject: ...
     def xslt(
         self,
-        _xslt: _ElementOrXMLTree,
+        _xslt: _ElementOrTree,
         /,
         extensions: Any = ...,  # TODO XSLT extension type
         access_control: XSLTAccessControl | None = ...,
         **_kw: Any,
     ) -> _ElementTree[_Element]: ...
-    def relaxng(self, relaxng: _ElementOrXMLTree) -> bool: ...
-    def xmlschema(self, xmlschema: _ElementOrXMLTree) -> bool: ...
+    def relaxng(self, relaxng: _ElementOrTree) -> bool: ...
+    def xmlschema(self, xmlschema: _ElementOrTree) -> bool: ...
     def xinclude(self) -> None: ...
     # Should have been overloaded for accuracy, but we can turn a blind eye
     # for something that is marked deprecated for 15 years
@@ -791,7 +795,7 @@ def fromstringlist(
 ) -> _Element: ...
 @overload  # Native str, no XML declaration
 def tostring(
-    element_or_tree: _ElementOrAnyTree,
+    element_or_tree: _ElementOrTree,
     *,
     encoding: type[str] | Literal["unicode"],
     method: _OutputMethodArg = ...,
@@ -802,7 +806,7 @@ def tostring(
 ) -> str: ...
 @overload  # byte str, no XML declaration
 def tostring(
-    element_or_tree: _ElementOrAnyTree,
+    element_or_tree: _ElementOrTree,
     *,
     encoding: _KnownEncodings | None = ...,
     method: _OutputMethodArg = ...,
@@ -817,7 +821,7 @@ def tostring(
 # some arguments would even raise exception outright if specified.
 @overload  # method="c14n"
 def tostring(
-    element_or_tree: _ElementOrAnyTree,
+    element_or_tree: _ElementOrTree,
     *,
     method: Literal["c14n"],
     exclusive: bool = ...,
@@ -826,7 +830,7 @@ def tostring(
 ) -> bytes: ...
 @overload  # method="c14n2"
 def tostring(
-    element_or_tree: _ElementOrAnyTree,
+    element_or_tree: _ElementOrTree,
     *,
     method: Literal["c14n2"],
     with_comments: bool = ...,
@@ -834,7 +838,7 @@ def tostring(
 ) -> bytes: ...
 @overload  # catch all
 def tostring(
-    element_or_tree: _ElementOrAnyTree,
+    element_or_tree: _ElementOrTree,
     *,
     encoding: str | type[str] = ...,
     method: str = ...,
@@ -848,17 +852,17 @@ def tostring(
     inclusive_ns_prefixes: Any = ...,
 ) -> _AnyStr: ...
 def indent(
-    element_or_tree: _ElementOrAnyTree,
+    element_or_tree: _ElementOrTree,
     space: str = ...,
     *,
     level: int = ...,
 ) -> None: ...
 
 @deprecated('For ElementTree 1.3 compat only; result is tostring() output wrapped inside a list')
-def tostringlist(element_or_tree: _ElementOrAnyTree, *args: Any, **__kw: Any) -> list[str]: ...
+def tostringlist(element_or_tree: _ElementOrTree, *args: Any, **__kw: Any) -> list[str]: ...
 @deprecated('Since v3.3.2; use tostring() with encoding="unicode" argument')
 def tounicode(
-    element_or_tree: _ElementOrAnyTree,
+    element_or_tree: _ElementOrTree,
     *,
     method: str,
     pretty_print: bool = ...,
@@ -878,15 +882,15 @@ class DocumentInvalid(LxmlError): ...
 class LxmlSyntaxError(LxmlError, SyntaxError): ...
 
 class _Validator(metaclass=ABCMeta):
-    def assert_(self, etree: _ElementOrAnyTree) -> None: ...
-    def assertValid(self, etree: _ElementOrAnyTree) -> None: ...
-    def validate(self, etree: _ElementOrAnyTree) -> bool: ...
+    def assert_(self, etree: _ElementOrTree) -> None: ...
+    def assertValid(self, etree: _ElementOrTree) -> None: ...
+    def validate(self, etree: _ElementOrTree) -> bool: ...
     @property
     def error_log(self) -> _ListErrorLog: ...
     # all methods implicitly require a concrete __call__()
     # implementation in subclasses in order to be usable
     @abstractmethod
-    def __call__(self, etree: _ElementOrAnyTree) -> bool: ...
+    def __call__(self, etree: _ElementOrTree) -> bool: ...
 
 class TreeBuilder(ParserTarget[_Element]):
     def __init__(

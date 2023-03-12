@@ -50,12 +50,11 @@
     - args: el, content_handler=ch
     - args: element_or_tree=et, content_handler=ch
   main: |
-    from typing import Any
     from lxml.sax import ElementTreeProducer
     from xml.sax.handler import ContentHandler
     from lxml.etree import _Element, _ElementTree
     ch: ContentHandler
-    et: _ElementTree[Any]
+    et: _ElementTree[_Element]
     el: _Element
     p = ElementTreeProducer({{ args }})
     reveal_type(p)  # N: Revealed type is "lxml.sax.ElementTreeProducer"
@@ -69,23 +68,21 @@
     - args: 1, ch
     - args: el, 1
   main: |
-    from typing import Any
     from lxml.sax import ElementTreeProducer
     from xml.sax.handler import ContentHandler
     from lxml.etree import _Element, _ElementTree
     ch: ContentHandler
-    et: _ElementTree[Any]
+    et: _ElementTree[_Element]
     el: _Element
     p = ElementTreeProducer({{ args }})
 
 - case: producer_saxify
   main: |
-    from typing import Any
     from lxml.sax import ElementTreeProducer
     from xml.sax.handler import ContentHandler
     from lxml.etree import _Element, _ElementTree
     ch: ContentHandler
-    et: _ElementTree[Any]
+    et: _ElementTree[_Element]
     el: _Element
     p = ElementTreeProducer(el, ch)
     _ = p.saxify()  # E: "saxify" of "ElementTreeProducer" does not return a value  [func-returns-value]
@@ -98,13 +95,12 @@
     - args: el, content_handler=ch
     - args: element_or_tree=et, content_handler=ch
   main: |
-    from typing import Any
     from xml.sax.handler import ContentHandler
     from lxml.sax import saxify
     from lxml.etree import _Element, _ElementTree
     class MyHandler(ContentHandler): ...
     ch: MyHandler
-    et: _ElementTree[Any]
+    et: _ElementTree[_Element]
     el: _Element
     _ = saxify({{ args }})  # E: "saxify" does not return a value  [func-returns-value]
 
@@ -117,12 +113,11 @@
     - args: 1, ch
     - args: el, 1
   main: |
-    from typing import Any
     from xml.sax.handler import ContentHandler
     from lxml.sax import saxify
     from lxml.etree import _Element, _ElementTree
     class MyHandler(ContentHandler): ...
     ch: MyHandler
-    et: _ElementTree[Any]
+    et: _ElementTree[_Element]
     el: _Element
     saxify({{ args }})

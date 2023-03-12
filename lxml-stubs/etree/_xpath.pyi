@@ -12,7 +12,7 @@ from .._types import (
     _XPathObject,
     _XPathVarArg,
 )
-from . import LxmlError, LxmlSyntaxError, _Element, _ElementOrAnyTree, _ElementTree
+from . import LxmlError, LxmlSyntaxError, _Element, _ElementOrTree, _ElementTree
 from ._xmlerror import _ListErrorLog
 from .._types import deprecated
 
@@ -41,7 +41,7 @@ class XPath(_XPathEvaluatorBase):
         smart_strings: bool = ...,
     ) -> None: ...
     def __call__(
-        self, _etree_or_element: _ElementOrAnyTree, /, **_variables: _XPathVarArg
+        self, _etree_or_element: _ElementOrTree, /, **_variables: _XPathVarArg
     ) -> _XPathObject: ...
     @property
     def path(self) -> str: ...
@@ -75,7 +75,7 @@ class XPathElementEvaluator(_XPathEvaluatorBase):
 class XPathDocumentEvaluator(XPathElementEvaluator):
     def __init__(
         self,
-        etree: _ElementTree[Any],
+        etree: _ElementTree[_Element],
         *,
         namespaces: _NonDefaultNSMapArg | None = ...,
         extensions: _XPathExtFuncArg | None = ...,
@@ -94,19 +94,10 @@ def XPathEvaluator(
 ) -> XPathElementEvaluator: ...
 @overload
 def XPathEvaluator(
-    etree_or_element: _ElementTree[Any],
+    etree_or_element: _ElementTree[_Element],
     *,
     namespaces: _NonDefaultNSMapArg | None = ...,
     extensions: _XPathExtFuncArg | None = ...,
     regexp: bool = ...,
     smart_strings: bool = ...,
 ) -> XPathDocumentEvaluator: ...
-@overload
-def XPathEvaluator(
-    etree_or_element: _ElementOrAnyTree,
-    *,
-    namespaces: _NonDefaultNSMapArg | None = ...,
-    extensions: _XPathExtFuncArg | None = ...,
-    regexp: bool = ...,
-    smart_strings: bool = ...,
-) -> XPathElementEvaluator | XPathDocumentEvaluator: ...

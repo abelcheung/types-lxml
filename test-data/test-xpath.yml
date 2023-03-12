@@ -124,7 +124,7 @@
     - evaluator_t: XPathDocumentEvaluator
       arg: root
       wrong_t: _Element
-      expect_t: "_ElementTree[Any]"
+      expect_t: "_ElementTree[_Element]"
     - evaluator_t: XPathElementEvaluator
       arg: 1
       wrong_t: int
@@ -132,7 +132,7 @@
     - evaluator_t: XPathDocumentEvaluator
       arg: 1
       wrong_t: int
-      expect_t: "_ElementTree[Any]"
+      expect_t: "_ElementTree[_Element]"
   main: |
     from lxml import etree
     root: etree._Element

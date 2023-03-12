@@ -91,7 +91,7 @@ def getRegisteredTypes() -> list[PyType]:
     end of the type list.
     """
 def pyannotate(
-    element_or_tree: etree._ElementOrAnyTree,
+    element_or_tree: etree._ElementOrTree,
     *,
     ignore_old: bool = ...,
     ignore_xsi: bool = ...,
@@ -116,7 +116,7 @@ def pyannotate(
         which means not to process empty elements at all.
     """
 def xsiannotate(
-    element_or_tree: etree._ElementOrAnyTree,
+    element_or_tree: etree._ElementOrTree,
     *,
     ignore_old: bool = ...,
     ignore_pytype: bool = ...,
@@ -147,7 +147,7 @@ def xsiannotate(
         `xsi:nil` attribute is not added.
     """
 def annotate(
-    element_or_tree: etree._ElementOrAnyTree,
+    element_or_tree: etree._ElementOrTree,
     *,
     ignore_old: bool = ...,
     ignore_xsi: bool = ...,
@@ -195,7 +195,7 @@ def annotate(
         default is yes (True).
     """
 def deannotate(
-    element_or_tree: etree._ElementOrAnyTree,
+    element_or_tree: etree._ElementOrTree,
     *,
     pytype: bool = ...,
     xsi: bool = ...,
