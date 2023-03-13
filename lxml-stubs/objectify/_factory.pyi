@@ -2,10 +2,11 @@
 # Element factories
 #
 
-from .._types import _TagName, SupportsLaxedItems, _NSMapArg, _AnyStr
-from typing import overload, Any, Literal, TypeVar
-from . import _element as _e
+from typing import Any, Literal, TypeVar, overload
+
+from .._types import SupportsLaxedItems, _AnyStr, _NSMapArg, _TagName
 from ..etree import _ElemFactory
+from . import _element as _e
 
 _DataElem_T = TypeVar("_DataElem_T", bound=_e.ObjectifiedDataElement)
 
@@ -42,6 +43,7 @@ def Element(
     ObjectifiedElement
         The generated element.
     """
+
 def SubElement(
     _parent: _e.ObjectifiedElement,
     _tag: _TagName,
@@ -275,6 +277,7 @@ class ElementMaker:
     some text
     ```
     """
+
     def __init__(
         self,
         *,

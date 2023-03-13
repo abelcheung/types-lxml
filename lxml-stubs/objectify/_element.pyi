@@ -3,10 +3,11 @@
 #
 
 import abc
+from typing import Any, Callable, Iterator, Literal, overload
+from typing_extensions import LiteralString, Self, SupportsIndex
+
 from .. import etree
-from typing import Any, Iterator, Callable, overload, Literal
-from .._types import _TagName, _AnyStr
-from typing_extensions import Self, SupportsIndex, LiteralString
+from .._types import _AnyStr, _TagName
 
 class ObjectifiedElement(etree.ElementBase):
     """Main XML Element class
@@ -29,6 +30,7 @@ class ObjectifiedElement(etree.ElementBase):
     1
     ```
     """
+
     @property  # type: ignore[misc]
     def text(self) -> str | None: ...  # Readonly, unlike _Element counterpart
     # addattr() value is stringified before adding to attribute
@@ -49,6 +51,7 @@ class ObjectifiedDataElement(ObjectifiedElement):
     Subclasses should override the `pyval` property and possibly
     the `__str__` method.
     """
+
     # In source code, .pyval return value is stated as str. However,
     # presence of the attribute is supposed to be protocol requirement
     # for subclasses, not that people are allowed to create
@@ -106,6 +109,7 @@ class StringElement(ObjectifiedDataElement):
     `len()`, `iter()`, `str_attr[0]`, `str_attr[0:1]`, etc. are *not* supported.
     Instead, use the `.text` attribute to get a 'real' string.
     """
+
     # For empty string element, .pyval = __str__ = '', .text = None
     @property
     def pyval(self) -> str: ...

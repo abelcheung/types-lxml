@@ -4,9 +4,10 @@
 
 from _typeshed import _T
 from typing import Iterable, overload
-from .._types import _AnyStr, _FileReadSource
-from ._element import ObjectifiedElement, ObjectifiedDataElement
+
 from .. import etree
+from .._types import _AnyStr, _FileReadSource
+from ._element import ObjectifiedDataElement, ObjectifiedElement
 
 #
 # Dumping tree and class lookup
@@ -15,8 +16,10 @@ from .. import etree
 def enable_recursive_str(on: bool) -> None:
     """Enable a recursively generated tree representation for
     `str(element)`, based on `objectify.dump(element)`"""
+
 def dump(element: ObjectifiedElement) -> str:
     """Return a recursively generated string representation of an element"""
+
 class ObjectifyElementClassLookup(etree.ElementClassLookup):
     """Element class lookup method that uses the objectify classes"""
 
@@ -43,7 +46,8 @@ class ObjectifyElementClassLookup(etree.ElementClassLookup):
 
 def set_default_parser(
     # Not joking, it uses isinstance check
-    new_parser: etree.XMLParser[ObjectifiedElement] | None = ...,
+    new_parser: etree.XMLParser[ObjectifiedElement]
+    | None = ...,
 ) -> None:
     """Replace the default parser used by objectify's `Element()`
     and `fromstring()` functions.
@@ -55,6 +59,7 @@ def set_default_parser(
         specified, defaults to `None`, which means reverting to
         original parser.
     """
+
 def makeparser(
     *,
     encoding: _AnyStr | None = ...,
@@ -83,6 +88,7 @@ def makeparser(
     removing blank text.  You can disable this by passing the
     `remove_blank_text` boolean keyword option yourself.
     """
+
 def parse(
     source: _FileReadSource,
     parser: etree._parser._DefEtreeParsers[ObjectifiedElement] | None = ...,
@@ -102,6 +108,7 @@ def parse(
         object. This is needed when looking up external entities
         (DTD, XInclude, ...) with relative paths.
     """
+
 def fromstring(
     xml: _AnyStr,
     parser: etree._parser._DefEtreeParsers[ObjectifiedElement] | None = ...,
@@ -144,6 +151,7 @@ class ObjectPath:
     --------
     - [Web documentation](https://lxml.de/objectify.html#objectpath)
     """
+
     def __init__(self, path: str | Iterable[str]) -> None: ...
     @overload
     def __call__(self, root: etree._ET) -> etree._ET: ...

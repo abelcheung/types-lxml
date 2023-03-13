@@ -219,8 +219,12 @@ class Classes(MutableSet[str]):
 # HtmlEntity is also rare; it can only appear if a specially constructed
 # HTML parser is used. By default entities are merged into text content.
 #
-class HtmlComment(HtmlElement, etree.CommentBase): ...  # pyright: ignore[ reportIncompatibleMethodOverride]
-class HtmlEntity(HtmlElement, etree.EntityBase): ...  # pyright: ignore[ reportIncompatibleMethodOverride]
+class HtmlComment(  # pyright: ignore[ reportIncompatibleMethodOverride]
+    HtmlElement, etree.CommentBase
+): ...
+class HtmlEntity(  # pyright: ignore[ reportIncompatibleMethodOverride]
+    HtmlElement, etree.EntityBase
+): ...
 
 #
 # Factory func, signature same as etree.Element

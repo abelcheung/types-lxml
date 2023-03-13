@@ -35,6 +35,7 @@ class _XSLTResultTree(_ElementTree[_Element]):
 class _XSLTQuotedStringParam:
     """A wrapper class for literal XSLT string parameters that require
     quote escaping"""
+
     strval: bytes
 
 class __AccessControlConfig(TypedDict):
@@ -63,6 +64,7 @@ class XSLTAccessControl:
     to deny everything, and a `DENY_WRITE` member that denies all
     write access but allows read access.
     """
+
     DENY_ALL: ClassVar[XSLTAccessControl]
     DENY_WRITE: ClassVar[XSLTAccessControl]
 
@@ -77,7 +79,6 @@ class XSLTAccessControl:
     ) -> None: ...
     @property
     def options(self) -> __AccessControlConfig: ...
-
 
 class XSLT:
     """Turn an XSL document into an XSLT object.
@@ -104,6 +105,7 @@ class XSLT:
     Other keyword arguments of the call are passed to the stylesheet
     as parameters.
     """
+
     def __init__(
         self,
         xslt_input: _ElementOrTree,
@@ -125,4 +127,3 @@ class XSLT:
     def strparam(s: _AnyStr) -> _XSLTQuotedStringParam: ...
     @staticmethod
     def set_global_max_depth(max_depth: int) -> None: ...
-

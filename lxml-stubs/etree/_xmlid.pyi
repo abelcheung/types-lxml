@@ -38,7 +38,6 @@ def XMLDTDID(
     *,
     base_url: _AnyStr | None = ...,
 ) -> tuple[_Element, _IDDict[_Element]]: ...
-
 @overload
 def parseid(
     source: _FileReadSource,
@@ -54,7 +53,6 @@ def parseid(
     base_url: _AnyStr | None = ...,
 ) -> tuple[_ElementTree[_Element], _IDDict[_Element]]: ...
 
-
 class _IDDict(Collection[str], Generic[_ET]):
     """Dictionary-like proxy class that mapps ID attributes to elements
 
@@ -64,6 +62,7 @@ class _IDDict(Collection[str], Generic[_ET]):
     document, otherwise the behaviour is undefined.  Elements and XML trees
     that were created or modified 'by hand' are not supported.
     """
+
     def __contains__(self, __o: object) -> bool: ...
     def __getitem__(self, __k: _AnyStr) -> _ET: ...
     def __iter__(self) -> Iterator[str]: ...

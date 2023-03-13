@@ -3,8 +3,9 @@
 #
 
 from typing import Any, Callable, Iterable
-from .._types import _AnyStr
+
 from .. import etree
+from .._types import _AnyStr
 from ._element import ObjectifiedDataElement
 
 class PyType:
@@ -34,6 +35,7 @@ class PyType:
     --------
     - [lxml "Python data types" documentation](https://lxml.de/objectify.html#python-data-types)
     """
+
     @property  # tired of dealing with bytes
     def xmlSchemaTypes(self) -> list[str]: ...
     @xmlSchemaTypes.setter
@@ -73,8 +75,10 @@ def set_pytype_attribute_tag(attribute_tag: str | None = ...) -> None:
         which means the default value
         `"{http://codespeak.net/lxml/objectify/pytype}pytype"`
     """
+
 def pytypename(obj: object) -> str:
     """Find the name of the corresponding PyType for a Python object"""
+
 def getRegisteredTypes() -> list[PyType]:
     """Returns a list of the currently registered PyType objects
 
@@ -90,6 +94,7 @@ def getRegisteredTypes() -> list[PyType]:
     check functions, you can simply `register()` it, which will append it to the
     end of the type list.
     """
+
 def pyannotate(
     element_or_tree: etree._ElementOrTree,
     *,
@@ -115,6 +120,7 @@ def pyannotate(
         for example, to annotate them as string elements. Default is None,
         which means not to process empty elements at all.
     """
+
 def xsiannotate(
     element_or_tree: etree._ElementOrTree,
     *,
@@ -146,6 +152,7 @@ def xsiannotate(
         is None, which means not to process empty elements at all. In particular,
         `xsi:nil` attribute is not added.
     """
+
 def annotate(
     element_or_tree: etree._ElementOrTree,
     *,
@@ -194,6 +201,7 @@ def annotate(
         Determines if `py:pytype` annotations would be updated or created,
         default is yes (True).
     """
+
 def deannotate(
     element_or_tree: etree._ElementOrTree,
     *,
