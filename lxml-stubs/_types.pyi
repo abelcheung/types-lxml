@@ -123,16 +123,6 @@ _FileReadSource = (
 # fmt: on
 _FileWriteSource = _FilePath | SupportsWrite[bytes]
 
-class SupportsGeturl(Protocol):
-    """Object supporting `geturl()` method
-
-    Currently include:
-    - `http.client.HTTPResponse`
-    - `urllib.parse` results
-    - `urllib.response` objects
-    """
-    def geturl(self) -> str: ...
-
 # Draft PEP 702, add support here since it is pretty unintrusive
 # Type checker that doesn't support it would ignore silently
 # Following signature borrowed from typing_extensions 4.5

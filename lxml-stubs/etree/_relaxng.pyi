@@ -1,8 +1,6 @@
-from gzip import GzipFile
-from io import FileIO
 from typing import overload
 
-from .._types import SupportsGeturl, _FileReadSource
+from .._types import _FileReadSource
 from . import LxmlError, _ElementOrTree, _Validator
 
 class RelaxNGError(LxmlError): ...
@@ -17,7 +15,7 @@ class RelaxNG(_Validator):
         self,
         etree: None = ...,
         *,
-        file: _FileReadSource | SupportsGeturl | FileIO | GzipFile,
+        file: _FileReadSource,
     ) -> None: ...
     def __call__(self, etree: _ElementOrTree) -> bool: ...
     @classmethod
