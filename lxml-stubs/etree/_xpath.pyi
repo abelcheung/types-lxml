@@ -1,9 +1,10 @@
 #
-# Internal classes and functions from lxml/xpath.pxi
+# Note that exception classes and funcs defined in
+# etree/_extension.pxi are merged here.
 #
 
 from abc import abstractmethod
-from typing import Any, Protocol, overload
+from typing import Any, Callable, Mapping, Protocol, overload
 
 from .._types import (
     _AnyStr,
@@ -16,9 +17,20 @@ from .._types import (
 from . import LxmlError, LxmlSyntaxError, _Element, _ElementOrTree, _ElementTree
 from ._xmlerror import _ListErrorLog
 
-# TODO Belongs to extensions.pxi, to be moved
-class XPathError(LxmlError): ...
-class XPathSyntaxError(LxmlSyntaxError, XPathError): ...
+class XPathError(LxmlError):
+    """Base class of all XPath errors"""
+
+class XPathEvalError(XPathError):
+    """Error during XPath evaluation"""
+
+class XPathFunctionError(XPathEvalError):
+    """Internal error looking up an XPath extension function"""
+
+class XPathResultError(XPathEvalError):
+    """Error handling an XPath result"""
+
+class XPathSyntaxError(LxmlSyntaxError, XPathError):
+    """Error in XPath expression"""
 
 class _XPathEvaluatorBase(Protocol):
     @property
@@ -101,3 +113,22 @@ def XPathEvaluator(
     regexp: bool = ...,
     smart_strings: bool = ...,
 ) -> XPathDocumentEvaluator: ...
+
+def Extension(
+    module: object,
+    function_mapping: Mapping[str, str] | None = ...,
+    *,
+    ns: str | None = ...,
+) -> dict[tuple[str | None, str], Callable[..., Any]]:
+    """Build a dictionary of extension functions from the functions
+    defined in a module or the methods of an object.
+
+    Original Docstring
+    ------------------
+    As second argument, you can pass an additional mapping of
+    attribute names to XPath function names, or a list of function
+    names that should be taken.
+
+    The ``ns`` keyword argument accepts a namespace URI for the XPath
+    functions.
+    """

@@ -106,13 +106,17 @@ from ._xmlschema import (
     XMLSchemaParseError as XMLSchemaParseError,
     XMLSchemaValidateError as XMLSchemaValidateError,
 )
-from ._xpath import (
+from ._xpath import (  # include extensions.pxi
     ETXPath as ETXPath,
+    Extension as Extension,
     XPath as XPath,
     XPathDocumentEvaluator as XPathDocumentEvaluator,
     XPathElementEvaluator as XPathElementEvaluator,
     XPathError as XPathError,
+    XPathEvalError as XPathEvalError,
     XPathEvaluator as XPathEvaluator,
+    XPathFunctionError as XPathFunctionError,
+    XPathResultError as XPathResultError,
     XPathSyntaxError as XPathSyntaxError,
 )
 from ._xslt import (
