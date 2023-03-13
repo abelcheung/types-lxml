@@ -47,6 +47,7 @@ from ._cleanup import (
     strip_elements as strip_elements,
     strip_tags as strip_tags,
 )
+from ._docloader import Resolver as Resolver
 from ._dtd import (
     DTD as DTD,
     DTDError as DTDError,
