@@ -166,7 +166,7 @@
     s: str
     b: bytes
     d.{{ prop }} = s
-    # BUG The 6th anniversary of issue python/mypy#3004
+    # BUG see mypy_3004_docinfo test case
     # d.{{ prop }} = b
     d.{{ prop }} = None
 

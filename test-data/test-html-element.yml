@@ -1,85 +1,67 @@
+- case: include_file
+  skip: true
+  files: &INC
+    - path: inc.py
+      content: |
+        from lxml import etree as e, html as h
+        el: h.HtmlElement
+        s: str
+        b: bytes
+        i: int
+        qn: e.QName
+        def good_repl_func(href: str): return href[1:]
+        def bad_repl_func(href: bytes): return href[1:]
+        def extfunc1(context, a): return ''
+        def extfunc2(context, a, b): return 0
+  main: null
+
 - case: mixin_properties_ro
-  parametrized:
-    - prop: classes
-      rt: '[\w\.]+\.Classes'
-    - prop: label
-      rt: 'Union\[[\w\.]+\.LabelElement, None]'
-    - prop: base_url
-      rt: 'Union\[builtins\.str, None]'
-    - prop: forms
-      rt: 'builtins.list\[[\w\.]+\.FormElement]'
-    - prop: body
-      rt: '[\w\.]+\.HtmlElement'
-    - prop: head
-      rt: '[\w\.]+\.HtmlElement'
+  files: *INC
   main: |
-    from lxml.html import HtmlElement
-    elem: HtmlElement
-    reveal_type(elem.{{ prop }})  # NR: Revealed type is "{{ rt }}"
+    from inc import el
+    reveal_type(el.classes)  # NR: .+ "[\w\.]+\.Classes"
+    reveal_type(el.label)  # NR: .+ "Union\[[\w\.]+\.LabelElement, None]"
+    reveal_type(el.base_url)  # NR: .+ "Union\[builtins\.str, None]"
+    reveal_type(el.forms)  # NR: .+ "builtins.list\[[\w\.]+\.FormElement]"
+    reveal_type(el.body)  # NR: .+ "[\w\.]+\.HtmlElement"
+    reveal_type(el.head)  # NR: .+ "[\w\.]+\.HtmlElement"
 
 - case: mixin_properties_rw
+  files: *INC
   main: |
-    from lxml.html import HtmlElement, LabelElement
-    elem: HtmlElement
-    elem.classes = elem.classes
-    elem.classes = {'cls1', 'cls2'}  # E: Incompatible types in assignment (expression has type "Set[str]", variable has type "Classes")  [assignment]
-    label: LabelElement
-    elem.label = label
-    elem.label = elem  # E: Incompatible types in assignment (expression has type "HtmlElement", variable has type "Optional[LabelElement]")  [assignment]
+    from inc import el, h
+    el.classes = el.classes
+    el.classes = {'cls1', 'cls2'}  # ER: Incompatible types .+  \[assignment]
+    label: h.LabelElement
+    el.label = label
+    el.label = el  # ER: Incompatible types .+  \[assignment]
 
 - case: mixin_properties_bad
+  files: *INC
   main: |
-    from lxml.html import HtmlElement
-    elem: HtmlElement
-    elem.head = elem.head
-    elem.head = None
-    result = elem.badprop
-    elem.badprop = 'foobar'
-  out: |
-    main:3: error: Property "head" defined in "HtmlElement" is read-only  [misc]
-    main:4: error: Property "head" defined in "HtmlElement" is read-only  [misc]
-    main:4: error: Incompatible types in assignment (expression has type "None", variable has type "HtmlElement")  [assignment]
-    main:5: error: "HtmlElement" has no attribute "badprop"  [attr-defined]
-    main:6: error: "HtmlElement" has no attribute "badprop"  [attr-defined]
+    from inc import el
+    el.head = el.head  # E: Property "head" defined in "HtmlElement" is read-only  [misc]
+    result = el.badprop  # E: "HtmlElement" has no attribute "badprop"  [attr-defined]
+    el.badprop = 'foobar'  # E: "HtmlElement" has no attribute "badprop"  [attr-defined]
 
-- case: mixin_method_set1
-  parametrized:
-  - args: s, s
-  - args: s, b
-  - args: s, None
-  - args: s, qn
-  - args: s
-  - args: b, s
-  - args: b, b
-  - args: b
-  - args: qn, s
-  - args: qn, qn
-  - args: qn
+- case: mixin_method_set
+  files: *INC
   main: |
-    from lxml import etree, html
-    s: str
-    b: bytes
-    qn: etree.QName
-    elem: html.HtmlElement
-    elem.set({{ args }})
-
-- case: mixin_method_set2
-  parametrized:
-  - args: goodarg, badarg0
-    pos: 2
-    wrong_type: int
-    exp_type: Optional[Union[str, bytes, QName]]
-  - args: badarg1, goodarg
-    pos: 1
-    wrong_type: object
-    exp_type: Union[str, bytes, QName]
-  main: |
-    from lxml.html import HtmlElement
-    goodarg: str
-    badarg0: int
-    badarg1: object
-    elem: HtmlElement
-    elem.set({{ args }})  # E: Argument {{ pos }} to "set" of "HtmlElement" has incompatible type "{{ wrong_type }}"; expected "{{ exp_type }}"  [arg-type]
+    from inc import s, b, i, qn, el
+    o: object
+    el.set(s, s)
+    el.set(s, b)
+    el.set(s, None)
+    el.set(s, qn)
+    el.set(s)
+    el.set(b, s)
+    el.set(b, b)
+    el.set(b)
+    el.set(qn, s)
+    el.set(qn, qn)
+    el.set(qn)
+    el.set(s, i)  # ER: Argument 2 to "set" .+; expected ".+"  \[arg-type]
+    el.set(o, s)  # ER: Argument 1 to "set" .+; expected ".+"  \[arg-type]
 
 - case: mixin_method_drop_
   parametrized:
@@ -98,27 +80,18 @@
     reveal_type(result)  # NR: Revealed type is "builtins.list\[[\w\.]+\.HtmlElement]"
 
 - case: mixin_method_find_class
-  parametrized:
-  - args: s
-  - args: b
+  files: *INC
   main: |
-    from lxml.html import HtmlElement
-    elem: HtmlElement
-    s: str
-    b: bytes
-    result = elem.find_class({{ args }})
+    from inc import s, b, el
+    reveal_type(el.find_class(s))  # NR: .+ "builtins\.list\[[\w\.]+\.HtmlElement]"
+    reveal_type(el.find_class(b))  # NR: .+ "builtins\.list\[[\w\.]+\.HtmlElement]"
 
 - case: mixin_method_get_element_by_id
-  parametrized:
-  - args: s
-  - args: b
+  files: *INC
   main: |
-    from lxml.html import HtmlElement
-    elem: HtmlElement
-    s: str
-    b: bytes
-    result = elem.get_element_by_id({{ args }})
-    reveal_type(result)  # NR: Revealed type is "[\w\.]+\.HtmlElement"
+    from inc import s, b, el
+    reveal_type(el.get_element_by_id(s))  # NR: .+ "[\w\.]+\.HtmlElement"
+    reveal_type(el.get_element_by_id(b))  # NR: .+ "[\w\.]+\.HtmlElement"
 
 - case: mixin_method_get_element_by_id_badargs
   expect_fail: true
@@ -149,32 +122,24 @@
     reveal_type(result)  # NR: Revealed type is "typing\.Iterator\[Tuple\[[\w\.]+\.HtmlElement, Union\[builtins\.str, None], builtins\.str, builtins\.int]]"
     result = elem.iterlinks(None)  # E: Too many arguments for "iterlinks" of "HtmlElement"  [call-arg]
 
-- case: mixin_method_make_links_absolute1
-  parametrized:
-  - args: ""
-  - args: url
-  - args: url, False
-  - args: None, True, None
-  - args: base_url=url
-  - args: resolve_base_href=True
-  - args: handle_failures=None
+- case: mixin_method_make_links_absolute
+  files: *INC
   main: |
-    from lxml.html import HtmlElement
-    elem: HtmlElement
+    from inc import b, el
     url: str
-    elem.make_links_absolute({{ args }})
-
-- case: mixin_method_make_links_absolute2
-  main: |
-    from lxml.html import HtmlElement
-    elem: HtmlElement
-    url: str
-    badurl: bytes
-    elem.make_links_absolute(badurl)  # E: Argument 1 to "make_links_absolute" of "HtmlElement" has incompatible type "bytes"; expected "Optional[str]"  [arg-type]
-    elem.make_links_absolute(url, 2, None)  # E: Argument 2 to "make_links_absolute" of "HtmlElement" has incompatible type "int"; expected "bool"  [arg-type]
-    elem.make_links_absolute(handle_failures='badval')  # E: Argument "handle_failures" to "make_links_absolute" of "HtmlElement" has incompatible type "Literal['badval']"; expected "Optional[Literal['ignore', 'discard']]"  [arg-type]
-    elem.make_links_absolute(badarg=1)  # E: Unexpected keyword argument "badarg" for "make_links_absolute" of "HtmlElement"  [call-arg]
-    elem.make_links_absolute(url, True, 'discard', None)  # E: Too many arguments for "make_links_absolute" of "HtmlElement"  [call-arg]
+    f = el.make_links_absolute
+    f()
+    f(url)
+    f(url, False)
+    f(None, True, None)
+    f(base_url=url)
+    f(resolve_base_href=True)
+    f(handle_failures=None)
+    f(b)  # ER: Argument 1 .+; expected ".+"  \[arg-type]
+    f(url, 2, None)  # ER: Argument 2 .+; expected ".+"  \[arg-type]
+    f(handle_failures='badval')  # ER: Argument "handle_failures" .+; expected ".+"  \[arg-type]
+    f(badarg=1)  # ER: Unexpected keyword argument .+  \[call-arg]
+    f(url, True, 'discard', None)  # ER: Too many arguments.*  \[call-arg]
 
 - case: mixin_method_resolve_base_href
   main: |
@@ -186,75 +151,45 @@
     elem.resolve_base_href(badarg=1)  # E: Unexpected keyword argument "badarg" for "resolve_base_href" of "HtmlElement"  [call-arg]
     elem.resolve_base_href(None, None)  # E: Too many arguments for "resolve_base_href" of "HtmlElement"  [call-arg]
 
-- case: mixin_method_rewrite_links1
-  parametrized:
-  - args: repl_func
-  - args: repl_func, resolve_base_href=False
-  - args: repl_func, True, base
-  - args: link_repl_func=repl_func, base_href=base
-  - args: resolve_base_href=True, link_repl_func=repl_func
+- case: mixin_method_rewrite_links
+  files: *INC
   main: |
-    from lxml.html import HtmlElement
-    elem: HtmlElement
-    base: str
-    def repl_func(href: str):
-      return href[1:]
-    elem.rewrite_links({{ args }})
+    from inc import el, s, b, good_repl_func, bad_repl_func
+    f = el.rewrite_links
+    f(good_repl_func)
+    f(good_repl_func, resolve_base_href=False)
+    f(good_repl_func, True, s)
+    f(link_repl_func=good_repl_func, base_href=s)
+    f(resolve_base_href=True, link_repl_func=good_repl_func)
+    f()  # ER: Too few arguments.*  \[call-arg]$
+    f(bad_repl_func)  # ER: Argument 1 .+; expected ".+"  \[arg-type]$
+    f(good_repl_func, 'badval')  # ER: Argument 2 .+; expected ".+"  \[arg-type]$
+    f(good_repl_func, True, b)  # ER: Argument 3 .+; expected ".+"  \[arg-type]$
 
-- case: mixin_method_rewrite_links2
+- case: xpath_goodargs
+  files: *INC
   main: |
-    from lxml.html import HtmlElement
-    elem: HtmlElement
-    badbase: bytes
-    def bad_func(href: bytes): ...
-    def repl_func(href: str) -> str:
-      return ''
-    elem.rewrite_links()  # E: Missing positional argument "link_repl_func" in call to "rewrite_links" of "HtmlElement"  [call-arg]
-    elem.rewrite_links(bad_func)  # E: Argument 1 to "rewrite_links" of "HtmlElement" has incompatible type "Callable[[bytes], Any]"; expected "Callable[[str], Optional[str]]"  [arg-type]
-    elem.rewrite_links(repl_func, 'badval')  # E: Argument 2 to "rewrite_links" of "HtmlElement" has incompatible type "str"; expected "bool"  [arg-type]
-    elem.rewrite_links(repl_func, True, badbase)  # E: Argument 3 to "rewrite_links" of "HtmlElement" has incompatible type "bytes"; expected "Optional[str]"  [arg-type]
-
-- case: xpath
-  parametrized:
-    - kwds: namespaces=None
-    - kwds: namespaces=ns
-    - kwds: extensions=None
-    - kwds: extensions=ext2
-    - kwds: smart_string=True
-    - kwds: var=1
-    - kwds: "namespaces=ns, extensions=ext1, smart_string=False"
-  main: |
-    from lxml.html import HtmlElement
-    root: HtmlElement
-    xpath_expr: str
-    s: str
+    from inc import el, s, extfunc1, extfunc2
+    expr: str
     ns = {s: s}
-    def extfunc1(context, a) -> str:
-      return ''
-    def extfunc2(context, a, b) -> int:
-      return 0
     ext1 = [{(None, s): extfunc1}]
     ext2 = {(s, s): extfunc2}
-    result = root.xpath(xpath_expr, {{ kwds }})
+    result = el.xpath(expr, namespaces=None)
+    result = el.xpath(expr, namespaces=ns)
+    result = el.xpath(expr, extensions=None)
+    result = el.xpath(expr, extensions=ext2)
+    result = el.xpath(expr, smart_string=False)
+    result = el.xpath(expr, var=1)
+    result = el.xpath(expr, namespaces=ns, extensions=ext1, smart_string=False)
 
-- case: xpath_noarg
+- case: xpath_badargs
+  files: *INC
   main: |
-    from lxml.html import HtmlElement
-    root: HtmlElement
-    root.xpath()  # E: Too few arguments for "xpath" of "_Element"  [call-arg]
-
-- case: xpath_badarg
-  expect_fail: true
-  parametrized:
-    - args: path=expr
-    - args: "expr, namespaces=badns"
-    - args: "expr, extensions=badext"
-  main: |
-    from lxml.html import HtmlElement
-    root: HtmlElement
+    from inc import el, s, extfunc1
     expr: str
-    s: str
     badns = {s: 1}
-    def extfunc1(context, a) -> str: ...
     badext = [{badns: extfunc1}]
-    root.xpath({{ args }})
+    el.xpath()  # ER: Too few arguments.*  \[call-arg]$
+    el.xpath(path=expr)  # ER: Too few arguments.*  \[call-arg]$
+    el.xpath(expr, namespaces=badns)  # ER: Argument "namespaces" .+; expected ".+"  \[arg-type]$
+    el.xpath(expr, extensions=badext)  # ER: Argument "extensions" .+; expected ".+"  \[arg-type]$

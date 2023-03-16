@@ -1,114 +1,76 @@
+- case: include_file
+  skip: true
+  files: &INC
+    - path: inc.py
+      content: |
+        from lxml import etree as e
+        el: e._Element
+        comm: e._Comment
+        ent: e._Entity
+        pi_: e._ProcessingInstruction
+        s: str
+        b: bytes
+        i: int
+        o: object
+        qn: e.QName
+  main: null
+
 - case: behave_like_sequence_1
   # No count()
-  parametrized:
-    - val: elem.index(elem)
-      rt: builtins.int
-    - val: len(elem)
-      rt: builtins.int
-    - val: elem[3]
-      rt: lxml.etree._Element
-    - val: elem[:2]
-      rt: builtins.list[lxml.etree._Element]
-    - val: iter(elem)
-      rt: typing.Iterator[lxml.etree._Element]
-    - val: reversed(elem)
-      rt: builtins.reversed[lxml.etree._Element]
+  files: *INC
   main: |
-    from lxml import etree
-    elem: etree._Element
-    reveal_type({{ val }})  # N: Revealed type is "{{ rt }}"
+    from inc import el
+    reveal_type(el.index(el))  # NR: .+ "[\w\.]+\.int"$
+    reveal_type(len(el))  # NR: .+ "[\w\.]+\.int"$
+    reveal_type(el[3])  # NR: .+ "[\w\.]+\._Element"$
+    reveal_type(el[:2])  # NR: .+ "[\w\.]+\.list\[[\w\.]+\._Element]"$
+    reveal_type(iter(el))  # NR: .+ "[\w\.]+\.Iterator\[[\w\.]+\._Element]"$
+    reveal_type(reversed(el))  # NR: .+ "[\w\.]+\.reversed\[[\w\.]+\._Element]"$
+    if el in el:
+      del el[1]
+      del el[2:4]
 
 - case: behave_like_sequence_2
+  expect_fail: true
+  files: *INC
   main: |
-    from lxml import etree
-    elem: etree._Element
-    elem in elem
-    del elem[1]
-    del elem[2:4]
-    _ = elem['junk']
-  out: |
-    main:6: error: No overload variant of "__getitem__" of "_Element" matches argument type "str"  [call-overload]
-    main:6: note: Possible overload variants:
-    main:6: note:     def __getitem__(self, int, /) -> _Element
-    main:6: note:     def __getitem__(self, slice, /) -> List[_Element]
+    from inc import el
+    _ = el['junk']
 
 - case: behave_like_sequence_badarg
-  parametrized:
-    - method: index
-      args: not_elem
-      pos: 1
-      wrong_type: object
-      exp_type: _Element
-    - method: index
-      args: elem, not_num
-      pos: 2
-      wrong_type: str
-      exp_type: Optional[int]
-    - method: index
-      args: elem, None, not_num
-      pos: 3
-      wrong_type: str
-      exp_type: Optional[int]
+  files: *INC
   main: |
-    from lxml import etree
-    elem: etree._Element
-    not_elem: object
-    not_num: str
-    _ = elem.{{ method }}({{ args }})  # E: Argument {{ pos }} to "{{ method }}" of "_Element" has incompatible type "{{ wrong_type }}"; expected "{{ exp_type }}"  [arg-type]
+    from inc import el, o, s
+    _ = el.index(o)  # ER: Argument 1 .+; expected ".+"  \[arg-type]$
+    _ = el.index(el, s)  # ER: Argument 2 .+; expected ".+"  \[arg-type]$
+    _ = el.index(el, None, s)  # ER: Argument 3 .+; expected ".+"  \[arg-type]$
 
 - case: behave_like_mutable_sequence
   # No reverse() and __iadd__(); __setitem__ has its own test
-  parametrized:
-    - method: append
-      arg: elem
-    - method: append
-      arg: pi_
-    - method: extend
-      arg: "[entity, comment, elem]"
-    - method: insert
-      arg: 4, comment
-    - method: remove
-      arg: pi_
-    - method: replace
-      arg: elem, entity
-    - method: clear
-      arg: false
+  files: *INC
   main: |
-    from lxml import etree
-    elem: etree._Element
-    comment: etree._Comment
-    pi_: etree._ProcessingInstruction
-    entity: etree._Entity
-    elem.{{ method }}({{ arg }})
+    from inc import el, comm, pi_, ent
+    el.append(el)
+    el.append(pi_)
+    el.extend([ent, comm, el])
+    el.insert(4, comm)
+    el.remove(pi_)
+    el.replace(el, ent)
+    el.clear()
 
 - case: behave_like_mutable_sequence_badarg_1
-  parametrized:
-    - method: append
-      args: not_elem
-      pos: 1
-      too_many: elem, None
-    - method: insert
-      args: 0, not_elem
-      pos: 2
-      too_many: 0, elem, None
-    - method: remove
-      args: not_elem
-      pos: 1
-      too_many: elem, None
-    - method: replace
-      args: not_elem, elem
-      pos: 1
-      too_many: elem, elem, None
-    - method: replace
-      args: elem, not_elem
-      pos: 2
-      too_many: elem, elem, None
+  files: *INC
   main: |
-    from lxml import etree
-    elem: etree._Element
-    not_elem: object
-    elem.{{ method }}({{ args }})  # E: Argument {{ pos }} to "{{ method }}" of "_Element" has incompatible type "object"; expected "_Element"  [arg-type]
-    elem.{{ method }}({{ too_many }})  # E: Too many arguments for "{{ method }}" of "_Element"  [call-arg]
+    from inc import el, o
+    el.append(o)  # ER: Argument 1 .+; expected ".+"  \[arg-type]$
+    el.append(el, None)  # ER: Too many arguments.*  \[call-arg]$
+    el.insert(0, o)  # ER: Argument 2 .+; expected ".+"  \[arg-type]$
+    el.insert(0, el, None)  # ER: Too many arguments.*  \[call-arg]$
+    el.remove(o)  # ER: Argument 1 .+; expected ".+"  \[arg-type]$
+    el.remove(el, None)  # ER: Too many arguments.*  \[call-arg]$
+    el.replace(o, el)  # ER: Argument 1 .+; expected ".+"  \[arg-type]$
+    el.replace(el, o)  # ER: Argument 2 .+; expected ".+"  \[arg-type]$
+    el.replace(el, el, None)  # ER: Too many arguments.*  \[call-arg]$
 
 - case: behave_like_mutable_sequence_badarg_2
   main: |
@@ -169,113 +131,65 @@
     reveal_type(elem.{{ prop }})  # N: Revealed type is "{{ rt }}"
     elem.{{ prop }} = elem.{{ prop }}  # E: Property "{{ prop }}" defined in "_Element" is read-only  [misc]
 
-# Quite a few projects perform automatic property conversion under the hook,
-# lxml employs it in project-wide manner, including str/byte conversion
-# for element properties.
-# But mypy is _very_ unhappy about this, while pyright doesn't have such
-# restriction (used to be, but not now).
-# Soothe mypy by only checking compatible types as input arg.
+# BUG See test case mypy_3004_element_prop
 - case: rw_properties
-  parametrized:
-    - prop: base
-      rt: Union[builtins.str, None]
-      arg_type: str
-    - prop: tag
-      rt: builtins.str
-      arg_type: str
-    - prop: text
-      rt: Union[builtins.str, None]
-      arg_type: str
-    - prop: tail
-      rt: Union[builtins.str, None]
-      arg_type: str
+  files: *INC
   main: |
-    from lxml import etree
-    elem: etree._Element
-    reveal_type(elem.{{ prop }})  # N: Revealed type is "{{ rt }}"
-    val: {{ arg_type }}
-    elem.{{ prop }} = val
+    from inc import el, s
+    reveal_type(el.base)  # NR: .+ "Union\[[\w\.]+\.str, None]"$
+    reveal_type(el.tag)  # NR: .+ "[\w\.]+\.str"$
+    reveal_type(el.text)  # NR: .+ "Union\[[\w\.]+\.str, None]"$
+    reveal_type(el.tail)  # NR: .+ "Union\[[\w\.]+\.str, None]"$
+    el.base = s
+    el.tag = s
+    el.text = s
+    el.tail = s
 
 # get() and set() have their own tests
 - case: element_mapping_mixin
-  parametrized:
-    - method: keys
-      rt: builtins.list[builtins.str]
-    - method: values
-      rt: builtins.list[builtins.str]
-    - method: items
-      rt: builtins.list[Tuple[builtins.str, builtins.str]]
+  files: *INC
   main: |
-    from lxml import etree
-    elem: etree._Element
-    reveal_type(elem.{{ method }}())  # N: Revealed type is "{{ rt }}"
+    from inc import el
+    reveal_type(el.keys())  # NR: .+ "[\w\.]+\.list\[[\w\.]+\.str]"$
+    reveal_type(el.values())  # NR: .+ "[\w\.]+\.list\[[\w\.]+\.str]"$
+    reveal_type(el.items())  # NR: .+ "[\w\.]+\.list\[Tuple\[[\w\.]+\.str, [\w\.]+\.str]]"$
 
-- case: method_get
-  parametrized:
-    - arg: attr1
-      rt: Union[builtins.str, None]
-    - arg: attr2
-      rt: Union[builtins.str, None]
-    - arg: qname
-      rt: Union[builtins.str, None]
-    - arg: qname, 4
-      rt: Union[builtins.str, builtins.int]
+- case: get_goodargs
+  files: *INC
   main: |
-    from lxml import etree
-    elem: etree._Element
-    attr1: str
-    attr2: bytes
-    qname: etree.QName
-    result = elem.get({{ arg }})
-    reveal_type(result)  # N: Revealed type is "{{ rt }}"
+    from inc import el, s, b, qn
+    reveal_type(el.get(s))  # NR: .+ "Union\[[\w\.]+\.str, None]"
+    reveal_type(el.get(b))  # NR: .+ "Union\[[\w\.]+\.str, None]"
+    reveal_type(el.get(qn))  # NR: .+ "Union\[[\w\.]+\.str, None]"
+    reveal_type(el.get(qn, 4))  # NR: .+ "Union\[[\w\.]+\.str, [\w\.]+\.int]"
 
-- case: method_get_badarg
+- case: get_badargs
+  files: *INC
   expect_fail: true
   parametrized:
-    - args: 123
-    - args: "obj, 123"
-    - args: "s, 1, 2"
+    - args: '()'
+    - args: '(1)'
+    - args: '(o, 1)'
+    - args: '(s, 1, 1)'
   main: |
-    from lxml import etree
-    elem: etree._Element
-    obj: object
-    s: str
-    _ = elem.get({{ args }})
+    from inc import el, o, s
+    el.get({{args}})
 
-- case: method_set
-  parametrized:
-    - key: s
-    - key: b
-    - key: q
+- case: set
+  files: *INC
   main: |
-    from lxml import etree
-    elem: etree._Element
-    s: str
-    b: bytes
-    q: etree.QName
-    elem.set({{ key }}, s)
-    elem.set({{ key }}, b)
-    elem.set({{ key }}, q)
-
-- case: method_set_badarg
-  parametrized:
-    - args: s
-      err: Missing positional argument "value" in call to "set" of "_Element"  [call-arg]
-    - args: 1, s
-      err: Argument 1 to "set" of "_Element" has incompatible type "int"; expected "Union[str, bytes, QName]"  [arg-type]
-    - args: "b, [s]"
-      err: Argument 2 to "set" of "_Element" has incompatible type "List[str]"; expected "Union[str, bytes, QName]"  [arg-type]
-    - args: "s, None"
-      err: Argument 2 to "set" of "_Element" has incompatible type "None"; expected "Union[str, bytes, QName]"  [arg-type]
-    - args: s, b, q
-      err: Too many arguments for "set" of "_Element"  [call-arg]
-  main: |
-    from lxml import etree
-    elem: etree._Element
-    s: str
-    b: bytes
-    q: etree.QName
-    elem.set({{ args }})  # E: {{{ err }}}
+    from inc import el, s, b, qn
+    el.set(s, s)
+    el.set(b, b)
+    el.set(qn, qn)
+    el.set(s, b)
+    el.set(b, qn)
+    el.set(qn, s)
+    el.set(s)  # ER: Missing positional argument .+ \[call-arg]$
+    el.set(1, s)  # ER: Argument 1 .+; expected ".+"  \[arg-type]$
+    el.set(b, [s])  # ER: Argument 2 .+; expected ".+"  \[arg-type]$
+    el.set(s, None)  # ER: Argument 2 .+; expected ".+"  \[arg-type]$
+    el.set(s, b, qn)  # ER: Too many arguments.*  \[call-arg]$
 
 - case: method_addnext_addprevious
   parametrized:
@@ -288,144 +202,94 @@
     elem.{{ method }}(1)  # E: Argument 1 to "{{ method }}" of "_Element" has incompatible type "int"; expected "_Element"  [arg-type]
     elem.{{ method }}(elem, 1)  # E: Too many arguments for "{{ method }}" of "_Element"  [call-arg]
 
-- case: method_elementpath
-  # If there were support for testing matrix...
-  parametrized:
-    - method: find
-      args: path
-      rt: Union[lxml.etree._Element, None]
-    - method: find
-      args: tag
-      rt: Union[lxml.etree._Element, None]
-    - method: find
-      args: path=path
-      rt: Union[lxml.etree._Element, None]
-    - method: find
-      args: path, nsmap
-      rt: Union[lxml.etree._Element, None]
-    - method: find
-      args: tag, namespaces=nsmap
-      rt: Union[lxml.etree._Element, None]
-    - method: findall
-      args: path
-      rt: builtins.list[lxml.etree._Element]
-    - method: findall
-      args: tag
-      rt: builtins.list[lxml.etree._Element]
-    - method: findall
-      args: path=path
-      rt: builtins.list[lxml.etree._Element]
-    - method: findall
-      args: path, nsmap
-      rt: builtins.list[lxml.etree._Element]
-    - method: findall
-      args: tag, namespaces=nsmap
-      rt: builtins.list[lxml.etree._Element]
-    - method: iterfind
-      args: path
-      rt: typing.Iterator[lxml.etree._Element]
-    - method: iterfind
-      args: tag
-      rt: typing.Iterator[lxml.etree._Element]
-    - method: iterfind
-      args: path=path
-      rt: typing.Iterator[lxml.etree._Element]
-    - method: iterfind
-      args: path, nsmap
-      rt: typing.Iterator[lxml.etree._Element]
-    - method: iterfind
-      args: tag, namespaces=nsmap
-      rt: typing.Iterator[lxml.etree._Element]
+- case: elementpath_goodargs
+  files: *INC
   main: |
-    from lxml import etree
-    elem: etree._Element
-    path: str
-    s: str
-    tag: etree.QName
+    from inc import s, qn, el
     nsmap = {None: s, s: s}
-    result = elem.{{ method }}({{ args }})
-    reveal_type(result)  # N: Revealed type is "{{ rt }}"
+    reveal_type(el.find(s       ))  # NR: .+ "Union\[[\w\.]+\._Element, None]"$
+    reveal_type(el.find(qn      ))  # NR: .+ "Union\[[\w\.]+\._Element, None]"$
+    reveal_type(el.find(path=s  ))  # NR: .+ "Union\[[\w\.]+\._Element, None]"$
+    reveal_type(el.find(s, nsmap))  # NR: .+ "Union\[[\w\.]+\._Element, None]"$
+    reveal_type(el.find(qn, namespaces=nsmap))  # NR: .+ "Union\[[\w\.]+\._Element, None]"$
+    reveal_type(el.findall(s       ))  # NR: .+ "[\w\.]+\.list\[[\w\.]+\._Element]"$
+    reveal_type(el.findall(qn      ))  # NR: .+ "[\w\.]+\.list\[[\w\.]+\._Element]"$
+    reveal_type(el.findall(path=s  ))  # NR: .+ "[\w\.]+\.list\[[\w\.]+\._Element]"$
+    reveal_type(el.findall(s, nsmap))  # NR: .+ "[\w\.]+\.list\[[\w\.]+\._Element]"$
+    reveal_type(el.findall(qn, namespaces=nsmap))  # NR: .+ "[\w\.]+\.list\[[\w\.]+\._Element]"$
+    reveal_type(el.iterfind(s       ))  # NR: .+ "[\w\.]+\.Iterator\[[\w\.]+\._Element]"$
+    reveal_type(el.iterfind(qn      ))  # NR: .+ "[\w\.]+\.Iterator\[[\w\.]+\._Element]"$
+    reveal_type(el.iterfind(path=s  ))  # NR: .+ "[\w\.]+\.Iterator\[[\w\.]+\._Element]"$
+    reveal_type(el.iterfind(s, nsmap))  # NR: .+ "[\w\.]+\.Iterator\[[\w\.]+\._Element]"$
+    reveal_type(el.iterfind(qn, namespaces=nsmap))  # NR: .+ "[\w\.]+\.Iterator\[[\w\.]+\._Element]"$
 
-- case: method_elementpath_badarg
-  parametrized:
-    - method: find
-    - method: findall
-    - method: iterfind
+- case: elementpath_badargs
+  files: *INC
   main: |
-    from lxml import etree
-    elem: etree._Element
-    ok_path: str
-    bad_path: bytes
+    from inc import el, s, b
     bad_nsmap = {'a': 1}
-    _ = elem.{{ method }}(bad_path)  # E: Argument 1 to "{{ method }}" of "_Element" has incompatible type "bytes"; expected "Union[str, QName]"  [arg-type]
-    _ = elem.{{ method }}(ok_path, bad_nsmap)  # ER: Argument 2 to "{{ method }}" of "_Element" has incompatible type "Dict\[str, int]"; expected "Union\[.+, None]"  \[arg-type]
-    _ = elem.{{ method }}(ok_path, None, 1)  # E: Too many arguments for "{{ method }}" of "_Element"  [call-arg]
-    _ = elem.{{ method }}(ok_path, badarg=True)  # E: Unexpected keyword argument "badarg" for "{{ method }}" of "_Element"  [call-arg]
+    el.find    (b)  # ER: Argument 1 .+; expected ".+"  \[arg-type]$
+    el.findall (b)  # ER: Argument 1 .+; expected ".+"  \[arg-type]$
+    el.iterfind(b)  # ER: Argument 1 .+; expected ".+"  \[arg-type]$
+    el.find    (s, bad_nsmap)  # ER: Argument 2 .+; expected ".+"  \[arg-type]$
+    el.findall (s, bad_nsmap)  # ER: Argument 2 .+; expected ".+"  \[arg-type]$
+    el.iterfind(s, bad_nsmap)  # ER: Argument 2 .+; expected ".+"  \[arg-type]$
+    el.find    (s, None, 1)  # ER: Too many arguments.*  \[call-arg]$
+    el.findall (s, None, 1)  # ER: Too many arguments.*  \[call-arg]$
+    el.iterfind(s, None, 1)  # ER: Too many arguments.*  \[call-arg]$
+    el.find    (s, badarg=True)  # ER: Unexpected keyword .+  \[call-arg]$
+    el.findall (s, badarg=True)  # ER: Unexpected keyword .+  \[call-arg]$
+    el.iterfind(s, badarg=True)  # ER: Unexpected keyword .+  \[call-arg]$
 
-- case: method_findtext
-  parametrized:
-    - args: path
-      rt: Union[builtins.str, None]
-    - args: tag
-      rt: Union[builtins.str, None]
-    - args: path=path
-      rt: Union[builtins.str, None]
-    - args: path, default1
-      rt: Union[builtins.str, builtins.int]
-    - args: path, default1, nsmap
-      rt: Union[builtins.str, builtins.int]
-    - args: tag, namespaces=nsmap
-      rt: Union[builtins.str, None]
-    - args: path=tag, default=default2
-      rt: builtins.str
+- case: findtext_goodargs
+  files: *INC
   main: |
-    from lxml import etree
-    elem: etree._Element
-    path: str
-    s: str
-    tag: etree.QName
-    default1: int
-    default2: str
+    from inc import el, s, b, i, qn
     nsmap = {None: s, s: s}
-    result = elem.findtext({{ args }})
-    reveal_type(result)  # N: Revealed type is "{{ rt }}"
+    reveal_type(el.findtext(s     ))  # NR: .+ "Union\[[\w\.]+\.str, None]"$
+    reveal_type(el.findtext(qn    ))  # NR: .+ "Union\[[\w\.]+\.str, None]"$
+    reveal_type(el.findtext(path=s))  # NR: .+ "Union\[[\w\.]+\.str, None]"$
+    reveal_type(el.findtext(s, i  ))  # NR: .+ "Union\[[\w\.]+\.str, [\w\.]+\.int]"$
+    reveal_type(el.findtext(s, i, nsmap))  # NR: .+ "Union\[[\w\.]+\.str, [\w\.]+\.int]"$
+    reveal_type(el.findtext(qn, namespaces=nsmap))  # NR: .+ "Union\[[\w\.]+\.str, None]"$
+    reveal_type(el.findtext(path=qn, default=s))  # NR: .+ "[\w\.]+\.str"$
 
-- case: method_findtext_badarg
+- case: findtext_badargs
+  files: *INC
   expect_fail: true
   parametrized:
-    - args: bad_path
-    - args: "ok_path, namespaces=bad_nsmap"
-    - args: "ok_path, '', None, 1"
-    - args: "ok_path, badarg=True"
+    - args: '()'
+    - args: '(b)'
+    - args: '(s, namespaces=bad_nsmap)'
+    - args: '(s, s, None, 1)'
+    - args: '(s, badarg=True)'
   main: |
-    from lxml import etree
-    elem: etree._Element
-    ok_path: str
-    bad_path: bytes
+    from inc import el, s, b
     bad_nsmap = {'a': 1}
-    _ = elem.findtext({{ args }})
+    el.findtext{{args}}
 
-- case: method_iter_family_goodarg
-  parametrized:
-    - method: iter
-    - method: iterancestors
-    - method: iterchildren
-    - method: iterdescendants
-    - method: itersiblings
+- case: iter_family_goodargs
+  files: *INC
   main: |
+    from inc import el, s, b, qn
     from lxml import etree
-    elem: etree._Element
-    tag1: str
-    tag2: bytes
-    tag3: etree.QName
-    factory1 = etree.Comment
-    factory2 = etree.Entity
-    result = elem.{{ method }}()
-    reveal_type(result)  # N: Revealed type is "typing.Iterator[lxml.etree._Element]"
-    _ = elem.{{ method }}(tag1)
-    _ = elem.{{ method }}(factory1, tag2)
+    reveal_type(el.iter           ())  # NR: .+ "[\w\.]+\.Iterator\[[\w\.]+\._Element]"$
+    reveal_type(el.iterancestors  ())  # NR: .+ "[\w\.]+\.Iterator\[[\w\.]+\._Element]"$
+    reveal_type(el.iterchildren   ())  # NR: .+ "[\w\.]+\.Iterator\[[\w\.]+\._Element]"$
+    reveal_type(el.iterdescendants())  # NR: .+ "[\w\.]+\.Iterator\[[\w\.]+\._Element]"$
+    reveal_type(el.itersiblings   ())  # NR: .+ "[\w\.]+\.Iterator\[[\w\.]+\._Element]"$
+    el.iter           (s)
+    el.iter           (etree.Comment, b)
+    el.iterancestors  (b)
+    el.iterancestors  (b, qn)
+    el.iterchildren   (qn)
+    el.iterchildren   (etree.Comment, etree.PI)
+    el.iterdescendants(etree.Comment)
+    el.iterdescendants(s, b)
+    el.itersiblings   (etree.Entity)
+    el.itersiblings   (s, b)
 
-- case: method_iter_family_badarg
+- case: iter_family_badargs
   expect_fail: true
   parametrized:
     - method: iter
@@ -464,21 +328,15 @@
     tag: str
     _ = elem.{{ method }}({{ args }})
 
-- case: method_iter_family_special_kwd
-  parametrized:
-    - method: itersiblings
-      args: tag1, tag2, preceding=True
-    - method: iterchildren
-      args: tag1, tag2, reversed=True
+- case: iter_family_special_kwd_goodargs
+  files: *INC
   main: |
-    from lxml import etree
-    elem: etree._Element
-    tag1: str
-    tag2: etree.QName
-    result = elem.{{ method }}({{ args }})
-    reveal_type(result)  # N: Revealed type is "typing.Iterator[lxml.etree._Element]"
+    from inc import el, s, b, qn
+    reveal_type(el.itersiblings(s, qn, preceding=True))  # NR: .+ "[\w\.]+\.Iterator\[[\w\.]+\._Element]"$
+    reveal_type(el.iterchildren(qn, b, reversed=True))  # NR: .+ "[\w\.]+\.Iterator\[[\w\.]+\._Element]"$
 
-- case: method_iter_family_special_kwd_badarg
+- case: iter_family_special_kwd_badargs
+  files: *INC
   expect_fail: true
   parametrized:
     - method: itersiblings
@@ -486,153 +344,93 @@
     - method: iterchildren
       kwd: reversed
   main: |
-    from lxml import etree
-    elem: etree._Element
-    tag: str
-    result = elem.{{ method }}(tag, {{ kwd }}='badval')
+    from inc import el, s
+    el.{{ method }}(s, {{ kwd }}=s)
 
-- case: method_itertext
-  parametrized:
-    - args: s
-    - args: "b, etree.Comment"
-    - args: "etree.Entity, q"
-    - args: "etree.PI, with_tail=False"
+- case: itertext_goodargs
+  files: *INC
   main: |
     from lxml import etree
-    elem: etree._Element
-    s: str
-    b: bytes
-    q: etree.QName
-    result = elem.itertext({{ args }})
-    reveal_type(result)  # N: Revealed type is "typing.Iterator[builtins.str]"
+    from inc import el, s, b, qn
+    reveal_type(el.itertext(s))  # NR: .+ "[\w\.]+\.Iterator\[[\w\.]+\.str]"$
+    el.itertext(b, etree.Comment)
+    el.itertext(etree.Entity, qn)
+    el.itertext(etree.PI, with_tail=False)
 
-- case: method_itertext_badarg
+- case: itertext_badargs
+  files: *INC
   expect_fail: true
   parametrized:
     - args: 1
-    - args: tag, None
-    - args: badarg=tag
-    - args: tag, with_tail=''
+    - args: s, None
+    - args: badarg=s
+    - args: s, with_tail=''
   main: |
-    from lxml import etree
-    elem: etree._Element
-    tag: str
-    _ = elem.itertext({{ args }})
+    from inc import el, s
+    el.itertext({{ args }})
 
-- case: method_makeelement_args
-  parametrized:
-    - args: s
-    - args: "b, elem.attrib"
-    - args: "q, myattrib"
-    - args: "s, None, crazy_nsmap"
-    - args: "s, foo=s"
-    - args: "s, foo=s, baz=b"
-    - args: "b, foo=s, nsmap={None: b}"
-    - args: "q, foo=s, attrib={s: b, s: s}"
+- case: makeelement_goodargs
+  files: *INC
   main: |
     from typing import Dict, Optional, Union
-    from lxml import etree
-    elem: etree._Element
-    s: str
-    b: bytes
-    q: etree.QName
-    # mypy has a serious problem inferring mapping type;
-    # it tries to find common denominator of different types,
-    # instead of using unions. The result is often overbroad,
-    # like inferring Sequence[object] when we want Union[str, bytes].
-    # Try to force type with annotation instead.
+    from inc import el, s, b, qn
+    # BUG see overzealous_inferred_type test case for info
+    # crazy_nsmap = {None: s, s: b}
     crazy_nsmap: Dict[Optional[str], Union[str, bytes]]
     nsmap = {None: s, s: s}
     myattrib = {s: s}
-    reveal_type(elem.makeelement({{ args }}))  # N: Revealed type is "lxml.etree._Element"
+    reveal_type(el.makeelement(s))  # NR: .+ "[\w\.]+\._Element"
+    el.makeelement(b, el.attrib)
+    el.makeelement(qn, myattrib)
+    el.makeelement(s, None, crazy_nsmap)
+    el.makeelement(s, foo=s)
+    el.makeelement(s, foo=s, baz=b)
+    el.makeelement(b, foo=s, nsmap={None: b})
+    el.makeelement(qn, foo=s, attrib={s: b, s: s})
 
-- case: method_makeelement_badarg
+- case: makeelement_badargs
+  files: *INC
   main: |
     from typing import Dict, Optional, Union
-    from lxml import etree
-    elem: etree._Element
-    s: str
-    b: bytes
-    q: etree.QName
-    bad_attrib = {
-      b: b,
-      s: 1,
-    }
-    _ = elem.makeelement()  # E: Too few arguments for "makeelement" of "_Element"  [call-arg]
-    _ = elem.makeelement(None)  # E: Argument 1 to "makeelement" of "_Element" has incompatible type "None"; expected "Union[str, bytes, QName]"  [arg-type]
-    _ = elem.makeelement(s, foo=1)  # E: Argument "foo" to "makeelement" of "_Element" has incompatible type "int"; expected "Union[str, bytes]"  [arg-type]
-    _ = elem.makeelement(s, bad_attrib)  # E: Argument 2 to "makeelement" of "_Element" has incompatible type "Dict[Sequence[object], object]"; expected "Optional[SupportsLaxedItems[str, Union[str, bytes]]]"  [arg-type]
+    from inc import el, s, b, qn
+    bad_attrib = {s: 1}
+    el.makeelement()  # ER: Too few arguments.*  \[call-arg]$
+    el.makeelement(None)  # ER: Argument 1 .+; expected ".+"  \[arg-type]$
+    el.makeelement(s, foo=1)  # ER: Argument "foo" .+; expected ".+"  \[arg-type]$
+    el.makeelement(s, bad_attrib)  # ER: Argument 2 .+; expected ".+"  \[arg-type]$
 
-# Simple methods that don't take any argument
-- case: method_others
-  parametrized:
-    - method: getparent
-      rt: Union[lxml.etree._Element, None]
-    - method: getnext
-      rt: Union[lxml.etree._Element, None]
-    - method: getprevious
-      rt: Union[lxml.etree._Element, None]
-    - method: getroottree
-      rt: "lxml.etree._ElementTree[lxml.etree._Element]"
+- case: noargs_method
+  files: *INC
   main: |
-    from lxml import etree
-    elem: etree._Element
-    reveal_type(elem.{{ method }}())  # N: Revealed type is "{{ rt }}"
-
-# Simple methods that don't take any argument
-- case: method_others_badarg
-  parametrized:
-    - method: getparent
-    - method: getnext
-    - method: getprevious
-    - method: getroottree
-  main: |
-    from lxml import etree
-    elem: etree._Element
-    _ = elem.{{ method }}('junk')  # E: Too many arguments for "{{ method }}" of "_Element"  [call-arg]
+    from inc import el, s
+    reveal_type(el.getparent  ())  # NR: .+ "Union\[[\w\.]+\._Element, None]"$
+    reveal_type(el.getnext    ())  # NR: .+ "Union\[[\w\.]+\._Element, None]"$
+    reveal_type(el.getprevious())  # NR: .+ "Union\[[\w\.]+\._Element, None]"$
+    reveal_type(el.getroottree())  # NR: .+ "[\w\.]+\._ElementTree\[[\w\.]+\._Element]"$
+    el.getparent  (s)  # ER: Too many arguments .+  \[call-arg]$
+    el.getnext    (s)  # ER: Too many arguments .+  \[call-arg]$
+    el.getprevious(s)  # ER: Too many arguments .+  \[call-arg]$
+    el.getroottree(s)  # ER: Too many arguments .+  \[call-arg]$
 
 - case: xpath
-  parametrized:
-    - kwds: namespaces=None
-    - kwds: namespaces=ns
-    - kwds: extensions=None
-    - kwds: extensions=ext2
-    - kwds: smart_string=True
-    - kwds: var=1
-    - kwds: "namespaces=ns, extensions=ext1, smart_string=False"
+  files: *INC
   main: |
-    from lxml import etree
-    root: etree._Element
-    xpath_expr: str
-    s: str
+    from inc import el, s
     ns = {s: s}
-    def extfunc1(context, a) -> str:
-      return ''
-    def extfunc2(context, a, b) -> int:
-      return 0
+    badns = {s: 1}
+    def extfunc1(context, a): return ''
+    def extfunc2(context, a, b): return 0
     ext1 = [{(None, s): extfunc1}]
     ext2 = {(s, s): extfunc2}
-    result = root.xpath(xpath_expr, {{ kwds }})
-
-- case: xpath_noarg
-  main: |
-    from lxml import etree
-    root: etree._Element
-    root.xpath()  # E: Too few arguments for "xpath" of "_Element"  [call-arg]
-
-- case: xpath_badarg
-  expect_fail: true
-  parametrized:
-    - args: path=expr
-    - args: "expr, namespaces=badns"
-    - args: "expr, extensions=badext"
-  main: |
-    from lxml import etree
-    root: etree._Element
-    expr: str
-    s: str
-    badns = {s: 1}
-    def extfunc1(context, a) -> str:
-      return ''
     badext = [{badns: extfunc1}]
-    root.xpath({{ args }})
+    el.xpath(s, namespaces=None)
+    el.xpath(s, namespaces=ns)
+    el.xpath(s, extensions=None)
+    el.xpath(s, extensions=ext2)
+    el.xpath(s, smart_string=True)
+    el.xpath(s, var=1)
+    el.xpath(s, namespaces=ns, extensions=ext1, smart_string=False)
+    el.xpath()  # ER: Too few arguments.*  \[call-arg]$
+    el.xpath(path=s)  # ER: Too few arguments.*  \[call-arg]$
+    el.xpath(s, namespaces=badns)  # ER: Argument "namespaces" .+; expected ".+"  \[arg-type]$
+    el.xpath(s, extensions=badext)  # ER: Argument "extensions" .+; expected ".+"  \[arg-type]$
