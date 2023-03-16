@@ -9,7 +9,6 @@ from typing import (
     Literal,
     TypeVar,
     Union,
-    final,
     overload,
 )
 from typing_extensions import LiteralString, Self, TypeAlias, TypeGuard
@@ -65,6 +64,7 @@ from ._parser import (
     XMLPullParser as XMLPullParser,
     XMLSyntaxError as XMLSyntaxError,
     _DefEtreeParsers,
+    _FeedParser as _FeedParser,
     get_default_parser as get_default_parser,
     set_default_parser as set_default_parser,
 )
@@ -77,8 +77,6 @@ from ._relaxng import (
 from ._serializer import (
     C14NWriterTarget as C14NWriterTarget,
     SerialisationError as SerialisationError,
-    _AsyncIncrementalFileWriter as _AsyncIncrementalFileWriter,
-    _IncrementalFileWriter as _IncrementalFileWriter,
     canonicalize as canonicalize,
     htmlfile as htmlfile,
     xmlfile as xmlfile,
@@ -109,7 +107,9 @@ from ._xmlschema import (
     XMLSchemaParseError as XMLSchemaParseError,
     XMLSchemaValidateError as XMLSchemaValidateError,
 )
-from ._xpath import (  # include extensions.pxi
+
+# Includes extensions.pxi (XPath func extensions)
+from ._xpath import (
     ETXPath as ETXPath,
     Extension as Extension,
     XPath as XPath,
@@ -121,6 +121,8 @@ from ._xpath import (  # include extensions.pxi
     XPathFunctionError as XPathFunctionError,
     XPathResultError as XPathResultError,
     XPathSyntaxError as XPathSyntaxError,
+    _ElementUnicodeResult as _ElementUnicodeResult,
+    _XPathEvaluatorBase as _XPathEvaluatorBase,
 )
 from ._xslt import (
     LIBXSLT_COMPILED_VERSION as LIBXSLT_COMPILED_VERSION,
@@ -186,26 +188,6 @@ LIBXML_VERSION: tuple[int, int, int]
 LIBXML_COMPILED_VERSION: tuple[int, int, int]
 LXML_VERSION: tuple[int, int, int, int]
 __version__: LiteralString
-
-@final
-class _ElementUnicodeResult(str, Generic[_ET]):
-    """Smart string is a private str subclass documented in
-    [return types](https://lxml.de/xpathxslt.html#xpath-return-values)
-    of XPath evaluation result.
-
-    Please [visit wiki page](https://github.com/abelcheung/types-lxml/wiki/Smart-string-usage)
-    on description and how to use it in you code.
-    """
-
-    @property
-    def is_attribute(self) -> bool: ...
-    @property
-    def is_tail(self) -> bool: ...
-    @property
-    def is_text(self) -> bool: ...
-    @property
-    def attrname(self) -> str | None: ...
-    def getparent(self: _ElementUnicodeResult[_ET]) -> _ET | None: ...
 
 class DocInfo:
     @property

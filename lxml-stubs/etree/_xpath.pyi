@@ -4,7 +4,7 @@
 #
 
 from abc import abstractmethod
-from typing import Any, Callable, Mapping, Protocol, overload
+from typing import Any, Callable, Generic, Mapping, Protocol, final, overload
 
 from .._types import (
     _AnyStr,
@@ -14,8 +14,9 @@ from .._types import (
     _XPathVarArg,
     deprecated,
 )
-from . import LxmlError, LxmlSyntaxError, _Element, _ElementOrTree, _ElementTree
+from . import _ET, LxmlError, LxmlSyntaxError, _Element, _ElementOrTree, _ElementTree
 from ._xmlerror import _ListErrorLog
+
 
 class XPathError(LxmlError):
     """Base class of all XPath errors"""
@@ -113,6 +114,26 @@ def XPathEvaluator(
     regexp: bool = ...,
     smart_strings: bool = ...,
 ) -> XPathDocumentEvaluator: ...
+
+@final
+class _ElementUnicodeResult(str, Generic[_ET]):
+    """Smart string is a private str subclass documented in
+    [return types](https://lxml.de/xpathxslt.html#xpath-return-values)
+    of XPath evaluation result.
+
+    Please [visit wiki page](https://github.com/abelcheung/types-lxml/wiki/Smart-string-usage)
+    on description and how to use it in you code.
+    """
+
+    @property
+    def is_attribute(self) -> bool: ...
+    @property
+    def is_tail(self) -> bool: ...
+    @property
+    def is_text(self) -> bool: ...
+    @property
+    def attrname(self) -> str | None: ...
+    def getparent(self: _ElementUnicodeResult[_ET]) -> _ET | None: ...
 
 def Extension(
     module: object,
