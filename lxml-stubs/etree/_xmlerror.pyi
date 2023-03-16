@@ -3,14 +3,35 @@
 #
 
 import enum
-from logging import Logger
-from typing import Collection, Iterator, final
-from typing_extensions import Self
+from abc import ABCMeta, abstractmethod
+from logging import Logger, LoggerAdapter
+from typing import Any, Collection, Iterable, Iterator, final
 
 @final
 class _LogEntry:
+    """Log message entry from an error log
+
+    Attributes
+    ----------
+    message: str
+        the message text
+    domain: ErrorDomains
+        domain ID
+    type: ErrorTypes
+        message type ID
+    level: ErrorLevels
+        log level ID
+    line: int
+        the line at which the message originated, if applicable
+    column: int
+        the character column at which the message originated, if applicable
+    filename: str, optional
+        the name of the file in which the message originated, if applicable
+    path: str, optional
+        the location in which the error was found, if available"""
+
     @property
-    def doamin(self) -> ErrorDomains: ...
+    def domain(self) -> ErrorDomains: ...
     @property
     def type(self) -> ErrorTypes: ...
     @property
@@ -20,7 +41,7 @@ class _LogEntry:
     @property
     def column(self) -> int: ...
     @property
-    def doamin_name(self) -> str: ...
+    def domain_name(self) -> str: ...
     @property
     def type_name(self) -> str: ...
     @property
@@ -30,25 +51,36 @@ class _LogEntry:
     @property
     def filename(self) -> str | None: ...
     @property
-    def path(self) -> str: ...
+    def path(self) -> str | None: ...
 
-class _BaseErrorLog:
+class _BaseErrorLog(metaclass=ABCMeta):
+    """The base class of all other error logs"""
+
     @property
-    def last_error(self) -> _LogEntry: ...
+    def last_error(self) -> _LogEntry | None: ...
     # copy() method is originally under _BaseErrorLog class. However
     # PyErrorLog overrides it with a dummy version, denoting it
     # shouldn't be used. So move copy() to the only other subclass
     # inherited from _BaseErrorLog, that is _ListErrorLog.
+    @abstractmethod
     def receive(self, log_entry: _LogEntry) -> None: ...
 
 class _ListErrorLog(_BaseErrorLog, Collection[_LogEntry]):
+    """Immutable base version of a list based error log"""
+
+    def __init__(
+        self,
+        entries: list[_LogEntry],
+        first_error: _LogEntry | None,
+        last_error: _LogEntry | None,
+    ) -> None: ...
     def __iter__(self) -> Iterator[_LogEntry]: ...
     def __len__(self) -> int: ...
     def __getitem__(self, __k: int) -> _LogEntry: ...
     def __contains__(self, __o: object) -> bool: ...
-    def filter_domains(self, domains: int | tuple[int]) -> _ListErrorLog: ...
-    def filter_types(self, types: int | tuple[int]) -> _ListErrorLog: ...
-    def filter_levels(self, levels: int | tuple[int]) -> _ListErrorLog: ...
+    def filter_domains(self, domains: int | Iterable[int]) -> _ListErrorLog: ...
+    def filter_types(self, types: int | Iterable[int]) -> _ListErrorLog: ...
+    def filter_levels(self, levels: int | Iterable[int]) -> _ListErrorLog: ...
     def filter_from_level(self, level: int) -> _ListErrorLog: ...
     def filter_from_fatals(self) -> _ListErrorLog: ...
     def filter_from_errors(self) -> _ListErrorLog: ...
@@ -58,33 +90,75 @@ class _ListErrorLog(_BaseErrorLog, Collection[_LogEntry]):
     # in python code, so dropped altogether.
     # copy() is originally implemented in _BaseErrorLog, see
     # comment there for more info.
-    def copy(self) -> Self: ...
+    def copy(self) -> _ListErrorLog: ...  # not Self, subclasses won't survive
+    def receive(self, log_entry: _LogEntry) -> None: ...
 
-# The interaction between _ListErrorLog and _ErrorLog is interesting.
-# _ListErrorLog is the base class, and unlikely to be instantiated
-# directly. _ErrorLog class instantiates _ListErrorLog object, and
-# patches it with extra runtime methods.
-# Here we merge all extra _ErrorLog methods into _ListErrorLog,
-# and make _Errorlog a function instead. Mypy become ferocious when
-# the idea of returning different object via __new__() comes up
-def _ErrorLog() -> _ListErrorLog: ...
+# The interaction between _ListErrorLog and _ErrorLog is interesting
+def _ErrorLog() -> _ListErrorLog:
+    """
+    Annotation notes
+    ----------------
+    `_ErrorLog` is originally a class itself. However, it has very
+    special property that it is now annotated as function.
 
-class _RotatingErrorLog(_ListErrorLog): ...
+    `_ErrorLog`, when instantiated, generates `_ListErrorLog` object
+    instead, and then patches it with extra runtime methods. `Mypy`
+    becomes malevolent on any attempt of annotating such behavior.
+
+    Therefore, besides making it a function, all extra properties
+    and methods are merged into `_ListErrorLog`, since `_ListErrorLog`
+    is seldom instantiated by itself.
+    """
+
+class _RotatingErrorLog(_ListErrorLog):
+    """Error log that has entry limit and uses FIFO rotation"""
+
+    def __init__(self, max_len: int) -> None: ...
 
 # Maybe there's some sort of hidden commercial version of lxml
-# that supports _DomainErrorLog? Anyway, the class in open source
-# lxml is entirely broken and not touched since 2006.
-
-def clear_error_log() -> None: ...
+# that supports _DomainErrorLog, if such thing exists? Anyway,
+# the class in open source lxml is entirely broken and not touched
+# since 2006.
 
 class PyErrorLog(_BaseErrorLog):
-    @property
-    def level_map(self) -> dict[int, int]: ...
-    def __init__(self, logger_name: str | None = ..., logger: Logger = ...) -> None: ...
-    # copy() is disallowed, implementation chooses to fail in a
-    # silent way by returning dummy object. We skip it altogether.
-    def log(self, log_entry: _LogEntry, message: str, *args: object) -> None: ...
+    """Global error log that connects to the Python stdlib logging package
 
+    Original Docstring
+    ------------------
+    The constructor accepts an optional logger name or a readily
+    instantiated logger instance.
+
+    If you want to change the mapping between libxml2's ErrorLevels and Python
+    logging levels, you can modify the level_map dictionary from a subclass.
+
+    The default mapping is::
+
+    ```python
+    ErrorLevels.WARNING = logging.WARNING
+    ErrorLevels.ERROR   = logging.ERROR
+    ErrorLevels.FATAL   = logging.CRITICAL
+    ```
+
+    You can also override the method ``receive()`` that takes a LogEntry
+    object and calls ``self.log(log_entry, format_string, arg1, arg2, ...)``
+    with appropriate data.
+    """
+
+    @property
+    def level_map(
+        self,
+    ) -> dict[ErrorLevels, int]: ...  # TypedDict req valid identifier keys
+    def __init__(
+        self,
+        logger_name: str | None = ...,
+        logger: Logger | LoggerAdapter[Any] | None = ...,
+    ) -> None: ...
+    # copy() is disallowed, implementation chooses to fail in a
+    # silent way by returning dummy _ListErrorLog. We skip it altogether.
+    def log(self, log_entry: _LogEntry, message: str, *args: object) -> None: ...
+    def receive(self, log_entry: _LogEntry) -> None: ...
+
+def clear_error_log() -> None: ...
 def use_global_python_log(log: PyErrorLog) -> None: ...
 
 # Container for libxml2 constants
@@ -93,12 +167,30 @@ def use_global_python_log(log: PyErrorLog) -> None: ...
 # unless these stubs are bundled with lxml together. So we only do
 # minimal enums which do not involve much work. No ErrorTypes. Never.
 class ErrorLevels(enum.IntEnum):
+    """Error severity level constants
+
+    Annotation notes
+    ----------------
+    These integer constants sementically fit int enum better, but
+    in the end they are just integers. No enum properties and mechanics
+    would work on them.
+    """
+
     NONE = ...
     WARNING = ...
     ERROR = ...
     FATAL = ...
 
 class ErrorDomains(enum.IntEnum):
+    """Part of the library that raised error
+
+    Annotation notes
+    ----------------
+    These integer constants sementically fit int enum better, but
+    in the end they are just integers. No enum properties and mechanics
+    would work on them.
+    """
+
     NONE = ...
     PARSER = ...
     TREE = ...
@@ -132,9 +224,31 @@ class ErrorDomains(enum.IntEnum):
     URI = ...
 
 class ErrorTypes(enum.IntEnum):
+    """The actual libxml2 error code
+
+    Annotation notes
+    ----------------
+    These integer constants sementically fit int enum better, but
+    in the end they are just integers. No enum properties and mechanics
+    would work on them.
+
+    Because of the vast amount of existing codes, and its ever-increasing
+    nature due to newer libxml2 releases, error type constant names
+    will not be explicitly listed in stub.
+    """
+
     def __getattr__(self, name: str) -> ErrorTypes: ...
 
 class RelaxNGErrorTypes(enum.IntEnum):
+    """RelaxNG specific libxml2 error code
+
+    Annotation notes
+    ----------------
+    These integer constants sementically fit int enum better, but
+    in the end they are just integers. No enum properties and mechanics
+    would work on them.
+    """
+
     RELAXNG_OK = ...
     RELAXNG_ERR_MEMORY = ...
     RELAXNG_ERR_TYPE = ...

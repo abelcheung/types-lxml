@@ -57,23 +57,6 @@
     document = etree.XML("<doc></doc>", parser=etree.XMLParser(), base_url="http://example.com/")
     reveal_type(document)  # N: Revealed type is "lxml.etree._Element"
 
-- case: etree_pyerrorlog_object
-  main: |
-    from lxml import etree
-    obj = etree.PyErrorLog()
-    reveal_type(obj)  # NR: Revealed type is "[\w\.]+\.PyErrorLog"
-    reveal_type(obj.level_map)  # N: Revealed type is "builtins.dict[builtins.int, builtins.int]"
-
-- case: etree_error_log_struct
-  main: |
-    from lxml import etree
-    parser: etree.XMLParser
-    s: str
-    document = etree.XML(s, parser=parser)
-    last_err = parser.error_log.last_error
-    reveal_type(last_err.level)  # NR: Revealed type is "[\w\.]+\.ErrorLevels"
-    reveal_type(last_err.filename)  # N: Revealed type is "Union[builtins.str, None]"
-
 - case: qname_create_ok
   parametrized:
     - kwds: tagname

@@ -89,8 +89,11 @@ from ._xmlerror import (
     ErrorTypes as ErrorTypes,
     PyErrorLog as PyErrorLog,
     RelaxNGErrorTypes as RelaxNGErrorTypes,
-    _BaseErrorLog,
-    _ListErrorLog,
+    _BaseErrorLog as _BaseErrorLog,
+    _ErrorLog as _ErrorLog,
+    _ListErrorLog as _ListErrorLog,
+    _LogEntry as _LogEntry,
+    _RotatingErrorLog as _RotatingErrorLog,
     clear_error_log as clear_error_log,
     use_global_python_log as use_global_python_log,
 )

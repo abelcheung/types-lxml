@@ -185,6 +185,6 @@
     dtd: etree.DTD
     schema: etree.XMLSchema
     tree: etree._ElementTree[etree._Element]
-    reveal_type({{ obj }}.error_log)  # N: Revealed type is "lxml.etree._xmlerror._ListErrorLog"
+    reveal_type({{ obj }}.error_log)  # NR: .+ "[\w\.]+\._ListErrorLog"
     _ = {{ obj }}.assertValid(tree)  # E: "assertValid" of "_Validator" does not return a value  [func-returns-value]
     _ = {{ obj }}.assert_(tree.getroot())  # E: "assert_" of "_Validator" does not return a value  [func-returns-value]

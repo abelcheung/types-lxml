@@ -1,0 +1,324 @@
+- case: included_files
+  skip: true
+  files: &INC
+    - path: errorinc.py
+      content: |
+        from lxml.etree import (
+          _LogEntry,
+          _ListErrorLog,
+          _RotatingErrorLog,
+          PyErrorLog,
+        )
+        listlog: _ListErrorLog
+        pylog: PyErrorLog
+        entry: _LogEntry
+        rotlog: _RotatingErrorLog
+  main: null
+
+- case: logentry_properties
+  files: *INC
+  parametrized:
+    - prop: domain
+      rt: ErrorDomains
+      optional: false
+    - prop: type
+      rt: ErrorTypes
+      optional: false
+    - prop: level
+      rt: ErrorLevels
+      optional: false
+    - prop: line
+      rt: int
+      optional: false
+    - prop: column
+      rt: int
+      optional: false
+    - prop: domain_name
+      rt: str
+      optional: false
+    - prop: type_name
+      rt: str
+      optional: false
+    - prop: level_name
+      rt: str
+      optional: false
+    - prop: message
+      rt: str
+      optional: false
+    - prop: filename
+      rt: str
+      optional: true
+    - prop: path
+      rt: str
+      optional: true
+  main: |
+    from errorinc import entry
+    reveal_type(entry.{{prop}})  # NR: Revealed type is "{{#optional}}Union\[{{/optional}}[\w\.]+\.{{rt}}{{#optional}}, None]{{/optional}}"
+
+- case: errorlog_create
+  main: |
+    from lxml.etree import _ErrorLog, _ListErrorLog
+    log1 = _ErrorLog()
+    log2 = _ListErrorLog([], None, None)
+    reveal_type(log1)  # NR: .+ "[\w\.]+\._ListErrorLog"$
+    reveal_type(log2)  # NR: .+ "[\w\.]+\._ListErrorLog"$
+
+- case: listlog_init_goodargs
+  files: *INC
+  parametrized:
+    - args: '[], entry, None'
+    - args: '[entry], None, entry'
+    - args: '[entry, entry], entry, entry'
+  main: |
+    from errorinc import entry, _ListErrorLog
+    log = _ListErrorLog({{args}})
+
+- case: listlog_init_badargs
+  files: *INC
+  parametrized:
+    - args: '[], entry'
+      err_code: 'call-arg'
+    - args: '[entry], entry, None, entry'
+      err_code: 'call-arg'
+    - args: 'entry, entry, entry'
+      err_code: 'arg-type'
+    - args: '(), entry, None'
+      err_code: 'arg-type'
+    - args: '1, None, entry'
+      err_code: 'arg-type'
+    - args: '[entry, 1], None, None'
+      err_code: 'list-item'
+    - args: '[], 1, None'
+      err_code: 'arg-type'
+    - args: '[], None, 1'
+      err_code: 'arg-type'
+  main: |
+    from errorinc import entry, _ListErrorLog
+    _ = _ListErrorLog({{args}})  # ER: .+ \[{{err_code}}]$
+
+- case: listlog_prop
+  files: *INC
+  main: |
+    from errorinc import listlog
+    reveal_type(listlog.last_error)  # NR: .+ "Union\[[\w\.]+\._LogEntry, None]"
+
+- case: listlog_behaves_like_collection
+  files: *INC
+  main: |
+    from errorinc import listlog
+    reveal_type(listlog[0])  # NR: .+ "[\w\.]+\._LogEntry"
+    reveal_type(len(listlog))  # NR: .+ "[\w\.]+\.int"
+    reveal_type(listlog[0] in listlog)  # NR: .+ "[\w\.]+\.bool"
+    for e in listlog:
+      reveal_type(e)  # NR: .+ "[\w\.]+\._LogEntry"
+
+- case: listlog_method_filters_goodargs
+  files: *INC
+  parametrized:
+    - method: filter_domains
+      args: '(domains=1)'
+    - method: filter_domains
+      args: '((1, 2, 3))'
+    - method: filter_types
+      args: '(types=1)'
+    - method: filter_types
+      args: '([1, 2, 3])'
+    - method: filter_levels
+      args: '(levels=1)'
+    - method: filter_levels
+      args: '({1, 2, 3})'
+    - method: filter_from_level
+      args: '(1)'
+    - method: filter_from_fatals
+      args: '()'
+    - method: filter_from_errors
+      args: '()'
+    - method: filter_from_warnings
+      args: '()'
+  main: |
+    from errorinc import listlog
+    result = listlog.{{method}}{{args}}
+    reveal_type(result)  # NR: .+ "[\w\.]+\._ListErrorLog"
+
+- case: listlog_method_filters_badargs
+  files: *INC
+  parametrized:
+    - method: filter_domains
+      args: '(None)'
+      err_code: 'arg-type'
+    - method: filter_types
+      args: '(None)'
+      err_code: 'arg-type'
+    - method: filter_levels
+      args: '(None)'
+      err_code: 'arg-type'
+    - method: filter_from_level
+      args: '(None)'
+      err_code: 'arg-type'
+    - method: filter_domains
+      args: '(1, 2)'
+      err_code: 'call-arg'
+    - method: filter_types
+      args: '(1, 2)'
+      err_code: 'call-arg'
+    - method: filter_levels
+      args: '(1, 2)'
+      err_code: 'call-arg'
+    - method: filter_from_level
+      args: '(1, 2)'
+      err_code: 'call-arg'
+    - method: filter_domains
+      args: '()'
+      err_code: 'call-arg'
+    - method: filter_types
+      args: '()'
+      err_code: 'call-arg'
+    - method: filter_levels
+      args: '()'
+      err_code: 'call-arg'
+    - method: filter_from_level
+      args: '()'
+      err_code: 'call-arg'
+    - method: filter_domains
+      args: '(badarg=1)'
+      err_code: 'call-arg'
+    - method: filter_types
+      args: '(badarg=1)'
+      err_code: 'call-arg'
+    - method: filter_levels
+      args: '(badarg=1)'
+      err_code: 'call-arg'
+    - method: filter_from_level
+      args: '(badarg=1)'
+      err_code: 'call-arg'
+    - method: filter_from_fatals
+      args: '(None)'
+      err_code: 'call-arg'
+    - method: filter_from_errors
+      args: '(None)'
+      err_code: 'call-arg'
+    - method: filter_from_warnings
+      args: '(None)'
+      err_code: 'call-arg'
+    - method: filter_from_fatals
+      args: '(badarg=1)'
+      err_code: 'call-arg'
+    - method: filter_from_errors
+      args: '(badarg=1)'
+      err_code: 'call-arg'
+    - method: filter_from_warnings
+      args: '(badarg=1)'
+      err_code: 'call-arg'
+  main: |
+    from errorinc import listlog, entry
+    listlog.{{method}}{{args}}  # ER: .+ \[{{err_code}}]$
+
+- case: listlog_method_others_goodargs
+  files: *INC
+  parametrized:
+    - method: receive
+      args: '(log_entry=entry)'
+      rt: false
+    - method: clear
+      args: '()'
+      rt: false
+    - method: copy
+      args: '()'
+      rt: '_ListErrorLog'
+  main: |
+    from errorinc import listlog, entry
+    {{#rt}}result = {{/rt}}listlog.{{method}}{{args}}
+    {{#rt}}reveal_type(result)  # NR: .+ "[\w\.]+\.{{rt}}"${{/rt}}
+
+- case: listlog_method_others_badargs
+  files: *INC
+  parametrized:
+    - method: receive
+      args: '()'
+      err_code: 'call-arg'
+    - method: receive
+      args: '(1)'
+      err_code: 'arg-type'
+    - method: receive
+      args: '(badarg=entry)'
+      err_code: 'call-arg'
+    - method: receive
+      args: '(entry, None)'
+      err_code: 'call-arg'
+    - method: clear
+      args: '(None)'
+      err_code: 'call-arg'
+    - method: copy
+      args: '(entry)'
+      err_code: 'call-arg'
+  main: |
+    from errorinc import listlog, entry
+    listlog.{{method}}{{args}}  # ER: .+ \[{{err_code}}]$
+
+- case: rotatinglog_init
+  main: |
+    from lxml.etree import _RotatingErrorLog
+    log = _RotatingErrorLog(30)
+    reveal_type(log)  # NR: .+ "[\w\.]+\._RotatingErrorLog"$
+    _ = _RotatingErrorLog()  # ER: .+ \[call-arg]$
+    _ = _RotatingErrorLog(None)  # ER: .+ \[arg-type]$
+    _ = _RotatingErrorLog(30, None)  # ER: .+ \[call-arg]$
+
+- case: rotatinglog_behaves_like_listlog
+  files: *INC
+  main: |
+    from errorinc import rotlog, entry
+    reveal_type(rotlog[0])  # NR: .+ "[\w\.]+\._LogEntry"
+    reveal_type(len(rotlog))  # NR: .+ "[\w\.]+\.int"
+    reveal_type(rotlog[0] in rotlog)  # NR: .+ "[\w\.]+\.bool"
+    for e in rotlog:
+      reveal_type(e)  # NR: .+ "[\w\.]+\._LogEntry"
+    reveal_type(rotlog.filter_domains([1,2]))  # NR: .+ "[\w\.]+\._ListErrorLog"$
+    reveal_type(rotlog.filter_from_level(1))  # NR: .+ "[\w\.]+\._ListErrorLog"$
+    rotlog.clear()
+    rotlog.copy()
+    rotlog.receive(entry)
+
+- case: pylog_init
+  main: |
+    from logging import Logger
+    from lxml.etree import PyErrorLog
+    s: str
+    logger: Logger
+    _ = PyErrorLog()
+    _ = PyErrorLog(logger_name=s)
+    _ = PyErrorLog(s, logger=logger)
+    _ = PyErrorLog(None)
+    _ = PyErrorLog(logger_name=1)  # ER: .+ \[arg-type]$
+    _ = PyErrorLog(None, 'logger')  # ER: .+ \[arg-type]$
+    _ = PyErrorLog(None, logger, None)  # ER: .+ \[call-arg]$
+
+- case: pylog_props_and_methods
+  files: *INC
+  main: |
+    from errorinc import pylog, entry
+    s: str
+    reveal_type(pylog.level_map)  # NR: .+ "[\w\.]+\[[\w\.]+\.ErrorLevels, [\w\.]+\.int]"$
+    reveal_type(pylog.last_error)  # NR: .+ "Union\[[\w\.]+\._LogEntry, None]"
+    pylog.receive(entry)
+    pylog.log(entry, s)
+
+- case: module_funcs
+  files: *INC
+  main: |
+    from lxml.etree import clear_error_log, use_global_python_log
+    from errorinc import pylog
+    clear_error_log()
+    clear_error_log(None)  # ER: .+ \[call-arg]$
+    use_global_python_log(pylog)
+    use_global_python_log()  #  ER: .+ \[call-arg]$
+
+- case: enum_members_are_int
+  main: |
+    from lxml.etree import ErrorLevels, ErrorDomains
+    level = 0 + ErrorLevels.ERROR
+    reveal_type(level)  # NR: .+ "[\w\.]+\.int"$
+    domain = ErrorDomains.XPATH // 2
+    reveal_type(domain)  # NR: .+ "[\w\.]+\.int"$
+    compare = (ErrorLevels.FATAL > ErrorLevels.WARNING)
+    reveal_type(compare)  # NR: .+ "[\w\.]+\.bool"$
