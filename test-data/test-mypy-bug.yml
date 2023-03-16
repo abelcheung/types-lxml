@@ -1,0 +1,49 @@
+#
+# All tests here check for either bug or inhuman behavior of mypy
+# If they go wrong, there is happy problem to fix
+#
+
+# mypy has a serious problem inferring mapping type;
+# it tries to find common denominator of different types,
+# instead of using unions. The result is often overbroad,
+# like inferring Sequence[object] when we want "str | bytes".
+# pyright is doing the correct thing in this area.
+# original test: test-etree-element.yml::makeelement_goodargs
+- case: overzealous_inferred_type
+  expect_fail: true
+  main: |
+    from lxml import etree
+    elem: etree._Element
+    s: str
+    b: bytes
+    crazy_nsmap = {None: s, s: b}
+    elem.makeelement(s, nsmap=crazy_nsmap)
+
+# Now is the 6th anniversary of issue python/mypy#3004
+# Earlier mypy blatantly emits error directly when checking
+# stub for read/write property, when their type don't match.
+# Now they pretend to not show error in stub, but becomes
+# fatal in checking python code.
+
+# original test: test-etree.yml::docinfo_properties_write
+- case: mypy_3004_docinfo
+  expect_fail: true
+  main: |
+    from lxml.etree import DocInfo
+    d: DocInfo
+    b: bytes
+    d.public_id = b
+    d.system_url = b
+    d.URL = b
+
+# original test: test-etree-element.yml::rw_properties
+- case: mypy_3004_element_prop
+  expect_fail: true
+  main: |
+    from lxml.etree import _Element
+    el: _Element
+    b: bytes
+    el.base = b
+    el.tag = b
+    el.text = b
+    el.tail = b
