@@ -10,7 +10,6 @@ from typing import (
     Mapping,
     Protocol,
     TypeVar,
-    Union,
 )
 from typing_extensions import TypeAlias
 
@@ -146,11 +145,10 @@ else:
 _ElemFactory: TypeAlias = Callable[..., _ET]
 
 # Note that _TagSelector filters element type not by classes,
-# but checks for exact element *factory functions* instead;
-# that is Element(), Comment(), ProcessingInstruction() and
-# Entity(). Python typing system doesn't support such outlandish
-# usage. We use a generic callable instead.
-_TagSelector: TypeAlias = Union[_TagName, _ElemFactory[_Element]]
+# but checks for exact element *factory functions* instead
+# (etree.Element() and friends). Python typing system doesn't
+# support such outlandish usage. Use a generic callable instead.
+_TagSelector: TypeAlias = _TagName | _ElemFactory[_Element]
 
 _ElementOrTree: TypeAlias = _Element | _ElementTree[_Element]
 

@@ -144,7 +144,7 @@ class XMLPullParser(_PullParserMixin, XMLParser[_ET_co]):
         cls,
         events: Iterable[str] | None = ...,
         *,
-        tag: _TagSelector = ...,
+        tag: _TagSelector | Iterable[_TagSelector] | None = ...,
         base_url: _AnyStr | None = ...,
         # All arguments from XMLParser
         encoding: _AnyStr | None = ...,
@@ -216,7 +216,7 @@ class HTMLPullParser(_PullParserMixin, HTMLParser[_ET_co]):
         cls,
         events: Iterable[str] | None = ...,
         *,
-        tag: _TagSelector = ...,
+        tag: _TagSelector | Iterable[_TagSelector] | None = ...,
         base_url: _AnyStr | None = ...,
         # All arguments from HTMLParser
         encoding: _AnyStr | None = ...,
