@@ -71,9 +71,28 @@ class CustomElementClassLookup(FallbackElementClassLookup, metaclass=ABCMeta):
         name: str | None,
     ) -> type[_Element] | None: ...
 
+def set_element_class_lookup(lookup: ElementClassLookup | None = ...) -> None:
+    """Set the global element class lookup method
+
+    Original Docstring
+    ------------------
+    This defines the main entry point for looking up element implementations.
+    The standard implementation uses the :class:`ParserBasedElementClassLookup`
+    to delegate to different lookup schemes for each parser.
+
+    This should only be changed by applications, not by library packages.
+    In most cases, parser specific lookups should be preferred,
+    which can be configured via
+    :meth:`lxml.etree.XMLParser.set_element_class_lookup`
+    (and the same for HTML parsers).
+
+    Globally replacing the element class lookup by something other than a
+    :class:`ParserBasedElementClassLookup` will prevent parser specific lookup
+    schemes from working. Several tools rely on parser specific lookups,
+    including :mod:`lxml.html` and :mod:`lxml.objectify`.
+    """
 ## TODO?
 # ElementDefaultClassLookup
 # AttributeBasedElementClassLookup
 # ParserBasedElementClassLookup
 # PythonElementClassLookup
-# def set_element_class_lookup()

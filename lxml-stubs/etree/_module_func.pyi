@@ -1,7 +1,8 @@
-from typing import Any, Iterable, Literal, overload
+from typing import Any, Iterable, Literal, final, overload
 from typing_extensions import TypeGuard
 
 from .._types import (
+    _ET,
     _AnyStr,
     _ElementOrTree,
     _ET_co,
@@ -102,11 +103,10 @@ def tostring(
     standalone: bool | None = ...,
     doctype: str | None = ...,
 ) -> bytes: ...
-
-# Under XML Canonicalization (C14N) mode, most arguments are ignored,
-# some arguments would even raise exception outright if specified.
 @overload  # method="c14n"
 def tostring(
+    # Under XML Canonicalization (C14N) mode, most arguments are ignored,
+    # some arguments would even raise exception outright if specified.
     element_or_tree: _ElementOrTree,
     *,
     method: Literal["c14n"],
@@ -160,7 +160,116 @@ def tounicode(
 ) -> None: ...
 def iselement(element: object) -> TypeGuard[_Element]: ...
 
+# XXX PyCapsule needs annotation of ctypes.pythonapi, which has no
+# annotation support currently. Use generic object for now.
+@overload
+def adopt_external_document(
+    capsule: object,
+    parser: _DefEtreeParsers[_ET],
+) -> _ElementTree[_ET]: ...
+@overload
+def adopt_external_document(
+    capsule: object,
+    parser: None = ...,
+) -> _ElementTree[_Element]:
+    """
+    Original Docstring
+    ------------------
+    Unpack a libxml2 document pointer from a PyCapsule and wrap it in an
+    lxml ElementTree object.
+
+    This allows external libraries to build XML/HTML trees using libxml2
+    and then pass them efficiently into lxml for further processing.
+
+    If a ``parser`` is provided, it will be used for configuring the
+    lxml document.  No parsing will be done.
+
+    The capsule must have the name ``"libxml2:xmlDoc"`` and its pointer
+    value must reference a correct libxml2 document of type ``xmlDoc*``.
+    The creator of the capsule must take care to correctly clean up the
+    document using an appropriate capsule destructor.  By default, the
+    libxml2 document will be copied to let lxml safely own the memory
+    of the internal tree that it uses.
+
+    If the capsule context is non-NULL, it must point to a C string that
+    can be compared using ``strcmp()``.  If the context string equals
+    ``"destructor:xmlFreeDoc"``, the libxml2 document will not be copied
+    but the capsule invalidated instead by clearing its destructor and
+    name.  That way, lxml takes ownership of the libxml2 document in memory
+    without creating a copy first, and the capsule destructor will not be
+    called.  The document will then eventually be cleaned up by lxml using
+    the libxml2 API function ``xmlFreeDoc()`` once it is no longer used.
+
+    If no copy is made, later modifications of the tree outside of lxml
+    should not be attempted after transferring the ownership.
+    """
+def register_namespace(prefix: _AnyStr, uri: _AnyStr) -> None:
+    """Registers a namespace prefix that newly created Elements in that
+    namespace will use.  The registry is global, and any existing
+    mapping for either the given prefix or the namespace URI will be
+    removed."""
+
 # Debugging only
 def dump(
     elem: _Element, *, pretty_print: bool = ..., with_tail: bool = ...
-) -> None: ...
+) -> None:
+    """Writes an element tree or element structure to sys.stdout.
+    This function should be used for debugging only."""
+@final
+class _MemDebug:
+    """Debugging support for the memory allocation in libxml2"""
+    def bytes_used(self) -> int:
+        """
+        Returns
+        -------
+        int
+            The total amount of memory (in bytes) currently used by libxml2.
+            Note that libxml2 constrains this value to a C int, which limits
+            the accuracy on 64 bit systems.
+        """
+    def blocks_used(self) -> int:
+        """
+        Returns
+        -------
+        int
+            The total number of memory blocks currently allocated by libxml2.
+            Note that libxml2 constrains this value to a C int, which limits
+            the accuracy on 64 bit systems.
+        """
+    def dict_size(self) -> int:
+        """
+        Returns
+        -------
+        int
+            The current size of the global name dictionary used by libxml2
+            for the current thread.  Each thread has its own dictionary.
+        """
+    def dump(
+        self, output_file: _AnyStr | None = ..., byte_count: int | None = ...
+    ) -> None:
+        """Dumps the current memory blocks allocated by libxml2 to a file
+
+        Parameters
+        ----------
+        output_file : str or bytes, optional
+            Output file path, default is ".memorylist" under current directory
+        byte_count : int, optional
+            Limits number of bytes in the dump, default is None (unlimited)
+        """
+    def show(
+        self, output_file: _AnyStr | None = ..., block_count: int | None = ...
+    ) -> None:
+        """Dumps the current memory blocks allocated by libxml2 to a file
+        The output file format is suitable for line diffing.
+
+        Parameters
+        ----------
+        output_file : str or bytes, optional
+            Output file path, default is ".memorydump" under current directory
+        block_count : int, optional
+            Limits number of blocks in the dump, default is None (unlimited)
+        """
+
+memory_debugger: _MemDebug
+"""Debugging support for the memory allocation in libxml2"""
+
