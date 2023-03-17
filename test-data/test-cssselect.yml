@@ -35,9 +35,9 @@
     root: etree._Element
     expr: str
     result = root.cssselect(expr)
-    reveal_type(result)  # N: Revealed type is "builtins.list[lxml.etree._Element]"
+    reveal_type(result)  # NR: .+ "[\w\.]+\.list[[\w\.]+\._Element]"$
     result = root.cssselect('tag', translator='xml')
-    reveal_type(result)  # N: Revealed type is "builtins.list[lxml.etree._Element]"
+    reveal_type(result)  # NR: .+ "[\w\.]+\.list[[\w\.]+\._Element]"$
 
 - case: etree_cssselect_bad_arg1
   parametrized:

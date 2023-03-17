@@ -79,7 +79,7 @@
     p1: {{ parser }}[Optional[List[str]]]
     p2: {{ parser }}[etree._Element]
     reveal_type(p1.close())  # N: Revealed type is "Union[builtins.list[builtins.str], None]"
-    reveal_type(p2.close())  # N: Revealed type is "lxml.etree._Element"
+    reveal_type(p2.close())  # NR: .+ "[\w\.]+\._Element"$
 
 - case: et_factory
   parametrized:

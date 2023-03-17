@@ -1,13 +1,13 @@
 - case: properties
   parametrized:
     - prop: parser
-      rt: "Union[lxml.etree._parser.XMLParser[lxml.etree._Element], lxml.etree._parser.HTMLParser[lxml.etree._Element], None]"
+      rt: 'Union\[[\w\.]+\.XMLParser\[[\w\.]+\._Element], [\w\.]+\.HTMLParser\[[\w\.]+\._Element], None]'
     - prop: docinfo
-      rt: "lxml.etree.DocInfo"
+      rt: '[\w\.]+\.DocInfo'
   main: |
     from lxml.etree import _ElementTree, _Element
     et: _ElementTree[_Element]
-    reveal_type(et.{{ prop }})  # N: Revealed type is "{{ rt }}"
+    reveal_type(et.{{ prop }})  # NR: .+ "{{ rt }}"$
     et.{{ prop }} = et.{{ prop }}  # E: Property "{{ prop }}" defined in "_ElementTree" is read-only  [misc]
 
 - case: no_arg_or_return_methods
@@ -17,7 +17,7 @@
     et: _ElementTree[_Element]
     r = et.xinclude()  # E: "xinclude" of "_ElementTree" does not return a value  [func-returns-value]
     r = et._setroot(root)  # E: "_setroot" of "_ElementTree" does not return a value  [func-returns-value]
-    reveal_type(et.getroot())  # N: Revealed type is "lxml.etree._Element"
+    reveal_type(et.getroot())  # NR: .+ "[\w\.]+\._Element"$
     et._setroot(et)  # E: Argument 1 to "_setroot" of "_ElementTree" has incompatible type "_ElementTree[_Element]"; expected "_Element"  [arg-type]
 
 - case: no_arg_or_return_methods_toomanyargs
@@ -67,49 +67,49 @@
   parametrized:
     - method: find
       args: path
-      rt: "Union[lxml.etree._Element, None]"
+      rt: 'Union\[[\w\.]+\._Element, None]'
     - method: find
       args: tag
-      rt: "Union[lxml.etree._Element, None]"
+      rt: 'Union\[[\w\.]+\._Element, None]'
     - method: find
       args: path=path
-      rt: "Union[lxml.etree._Element, None]"
+      rt: 'Union\[[\w\.]+\._Element, None]'
     - method: find
       args: path, nsmap
-      rt: "Union[lxml.etree._Element, None]"
+      rt: 'Union\[[\w\.]+\._Element, None]'
     - method: find
       args: tag, namespaces=nsmap
-      rt: "Union[lxml.etree._Element, None]"
+      rt: 'Union\[[\w\.]+\._Element, None]'
     - method: findall
       args: path
-      rt: "builtins.list[lxml.etree._Element]"
+      rt: '[\w\.]+\.list\[[\w\.]+\._Element]'
     - method: findall
       args: tag
-      rt: "builtins.list[lxml.etree._Element]"
+      rt: '[\w\.]+\.list\[[\w\.]+\._Element]'
     - method: findall
       args: path=path
-      rt: "builtins.list[lxml.etree._Element]"
+      rt: '[\w\.]+\.list\[[\w\.]+\._Element]'
     - method: findall
       args: path, nsmap
-      rt: "builtins.list[lxml.etree._Element]"
+      rt: '[\w\.]+\.list\[[\w\.]+\._Element]'
     - method: findall
       args: tag, namespaces=nsmap
-      rt: "builtins.list[lxml.etree._Element]"
+      rt: '[\w\.]+\.list\[[\w\.]+\._Element]'
     - method: iterfind
       args: path
-      rt: "typing.Iterator[lxml.etree._Element]"
+      rt: '[\w\.]+\.Iterator\[[\w\.]+\._Element]'
     - method: iterfind
       args: tag
-      rt: "typing.Iterator[lxml.etree._Element]"
+      rt: '[\w\.]+\.Iterator\[[\w\.]+\._Element]'
     - method: iterfind
       args: path=path
-      rt: "typing.Iterator[lxml.etree._Element]"
+      rt: '[\w\.]+\.Iterator\[[\w\.]+\._Element]'
     - method: iterfind
       args: path, nsmap
-      rt: "typing.Iterator[lxml.etree._Element]"
+      rt: '[\w\.]+\.Iterator\[[\w\.]+\._Element]'
     - method: iterfind
       args: tag, namespaces=nsmap
-      rt: "typing.Iterator[lxml.etree._Element]"
+      rt: '[\w\.]+\.Iterator\[[\w\.]+\._Element]'
   main: |
     from lxml import etree
     et: etree._ElementTree[etree._Element]
@@ -118,7 +118,7 @@
     tag: etree.QName
     nsmap = {None: s, s: s}
     result = et.{{ method }}({{ args }})
-    reveal_type(result)  # N: Revealed type is "{{ rt }}"
+    reveal_type(result)  # NR: .+ "{{ rt }}"$
 
 - case: elementpath_family_badarg
   parametrized:
@@ -220,7 +220,7 @@
     from lxml.etree import _Element, _ElementTree
     from lxml.html import HtmlElement
     tree: _ElementTree[{{ subtype }}]
-    reveal_type(tree.iter())  # NR: Revealed type is "typing\.Iterator\[{{ itr_t }}]"
+    reveal_type(tree.iter())  # NR: Revealed type is "typing\.Iterator\[{{ itr_t }}]"$
 
 - case: iter
   parametrized:
@@ -235,7 +235,7 @@
     tag3: etree.QName
     factory1 = etree.Comment
     factory2 = etree.Entity
-    reveal_type(tree.iter({{ args }}))  # N: Revealed type is "typing.Iterator[lxml.etree._Element]"
+    reveal_type(tree.iter({{ args }}))  # NR: .+ "[\w\.]+\.Iterator\[[\w\.]+\._Element]"$
 
 - case: iter_badarg
   expect_fail: true

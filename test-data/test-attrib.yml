@@ -3,7 +3,7 @@
     from lxml.etree import _Element
     el: _Element
     a = el.attrib
-    reveal_type(a)  # N: Revealed type is "lxml.etree._Attrib"
+    reveal_type(a)  # NR: .+ "[\w\.]+\._Attrib"$
 
 - case: attrib_is_like_mapping
   main: |

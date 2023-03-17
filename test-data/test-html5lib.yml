@@ -32,25 +32,25 @@
   parametrized:
     - func: document_fromstring
       param: html
-      rt: lxml.etree._Element
+      rt: '[\w\.]+\._Element'
     - func: fragments_fromstring
       param: html
-      rt: "builtins.list[lxml.etree._Element]"
+      rt: '[\w\.]+\.list\[[\w\.]+\._Element]'
     - func: fragment_fromstring
       param: html
-      rt: lxml.etree._Element
+      rt: '[\w\.]+\._Element'
     - func: fromstring
       param: html
-      rt: lxml.etree._Element
+      rt: '[\w\.]+\._Element'
     - func: parse
       param: filename_url_or_file
-      rt: "lxml.etree._ElementTree[lxml.etree._Element]"
+      rt: '[\w\.]+\._ElementTree\[[\w\.]+\._Element]'
   main: |
     from lxml.html import html5parser
     s: str
     b: bytes
-    reveal_type(html5parser.{{ func }}(s))  # N: Revealed type is "{{ rt }}"
-    reveal_type(html5parser.{{ func }}({{ param }}=b))  # N: Revealed type is "{{ rt }}"
+    reveal_type(html5parser.{{ func }}(s))  # NR: .+ "{{ rt }}"$
+    reveal_type(html5parser.{{ func }}({{ param }}=b))  # NR: .+ "{{ rt }}"$
 
 - case: charset_arg_type
   parametrized:

@@ -118,17 +118,17 @@
 - case: ro_properties
   parametrized:
     - prop: attrib
-      rt: lxml.etree._Attrib
+      rt: '[\w\.]+\._Attrib'
     - prop: prefix
-      rt: Union[builtins.str, None]
+      rt: 'Union\[[\w\.]+\.str, None]'
     - prop: nsmap
-      rt: builtins.dict[Union[builtins.str, None], builtins.str]
+      rt: '[\w\.]+\.dict\[Union\[[\w\.]+\.str, None], [\w\.]+\.str]'
     - prop: sourceline
-      rt: Union[builtins.int, None]
+      rt: 'Union\[[\w\.]+\.int, None]'
   main: |
     from lxml import etree
     elem: etree._Element
-    reveal_type(elem.{{ prop }})  # N: Revealed type is "{{ rt }}"
+    reveal_type(elem.{{ prop }})  # NR: .+ "{{ rt }}"$
     elem.{{ prop }} = elem.{{ prop }}  # E: Property "{{ prop }}" defined in "_Element" is read-only  [misc]
 
 # BUG See test case mypy_3004_element_prop

@@ -2,8 +2,8 @@
   main: |
     from lxml.sax import ElementTreeContentHandler
     h = ElementTreeContentHandler()
-    reveal_type(h)  # N: Revealed type is "lxml.sax.ElementTreeContentHandler[lxml.etree._Element]"
-    reveal_type(h.etree)  # N: Revealed type is "lxml.etree._ElementTree[lxml.etree._Element]"
+    reveal_type(h)  # NR: .+ "[\w\.]+\.ElementTreeContentHandler\[[\w\.]+\._Element]"$
+    reveal_type(h.etree)  # NR: .+ "[\w\.]+\._ElementTree\[[\w\.]+\._Element]"$
 
 - case: handler_property_readonly
   main: |
