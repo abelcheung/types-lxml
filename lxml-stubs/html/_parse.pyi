@@ -162,5 +162,5 @@ class HtmlElementClassLookup(etree.CustomElementClassLookup):
         node_type: _ElemClsLookupArg | None,
         document: Unused,
         namespace: Unused,
-        name: str | None,
+        name: str,  # type: ignore[override]
     ) -> type[HtmlElement] | None: ...
