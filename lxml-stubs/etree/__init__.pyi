@@ -95,6 +95,7 @@ from ._serializer import (
     htmlfile as htmlfile,
     xmlfile as xmlfile,
 )
+from ._xinclude import XInclude as XInclude, XIncludeError as XIncludeError
 from ._xmlerror import (
     ErrorDomains as ErrorDomains,
     ErrorLevels as ErrorLevels,

@@ -1,0 +1,22 @@
+- case: init
+  main: |
+    from lxml.etree import XInclude
+    result = XInclude()
+    reveal_type(result)  # NR: .+ "[\w\.]+\.XInclude"$
+    _ = XInclude(None)  # ER: Too many arguments.*  \[call-arg]$
+
+- case: property
+  main: |
+    from lxml.etree import XInclude
+    xinc: XInclude
+    reveal_type(xinc.error_log)  # NR: .+ "[\w\.]+\._ListErrorLog"$
+
+- case: call
+  main: |
+    from lxml.etree import XInclude, _Element, _ElementTree
+    xinc: XInclude
+    el: _Element
+    tree: _ElementTree[_Element]
+    xinc(el)
+    xinc(tree)  # ER: Argument 1 .+; expected "_Element"  \[arg-type]$
+    _ = xinc(el)  # E: Function does not return a value  [func-returns-value]
