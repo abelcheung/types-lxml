@@ -6,7 +6,7 @@ from abc import ABCMeta, abstractmethod
 from typing import final
 
 from .._types import SupportsLaxedItems, _AnyStr, _ElemClsLookupArg, _NSMapArg
-from . import _Comment, _Element, _Entity, _ProcessingInstruction
+from ._element import _Comment, _Element, _Entity, _ProcessingInstruction
 
 #
 # Public element classes

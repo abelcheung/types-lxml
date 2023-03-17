@@ -1,14 +1,8 @@
 from typing import Generic, overload
 from xml.sax.handler import ContentHandler
 
-from .etree import (
-    LxmlError,
-    _Element,
-    _ElementOrTree,
-    _ElementTree,
-    _ElemFactory,
-    _ET_co,
-)
+from ._types import _ElementOrTree, _ElemFactory, _ET_co
+from .etree import LxmlError, _Element, _ElementTree
 
 class SaxError(LxmlError): ...
 

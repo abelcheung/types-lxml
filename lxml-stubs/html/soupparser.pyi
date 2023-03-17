@@ -3,8 +3,8 @@ from typing import Any
 
 from bs4 import BeautifulSoup
 
-from .._types import _AnyStr
-from ..etree import _ElementTree, _ElemFactory
+from .._types import _AnyStr, _ElemFactory
+from ..etree import _ElementTree
 from . import HtmlElement
 
 def fromstring(

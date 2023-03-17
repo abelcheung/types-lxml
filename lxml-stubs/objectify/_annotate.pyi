@@ -4,8 +4,7 @@
 
 from typing import Any, Callable, Iterable
 
-from .. import etree
-from .._types import _AnyStr
+from .._types import _AnyStr, _ElementOrTree
 from ._element import ObjectifiedDataElement
 
 class PyType:
@@ -96,7 +95,7 @@ def getRegisteredTypes() -> list[PyType]:
     """
 
 def pyannotate(
-    element_or_tree: etree._ElementOrTree,
+    element_or_tree: _ElementOrTree,
     *,
     ignore_old: bool = ...,
     ignore_xsi: bool = ...,
@@ -122,7 +121,7 @@ def pyannotate(
     """
 
 def xsiannotate(
-    element_or_tree: etree._ElementOrTree,
+    element_or_tree: _ElementOrTree,
     *,
     ignore_old: bool = ...,
     ignore_pytype: bool = ...,
@@ -154,7 +153,7 @@ def xsiannotate(
     """
 
 def annotate(
-    element_or_tree: etree._ElementOrTree,
+    element_or_tree: _ElementOrTree,
     *,
     ignore_old: bool = ...,
     ignore_xsi: bool = ...,
@@ -203,7 +202,7 @@ def annotate(
     """
 
 def deannotate(
-    element_or_tree: etree._ElementOrTree,
+    element_or_tree: _ElementOrTree,
     *,
     pytype: bool = ...,
     xsi: bool = ...,

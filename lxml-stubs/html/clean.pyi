@@ -1,8 +1,8 @@
 from typing import Iterable, Pattern, Union, overload
 from typing_extensions import TypeAlias
 
-from .._types import Unused
-from ..etree import _Element, _ElemFactory
+from .._types import Unused, _ElemFactory
+from ..etree import _Element
 from . import HtmlElement
 from ._funcs import _HtmlDoc_T, _HtmlElemOrTree
 

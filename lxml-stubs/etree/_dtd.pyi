@@ -1,7 +1,7 @@
 from typing import Iterator, Literal, final, overload
 
-from .._types import _FileReadSource
-from . import LxmlError, _ElementOrTree, _Validator
+from .._types import _ElementOrTree, _FileReadSource
+from ._module_misc import LxmlError, _Validator
 
 class DTDError(LxmlError): ...
 class DTDParseError(DTDError): ...

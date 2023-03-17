@@ -1,8 +1,9 @@
 from typing import Any, ClassVar, final
 from typing_extensions import TypedDict
 
-from .._types import _AnyStr
-from . import LxmlError, _Element, _ElementOrTree, _ElementTree
+from .._types import _AnyStr, _ElementOrTree
+from ._element import _Element, _ElementTree
+from ._module_misc import LxmlError
 from ._serializer import SerialisationError
 from ._xmlerror import _ListErrorLog
 

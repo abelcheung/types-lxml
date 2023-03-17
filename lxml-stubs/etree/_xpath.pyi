@@ -7,16 +7,18 @@ from abc import abstractmethod
 from typing import Any, Callable, Generic, Mapping, Protocol, final, overload
 
 from .._types import (
+    _ET,
     _AnyStr,
+    _ElementOrTree,
     _NonDefaultNSMapArg,
     _XPathExtFuncArg,
     _XPathObject,
     _XPathVarArg,
     deprecated,
 )
-from . import _ET, LxmlError, LxmlSyntaxError, _Element, _ElementOrTree, _ElementTree
+from ._element import _Element, _ElementTree
+from ._module_misc import LxmlError, LxmlSyntaxError
 from ._xmlerror import _ListErrorLog
-
 
 class XPathError(LxmlError):
     """Base class of all XPath errors"""
@@ -114,7 +116,6 @@ def XPathEvaluator(
     regexp: bool = ...,
     smart_strings: bool = ...,
 ) -> XPathDocumentEvaluator: ...
-
 @final
 class _ElementUnicodeResult(str, Generic[_ET]):
     """Smart string is a private str subclass documented in

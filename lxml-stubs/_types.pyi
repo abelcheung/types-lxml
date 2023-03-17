@@ -1,9 +1,20 @@
 from _typeshed import _T, SupportsRead, SupportsWrite, _KT_co, _T_co, _VT_co
 from os import PathLike
-from typing import IO, Any, Callable, Collection, Iterable, Literal, Mapping, Protocol
+from typing import (
+    IO,
+    Any,
+    Callable,
+    Collection,
+    Iterable,
+    Literal,
+    Mapping,
+    Protocol,
+    TypeVar,
+    Union,
+)
 from typing_extensions import TypeAlias
 
-from .etree import QName, _Element
+from .etree import QName, _Element, _ElementTree
 
 # Dup but deviate from recent _typeshed
 Unused: TypeAlias = Any
@@ -64,23 +75,38 @@ _XPathExtFuncArg = (
 # However the type is too versatile to be of any use in further processing,
 # so users are encouraged to do type narrowing by themselves.
 _XPathObject = Any
+
 # XPath variable supports most of the XPathObject types
 # as _input_ argument value, but most users would probably
 # only use primivite types for substitution.
 # fmt: off
 _XPathVarArg = (
-    bool |
-    int |
-    float |
-    str |
-    bytes |
-    _Element |
-    list[_Element]
+    bool
+    | int
+    | float
+    | str
+    | bytes
+    | _Element
+    | list[_Element]
 )
 # fmt: on
 
 # https://lxml.de/element_classes.html#custom-element-class-lookup
 _ElemClsLookupArg = Literal["element", "comment", "PI", "entity"]
+
+# For tostring() encoding. In theory it should be any encoding name
+# except "unicode", but is not representable in current typing system.
+# Settle for commonly encodings explicitly checked by lxml.
+_KnownEncodings = Literal[
+    "ASCII",
+    "ascii",
+    "UTF-8",
+    "utf-8",
+    "UTF8",
+    "utf8",
+    "US-ASCII",
+    "us-ascii",
+]
 
 # serializer.pxi _findOutputMethod()
 _OutputMethodArg = Literal[
@@ -92,9 +118,41 @@ _OutputMethodArg = Literal[
     "XML",
 ]
 
-# lxml contains many private classes implementing custom accessors
-# and mixins that almost behave like common python types.
-# It is better for function arguments to accept protocols instead.
+# It is unknown if mypy will ever implemenet PEP 696; therefore,
+# pyright will enjoy shorthand while mypy doesn't,
+# while more specialization of classes are to be implemeneted,
+# such as _Attrib -> _Attrib[_Element]
+#
+# XXX Here is the trick:
+# 1. mypy claims it doesn't understand MYPY variable, but actually
+#    it does, and skips over to else block
+# 2. pyright truly does not understand MYPY variable. Under default
+#    behavior, it sort of merges definition of both blocks. With
+#    compatible enough definition, it doesn't modify the desired result.
+# 3. Replace MYPY with any name, and mypy will break.
+#
+# While pyright supports defining constants in config, it is not
+# reasonable to ask all pyright users to modify their own config.
+#
+if not MYPY:  # type: ignore
+    _ET = TypeVar("_ET", bound=_Element, default=_Element)
+    _ET_co = TypeVar("_ET_co", bound=_Element, default=_Element, covariant=True)
+else:
+    _ET = TypeVar("_ET", bound=_Element)  # pyright: ignore[reportConstantRedefinition]
+    _ET_co = TypeVar("_ET_co", bound=_Element, covariant=True)
+
+# Generic element factory function type. Because arguments are
+# mostly optional, accurate typing can't be done.
+_ElemFactory: TypeAlias = Callable[..., _ET]
+
+# Note that _TagSelector filters element type not by classes,
+# but checks for exact element *factory functions* instead;
+# that is Element(), Comment(), ProcessingInstruction() and
+# Entity(). Python typing system doesn't support such outlandish
+# usage. We use a generic callable instead.
+_TagSelector: TypeAlias = Union[_TagName, _ElemFactory[_Element]]
+
+_ElementOrTree: TypeAlias = _Element | _ElementTree[_Element]
 
 class SupportsLaxedItems(Protocol[_KT_co, _VT_co]):
     """Relaxed form of SupportsItems

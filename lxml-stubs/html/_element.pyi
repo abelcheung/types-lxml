@@ -11,6 +11,7 @@ from .._types import (
     _ElemPathArg,
     _NSMapArg,
     _TagName,
+    _TagSelector,
 )
 from ..cssselect import _CSSTransArg
 from ._form import FormElement, LabelElement
@@ -136,30 +137,30 @@ class HtmlElement(etree.ElementBase):
     def getprevious(self) -> HtmlElement | None: ...
     def itersiblings(
         self,
-        tag: etree._TagSelector | None = ...,
-        *tags: etree._TagSelector,
+        tag: _TagSelector | None = ...,
+        *tags: _TagSelector,
         preceding: bool = ...,
     ) -> Iterator[HtmlElement]: ...
     def iterancestors(
-        self, tag: etree._TagSelector | None = ..., *tags: etree._TagSelector
+        self, tag: _TagSelector | None = ..., *tags: _TagSelector
     ) -> Iterator[HtmlElement]: ...
     def iterdescendants(
-        self, tag: etree._TagSelector | None = ..., *tags: etree._TagSelector
+        self, tag: _TagSelector | None = ..., *tags: _TagSelector
     ) -> Iterator[HtmlElement]: ...
     def iterchildren(
         self,
-        tag: etree._TagSelector | None = ...,
-        *tags: etree._TagSelector,
+        tag: _TagSelector | None = ...,
+        *tags: _TagSelector,
         reversed: bool = ...,
     ) -> Iterator[HtmlElement]: ...
     def getroottree(self) -> etree._ElementTree[HtmlElement]: ...
     def iter(
-        self, tag: etree._TagSelector | None = ..., *tags: etree._TagSelector
+        self, tag: _TagSelector | None = ..., *tags: _TagSelector
     ) -> Iterator[HtmlElement]: ...
     def itertext(
         self,
-        tag: etree._TagSelector | None = ...,
-        *tags: etree._TagSelector,
+        tag: _TagSelector | None = ...,
+        *tags: _TagSelector,
         with_tail: bool = ...,
     ) -> Iterator[str]: ...
     def makeelement(

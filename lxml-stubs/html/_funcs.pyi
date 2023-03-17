@@ -2,7 +2,7 @@ from typing import Callable, Iterator, Literal, TypeVar, overload
 from typing_extensions import TypeAlias
 
 from .. import etree
-from .._types import _AnyStr, _OutputMethodArg
+from .._types import _AnyStr, _KnownEncodings, _OutputMethodArg
 from ._element import _HANDLE_FAILURES, HtmlElement
 
 _HtmlDoc_T = TypeVar(
@@ -93,7 +93,7 @@ def tostring(
     *,
     pretty_print: bool = ...,
     include_meta_content_type: bool = ...,
-    encoding: etree._KnownEncodings | None = ...,
+    encoding: _KnownEncodings | None = ...,
     method: _OutputMethodArg = ...,
     with_tail: bool = ...,
     doctype: str | None = ...,

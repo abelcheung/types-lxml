@@ -13,13 +13,15 @@ from typing import (
 from .._types import (
     SupportsLaxedItems,
     _AnyStr,
+    _ElementOrTree,
     _FileReadSource,
     _FileWriteSource,
     _NSMapArg,
     _OutputMethodArg,
     _TagName,
 )
-from . import LxmlError, _Element, _ElementOrTree
+from ._element import _Element
+from ._module_misc import LxmlError
 
 class SerialisationError(LxmlError): ...
 

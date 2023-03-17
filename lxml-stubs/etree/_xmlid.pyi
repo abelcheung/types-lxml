@@ -1,8 +1,8 @@
 from typing import Collection, Generic, Iterator, overload
 from typing_extensions import Self
 
-from .._types import _AnyStr, _FileReadSource
-from . import _ET, _Element, _ElementTree
+from .._types import _ET, _AnyStr, _FileReadSource
+from ._element import _Element, _ElementTree
 from ._parser import _DefEtreeParsers
 
 # arguments for these module funcs are the same as XML() and parse()

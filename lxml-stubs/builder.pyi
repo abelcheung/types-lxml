@@ -1,7 +1,7 @@
 from typing import Any, Callable, Generic, Mapping, TypeVar, overload
 
-from ._types import _NSMapArg
-from .etree import QName, _Element, _ElemFactory
+from ._types import _ElemFactory, _NSMapArg
+from .etree import QName, _Element
 
 _ET_co = TypeVar("_ET_co", bound=_Element, covariant=True)
 

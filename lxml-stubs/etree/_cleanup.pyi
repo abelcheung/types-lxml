@@ -1,7 +1,6 @@
 from typing import Iterable
 
-from .._types import _AnyStr, _NSMapArg
-from . import _ElementOrTree, _TagSelector
+from .._types import _AnyStr, _ElementOrTree, _NSMapArg, _TagSelector
 
 def cleanup_namespaces(
     tree_or_element: _ElementOrTree,

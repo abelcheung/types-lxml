@@ -1,7 +1,7 @@
 from typing import Literal, overload
 
-from ._types import _NonDefaultNSMapArg, _XPathVarArg
-from .etree import _ET, XPath, _ElementTree
+from ._types import _ET, _NonDefaultNSMapArg, _XPathVarArg
+from .etree import XPath, _ElementTree
 
 _CSSTransArg = LxmlTranslator | Literal["xml", "html", "xhtml"]
 

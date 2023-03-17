@@ -4,8 +4,7 @@
 
 from typing import Any, Literal, TypeVar, overload
 
-from .._types import SupportsLaxedItems, _AnyStr, _NSMapArg, _TagName
-from ..etree import _ElemFactory
+from .._types import SupportsLaxedItems, _AnyStr, _ElemFactory, _NSMapArg, _TagName
 from . import _element as _e
 
 _DataElem_T = TypeVar("_DataElem_T", bound=_e.ObjectifiedDataElement)
