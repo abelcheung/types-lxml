@@ -37,6 +37,7 @@ from ._factory_func import (
     ProcessingInstruction as ProcessingInstruction,
     SubElement as SubElement,
 )
+from ._iterparse import iterparse as iterparse, iterwalk as iterwalk
 from ._module_func import (
     HTML as HTML,
     XML as XML,

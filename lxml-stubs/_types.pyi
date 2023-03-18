@@ -117,6 +117,16 @@ _OutputMethodArg = Literal[
     "XML",
 ]
 
+# saxparser.pxi _buildParseEventFilter()
+_SaxEventNames = Literal[
+    "start",
+    "end",
+    "start-ns",
+    "end-ns",
+    "comment",
+    "pi",
+]
+
 # It is unknown if mypy will ever implemenet PEP 696; therefore,
 # pyright will enjoy shorthand while mypy doesn't,
 # while more specialization of classes are to be implemeneted,
