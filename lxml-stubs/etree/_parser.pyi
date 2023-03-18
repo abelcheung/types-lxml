@@ -7,6 +7,7 @@ from .._types import (
     _AnyStr,
     _ET_co,
     _NSMapArg,
+    _SaxEventNames,
     _TagName,
     _TagSelector,
     deprecated,
@@ -142,7 +143,7 @@ class XMLParser(_ParserTargetMixin[Any], _FeedParser[_ET_co]):
 class XMLPullParser(_PullParserMixin, XMLParser[_ET_co]):
     def __new__(
         cls,
-        events: Iterable[str] | None = ...,
+        events: Iterable[_SaxEventNames] | None = ...,
         *,
         tag: _TagSelector | Iterable[_TagSelector] | None = ...,
         base_url: _AnyStr | None = ...,
@@ -214,7 +215,7 @@ class HTMLParser(_ParserTargetMixin[Any], _FeedParser[_ET_co]):
 class HTMLPullParser(_PullParserMixin, HTMLParser[_ET_co]):
     def __new__(
         cls,
-        events: Iterable[str] | None = ...,
+        events: Iterable[_SaxEventNames] | None = ...,
         *,
         tag: _TagSelector | Iterable[_TagSelector] | None = ...,
         base_url: _AnyStr | None = ...,
