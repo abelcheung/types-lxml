@@ -1,9 +1,7 @@
-from typing import Any, Callable, Generic, Mapping, TypeVar, overload
+from typing import Any, Callable, Generic, Mapping, overload
 
-from ._types import _ElemFactory, _NSMapArg
+from ._types import _ElemFactory, _ET_co, _NSMapArg
 from .etree import QName, _Element
-
-_ET_co = TypeVar("_ET_co", bound=_Element, covariant=True)
 
 _TypeMapArg = Mapping[Any, Callable[[_Element, Any], None]]
 

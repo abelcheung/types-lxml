@@ -1,6 +1,6 @@
 from _typeshed import _T
 from typing import Any, Generic, Iterable, Iterator
-from typing_extensions import Self
+from typing_extensions import LiteralString, Self
 
 from .._types import (
     SupportsLaxedItems,
@@ -50,7 +50,7 @@ class _FeedParser(Generic[_ET_co]):
     @property
     def resolvers(self) -> _ResolverRegistry: ...
     @property
-    def version(self) -> str: ...
+    def version(self) -> LiteralString: ...
     def copy(self) -> Self: ...
     def makeelement(
         self,
