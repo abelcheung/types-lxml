@@ -1,0 +1,177 @@
+#
+# Not much can be tested beyond the basics, as
+# element class lookup methods change the internal
+# state of how module works, which aren't supposed
+# to be detectable by static type checkers
+#
+
+- case: public_element_subclass
+  parametrized:
+    - cls: MyElement
+      supercls: ElementBase
+      args: 'attrib={s: s}, attr1=s'
+    - cls: MyComment
+      supercls: CommentBase
+      args: s
+    - cls: MyPI
+      supercls: PIBase
+      args: s, s
+    - cls: MyEntity
+      supercls: EntityBase
+      args: s
+  main: |
+    from lxml.etree import {{supercls}}
+    class {{cls}}({{supercls}}): pass
+    s: str
+    el = {{cls}}({{args}})
+    reveal_type(el)  # NR: .+ "[\w\.]+\.{{cls}}"$
+
+- case: public_element_no_init_override
+  parametrized:
+    - cls: MyElement
+      supercls: ElementBase
+    - cls: MyComment
+      supercls: CommentBase
+    - cls: MyPI
+      supercls: PIBase
+    - cls: MyEntity
+      supercls: EntityBase
+  main: |
+    from lxml.etree import {{supercls}}
+    class {{cls}}({{supercls}}):
+      def __init__(self, *args, **kw) -> None:  # E: Cannot override final attribute "__init__" (previously declared in base class "{{supercls}}")  [misc]
+        self.someattr = 1
+
+- case: public_element_override
+  parametrized:
+    - cls: MyElement
+      supercls: ElementBase
+      args: 'attrib={s: s}, attr1=s'
+    - cls: MyComment
+      supercls: CommentBase
+      args: s
+    - cls: MyPI
+      supercls: PIBase
+      args: s, s
+    - cls: MyEntity
+      supercls: EntityBase
+      args: s
+  main: |
+    from typing_extensions import override
+    from lxml.etree import {{supercls}}
+    class {{cls}}({{supercls}}):
+      @override
+      def _init(self) -> None:
+        self.someattr = 1
+    s: str
+    el = {{cls}}({{args}})
+    reveal_type(el)  # NR: .+ "[\w\.]+\.{{cls}}"$
+
+- case: fallback_lookup_init
+  main: |
+    from lxml.etree import FallbackElementClassLookup, ParserBasedElementClassLookup
+    lookup = FallbackElementClassLookup()
+    fallback: ParserBasedElementClassLookup
+    lookup.set_fallback(fallback)
+    reveal_type(lookup.fallback)  # NR: .+ "Union\[[\w\.]+\.ElementClassLookup, None]"$
+
+- case: fallback_lookup_badargs
+  main: |
+    from lxml.etree import FallbackElementClassLookup, ParserBasedElementClassLookup
+    lookup: FallbackElementClassLookup
+    fallback: ParserBasedElementClassLookup
+    FallbackElementClassLookup("foo")  # ER: Argument 1 .+; expected ".+"  \[arg-type]$
+    lookup.fallback = fallback  # ER: Property "fallback" .+ is read-only  \[misc]$
+    lookup.set_fallback(None)  # ER: Argument 1 .+; expected ".+"  \[arg-type]$
+
+- case: elementdefault_lookup_init
+  main: |
+    from lxml.etree import ElementDefaultClassLookup
+    from lxml.html import HtmlElement, HtmlComment
+    _ = ElementDefaultClassLookup()
+    _ = ElementDefaultClassLookup(HtmlElement, HtmlComment)
+    lookup: ElementDefaultClassLookup
+    reveal_type(lookup.element_class)  # NR: .+ "Type\[[\w\.]+\._Element]"$
+    reveal_type(lookup.comment_class)  # NR: .+ "Type\[[\w\.]+\._Comment]"$
+    reveal_type(lookup.pi_class)  # NR: .+ "Type\[[\w\.]+\._ProcessingInstruction]"$
+    reveal_type(lookup.entity_class)  # NR: .+ "Type\[[\w\.]+\._Entity]"$
+
+- case: elementdefault_lookup_badargs
+  main: |
+    from lxml.etree import ElementDefaultClassLookup, ElementBase, CommentBase
+    ElementDefaultClassLookup(pi=CommentBase)  # ER: Argument "pi" .+; expected ".+"  \[arg-type]$
+    ElementDefaultClassLookup(CommentBase)  # ER: Argument 1 .+; expected ".+"  \[arg-type]$
+    lookup: ElementDefaultClassLookup
+    lookup.element_class = ElementBase  # ER: Property "element_class" .+ is read-only  \[misc]$
+
+- case: attr_based_lookup_init
+  main: |
+    from lxml.etree import (
+      AttributeBasedElementClassLookup,
+      ParserBasedElementClassLookup,
+      QName,
+      _Element,
+    )
+    from lxml.html import HtmlElement
+    fallback: ParserBasedElementClassLookup
+    attr: str
+    qn: QName
+    map1 = {'ns': HtmlElement}
+    map2 = {'ns': HtmlElement, None: _Element}
+    _ = AttributeBasedElementClassLookup('attr', map1)
+    _ = AttributeBasedElementClassLookup('attr', map1, fallback)
+    _ = AttributeBasedElementClassLookup(attribute_name=qn, class_mapping=map2, fallback=None)
+
+- case: attr_based_lookup_badargs
+  main: |
+    from lxml.etree import AttributeBasedElementClassLookup, QName, _Element
+    s: str
+    badns = {s: s}
+    ns = {s: _Element}
+    AttributeBasedElementClassLookup()  # ER: Missing positional arguments "attribute_name", "class_mapping" .+ ".+"  \[call-arg]$
+    AttributeBasedElementClassLookup(s)  # ER: Missing positional argument "class_mapping" .+ ".+"  \[call-arg]$
+    AttributeBasedElementClassLookup(None, ns)  # ER: Argument 1 .+; expected ".+"  \[arg-type]$
+    AttributeBasedElementClassLookup(s, badns)  # ER: Argument 2 .+; expected ".+"  \[arg-type]$
+    AttributeBasedElementClassLookup(s, ns, fallback=s)  # ER: Argument "fallback" .+; expected ".+"  \[arg-type]$
+    AttributeBasedElementClassLookup(s, ns, None, None)  # ER: Too many arguments.*  \[call-arg]$
+
+# based on documentation example
+- case: custom_lookup
+  main: |
+    from lxml.etree import CustomElementClassLookup, XMLParser
+    class MyLookup(CustomElementClassLookup):
+      def lookup(self, node_type, document, namespace, name):
+        if node_type == 'element':
+          return honk  # be a bit more selective here ...
+        else:
+          return None  # pass on to (default) fallback
+    parser = XMLParser()
+    parser.set_element_class_lookup(MyLookup())
+
+# based on docstring example
+- case: python_elem_lookup
+  main: |
+    from lxml.etree import PythonElementClassLookup, set_element_class_lookup
+    class MyLookup(PythonElementClassLookup):
+      def lookup(self, doc, root):
+        if root.tag == "sometag":
+          return MyElementClass
+        else:
+          for child in root:
+            if child.tag == "someothertag":
+              return MyElementClass
+        return None
+    set_element_class_lookup(MyLookup())
+
+- case: set_element_class_lookup
+  main: |
+    from lxml.etree import (
+      set_element_class_lookup,
+      ParserBasedElementClassLookup,
+      AttributeBasedElementClassLookup,
+    )
+    p: ParserBasedElementClassLookup
+    a: AttributeBasedElementClassLookup
+    set_element_class_lookup()
+    set_element_class_lookup(p)
+    set_element_class_lookup(lookup=a)

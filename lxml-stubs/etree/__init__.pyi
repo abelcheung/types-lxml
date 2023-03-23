@@ -1,11 +1,16 @@
 from ._classlookup import (
+    AttributeBasedElementClassLookup as AttributeBasedElementClassLookup,
     CommentBase as CommentBase,
     CustomElementClassLookup as CustomElementClassLookup,
     ElementBase as ElementBase,
     ElementClassLookup as ElementClassLookup,
+    ElementDefaultClassLookup as ElementDefaultClassLookup,
     EntityBase as EntityBase,
     FallbackElementClassLookup as FallbackElementClassLookup,
+    ParserBasedElementClassLookup as ParserBasedElementClassLookup,
     PIBase as PIBase,
+    PythonElementClassLookup as PythonElementClassLookup,
+    set_element_class_lookup as set_element_class_lookup,
 )
 from ._cleanup import (
     cleanup_namespaces as cleanup_namespaces,
