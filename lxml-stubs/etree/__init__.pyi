@@ -74,6 +74,12 @@ from ._module_misc import (
     __version__ as __version__,
     _Validator as _Validator,
 )
+from ._nsclasses import (
+    ElementNamespaceClassLookup as ElementNamespaceClassLookup,
+    FunctionNamespace as FunctionNamespace,
+    LxmlRegistryError as LxmlRegistryError,
+    NamespaceRegistryError as NamespaceRegistryError,
+)
 from ._parser import (
     ETCompatXMLParser as ETCompatXMLParser,
     HTMLParser as HTMLParser,

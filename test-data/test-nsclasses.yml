@@ -1,0 +1,107 @@
+#
+# Majority of test code comes from official documentation
+#
+
+- case: elem_nsreg_create
+  main: |
+    from lxml.etree import (
+      ElementNamespaceClassLookup as ELookup,
+      ElementDefaultClassLookup,
+    )
+    lookup = ELookup()
+    reveal_type(lookup)  # NR: .+ "[\w\.]+\.ElementNamespaceClassLookup"$
+    ELookup(fallback=ElementDefaultClassLookup())
+    uri: str
+    ns = lookup.get_namespace(uri)
+    reveal_type(ns)  # NR: .+ "[\w\.]+\._ClassNamespaceRegistry"$
+
+- case: elem_nsreg_create_badargs
+  main: |
+    from lxml.etree import ElementNamespaceClassLookup as ELookup
+    ELookup(fallback='')  # ER: Argument "fallback" .+; expected ".+"  \[arg-type]$
+    ELookup(None, None)  # ER: Too many arguments.*  \[call-arg]$
+    lookup: ELookup
+    lookup.get_namespace()  # ER: Missing positional argument "ns_uri".+  \[call-arg]$
+    lookup.get_namespace(1)  # ER: Argument 1 to .+; expected ".+"  \[arg-type]$
+    lookup.get_namespace(None, None)  # ER: Too many arguments.*  \[call-arg]$
+
+- case: elem_nsreg_as_dict
+  main: |
+    from lxml.etree import ElementNamespaceClassLookup, ElementBase
+    class HonkNSElement(ElementBase):
+      def honk(self):
+        return "HONK"
+    class HonkElement(HonkNSElement):
+      @property
+      def honking(self):
+        return self.get('honking') == 'true'
+
+    lookup: ElementNamespaceClassLookup
+    ns = lookup.get_namespace(None)
+    ns[None] = HonkNSElement
+    ns['honk'] = HonkElement
+    del ns[None]
+
+- case: elem_nsreg_as_decorator
+  main: |
+    from lxml.etree import ElementNamespaceClassLookup, ElementBase
+    lookup: ElementNamespaceClassLookup
+    uri: str
+    ns = lookup.get_namespace(uri)
+    @ns
+    class HonkNSElement(ElementBase):
+      def honk(self):
+        return "HONK"
+    @ns('tag')
+    class HonkElement(HonkNSElement):
+      @property
+      def honking(self):
+        return self.get('honking') == 'true'
+
+- case: elem_nsreg_use_public_elem
+  main: |
+    from lxml.etree import ElementNamespaceClassLookup, _Element
+    lookup: ElementNamespaceClassLookup
+    uri: str
+    ns = lookup.get_namespace(uri)
+    @ns
+    class MyElem(_Element):  # ER: Value of type .+ cannot be ".+"  \[type-var]$
+      pass
+
+- case: func_nsreg_create
+  main: |
+    from lxml.etree import FunctionNamespace as F
+    uri: str
+    ns = F(uri)
+    reveal_type(ns)  # NR: .+ "[\w\.]+\._FunctionNamespaceRegistry"$
+
+- case: func_nsreg_create_badargs
+  main: |
+    from lxml.etree import FunctionNamespace as F
+    uri: str
+    F()  # ER: Missing positional argument "ns_uri".*  \[call-arg]$
+    F(1)  # ER: Argument 1 .+; expected ".+"  \[arg-type]$
+    F(uri, None)  # ER: Too many arguments.*  \[call-arg]$
+
+- case: func_nsreg_as_dict
+  main: |
+    from lxml.etree import FunctionNamespace as F
+    def hello(context, a):
+      return "Hello %s" % a
+
+    uri: str
+    ns = F(uri)
+    ns['hello'] = hello
+    del ns['countargs']
+
+- case: func_nsreg_as_decorator
+  main: |
+    from lxml.etree import FunctionNamespace as F
+    uri: str
+    ns = F(uri)
+    @ns
+    def hello(context, a):
+      return "Hello %s" % a
+    @ns('name')
+    def ola(context, a):
+      return "Ola %s" % a
