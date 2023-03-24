@@ -5,21 +5,16 @@ build-backend = 'pdm.backend'
 [project]
 name = 'types-lxml'
 dynamic = ['version']
-description = 'Type annotations for lxml striving for completeness'
+description = 'Complete lxml external type annotation'
 readme = 'README.md'
 requires-python = '>=3.8'
 license = {text = 'Apache-2.0'}
 dependencies = [
     'types-beautifulsoup4',
 ]
-keywords = ['lxml', 'typing', 'stubs']
+keywords = ['lxml', 'typing', 'stubs', 'annotation']
 authors = [
-    { name = 'Jelle Zijlstra', email = 'jelle.zijlstra@gmail.com' },
-    { name = 'Michael van Tellingen', email = 'michaelvantellingen@gmail.com' },
-    { name = 'Stefan Behnel', email = 'gh@behnel.de' },
-]
-maintainers = [
-    { name = 'Abel Cheung', email = 'abelcheung@gmail.com' },
+    { name = 'Abel Cheung', email = 'abelcheung@gmail.com' }
 ]
 classifiers = [
     'Development Status :: 4 - Beta',
@@ -43,7 +38,7 @@ dev = [
     'isort',
     'mypy == 1.1.*',
     'pyright >= 1.1.288',
-    'lxml',
+    'lxml ~= 4.9',
 ]
 
 [tool.pdm.version]

@@ -26,8 +26,6 @@ _DefEtreeParsers = XMLParser[_ET_co] | HTMLParser[_ET_co]
 class ParseError(LxmlSyntaxError):
     lineno: int
     offset: int
-    # XXX OK, now it might make sense to generate all error constants
-    # since they are behaving like IntEnum. But it's low priority.
     code: int
     filename: str | None
     position: tuple[int, int]
@@ -60,7 +58,7 @@ class _FeedParser(Generic[_ET_co]):
         nsmap: _NSMapArg | None = ...,
         **_extra: _AnyStr,
     ) -> _ET_co: ...
-    # FIXME: In terms of annotation, what setting class_lookup
+    # XXX: In terms of annotation, what setting class_lookup
     # does is change _ET_co (type specialization), which can't be
     # done automatically with current python typing system.
     # One has to change it manually during type checking.
@@ -95,7 +93,7 @@ class _FeedParser(Generic[_ET_co]):
     def feed_error_log(self) -> _ListErrorLog: ...
     def feed(self, data: _AnyStr) -> None: ...
 
-# FIXME: Custom parser target support is temporarily abandoned,
+# XXX: Custom parser target support is temporarily abandoned,
 # see comment in XMLParser
 class _ParserTargetMixin(Generic[_T]):
     @property
@@ -108,12 +106,13 @@ class _PullParserMixin:
     # overriding factory functions via arguments to generate anything.
     def read_events(self) -> Iterator[tuple[str, Any]]: ...
 
-# FIXME: Python doesn't support Higher Kinded Types, otherwise
+# XXX: Python doesn't support Higher Kinded Types, otherwise
 # it should have been something like _PT[_Element]. This means
 # one can't properly annotate subclassed XMLParser.
 # https://github.com/python/typing/issues/548
 # Same applies to all other parsers inherited from FeedParser.
-# FIXME: It is unfortunate that, in the end, it is decided to forfeit
+#
+# XXX: It is unfortunate that, in the end, it is decided to forfeit
 # integration of custom target annotation (the 'target' parameter).
 # So far all attempts would cause usage of annotation unnecessarily
 # complex and convoluted, yet still can't get everything right.

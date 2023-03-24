@@ -4,22 +4,46 @@
 
 This repository contains [external type annotations](https://peps.python.org/pep-0561/) for [`lxml`](http://lxml.de/). It can be used by type-checking tools (currently supporting [`mypy`](https://pypi.org/project/mypy/) and [`pyright`](https://github.com/Microsoft/pyright)) to check code that uses `lxml`, or used within IDEs like [VSCode](https://code.visualstudio.com/) or [PyCharm](https://www.jetbrains.com/pycharm/) to facilitate development.
 
-## Improvements
+## Goal ①: Completion
 
-There are lots of enhancements on top of lxml-stubs:
+Now the coverage of major `lxml` submodules is almost complete:
+  - [x] `lxml.etree`: 100% except &mdash;
+    - ~~`etree.Schematron`~~: will not implement, obsolete and superseded by `lxml.isoschematron`
+    - [ ] `etree.XSLT`
+  - [x] `lxml.html` proper: 100%
+  - [x] `lxml.objectify`: 100%
+  - [x] `lxml.builder`: 100%
+  - [x] `lxml.cssselect`: 100%
+  - [x] `lxml.sax`: 100%
 
-- **Main goal ①** Completes annotation for at least 90% of publicly used `lxml` API. Besides various completed classes and methods, here are currently implemented extra submodules:
-    * [x] `lxml.builder`
-    * [x] `lxml.html.builder`
-    * [x] `lxml.html.clean`
-    * [x] `lxml.html.html5parser`
-    * [x] `lxml.html.soupparser`
-    * [x] `lxml.sax`
-    * Check out [project page](https://github.com/abelcheung/types-lxml/projects/1) for future plans and progress
-- **Main goal ②** All existing contributions reviewed thoroughly, bringing coherency of annotation across the whole package
-    * [x] Guarantees error free for `pyright` basic checking mode as well
-    * [x] Much more extensive test cases
-- Modernize package building infrastructure
+Following list reflects current situation for less used `lxml` / `html` submodules:
+
+  - [ ] `lxml.ElementInclude`
+  - [ ] `lxml.isoschematron`
+  - [ ] `lxml.usedoctest`
+  - [x] `lxml.html.builder`
+  - [x] `lxml.html.clean`
+  - [ ] `lxml.html.diff`
+  - [ ] `lxml.html.formfill`
+  - [x] `lxml.html.html5parser`
+  - [x] `lxml.html.soupparser`
+  - [ ] `lxml.html.usedoctest`
+
+Check out [project page](https://github.com/abelcheung/types-lxml/projects/1) for future plans and progress.
+
+## Goal ②: Support multiple type checkers
+
+Currently the annotations are validated for both `mypy` and `pyright` strict mode.
+
+In the future, there is plan to bring even more type checker support.
+
+## Goal ③: Review and test suite
+
+- [x] All prior `lxml-stubs` contributions are reviewed thoroughly, bringing coherency of annotation across the whole package
+- [x] Much more extensive test cases
+  - [ ] Mypy test suite only covered about half of the whole package currently
+  - [ ] Plan to perform runtime check, and compare against type checker result
+- [x] Modernize package building infrastructure
 
 ## Installation
 
@@ -28,10 +52,6 @@ There are lots of enhancements on top of lxml-stubs:
 This is the normal choice for most people:
 
     pip install -U types-lxml
-
-If there is plan to use html submodule for external libraries (mainly `lxml.html.html5parser` and `lxml.html.soupparser`), please install `extra` dependencies instead:
-
-    pip install -U types-lxml[extra]
 
 ### From downloaded wheel file
 
@@ -44,13 +64,14 @@ Head over to [latest release in GitHub](https://github.com/abelcheung/types-lxml
     pip install -U git+https://github.com/abelcheung/types-lxml.git
 
 ## Special notes
+
+### ParserTarget
 There is now only one stub-only classes that do not exist as concrete class in
-`lxml` &mdash; `lxml.etree.ParserTarget`.
-[`SmartStr`](https://github.com/abelcheung/types-lxml/wiki/Smart-string-usage),
-which used to be user friendly naming of XPath string selection result `str`
-subclass, is reverted to original concrete class name after March 2023.
-Please consult their docstring in stub files for more detail; for IDE users,
-the docstring may have already been formatted nicely for reference.
+`lxml` &mdash; `lxml.etree.ParserTarget`. However the support of custom parser target is shelved, so this virtual class is not very relevant for now.
+
+### Docstring for stub
+
+Dispite having no official PEP, some IDEs support showing docstring from external annotations. This package is try to bring more and more of the original `lxml` class and function docstrings, since the majorify of `lxml` is written in Cython, and IDEs mostly won't show Cython docstrings during code development. Following screenshots show what would look like, behaving if docstrings are coming from pure python code:
 
 ![Stub docstring in PyCharm Documentation Tool](https://user-images.githubusercontent.com/83110/160575574-c20b29d0-ddda-40d4-82e3-724f59663d7e.png)
 

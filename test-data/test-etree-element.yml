@@ -131,7 +131,7 @@
     reveal_type(elem.{{ prop }})  # NR: .+ "{{ rt }}"$
     elem.{{ prop }} = elem.{{ prop }}  # E: Property "{{ prop }}" defined in "_Element" is read-only  [misc]
 
-# BUG See test case mypy_3004_element_prop
+# XXX See test case mypy_3004_element_prop
 - case: rw_properties
   files: *INC
   main: |
@@ -374,7 +374,7 @@
   main: |
     from typing import Dict, Optional, Union
     from inc import el, s, b, qn
-    # BUG see overzealous_inferred_type test case for info
+    # XXX see overzealous_inferred_type test case for info
     # crazy_nsmap = {None: s, s: b}
     crazy_nsmap: Dict[Optional[str], Union[str, bytes]]
     nsmap = {None: s, s: s}

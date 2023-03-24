@@ -51,7 +51,3 @@ def ElementTree(
     file: _FileReadSource,
     parser: None = ...,
 ) -> _ElementTree[_Element]: ...
-
-# FIXME Missing case: element = file = None,
-# parser must use custom target that generates something
-# even when there is no input data. Low priority.

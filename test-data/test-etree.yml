@@ -166,7 +166,7 @@
     s: str
     b: bytes
     d.{{ prop }} = s
-    # BUG see mypy_3004_docinfo test case
+    # XXX see mypy_3004_docinfo test case
     # d.{{ prop }} = b
     d.{{ prop }} = None
 

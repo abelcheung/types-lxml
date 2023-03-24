@@ -162,7 +162,7 @@ class BoolElement(IntElement):
     def __xor__(self, __n: bool | BoolElement) -> bool: ...
     @overload
     def __xor__(self, __n: int) -> int: ...
-    # BUG Under current implementation, reverse boolean operators
+    # FIXME Under current implementation, reverse boolean operators
     # won't work. BoolElement is considered as int
     # (BoolElement -> IntElement -> int), and the result of
     # (bool <op> BoolElement) is always int. Besides, native bool

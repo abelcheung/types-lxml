@@ -203,6 +203,7 @@ def adopt_external_document(
     If no copy is made, later modifications of the tree outside of lxml
     should not be attempted after transferring the ownership.
     """
+
 def register_namespace(prefix: _AnyStr, uri: _AnyStr) -> None:
     """Registers a namespace prefix that newly created Elements in that
     namespace will use.  The registry is global, and any existing
@@ -210,14 +211,14 @@ def register_namespace(prefix: _AnyStr, uri: _AnyStr) -> None:
     removed."""
 
 # Debugging only
-def dump(
-    elem: _Element, *, pretty_print: bool = ..., with_tail: bool = ...
-) -> None:
+def dump(elem: _Element, *, pretty_print: bool = ..., with_tail: bool = ...) -> None:
     """Writes an element tree or element structure to sys.stdout.
     This function should be used for debugging only."""
+
 @final
 class _MemDebug:
     """Debugging support for the memory allocation in libxml2"""
+
     def bytes_used(self) -> int:
         """
         Returns
@@ -272,4 +273,3 @@ class _MemDebug:
 
 memory_debugger: _MemDebug
 """Debugging support for the memory allocation in libxml2"""
-
