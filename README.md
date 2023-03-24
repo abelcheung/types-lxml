@@ -7,9 +7,8 @@ This repository contains [external type annotations](https://peps.python.org/pep
 ## Goal ①: Completion
 
 Now the coverage of major `lxml` submodules is almost complete:
-  - [x] `lxml.etree`: 100% except &mdash;
-    - ~~`etree.Schematron`~~: will not implement, obsolete and superseded by `lxml.isoschematron`
-    - [ ] `etree.XSLT`
+  - [x] `lxml.etree`: 100%
+    - `etree.Schematron` is obsolete and superseded by `lxml.isoschematron`, so won't implement
   - [x] `lxml.html` proper: 100%
   - [x] `lxml.objectify`: 100%
   - [x] `lxml.builder`: 100%
