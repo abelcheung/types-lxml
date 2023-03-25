@@ -397,8 +397,6 @@ class __ContentOnlyElement(_Element):
     #
     # Useful properties
     #
-    @property  # type: ignore[misc]
-    def tag(self) -> _t._ElemFactory[Self]: ...  # type: ignore[override]
     @property
     def text(self) -> str | None: ...
     @text.setter
@@ -429,10 +427,15 @@ class __ContentOnlyElement(_Element):
     # concentrate on useful properties.
     #
 
-class _Comment(__ContentOnlyElement): ...
+class _Comment(__ContentOnlyElement):
+    @property  # type: ignore[misc]
+    def tag(self) -> _t._ElemFactory[_Comment]: ...  # type: ignore[override]
+
 
 # signature of .get() for _PI and _Element are the same
 class _ProcessingInstruction(__ContentOnlyElement):
+    @property  # type: ignore[misc]
+    def tag(self) -> _t._ElemFactory[_ProcessingInstruction]: ...  # type: ignore[override]
     @property
     def target(self) -> str: ...
     @target.setter
@@ -441,6 +444,8 @@ class _ProcessingInstruction(__ContentOnlyElement):
     def attrib(self) -> dict[str, str]: ...  # type: ignore[override]
 
 class _Entity(__ContentOnlyElement):
+    @property  # type: ignore[misc]
+    def tag(self) -> _t._ElemFactory[_Entity]: ...  # type: ignore[override]
     @property  # type: ignore[misc]
     def text(self) -> str: ...  # type: ignore[override]
     @property
