@@ -1,6 +1,6 @@
 from _typeshed import _T
-from typing import Any, Generic, Iterable, Iterator, Literal, overload
-from typing_extensions import Self
+from typing import Any, Generic, Iterable, Iterator, Literal, Mapping, overload
+from typing_extensions import Never, Self
 
 from .. import _types as _t
 from ..cssselect import _CSSTransArg
@@ -385,8 +385,7 @@ class _Attrib:
 # Element types and content node types
 #
 
-# NOTE: Follow lxml source code -- shove all dirt under these classes
-# NOTE: It is decided to not decouple other content only elements
+# It is decided to not decouple other content only elements
 # from _Element, even though their interfaces are vastly different
 # from _Element. The notion of or'ing different kind of elements
 # throughout all element methods would cause great inconvenience
@@ -402,35 +401,40 @@ class __ContentOnlyElement(_Element):
     @text.setter
     def text(self, value: _t._AnyStr | None) -> None: ...
     #
-    # Explicitly dummified properties and methods
+    # Mypy: Liskov!
+    # Lxml: No Liskov!
+    # Mypy: I am *THE* authority here!
+    # Lxml: I will *NEVER* submit to you! Fuck off!
+    # Mypy: Now die!
     #
-    # def set(self, key: Any, value: Any) -> NoReturn: ...
-    # def append(self, element: Any) -> NoReturn: ...
-    # def insert(self, index: Any, element: Any) -> NoReturn: ...
-    # def __setitem__(self, __x: Any, __v: Any) -> NoReturn: ...
-    # @property
-    # def attrib(self) -> Incomplete: ...  # type: ignore[override]
+    # So here we are.
+    #
+    @property
+    def attrib(self) -> Mapping[_t.Unused, _t.Unused]: ...  # type: ignore[override]
+    def get(self, key: _t.Unused, default: _t.Unused = ...) -> None: ...  # type: ignore[override]
+    def set(self, key: Never, value: Never) -> Never: ...  # type: ignore[override]
+    def append(self, element: Never) -> Never: ...  # type: ignore[override]
+    def insert(self, index: Never, value: Never) -> Never: ...  # type: ignore[override]
+    def __setitem__(self, __k: Never, __v: Never) -> Never: ...  # type: ignore[override]
     # The intention is to forbid elem.__getitem__, allowing slice
-    # doesn't make sense
-    # def __getitem__(self, __x: Any) -> NoReturn: ...  # type: ignore[override]
-    # def get(self, key: Any, default: Any = ...) -> None: ...  # type: ignore[override]
-    # def keys(self) -> list[Incomplete]: ...
-    # def values(self) -> list[Incomplete]: ...
-    # def items(self) -> list[Incomplete]: ...
-    #
-    # FIXME There are many, many more methods that don't work for
-    # content only elements (e.g. most ElementTree / ElementPath ones)
-    # But adding them to annotation would mean HUGE amount of manual
-    # type ignoring, not to mention that none of those are handled in
+    # doesn't make any sense
+    def __getitem__(self, __k: Never) -> Never: ...  # type: ignore[override]
+    # Methods above are explicitly defined in source, while those below aren't
+    def __delitem__(self, __k: Never) -> Never: ...  # type: ignore[override]
+    def __iter__(self) -> Never: ...
+
+    # TODO (low priority) There are many, many more methods that
+    # don't work for content only elements, such as most
+    # ElementTree / ElementPath ones, and all inherited
+    # HTML element methods. None of those are handled in
     # source code -- users are left to bump into wall themselves.
-    # Let's not care about the half-assed overriding for now, and just
-    # concentrate on useful properties.
-    #
+    # For example, append(elem) explicitly raises exception, yet
+    # one can use extend([elem]) to circumvent restriction.
+    # Go figure.
 
 class _Comment(__ContentOnlyElement):
     @property  # type: ignore[misc]
     def tag(self) -> _t._ElemFactory[_Comment]: ...  # type: ignore[override]
-
 
 # signature of .get() for _PI and _Element are the same
 class _ProcessingInstruction(__ContentOnlyElement):
