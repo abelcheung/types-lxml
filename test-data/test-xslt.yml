@@ -1,0 +1,25 @@
+- case: basic_workflow
+  main: |
+    from pathlib import Path
+    from lxml import etree
+    s: str
+    xml_tree = etree.parse(s)
+    reveal_type(xml_tree)  # NR: .+ "[\w\.]+\._ElementTree\[[\w\.]+\._Element]"$
+    xsl_tree = etree.parse(s)
+    access = etree.XSLTAccessControl(
+      read_network=False, write_network=False)
+    tr = etree.XSLT(xsl_tree, access_control=access)
+    reveal_type(tr)  # NR: .+ "[\w\.]+\.XSLT"$
+    result = tr(xml_tree)
+    reveal_type(result)  # NR: .+ "[\w\.]+\._XSLTResultTree"$
+    outfile = Path('output.txt')
+    result.write_output(outfile, compression=9)
+
+- case: repeat_processing
+  main: |
+    from lxml import etree
+    result1: etree._ElementTree[etree._Element]
+    tr: etree.XSLT
+    result2 = tr(result1)
+    result3 = tr(result2)
+    reveal_type(result3)  # NR: .+ "[\w\.]+\._XSLTResultTree"$

@@ -162,8 +162,10 @@ from ._xslt import (
     XSLTAccessControl as XSLTAccessControl,
     XSLTApplyError as XSLTApplyError,
     XSLTError as XSLTError,
+    XSLTExtension as XSLTExtension,
     XSLTExtensionError as XSLTExtensionError,
     XSLTParseError as XSLTParseError,
     XSLTSaveError as XSLTSaveError,
+    _XSLTProcessingInstruction as _XSLTProcessingInstruction,
     _XSLTResultTree as _XSLTResultTree,
 )

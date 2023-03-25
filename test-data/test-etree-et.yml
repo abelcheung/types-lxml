@@ -410,4 +410,22 @@
     badext = [{badns: extfunc1}]
     tree.xpath({{ args }})
 
-# TODO xslt()
+- case: xslt
+  main: |
+    from typing import Callable, Any
+    from lxml import etree
+    tree: etree._ElementTree
+    elem: etree._Element
+    trans1: etree._ElementTree
+    trans2: etree._Element
+    s: str
+    ns = (s, s)
+    ext: etree.XSLTExtension
+    exts = {ns: ext}
+    access = etree.XSLTAccessControl.DENY_WRITE
+    rs = tree.xslt(trans1)
+    reveal_type(rs)  # NR: .+ "[\w\.]+\._XSLTResultTree"$
+    tree.xslt(trans1, exts, access)
+    tree.xslt(trans2, extensions=exts)
+    tree.xslt(trans1, access_control=access)
+    tree.xslt(trans2, profile_run=True)
