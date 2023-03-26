@@ -6,13 +6,8 @@ from .. import _types as _t
 from ..cssselect import _CSSTransArg
 from ._module_misc import CDATA, DocInfo, QName
 from ._parser import _DefEtreeParsers
-from ._xpath import XPath
-from ._xslt import (
-    XSLTAccessControl,
-    XSLTExtension,
-    _XSLTQuotedStringParam,
-    _XSLTResultTree,
-)
+from ._xslt import XSLTAccessControl, XSLTExtension, _Stylesheet_Param, _XSLTResultTree
+
 
 # The base of _Element is *almost* an amalgam of MutableSequence[_Element]
 # plus mixin methods for _Attrib.
@@ -329,7 +324,7 @@ class _ElementTree(Generic[_t._ET_co]):
         access_control: XSLTAccessControl | None = ...,
         *,  # all keywords are passed to XSLT.__call__
         profile_run: bool = ...,
-        **__kw: _XSLTQuotedStringParam | XPath | _t._AnyStr,
+        **__kw: _Stylesheet_Param,
     ) -> _XSLTResultTree: ...
     def relaxng(self, relaxng: _t._ElementOrTree) -> bool: ...
     def xmlschema(self, xmlschema: _t._ElementOrTree) -> bool: ...
