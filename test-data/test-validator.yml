@@ -14,13 +14,6 @@
   main: null
 
 - case: xmlschema_create
-  parametrized:
-    - args: elem
-    - args: "tree, attribute_defaults=False"
-    - args: "elem, file=None"
-    - args: file=filename
-    - args: file=path
-    - args: "file=fileio, attribute_defaults=True"
   main: |
     from pathlib import PosixPath
     from io import StringIO
@@ -30,8 +23,13 @@
     filename: str
     fileio: StringIO
     path: PosixPath
-    result = etree.XMLSchema({{ args }})
-    reveal_type(result)  # N: Revealed type is "lxml.etree._xmlschema.XMLSchema"
+    result = etree.XMLSchema(elem)
+    reveal_type(result)  # NR: .+ "[\w\.]+\.XMLSchema"$
+    etree.XMLSchema(tree, attribute_defaults=False)
+    etree.XMLSchema(elem, file=None)
+    etree.XMLSchema(file=filename)
+    etree.XMLSchema(file=path)
+    etree.XMLSchema(file=fileio, attribute_defaults=True)
 
 - case: xmlschema_create_badarg
   expect_fail: true
@@ -49,24 +47,22 @@
     result = etree.XMLSchema({{ args }})
 
 - case: relaxng_construct
-  parametrized:
-    - args: tree
-    - args: tree.getroot()
-    - args: file=s
-    - args: file=b
-    - args: file=io.FileIO(s)
-    - args: file=gzip.GzipFile(s)
-    - args: file=open(s, 'r')
-    - args: file=open(s, 'rb')
-    - args: file=pathlib.Path(s)
   main: |
     import gzip, io, pathlib
     from lxml import etree
     s: str
     b: bytes
     tree: etree._ElementTree[etree._Element]
-    rng = etree.RelaxNG({{ args }})
-    reveal_type(rng)  # N: Revealed type is "lxml.etree._relaxng.RelaxNG"
+    rng = etree.RelaxNG(tree)
+    reveal_type(rng)  # NR: .+ "[\w\.]+\.RelaxNG"$
+    etree.RelaxNG(tree.getroot())
+    etree.RelaxNG(file=s)
+    etree.RelaxNG(file=b)
+    etree.RelaxNG(file=io.FileIO(s))
+    etree.RelaxNG(file=gzip.GzipFile(s))
+    etree.RelaxNG(file=open(s, 'r'))
+    etree.RelaxNG(file=open(s, 'rb'))
+    etree.RelaxNG(file=pathlib.Path(s))
 
 - case: relaxng_construct_classmethod
   parametrized:
@@ -76,36 +72,36 @@
     from lxml.etree import RelaxNG
     s: str
     rng = RelaxNG.from_rnc_string({{ args }})
-    reveal_type(rng)  # N: Revealed type is "lxml.etree._relaxng.RelaxNG"
+    reveal_type(rng)  # NR: .+ "[\w\.]+\.RelaxNG"$
 
 - case: relaxng_construct_badargs
   expect_fail: true
   parametrized:
     - args: ""
-      is_method: false
     - args: s
-      is_method: false
     - args: file=None
-      is_method: false
     - args: file=root
-      is_method: false
     - args: badarg=s
-      is_method: false
-    - args: ""
-      is_method: true
-    - args: 1
-      is_method: true
-    - args: None
-      is_method: true
-    - args: s, base_url=1
-      is_method: true
-    - args: badarg=s
-      is_method: true
   main: |
     from lxml.etree import RelaxNG, _Element
     s: str
     root: _Element
-    rng = RelaxNG{{#is_method}}.from_rnc_string{{/is_method}}({{ args }})
+    rng = RelaxNG({{ args }})
+
+- case: relaxng_construct_from_string_badargs
+  main: |
+    from lxml.etree import RelaxNG, _Element
+    s: str
+    root: _Element
+    RelaxNG.from_rnc_string()  # ER: Missing positional argument .+  \[call-arg]$
+    RelaxNG.from_rnc_string(1)  # ER: Argument 1 .+; expected ".+"  \[arg-type]$
+    RelaxNG.from_rnc_string(None)  # ER: Argument 1 .+; expected ".+"  \[arg-type]$
+    RelaxNG.from_rnc_string(s, base_url=1)  # ER: Argument "base_url" .+; expected ".+"  \[arg-type]$
+    RelaxNG.from_rnc_string(badarg=s)  # ER: Unexpected keyword argument "badarg".*  \[call-arg]$
+
+#
+# Tests below are generic tests of etree._Validator class inheritance
+#
 
 - case: superclass_validate_method
   files: *INC
