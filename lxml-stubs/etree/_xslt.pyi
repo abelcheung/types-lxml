@@ -4,7 +4,7 @@
 
 import abc
 from typing import Any, ClassVar, Literal, final, overload
-from typing_extensions import TypedDict
+from typing_extensions import TypedDict, TypeAlias
 
 from .._types import (
     SupportsLaxedItems,
@@ -20,6 +20,8 @@ from ._parser import _DefEtreeParsers
 from ._serializer import SerialisationError
 from ._xmlerror import _ListErrorLog
 from ._xpath import XPath
+
+_Stylesheet_Param: TypeAlias = _XSLTQuotedStringParam | XPath | str
 
 # exported constants
 LIBXSLT_VERSION: tuple[int, int, int]
@@ -142,7 +144,7 @@ class XSLT:
         _input: _ElementOrTree,
         /,
         profile_run: bool = ...,
-        **kw: _XSLTQuotedStringParam | XPath | _AnyStr,
+        **__kw: _Stylesheet_Param,
     ) -> _XSLTResultTree: ...
     @property
     def error_log(self) -> _ListErrorLog: ...
@@ -150,15 +152,15 @@ class XSLT:
     def strparam(strval: _AnyStr) -> _XSLTQuotedStringParam: ...
     @staticmethod
     def set_global_max_depth(max_depth: int) -> None: ...
-    @deprecated('Since v2.0; call instance directly instead')
+    @deprecated("Since v2.0; call instance directly instead")
     def apply(
         self,
         _input: _ElementOrTree,
         /,
         profile_run: bool = ...,
-        **kw: _XSLTQuotedStringParam | XPath | _AnyStr,
+        **__kw: _Stylesheet_Param,
     ) -> _XSLTResultTree: ...
-    @deprecated('Since v2.0; use str(result_tree) instead')
+    @deprecated("Since v2.0; use str(result_tree) instead")
     def tostring(
         self,
         result_tree: _ElementTree[_Element],
@@ -170,7 +172,6 @@ class _XSLTProcessingInstruction(PIBase):
     ) -> _ElementTree[_Element]: ...
     def set(self, key: Literal["href"], value: str) -> None: ...  # type: ignore[override]
 
-
 # Nodes are usually some opaque or read-only wrapper of _Element.
 # They provide access of varying attributes depending on node type,
 # which are not known to static typing. So use typing.Any here
@@ -179,8 +180,9 @@ class XSLTExtension(metaclass=abc.ABCMeta):
     """Base class of an XSLT extension element"""
 
     @abc.abstractmethod
-    def execute(self,
-        context: Any, # _XSLTContext,
+    def execute(
+        self,
+        context: Any,  # _XSLTContext,
         self_node: Any,
         input_node: Any,
         output_parent: _Element | None,
@@ -199,11 +201,10 @@ class XSLTExtension(metaclass=abc.ABCMeta):
         is no parent element in the current context (e.g. no content
         was added to the output tree yet).
         """
-
     @overload
     def apply_templates(
         self,
-        context: Any, # _XSLTContext,
+        context: Any,  # _XSLTContext,
         node: Any,
         output_parent: _Element,
         *,
@@ -250,11 +251,10 @@ class XSLTExtension(metaclass=abc.ABCMeta):
         Note that the string discarding options will be ignored in this
         case.
         """
-
     @overload
     def process_children(
         self,
-        context: Any, # _XSLTContext,
+        context: Any,  # _XSLTContext,
         output_parent: _Element,
         *,
         elements_only: bool = ...,

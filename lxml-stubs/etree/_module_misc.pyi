@@ -98,3 +98,13 @@ class _Validator(metaclass=ABCMeta):
     # implementation in subclasses in order to be usable
     @abstractmethod
     def __call__(self, etree: _ElementOrTree) -> bool: ...
+
+# Though etree.Schematron is not implemented in stub,
+# lxml.isoschematron reuses related exception classes,
+# so list them here
+class SchematronError(LxmlError):
+    """Base class of all Schematron errors"""
+class SchematronParseError(SchematronError):
+    """Error while parsing an XML document as Schematron schema"""
+class SchematronValidateError(SchematronError):
+    """Error while validating an XML document with a Schematron schema"""

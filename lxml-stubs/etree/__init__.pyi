@@ -71,6 +71,9 @@ from ._module_misc import (
     LxmlError as LxmlError,
     LxmlSyntaxError as LxmlSyntaxError,
     QName as QName,
+    SchematronError as SchematronError,
+    SchematronParseError as SchematronParseError,
+    SchematronValidateError as SchematronValidateError,
     __version__ as __version__,
     _Validator as _Validator,
 )

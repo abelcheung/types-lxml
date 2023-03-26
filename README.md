@@ -18,12 +18,12 @@ Now the coverage of major `lxml` submodules is almost complete:
 Following list reflects current situation for less used `lxml` / `html` submodules:
 
   - [ ] `lxml.ElementInclude`
-  - [ ] `lxml.isoschematron`
+  - [x] `lxml.isoschematron`
   - [ ] `lxml.usedoctest`
   - [x] `lxml.html.builder`
   - [x] `lxml.html.clean`
   - [ ] `lxml.html.diff`
-  - [ ] `lxml.html.formfill`
+  - [ ] `lxml.html.formfill` (may not implement)
   - [x] `lxml.html.html5parser`
   - [x] `lxml.html.soupparser`
   - [ ] `lxml.html.usedoctest`
