@@ -127,28 +127,8 @@ _SaxEventNames = Literal[
     "pi",
 ]
 
-# It is unknown if mypy will ever implemenet PEP 696; therefore,
-# pyright will enjoy shorthand while mypy doesn't,
-# while more specialization of classes are to be implemeneted,
-# such as _Attrib -> _Attrib[_Element]
-#
-# XXX Here is the trick:
-# 1. mypy claims it doesn't understand MYPY variable, but actually
-#    it does, and skips over to else block
-# 2. pyright truly does not understand MYPY variable. Under default
-#    behavior, it sort of merges definition of both blocks. With
-#    compatible enough definition, it doesn't modify the desired result.
-# 3. Replace MYPY with any name, and mypy will break.
-#
-# While pyright supports defining constants in config, it is not
-# reasonable to ask all pyright users to modify their own config.
-#
-if not MYPY:  # type: ignore
-    _ET = TypeVar("_ET", bound=_Element, default=_Element)
-    _ET_co = TypeVar("_ET_co", bound=_Element, default=_Element, covariant=True)
-else:
-    _ET = TypeVar("_ET", bound=_Element)  # pyright: ignore[reportConstantRedefinition]
-    _ET_co = TypeVar("_ET_co", bound=_Element, covariant=True)
+_ET = TypeVar("_ET", bound=_Element)
+_ET_co = TypeVar("_ET_co", bound=_Element, covariant=True)
 
 # Generic element factory function type. Because arguments are
 # mostly optional, accurate typing can't be done.
