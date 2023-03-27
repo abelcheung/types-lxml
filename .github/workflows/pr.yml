@@ -24,7 +24,7 @@ jobs:
         python-version: "3.10"
 
     - name: Install dependencies
-      run: pip install -v types-beautifulsoup4 types-html5lib
+      run: pip install -v types-beautifulsoup4
 
     - name: Mypy review
       id: mypy

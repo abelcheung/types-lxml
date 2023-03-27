@@ -13,8 +13,8 @@ jobs:
   build:
     strategy:
       matrix:
-        os: ["ubuntu-22.04"]
         pyver: ["3.10"]
+        os: ["ubuntu-22.04"]
     runs-on: ${{ matrix.os }}
     steps:
     - uses: actions/checkout@v3
@@ -35,12 +35,10 @@ jobs:
       run: pip install -v tox
 
     - name: Type checker validation on source
-      env:
-        TOX_PARALLEL_NO_SPINNER: 1
-      run: tox -p -v -e mypy,pyright
+      run: tox run-parallel --parallel-no-spinner -v -e mypy,pyright
 
     - name: Build sdist and wheel
-      run: tox -v -e build
+      run: tox run -v -e build
 
     - name: Upload artifact
       uses: actions/upload-artifact@v3
@@ -78,13 +76,12 @@ jobs:
       with:
         name: dist
 
-    # thread hanging in tox 4.4, tests complete but refuse to quit
-    - name: Install dependencies
-      run: pip install -v "tox < 4"
+    - name: Install tox
+      run: pip install -v tox
 
     - name: Test sdist
       shell: bash
-      run: tox --installpkg *.tar.gz --result-json test-job-${{ strategy.job-index }}.json -v
+      run: tox run -e py -v --installpkg *.tar.gz --result-json test-job-${{ strategy.job-index }}.json
 
     - name: Upload log artifact
       uses: actions/upload-artifact@v3
