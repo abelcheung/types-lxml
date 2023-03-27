@@ -1,0 +1,251 @@
+- case: de_include_file
+  skip: true
+  files: &DE_INC
+    - path: de_inc.py
+      content: |
+        from lxml.objectify import (
+          ObjectifiedElement,
+          ObjectifiedDataElement,
+          IntElement,
+          FloatElement,
+          StringElement,
+          NoneElement,
+          BoolElement,
+        )
+        oe: ObjectifiedElement
+        de: ObjectifiedDataElement
+        ie: IntElement
+        fe: FloatElement
+        se: StringElement
+        ne: NoneElement
+        be: BoolElement
+  main: null
+
+- case: oe_has_arbitrary_attribute
+  parametrized:
+    - attr: x
+    - attr: x.x
+    - attr: x.y.z
+  main: |
+    from lxml.objectify import ObjectifiedElement
+    doc: ObjectifiedElement
+    reveal_type(doc.{{ attr }})  # NR: .+ "[\w\.]+\.ObjectifiedElement"$
+
+- case: oe_is_iterable
+  main: |
+    from lxml.objectify import ObjectifiedElement
+    doc: ObjectifiedElement
+    for el in doc:
+      reveal_type(el)  # NR: .+ "[\w\.]+\.ObjectifiedElement"$
+
+- case: oe_specific_methods_no_arg
+  parametrized:
+    - method: countchildren
+      rt: '[\w\.]+\.int'
+    - method: getchildren
+      rt: '[\w\.]+\.list\[[\w\.]+\.ObjectifiedElement]'
+  main: |
+    from lxml.objectify import ObjectifiedElement
+    doc: ObjectifiedElement
+    rs = doc.{{ method }}()
+    reveal_type(rs)  # NR: .+ "{{ rt }}"$
+    doc.{{ method }}(None)  # ER: Too many arguments.*  \[call-arg]$
+
+- case: oe_method_addattr
+  main: |
+    from lxml.objectify import ObjectifiedElement
+    doc: ObjectifiedElement
+    s: str
+    doc.addattr(s, 1)
+    rs = doc.addattr(tag=s, value=s)  # ER: "addattr" .+  \[func-returns-value]$
+    doc.addattr(s)  # ER: Missing positional argument "value" .+  \[call-arg]$
+    doc.addattr(None, s)  # ER: Argument 1 .+; expected ".+"  \[arg-type]$
+    doc.addattr(s, s, None)  # ER: Too many arguments.*  \[call-arg]$
+    doc.addattr(s, badarg=s)  # ER: Unexpected keyword argument .+  \[call-arg]$
+
+- case: oe_method_descendantpaths
+  main: |
+    from lxml.objectify import ObjectifiedElement
+    s: str
+    doc: ObjectifiedElement
+    rs = doc.descendantpaths()
+    reveal_type(rs)  # NR: .+ "[\w\.]+\.list\[[\w\.]+\.str]"$
+    doc.descendantpaths(prefix=s)
+    doc.descendantpaths(1)  # ER: Argument 1 .+; expected ".+"  \[arg-type]$
+    doc.descendantpaths(s, s)  # ER: Too many arguments.*  \[call-arg]$
+
+- case: de_props
+  files: *DE_INC
+  main: |
+    from de_inc import ie, fe, se, ne, be
+    reveal_type(ie.pyval)  # NR: .+ "[\w\.]+\.int"$
+    reveal_type(fe.pyval)  # NR: .+ "[\w\.]+\.float"$
+    reveal_type(se.pyval)  # NR: .+ "[\w\.]+\.str"$
+    reveal_type(ne.pyval)  # NR: .+ "None"$
+    reveal_type(be.pyval)  # NR: .+ "[\w\.]+\.bool"$
+    reveal_type(ie.text)  # NR: .+ "[\w\.]+\.str"$
+    reveal_type(fe.text)  # NR: .+ "[\w\.]+\.str"$
+    reveal_type(se.text)  # NR: .+ "Union\[[\w\.]+\.str, None]"$
+    reveal_type(ne.text)  # NR: .+ "None"$
+    reveal_type(be.text)  # NR: .+ "[\w\.]+\.str"$
+    ie.pyval = 1  # ER: Property "pyval" .+ read-only  \[misc]$
+    se.text = ''  # ER: Property "text" .+ read-only  \[misc]$
+    reveal_type(se.strlen())  # NR: .+ "[\w\.]+\.int"$
+
+- case: de_manipulation_in_doc
+  files: *DE_INC
+  main: |
+    from de_inc import ie, fe, se, ne, be, oe
+    oe.child1 = oe
+    oe.child1[1] = fe
+    del oe.child1
+    oe.child2 = oe.child1 = se
+    oe.child3 = [ne, be, oe]
+    oe.child3 in oe
+    reveal_type(oe.child2)  # NR: .+ "[\w\.]+\.StringElement"$
+    # Beware: reveal_type(oe.child3) wreaks havoc
+
+- case: ie_behave_as_int
+  files: *DE_INC
+  main: |
+    from de_inc import ie
+    i: int
+
+    reveal_type(int(ie))  # NR: .+ "[\w\.]+\.int"$
+    reveal_type(float(ie))  # NR: .+ "[\w\.]+\.float"$
+    reveal_type(abs(ie))  # NR: .+ "[\w\.]+\.int"$
+    reveal_type(bool(ie))  # NR: .+ "[\w\.]+\.bool"$
+    reveal_type(-ie)  # NR: .+ "[\w\.]+\.int"$
+    reveal_type(~ie)  # NR: .+ "[\w\.]+\.int"$
+
+    # See python/mypy#7765
+    reveal_type(ie ** i )  # NR: .+ "Any"$
+    reveal_type(i  ** ie)  # NR: .+ "Any"$
+    reveal_type(ie ** 1 )  # NR: .+ "[\w\.]+\.int"$
+    reveal_type(1  ** ie)  # NR: .+ "Any"$
+
+    reveal_type(ie +  i )  # NR: .+ "[\w\.]+\.int"$
+    reveal_type(ie %  i )  # NR: .+ "[\w\.]+\.int"$
+    reveal_type(i  -  ie)  # NR: .+ "[\w\.]+\.int"$
+    reveal_type(i  // ie)  # NR: .+ "[\w\.]+\.int"$
+    reveal_type(i  %  ie)  # NR: .+ "[\w\.]+\.int"$
+    reveal_type(ie +  ie)  # NR: .+ "[\w\.]+\.int"$
+    reveal_type(ie %  ie)  # NR: .+ "[\w\.]+\.int"$
+
+    # See test-mypy-bug.yml::incompat_assignment
+    # ie -= 10
+    # ie %= 10
+
+    reveal_type(ie << i )  # NR: .+ "[\w\.]+\.int"$
+    reveal_type(ie >> i )  # NR: .+ "[\w\.]+\.int"$
+    reveal_type(i  >> ie)  # NR: .+ "[\w\.]+\.int"$
+
+    reveal_type(ie &  i )  # NR: .+ "[\w\.]+\.int"$
+    reveal_type(ie >  i )  # NR: .+ "[\w\.]+\.bool"$
+    reveal_type(i  >  ie)  # NR: .+ "[\w\.]+\.bool"$
+    reveal_type(i  ^  ie)  # NR: .+ "[\w\.]+\.int"$
+    reveal_type(ie >= ie)  # NR: .+ "[\w\.]+\.bool"$
+    reveal_type(ie |  ie)  # NR: .+ "[\w\.]+\.int"$
+
+- case: fe_behave_as_float
+  files: *DE_INC
+  main: |
+    from de_inc import fe
+    f: float
+    i: int
+
+    reveal_type(int(fe))  # NR: .+ "[\w\.]+\.int"$
+    reveal_type(float(fe))  # NR: .+ "[\w\.]+\.float"$
+    reveal_type(abs(fe))  # NR: .+ "[\w\.]+\.float"$
+    reveal_type(bool(fe))  # NR: .+ "[\w\.]+\.bool"$
+    reveal_type(-fe)  # NR: .+ "[\w\.]+\.float"$
+
+    # See python/mypy#7765
+    reveal_type(fe ** f )  # NR: .+ "Any"$
+
+    reveal_type(fe ** i )  # NR: .+ "[\w\.]+\.float"$
+    reveal_type(fe +  f )  # NR: .+ "[\w\.]+\.float"$
+    reveal_type(fe %  f )  # NR: .+ "[\w\.]+\.float"$
+    reveal_type(f  -  fe)  # NR: .+ "[\w\.]+\.float"$
+    reveal_type(f  // fe)  # NR: .+ "[\w\.]+\.float"$
+    reveal_type(f  %  fe)  # NR: .+ "[\w\.]+\.float"$
+    reveal_type(fe +  fe)  # NR: .+ "[\w\.]+\.float"$
+    reveal_type(fe %  fe)  # NR: .+ "[\w\.]+\.float"$
+
+    # Same as IntElement test above
+    # fe -= f
+    # fe %= f
+
+    reveal_type(fe > f )  # NR: .+ "[\w\.]+\.bool"$
+    reveal_type(f  > fe)  # NR: .+ "[\w\.]+\.bool"$
+    reveal_type(fe >= fe)  # NR: .+ "[\w\.]+\.bool"$
+
+    ~fe  # ER: Unsupported.* operand .+  \[operator]$
+    fe << f  # ER: Unsupported.* operand .+  \[operator]$
+    fe &  f  # ER: Unsupported.* operand .+  \[operator]$
+
+- case: se_behave_as_str
+  files: *DE_INC
+  main: |
+    from de_inc import se, ie
+    s: str
+    i: int
+
+    reveal_type(int(se))  # NR: .+ "[\w\.]+\.int"$
+    reveal_type(float(se))  # NR: .+ "[\w\.]+\.float"$
+    reveal_type(bool(se))  # NR: .+ "[\w\.]+\.bool"$
+
+    reveal_type(se + s )  # NR: .+ "[\w\.]+\.str"$
+    reveal_type(s  + se)  # NR: .+ "[\w\.]+\.str"$
+    reveal_type(se + se)  # NR: .+ "[\w\.]+\.str"$
+    reveal_type(se + i )  # NR: .+ "[\w\.]+\.str"$
+    reveal_type(se + ie)  # NR: .+ "[\w\.]+\.str"$
+    reveal_type(se > s )  # NR: .+ "[\w\.]+\.bool"$
+    reveal_type(s  > se)  # NR: .+ "[\w\.]+\.bool"$
+    reveal_type(se >= se)  # NR: .+ "[\w\.]+\.bool"$
+    reveal_type(se * i )  # NR: .+ "[\w\.]+\.str"$
+    reveal_type(i  * se)  # NR: .+ "[\w\.]+\.str"$
+    reveal_type(se % (s, s))  # NR: .+ "[\w\.]+\.str"$
+
+    se > i  # ER: Unsupported.* operand .+  \[operator]$
+    se | i  # ER: Unsupported.* operand .+  \[operator]$
+    se - s  # ER: Unsupported.* operand .+  \[operator]$
+
+- case: be_behave_as_bool
+  files: *DE_INC
+  main: |
+    from de_inc import be, ie
+    b: bool
+    i: int
+    f: float
+
+    reveal_type(int(be))  # NR: .+ "[\w\.]+\.int"$
+    reveal_type(float(be))  # NR: .+ "[\w\.]+\.float"$
+    reveal_type(abs(be))  # NR: .+ "[\w\.]+\.int"$
+    reveal_type(bool(be))  # NR: .+ "[\w\.]+\.bool"$
+    reveal_type(-be)  # NR: .+ "[\w\.]+\.int"$
+    reveal_type(~be)  # NR: .+ "[\w\.]+\.int"$
+
+    reveal_type(be ** b )  # NR: .+ "Union\[.+]"$
+    reveal_type(be ** i )  # NR: .+ "Union\[.+]"$
+    reveal_type(be ** f )  # NR: .+ "[\w\.]+\.float"$
+
+    reveal_type(be +  i )  # NR: .+ "[\w\.]+\.int"$
+    reveal_type(be %  i )  # NR: .+ "[\w\.]+\.int"$
+    reveal_type(i  -  be)  # NR: .+ "[\w\.]+\.int"$
+    reveal_type(i  // be)  # NR: .+ "[\w\.]+\.int"$
+    reveal_type(i  %  be)  # NR: .+ "[\w\.]+\.int"$
+    reveal_type(be +  be)  # NR: .+ "[\w\.]+\.int"$
+    reveal_type(be %  be)  # NR: .+ "[\w\.]+\.int"$
+
+    reveal_type(be << i )  # NR: .+ "[\w\.]+\.int"$
+    reveal_type(be >> be)  # NR: .+ "[\w\.]+\.int"$
+    reveal_type(i  >> be)  # NR: .+ "[\w\.]+\.int"$
+
+    reveal_type(be &  i )  # NR: .+ "[\w\.]+\.int"$
+    reveal_type(be >  i )  # NR: .+ "[\w\.]+\.bool"$
+    reveal_type(i  >  be)  # NR: .+ "[\w\.]+\.bool"$
+    reveal_type(i  ^  be)  # NR: .+ "[\w\.]+\.int"$
+    reveal_type(be >= be)  # NR: .+ "[\w\.]+\.bool"$
+    reveal_type(be |  be)  # NR: .+ "[\w\.]+\.bool"$
+    # TODO Reverse operations don't work for now

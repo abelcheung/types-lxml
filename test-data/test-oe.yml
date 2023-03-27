@@ -8,57 +8,10 @@
     from lxml.objectify import fromstring
     reveal_type(fromstring({{ args }}))  # NR: Revealed type is "[\w\.]+\.ObjectifiedElement"
 
-- case: oe_has_arbitrary_attribute
-  parametrized:
-    - attr: x
-    - attr: x.x
-    - attr: x.y.z
-  main: |
-    from lxml.objectify import ObjectifiedElement
-    doc: ObjectifiedElement
-    reveal_type(doc.{{ attr }})  # NR: Revealed type is "[\w\.]+\.ObjectifiedElement"
-
-- case: oe_is_iterable
-  main: |
-    from lxml.objectify import ObjectifiedElement
-    doc: ObjectifiedElement
-    for el in doc:
-      reveal_type(el)  # NR: Revealed type is "[\w\.]+\.ObjectifiedElement"
-
-- case: oe_specific_methods_no_arg
-  parametrized:
-    - method: countchildren
-      rt: 'builtins\.int'
-    - method: getchildren
-      rt: 'builtins\.list\[[\w\.]+\.ObjectifiedElement]'
-    - method: descendantpaths
-      rt: 'builtins\.list\[builtins\.str]'
-  main: |
-    from lxml.objectify import ObjectifiedElement
-    doc: ObjectifiedElement
-    reveal_type(doc.{{ method }}())  # NR: Revealed type is "{{ rt }}"
-
-- case: oe_specific_methods_have_arg
-  parametrized:
-    - method: addattr
-      args: s, 1
-      rt: None
-    - method: addattr
-      args: tag=s, value=s
-      rt: None
-    - method: descendantpaths
-      args: prefix=s
-      rt: builtins.list[builtins.str]
-  main: |
-    s: str
-    from lxml.objectify import ObjectifiedElement
-    doc: ObjectifiedElement
-    reveal_type(doc.{{ method }}({{ args }}))  # N: Revealed type is "{{ rt }}"
-
 - case: elementmaker_default
   main: |
     from lxml.objectify import E
-    reveal_type(E)  # NR: Revealed type is "[\w\.]+\.ElementMaker"
+    reveal_type(E)  # NR: .+ "[\w\.]+\.ElementMaker"$
 
 - case: elementmaker_customize
   parametrized:
