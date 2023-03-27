@@ -104,7 +104,9 @@ class _Validator(metaclass=ABCMeta):
 # so list them here
 class SchematronError(LxmlError):
     """Base class of all Schematron errors"""
+
 class SchematronParseError(SchematronError):
     """Error while parsing an XML document as Schematron schema"""
+
 class SchematronValidateError(SchematronError):
     """Error while validating an XML document with a Schematron schema"""

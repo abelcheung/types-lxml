@@ -4,7 +4,7 @@
 
 import abc
 from typing import Any, ClassVar, Literal, final, overload
-from typing_extensions import TypedDict, TypeAlias
+from typing_extensions import TypeAlias, TypedDict
 
 from .._types import (
     SupportsLaxedItems,

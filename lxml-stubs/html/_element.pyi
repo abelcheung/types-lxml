@@ -236,12 +236,8 @@ class Classes(MutableSet[str]):
 # Note the reversed MRO order -- fatal dunders from __ContentOnlyElement
 # are dominant in runtime
 #
-class HtmlComment(  # type: ignore
-    etree.CommentBase, HtmlElement
-): ...
-class HtmlEntity(  # type: ignore
-    etree.EntityBase, HtmlElement
-): ...
+class HtmlComment(etree.CommentBase, HtmlElement): ...  # type: ignore
+class HtmlEntity(etree.EntityBase, HtmlElement): ...  # type: ignore
 
 #
 # Factory func, signature same as etree.Element

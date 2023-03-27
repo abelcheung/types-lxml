@@ -7,20 +7,20 @@ from .etree._xslt import _Stylesheet_Param
 
 __all__ = (
     # Official exports
-    'extract_xsd',
-    'extract_rng',
-    'iso_dsdl_include',
-    'iso_abstract_expand',
-    'iso_svrl_for_xslt1',
-    'svrl_validation_errors',
-    'schematron_schema_valid',
-    'stylesheet_params',
-    'Schematron',
+    "extract_xsd",
+    "extract_rng",
+    "iso_dsdl_include",
+    "iso_abstract_expand",
+    "iso_svrl_for_xslt1",
+    "svrl_validation_errors",
+    "schematron_schema_valid",
+    "stylesheet_params",
+    "Schematron",
     # Namespace constants
-    'XML_SCHEMA_NS',
-    'RELAXNG_NS',
-    'SCHEMATRON_NS',
-    'SVRL_NS',
+    "XML_SCHEMA_NS",
+    "RELAXNG_NS",
+    "SCHEMATRON_NS",
+    "SVRL_NS",
 )
 
 XML_SCHEMA_NS: LiteralString
@@ -107,9 +107,7 @@ class Schematron(_e._Validator):
         phase: str | None = ...,
         error_finder: _e.XPath = ...,
     ) -> None: ...
-
     def __call__(self, etree: _ElementOrTree) -> bool: ...
-
     @property
     def schematron(self) -> _e._XSLTResultTree | None: ...
     @property

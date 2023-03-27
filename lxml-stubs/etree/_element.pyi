@@ -8,7 +8,6 @@ from ._module_misc import CDATA, DocInfo, QName
 from ._parser import _DefEtreeParsers
 from ._xslt import XSLTAccessControl, XSLTExtension, _Stylesheet_Param, _XSLTResultTree
 
-
 # The base of _Element is *almost* an amalgam of MutableSequence[_Element]
 # plus mixin methods for _Attrib.
 # Extra methods follow the order of _Element source approximately
