@@ -79,9 +79,13 @@ jobs:
     - name: Install tox
       run: pip install -v tox
 
-    - name: Test sdist
+    - name: Test stubs
       shell: bash
-      run: tox run -e py -v --installpkg *.tar.gz --result-json test-job-${{ strategy.job-index }}.json
+      run: >
+        tox run -v
+        --skip-env='.*-rt$'
+        --installpkg *.tar.gz
+        --result-json test-job-${{ strategy.job-index }}.json
 
     - name: Upload log artifact
       uses: actions/upload-artifact@v3

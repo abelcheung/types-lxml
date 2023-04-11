@@ -52,15 +52,10 @@ excludes = [
     '**/*.bak',
 ]
 source-includes = [
-    'test-data/',
+    'test-stub/',
     'LICENSE',
     'README.md',
     'tox.ini',
-]
-
-[tool.pytest.ini_options]
-testpaths = [
-    'test-data',
 ]
 
 [tool.isort]
@@ -75,6 +70,7 @@ extra_standard_library = [
 [tool.pyright]
 include = ['lxml-stubs']
 reportPrivateUsage = false
+reportUnnecessaryIsInstance = false
 
 [tool.mypy]
 packages = 'lxml-stubs'
