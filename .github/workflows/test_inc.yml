@@ -77,7 +77,7 @@ jobs:
         name: dist
 
     - name: Install tox
-      run: pip install -v tox
+      run: pip install -v "tox > 4" "tox-gh-actions == 3.1.*"
 
     - name: Test stubs
       shell: bash
