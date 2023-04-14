@@ -39,8 +39,8 @@ def _get_var_name(frame: inspect.FrameInfo) -> str:
 
 
 def reveal_type_wrapper(var: _T) -> _T:
-    """Wrapper for `reveal_type()` that matches static type checker
-    result with typeguard runtime result
+    """Replacement of `reveal_type()` that matches static
+    type checker result with typeguard runtime result
 
     This function is intended to be called as `reveal_type()`,
     replacing official `reveal_type()` from either Python 3.11
@@ -93,20 +93,30 @@ def reveal_type_wrapper(var: _T) -> _T:
         )
 
     ref = _t.ForwardRef(result.type)
+
     # Since this is a wrapper of typeguard.check_type(),
     # get globals and locals from my caller, not mine
-    globals = caller.frame.f_globals
-    locals = caller.frame.f_locals
+    globalns = caller.frame.f_globals
+    localns = caller.frame.f_locals
+
+    type_ast = ast.parse(result.type, mode='eval')
+    walker = NameCollector(globalns, localns)
+    walker.visit(type_ast)
+    localns |= walker.names
+    memo = TypeCheckMemo(globalns, localns)
     try:
-        memo = TypeCheckMemo(globals, locals)
         check_type_internal(var, ref, memo)
-    except NameError:
-        # Collect resolved bare names and try again
-        walker = NameCollector()
-        walker.visit(ast.parse(result.type))
-        locals |= walker.names
-        memo = TypeCheckMemo(globals, locals)
-        check_type_internal(var, ref, memo)
+    except TypeError as exc:
+        if 'is not subscriptable' not in exc.args[0]:
+            raise
+        if not isinstance(type_ast.body, ast.Subscript):
+            raise TypeCheckError('Inconsistency between type and parsed AST tree')
+        # Have to concede by verifying unsubscripted type
+        # Specialized classes is a stub-only thing here, and
+        # all classes in lxml do not support __class_getitem__
+        bare_type = ast.get_source_segment(result.type, type_ast.body.value)
+        assert bare_type is not None
+        check_type_internal(var, _t.ForwardRef(bare_type), memo)
 
     del caller
     return var

@@ -56,11 +56,20 @@ def run_pyright_on(filepath: str | Path) -> None:
 class NameCollector(ast.NodeVisitor):
     names: dict[str, _t.Any] = {}
 
+    def __init__(
+        self,
+        globalns: dict[str, _t.Any],
+        localns: _t.Mapping[str, _t.Any],
+    ) -> None:
+        super().__init__()
+        self.globalns = globalns
+        self.localns = localns
+
     def visit_Name(self, node: ast.Name) -> _t.Any:
         name = node.id
         resolver = NameResolver()
         try:
-            eval(name)
-        except:
+            eval(name, self.globalns, self.localns)
+        except NameError:
             self.names[name] = resolver.find(name)
         return self.generic_visit(node)
