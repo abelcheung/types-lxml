@@ -37,8 +37,9 @@ dev = [
     'black',
     'isort',
     'mypy == 1.1.*',
-    'pyright >= 1.1.288',
-    'lxml ~= 4.9',
+    'pyright == 1.1.*, >= 1.1.289',
+    'lxml == 4.9.*',
+    'typeguard > 3'
 ]
 
 [tool.pdm.version]
