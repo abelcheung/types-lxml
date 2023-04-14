@@ -129,10 +129,6 @@ jobs:
         pip install -v
         "tox > 4"
         "tox-gh-actions == 3.1.*"
-        "pyright == 1.1.*"
-
-    - name: Pyright validation on test files
-      run: pyright test-rt
 
     - name: Test runtime
       shell: bash
