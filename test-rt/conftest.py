@@ -14,12 +14,12 @@ typeguard.config.forward_ref_policy = typeguard.ForwardRefPolicy.ERROR
 @pytest.fixture
 def h_filepath() -> Path:
     # hand edited to chop off many inline script blocks
-    return Path(__file__) / ".." / "data" / "sample.html"
+    return Path(__file__).parent / "data" / "sample.html"
 
 
 @pytest.fixture
 def x_filepath() -> Path:
-    return Path(__file__) / ".." / "data" / "w3c-example.svg"
+    return Path(__file__).parent / "data" / "w3c-example.svg"
 
 
 @pytest.fixture
