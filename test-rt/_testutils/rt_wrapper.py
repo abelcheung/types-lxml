@@ -31,7 +31,7 @@ def _get_var_name(frame: inspect.FrameInfo) -> str:
     code = code[idx].strip()
 
     walker = RevealTypeExtractor()
-    walker.visit(ast.parse(code))
+    walker.visit(ast.parse(code, mode='eval'))
     try:
         return ast.get_source_segment(code, walker.target)  # type: ignore
     except:

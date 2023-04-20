@@ -10,9 +10,6 @@ from types import MappingProxyType
 
 from .common import FilePos, NameResolver, VarType
 
-# _logger = logging.getLogger(__name__)
-# _logger.setLevel(logging.WARN)
-
 # {('file.py', 10): ('var_name', 'str'), ...}
 _pyright_results: dict[FilePos, VarType] = {}
 _pyright_re = re.compile('^Type of "(?P<var>.+?)" is "(?P<type>.+?)"$')
@@ -27,13 +24,12 @@ def get_pyright_result(filepath: str | Path):
     )
 
 
-def run_pyright_on(filepath: str | Path) -> None:
-    pyright_path = shutil.which("pyright")
-    if pyright_path is None:
+def run_pyright_on(paths: _t.Iterable[Path]) -> None:
+    if (pyright_path := shutil.which("pyright")) is None:
         raise FileNotFoundError("Pyright is required to run test suite")
-    proc = subprocess.run(
-        [pyright_path, "--outputjson", str(filepath)], capture_output=True
-    )
+    pyright_cmd = [pyright_path, "--outputjson"]
+    pyright_cmd.extend(str(p) for p in paths)
+    proc = subprocess.run(pyright_cmd, capture_output=True)
     report = json.loads(proc.stdout)
 
     for diag in report["generalDiagnostics"]:
@@ -44,8 +40,6 @@ def run_pyright_on(filepath: str | Path) -> None:
         lineno = diag["range"]["start"]["line"] + 1
         filename = Path(diag["file"]).name
         if (m := _pyright_re.match(diag["message"])) is None:
-            # _logger.critical(f'Message "{diag["message"]}" '
-            #     'does not contain inferred type of variable')
             continue
         pos = FilePos(filename, lineno)
         # FIXME Rewrite m['type'] so that names are resolvable

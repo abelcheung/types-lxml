@@ -7,8 +7,13 @@ import pytest
 import typeguard
 from lxml.etree import _Element, _ElementTree
 from lxml.html import HtmlElement, parse
+from _testutils import run_pyright_on
 
 typeguard.config.forward_ref_policy = typeguard.ForwardRefPolicy.ERROR
+
+def pytest_collection_finish(session: pytest.Session) -> None:
+    files = {i.path for i in session.items}
+    run_pyright_on(files)
 
 
 @pytest.fixture

@@ -3,14 +3,8 @@ from __future__ import annotations
 from pathlib import Path
 
 import _testutils
-import pytest
 from lxml.etree import _Element, _ElementTree, iterparse, iterwalk
 from lxml.html import HtmlElement
-
-try:
-    _testutils.run_pyright_on(__file__)
-except FileNotFoundError as e:
-    _ = pytest.mark.skip(" ".join([str(a) for a in e.args]))
 
 reveal_type = getattr(_testutils, "reveal_type_wrapper")
 
