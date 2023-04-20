@@ -47,7 +47,7 @@ jobs:
         path: dist/*
         if-no-files-found: error
 
-  test:
+  test-stub:
     needs: build
     strategy:
       matrix:
@@ -76,16 +76,71 @@ jobs:
       with:
         name: dist
 
-    - name: Install tox
-      run: pip install -v tox
+    - name: Install prerequisites
+      run: >
+        pip install -v
+        "tox > 4"
+        "tox-gh-actions == 3.1.*"
 
-    - name: Test sdist
+    - name: Test stubs
       shell: bash
-      run: tox run -e py -v --installpkg *.tar.gz --result-json test-job-${{ strategy.job-index }}.json
+      run: >
+        tox run -v
+        --skip-env='.*-rt$'
+        --installpkg *.tar.gz
+        --result-json test-stub-${{ strategy.job-index }}.json
 
     - name: Upload log artifact
       uses: actions/upload-artifact@v3
       with:
         name: log
-        path: test-job-*.json
+        path: test-stub-*.json
+        if-no-files-found: error
+
+  test-rt:
+    needs: build
+    strategy:
+      matrix:
+        pyver:
+          - "3.10"
+          - "3.11"
+        os:
+          - "ubuntu-22.04"
+    runs-on: ${{ matrix.os }}
+    steps:
+    - uses: actions/checkout@v3
+
+    - uses: actions/setup-python@v4
+      with:
+        python-version: ${{ matrix.pyver }}
+
+    - uses: actions/cache@v3
+      with:
+        path: ${{ env.pythonLocation }}
+        key: ${{ matrix.os }}-${{ env.pythonLocation }}-${{ hashFiles('tox.ini', 'pyproject.toml') }}
+
+    - name: Download artifact
+      uses: actions/download-artifact@v3
+      with:
+        name: dist
+
+    - name: Install prerequisites
+      run: >
+        pip install -v
+        "tox > 4"
+        "tox-gh-actions == 3.1.*"
+
+    - name: Test runtime
+      shell: bash
+      run: >
+        tox run -v
+        --skip-env='.*-stub$'
+        --installpkg *.tar.gz
+        --result-json test-rt-${{ strategy.job-index }}.json
+
+    - name: Upload log artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: log
+        path: test-rt-*.json
         if-no-files-found: error

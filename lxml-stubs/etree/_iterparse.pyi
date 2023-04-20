@@ -1,12 +1,13 @@
 from _typeshed import _T_co
-from typing import Iterable, Iterator, Literal, overload
+from typing import IO, Iterable, Iterator, Literal, overload
 from typing_extensions import LiteralString, TypeAlias
 
 from .._types import (
     SupportsLaxedItems,
+    SupportsReadClose,
     _AnyStr,
     _ET_co,
-    _FileReadSource,
+    _FilePath,
     _NSMapArg,
     _SaxEventNames,
     _TagName,
@@ -54,7 +55,7 @@ class iterparse(Iterator[_T_co]):
     @overload  # default events
     def __new__(
         cls,
-        source: _FileReadSource,
+        source: _FilePath | IO[bytes] | SupportsReadClose[bytes],
         events: None = ...,
         *,
         tag: _TagSelector | Iterable[_TagSelector] | None = ...,
@@ -78,7 +79,7 @@ class iterparse(Iterator[_T_co]):
     @overload  # html mode -> namespace events supressed
     def __new__(
         cls,
-        source: _FileReadSource,
+        source: _FilePath | IO[bytes] | SupportsReadClose[bytes],
         events: Iterable[_SaxEventNames],
         *,
         tag: _TagSelector | Iterable[_TagSelector] | None = ...,
@@ -102,7 +103,7 @@ class iterparse(Iterator[_T_co]):
     @overload  # custom events, xml mode
     def __new__(
         cls,
-        source: _FileReadSource,
+        source: _FilePath | IO[bytes] | SupportsReadClose[bytes],
         events: Iterable[_SaxEventNames],
         *,
         tag: _TagSelector | Iterable[_TagSelector] | None = ...,

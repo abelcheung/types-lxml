@@ -11,6 +11,7 @@ requires-python = '>=3.8'
 license = {text = 'Apache-2.0'}
 dependencies = [
     'types-beautifulsoup4',
+    'typing_extensions ~= 4.5'
 ]
 keywords = ['lxml', 'typing', 'stubs', 'annotation']
 authors = [
@@ -34,11 +35,13 @@ homepage = 'https://github.com/abelcheung/types-lxml'
 [project.optional-dependencies]
 dev = [
     'pytest-mypy-plugins ~= 1.10, != 1.10.0',
+    'pytest >= 7',
     'black',
-    'isort',
+    'isort >= 5',
     'mypy == 1.1.*',
-    'pyright >= 1.1.288',
-    'lxml ~= 4.9',
+    'pyright == 1.1.*, >= 1.1.289',
+    'lxml == 4.9.*',
+    'typeguard == 3.0.*'
 ]
 
 [tool.pdm.version]
@@ -52,15 +55,10 @@ excludes = [
     '**/*.bak',
 ]
 source-includes = [
-    'test-data/',
+    'test-stub/',
     'LICENSE',
     'README.md',
     'tox.ini',
-]
-
-[tool.pytest.ini_options]
-testpaths = [
-    'test-data',
 ]
 
 [tool.isort]
@@ -75,6 +73,7 @@ extra_standard_library = [
 [tool.pyright]
 include = ['lxml-stubs']
 reportPrivateUsage = false
+reportUnnecessaryIsInstance = false
 typeCheckingMode = 'strict'
 
 [tool.mypy]
