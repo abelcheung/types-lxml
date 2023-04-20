@@ -22,7 +22,7 @@ Following list reflects current situation for less used `lxml` / `html` submodul
   - [ ] `lxml.usedoctest`
   - [x] `lxml.html.builder`
   - [x] `lxml.html.clean`
-  - [ ] `lxml.html.diff`
+  - [x] `lxml.html.diff`
   - [ ] `lxml.html.formfill` (may not implement)
   - [x] `lxml.html.html5parser`
   - [x] `lxml.html.soupparser`

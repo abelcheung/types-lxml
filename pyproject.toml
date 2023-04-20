@@ -74,6 +74,7 @@ extra_standard_library = [
 include = ['lxml-stubs']
 reportPrivateUsage = false
 reportUnnecessaryIsInstance = false
+typeCheckingMode = 'strict'
 
 [tool.mypy]
 packages = 'lxml-stubs'
