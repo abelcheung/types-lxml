@@ -40,9 +40,12 @@ In the future, there is plan to bring even more type checker support.
 
 - [x] All prior `lxml-stubs` contributions are reviewed thoroughly, bringing coherency of annotation across the whole package
 - [x] Much more extensive test cases
-  - [ ] Mypy test suite only covered about half of the whole package currently
-  - [ ] Lack of prior art for performing pyright checks within `pytest`
-  - [ ] Plan to perform runtime check, and compare against type checker result
+  - [x] Mypy test suite already vastly expanded
+    - But still, only managed to cover about half of the whole package
+  - [x] Perform runtime check, and compare against static type checker result
+    - This guarantees annotations are indeed valid
+    - [x] Proof of concept for incorporating `pyright` result under progress
+    - [ ] `mypy` support under consideration later
 - [x] Modernize package building infrastructure
 
 ## Goal ④: Support for IDEs
