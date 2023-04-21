@@ -17,7 +17,6 @@ class TestIterwalk:
             reveal_type(event)
             reveal_type(elem)
 
-
     def test_xml_more_event(self, xml_tree: _ElementTree[_Element]) -> None:
         walker = iterwalk(xml_tree, ["start", "end", "start-ns", "end-ns", "comment"])
         reveal_type(walker)
@@ -25,14 +24,12 @@ class TestIterwalk:
             reveal_type(event)
             reveal_type(elem)
 
-
     def test_html_default_event(self, html_tree: _ElementTree[HtmlElement]) -> None:
         walker = iterwalk(html_tree)
         reveal_type(walker)
         for event, elem in walker:
             reveal_type(event)
             reveal_type(elem)
-
 
     def test_html_more_event(self, html_tree: _ElementTree[HtmlElement]) -> None:
         # BUG Since HtmlComment is pretended as HtmlElement subclass
@@ -43,24 +40,25 @@ class TestIterwalk:
             reveal_type(event)
             reveal_type(elem)
 
+
 class TestIterparse:
-    def test_default_event(self, x_filepath: Path) -> None:
-        walker = iterparse(x_filepath)
+    def test_default_event(self, x1_filepath: Path) -> None:
+        walker = iterparse(x1_filepath)
         reveal_type(walker)
         for event, elem in walker:
             reveal_type(event)
             reveal_type(elem)
 
-    def test_html_mode(self, x_filepath: Path) -> None:
-        walker = iterparse(source=str(x_filepath), html=True)
+    def test_html_mode(self, x1_filepath: Path) -> None:
+        walker = iterparse(source=str(x1_filepath), html=True)
         reveal_type(walker)
         for event, elem in walker:
             reveal_type(event)
             reveal_type(elem)
 
-    def test_custom_event(self, x_filepath: Path) -> None:
-        with open(x_filepath, 'rb') as f:
-            walker = iterparse(f, ['start', 'end', 'start-ns', 'end-ns'])
+    def test_custom_event(self, x1_filepath: Path) -> None:
+        with open(x1_filepath, "rb") as f:
+            walker = iterparse(f, ["start", "end", "start-ns", "end-ns"])
             reveal_type(walker)
             for event, elem in walker:
                 reveal_type(event)
