@@ -1,13 +1,16 @@
-from typing import Iterable, Pattern, Union, overload
+from typing import Iterable, Pattern, TypeVar, Union, overload
 from typing_extensions import TypeAlias
 
 from .._types import Unused, _ElemFactory
-from ..etree import _Element
+from ..etree import _Element, _ElementTree
 from . import HtmlElement
 from ._funcs import _HtmlDoc_T, _HtmlElemOrTree
 
 # Version of tag selector that doesn't support QName helper
 _HTagSelector: TypeAlias = Union[str, bytes, _ElemFactory[_Element]]
+
+# Similar to _funcs._HtmlDoc_T, but also supports ET; only used in Cleaner
+_DT = TypeVar('_DT', str, bytes, HtmlElement, _ElementTree[HtmlElement])
 
 class Cleaner:
     # allow_tags and remove_unknown_tags can't coexist
@@ -68,7 +71,7 @@ class Cleaner:
     def allow_element(self, el: HtmlElement) -> bool: ...
     def allow_embedded_url(self, el: HtmlElement, url: str) -> bool: ...
     def kill_conditional_comments(self, doc: _HtmlElemOrTree) -> None: ...
-    def clean_html(self, html: _HtmlDoc_T) -> _HtmlDoc_T: ...
+    def clean_html(self, html: _DT) -> _DT: ...
 
 clean: Cleaner
 clean_html = clean.clean_html
