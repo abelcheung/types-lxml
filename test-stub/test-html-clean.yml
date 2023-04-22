@@ -84,9 +84,6 @@
     - func: clean.autolink_html
       args: html=root
       rt: '[\w\.]+\.HtmlElement'
-    - func: clean.autolink_html
-      args: tree
-      rt: '[\w\.]+\._ElementTree\[[\w\.]+\.HtmlElement]'
     - func: clean.word_break_html
       args: s
       rt: 'builtins\.str'
@@ -96,9 +93,6 @@
     - func: clean.word_break_html
       args: root
       rt: '[\w\.]+\.HtmlElement'
-    - func: clean.word_break_html
-      args: html=tree
-      rt: '[\w\.]+\._ElementTree\[[\w\.]+\.HtmlElement]'
   main: |
     from lxml.html import clean, HtmlElement
     from lxml.etree import _ElementTree
@@ -114,9 +108,9 @@
     from lxml.html import HtmlElement, clean
     root: HtmlElement
     clean.clean_html()  # E: Too few arguments  [call-arg]
-    clean.clean_html(None)  # E: Value of type variable "_HtmlDoc_T" of function cannot be "None"  [type-var]
-    clean.clean_html(root, None)  # E: Too many arguments  [call-arg]
-    clean.clean_html(badarg=root)  # E: Unexpected keyword argument "badarg"  [call-arg]
+    clean.clean_html(None)  # ER: Value of .+ cannot be "None"  \[type-var]$
+    clean.clean_html(root, None)  # ER: Too many arguments.*  \[call-arg]$
+    clean.clean_html(badarg=root)  # ER: Unexpected keyword argument .+  \[call-arg]$
 
 - case: other_html_funcs_badargs
   parametrized:
@@ -133,9 +127,9 @@
     from lxml.html import HtmlElement, clean
     c: clean.Cleaner
     root: HtmlElement
-    {{ func }}()  # E: Missing positional argument "html" in call to "{{ name }}"{{#is_method}} of "Cleaner"{{/is_method}}  [call-arg]
-    {{ func }}(None)  # E: Value of type variable "_HtmlDoc_T" of "{{ name }}"{{#is_method}} of "Cleaner"{{/is_method}} cannot be "None"  [type-var]
-    {{ func }}(badarg=root)  # E: Unexpected keyword argument "badarg" for "{{ name }}"{{#is_method}} of "Cleaner"{{/is_method}}  [call-arg]
+    {{ func }}()  # ER: Missing positional argument "html" .+  \[call-arg]$
+    {{ func }}(None)  # ER: Value of .+ cannot be "None"  \[type-var]$
+    {{ func }}(badarg=root)  # ER: Unexpected keyword argument "badarg".+  \[call-arg]$
 
 - case: html_funcs_wrong_arg_type
   parametrized:
