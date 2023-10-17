@@ -26,6 +26,7 @@ classifiers = [
     'Programming Language :: Python :: 3.9',
     'Programming Language :: Python :: 3.10',
     'Programming Language :: Python :: 3.11',
+    'Programming Language :: Python :: 3.12',
     'Typing :: Stubs Only',
 ]
 
@@ -34,7 +35,7 @@ homepage = 'https://github.com/abelcheung/types-lxml'
 
 [project.optional-dependencies]
 dev = [
-    'pytest-mypy-plugins ~= 1.10, != 1.10.0',
+    'pytest-mypy-plugins >= 1.10.1',
     'pytest >= 7',
     'black',
     'isort >= 5',
