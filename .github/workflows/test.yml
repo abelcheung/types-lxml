@@ -2,8 +2,8 @@ name: Build and test
 
 on:
   push:
-    branches:
-      - 'main'
+    branches-ignore:
+      - 'dependabot/**'
     paths-ignore:
       - '.git*'
       - '**.md'
