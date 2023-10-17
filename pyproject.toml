@@ -56,9 +56,10 @@ excludes = [
     '**/*.bak',
 ]
 source-includes = [
-    'test-stub/',
     'LICENSE',
     'README.md',
+    'test-rt/',
+    'test-stub/',
     'tox.ini',
 ]
 
