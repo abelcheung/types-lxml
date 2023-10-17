@@ -74,6 +74,7 @@ class Schematron(_e._Validator):
         store_report: bool = ...,
         phase: str | None = ...,
         error_finder: _e.XPath = ...,
+        validate_schema: bool = ...,
     ) -> None: ...
     @overload
     def __init__(
@@ -90,6 +91,7 @@ class Schematron(_e._Validator):
         store_report: bool = ...,
         phase: str | None = ...,
         error_finder: _e.XPath = ...,
+        validate_schema: bool = ...,
     ) -> None: ...
     @overload
     def __init__(
@@ -106,6 +108,7 @@ class Schematron(_e._Validator):
         store_report: bool = ...,
         phase: str | None = ...,
         error_finder: _e.XPath = ...,
+        validate_schema: bool = ...,
     ) -> None: ...
     def __call__(self, etree: _ElementOrTree) -> bool: ...
     @property
