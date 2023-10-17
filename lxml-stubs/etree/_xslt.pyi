@@ -152,7 +152,7 @@ class XSLT:
     def strparam(strval: _AnyStr) -> _XSLTQuotedStringParam: ...
     @staticmethod
     def set_global_max_depth(max_depth: int) -> None: ...
-    @deprecated("Since v2.0; call instance directly instead")
+    @deprecated("Removed since 5.0; deprecated since v2.0 (2008); call instance directly instead")
     def apply(
         self,
         _input: _ElementOrTree,
@@ -160,7 +160,7 @@ class XSLT:
         profile_run: bool = ...,
         **__kw: _Stylesheet_Param,
     ) -> _XSLTResultTree: ...
-    @deprecated("Since v2.0; use str(result_tree) instead")
+    @deprecated("Since v2.0 (2008); use str(result_tree) instead")
     def tostring(
         self,
         result_tree: _ElementTree[_Element],
