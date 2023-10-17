@@ -1,6 +1,6 @@
 [build-system]
-requires = ['pdm-backend ~= 2.0']
-build-backend = 'pdm.backend'
+requires = ['setuptools >= 64', 'setuptools_scm ~= 8.0']
+build-backend = 'setuptools.build_meta'
 
 [project]
 name = 'types-lxml'
@@ -62,6 +62,8 @@ source-includes = [
     'test-stub/',
     'tox.ini',
 ]
+
+[tool.setuptools_scm]
 
 [tool.isort]
 profile = 'black'
