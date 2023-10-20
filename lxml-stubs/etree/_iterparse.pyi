@@ -27,6 +27,17 @@ _SaxNsEventValues: TypeAlias = tuple[str, str] | None  # for start-ns & end-ns e
 class iterparse(Iterator[_T_co]):
     """Incremental parser
 
+    Annotation
+    ----------
+    Totally 5 function signatures are available:
+    - Default XML mode, where only `end` event is emitted
+    - `start`, `end`, `comment` and `pi` events, where only
+      Element values are produced
+    - HTML mode (`html=True`), where namespace events are ignored
+    - XML mode with `start-ns` or `end-ns` events, producing
+      namespace tuple (for `start-ns`) or nothing (`end-ns`)
+    - Final catch-all signature for XML mode
+
     Original Docstring
     ------------------
     Parses XML into a tree and generates tuples (event, element) in a
@@ -52,7 +63,7 @@ class iterparse(Iterator[_T_co]):
     libxml2 parser configuration.  A DTD will also be loaded if validation or
     attribute default values are requested."""
 
-    @overload  # default events
+    @overload  # default values, only 'end' event emitted
     def __new__(
         cls,
         source: _FilePath | IO[bytes] | SupportsReadClose[bytes],
@@ -76,7 +87,31 @@ class iterparse(Iterator[_T_co]):
         collect_ids: bool = ...,
         schema: XMLSchema | None = ...,
     ) -> iterparse[tuple[Literal["end"], _Element]]: ...
-    @overload  # html mode -> namespace events supressed
+    @overload  # element-only events
+    def __new__(
+        cls,
+        source: _FilePath | IO[bytes] | SupportsReadClose[bytes],
+        events: Iterable[_NoNSEventNames],
+        *,
+        tag: _TagSelector | Iterable[_TagSelector] | None = ...,
+        attribute_defaults: bool = ...,
+        dtd_validation: bool = ...,
+        load_dtd: bool = ...,
+        no_network: bool = ...,
+        remove_blank_text: bool = ...,
+        compact: bool = ...,
+        resolve_entities: bool = ...,
+        remove_comments: bool = ...,
+        remove_pis: bool = ...,
+        strip_cdata: bool = ...,
+        encoding: _AnyStr | None = ...,
+        html: bool = ...,
+        recover: bool | None = ...,
+        huge_tree: bool = ...,
+        collect_ids: bool = ...,
+        schema: XMLSchema | None = ...,
+    ) -> iterparse[tuple[_NoNSEventNames, _Element]]: ...
+    @overload  # html mode -> namespace events suppressed
     def __new__(
         cls,
         source: _FilePath | IO[bytes] | SupportsReadClose[bytes],
@@ -100,7 +135,33 @@ class iterparse(Iterator[_T_co]):
         collect_ids: bool = ...,
         schema: XMLSchema | None = ...,
     ) -> iterparse[tuple[_NoNSEventNames, _Element]]: ...
-    @overload  # custom events, xml mode
+    @overload  # xml mode & NS-only events
+    def __new__(
+        cls,
+        source: _FilePath | IO[bytes] | SupportsReadClose[bytes],
+        events: Iterable[Literal['start-ns', 'end-ns']],
+        *,
+        tag: _TagSelector | Iterable[_TagSelector] | None = ...,
+        attribute_defaults: bool = ...,
+        dtd_validation: bool = ...,
+        load_dtd: bool = ...,
+        no_network: bool = ...,
+        remove_blank_text: bool = ...,
+        compact: bool = ...,
+        resolve_entities: bool = ...,
+        remove_comments: bool = ...,
+        remove_pis: bool = ...,
+        strip_cdata: bool = ...,
+        encoding: _AnyStr | None = ...,
+        html: Literal[False] = ...,
+        recover: bool | None = ...,
+        huge_tree: bool = ...,
+        collect_ids: bool = ...,
+        schema: XMLSchema | None = ...,
+    ) -> iterparse[
+            tuple[Literal['start-ns'], tuple[str, str]]
+            | tuple[Literal['end-ns'], None]]: ...
+    @overload  # xml mode, catch all
     def __new__(
         cls,
         source: _FilePath | IO[bytes] | SupportsReadClose[bytes],
@@ -118,12 +179,16 @@ class iterparse(Iterator[_T_co]):
         remove_pis: bool = ...,
         strip_cdata: bool = ...,
         encoding: _AnyStr | None = ...,
-        html: bool = ...,
+        html: Literal[False] = ...,
         recover: bool | None = ...,
         huge_tree: bool = ...,
         collect_ids: bool = ...,
         schema: XMLSchema | None = ...,
-    ) -> iterparse[tuple[_SaxEventNames, _Element | _SaxNsEventValues]]: ...
+    ) -> iterparse[
+        tuple[_NoNSEventNames, _Element]
+        | tuple[Literal['start-ns'], tuple[str, str]]
+        | tuple[Literal['end-ns'], None]
+    ]: ...
     def __next__(self) -> _T_co: ...
     # root property only present after parsing is done
     @property
@@ -151,6 +216,17 @@ class iterwalk(Iterator[_T_co]):
     """Tree walker that generates events from an existing tree as if it
     was parsing XML data with ``iterparse()``
 
+    Annotation
+    ----------
+    Totally 4 function signatures, depending on `events` argument:
+    - Default value, where only `end` event is emitted
+    - `start`, `end`, `comment` and `pi` events, where only
+      Element values are produced
+    - Namespace events (`start-ns` or `end-ns`), producing
+      namespace tuple (for `start-ns`) or nothing (`end-ns`)
+    - Final catch-all for custom events combination
+
+
     Original Docstring
     ------------------
     Just as for ``iterparse()``, the ``tag`` argument can be a single tag or a
@@ -163,13 +239,6 @@ class iterwalk(Iterator[_T_co]):
 
     # There is no concept of html mode in iterwalk; namespace events
     # are not supressed like iterparse might do
-    @overload  # custom events
-    def __new__(
-        cls,
-        element_or_tree: _ET_co | _ElementTree[_ET_co],
-        events: Iterable[_SaxEventNames],
-        tag: _TagSelector | Iterable[_TagSelector] | None = ...,
-    ) -> iterwalk[tuple[_SaxEventNames, _ET_co | _SaxNsEventValues]]: ...
     @overload  # default events
     def __new__(
         cls,
@@ -177,5 +246,33 @@ class iterwalk(Iterator[_T_co]):
         events: None = ...,
         tag: _TagSelector | Iterable[_TagSelector] | None = ...,
     ) -> iterwalk[tuple[Literal["end"], _ET_co]]: ...
+    @overload  # element-only events
+    def __new__(
+        cls,
+        element_or_tree: _ET_co | _ElementTree[_ET_co],
+        events: Iterable[_NoNSEventNames],
+        tag: _TagSelector | Iterable[_TagSelector] | None = ...,
+    ) -> iterwalk[tuple[_NoNSEventNames, _ET_co]]: ...
+    @overload  # namespace-only events
+    def __new__(
+        cls,
+        element_or_tree: _ET_co | _ElementTree[_ET_co],
+        events: Iterable[Literal['start-ns', 'end-ns']],
+        tag: _TagSelector | Iterable[_TagSelector] | None = ...,
+    ) -> iterwalk[
+        tuple[Literal['start-ns'], tuple[str, str]]
+        | tuple[Literal['end-ns'], None]
+    ]: ...
+    @overload  # catch-all
+    def __new__(
+        cls,
+        element_or_tree: _ET_co | _ElementTree[_ET_co],
+        events: Iterable[_SaxEventNames],
+        tag: _TagSelector | Iterable[_TagSelector] | None = ...,
+    ) -> iterwalk[
+        tuple[_NoNSEventNames, _ET_co]
+        | tuple[Literal['start-ns'], tuple[str, str]]
+        | tuple[Literal['end-ns'], None]
+    ]: ...
     def __next__(self) -> _T_co: ...
     def skip_subtree(self) -> None: ...

@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import pytest
 from pathlib import Path
 
 import _testutils
@@ -20,46 +21,91 @@ class TestIterwalk:
     def test_xml_more_event(self, xml_tree: _ElementTree[_Element]) -> None:
         walker = iterwalk(xml_tree, ["start", "end", "start-ns", "end-ns", "comment"])
         reveal_type(walker)
-        for event, elem in walker:
-            reveal_type(event)
-            reveal_type(elem)
+        # Generated values are not unpacked here to test type narrowing
+        # See issue #19 for more info
+        for item in walker:
+            if item[0] == 'start-ns':
+                reveal_type(item[1])
+            elif item[0] == 'end-ns':
+                reveal_type(item[1])
+            else:
+                reveal_type(item[1])
 
     def test_html_default_event(self, html_tree: _ElementTree[HtmlElement]) -> None:
-        walker = iterwalk(html_tree)
+        walker = iterwalk(html_tree, tag=('div', 'span'))
         reveal_type(walker)
         for event, elem in walker:
             reveal_type(event)
             reveal_type(elem)
 
     def test_html_more_event(self, html_tree: _ElementTree[HtmlElement]) -> None:
-        # BUG Since HtmlComment is pretended as HtmlElement subclass
+        # Since HtmlComment is pretended as HtmlElement subclass
         # in stub but not runtime, adding 'comment' event would fail
-        walker = iterwalk(html_tree, ["start", "end", "start-ns", "end-ns"], "div")
+        walker = iterwalk(html_tree, ("start", "end", "start-ns", "end-ns"), "div")
         reveal_type(walker)
-        for event, elem in walker:
-            reveal_type(event)
-            reveal_type(elem)
+        # Unlike iterparse(), iterwalk behaves the same with HTML
+        for item in walker:
+            if item[0] == 'start-ns':
+                reveal_type(item[1])
+            elif item[0] == 'end-ns':
+                reveal_type(item[1])
+            else:
+                reveal_type(item[1])
 
 
 class TestIterparse:
-    def test_default_event(self, x1_filepath: Path) -> None:
+    def test_xml_default_event(self, x1_filepath: Path) -> None:
         walker = iterparse(x1_filepath)
         reveal_type(walker)
         for event, elem in walker:
             reveal_type(event)
             reveal_type(elem)
 
+    def test_xml_more_event(self, x1_filepath: Path) -> None:
+        walker = iterparse(x1_filepath, [
+            "start", "end", "start-ns", "end-ns", "comment"
+        ])
+        reveal_type(walker)
+        # Generated values are not unpacked here to test type narrowing
+        # See issue #19 for more info
+        for item in walker:
+            if item[0] == 'start-ns':
+                reveal_type(item[1])
+            elif item[0] == 'end-ns':
+                reveal_type(item[1])
+            else:
+                reveal_type(item[1])
+
     def test_html_mode(self, x1_filepath: Path) -> None:
-        walker = iterparse(source=str(x1_filepath), html=True)
+        walker = iterparse(
+            source=x1_filepath,
+            html=True,
+            events = ("start", "end", "start-ns", "end-ns", "comment"))
         reveal_type(walker)
         for event, elem in walker:
             reveal_type(event)
             reveal_type(elem)
 
-    def test_custom_event(self, x1_filepath: Path) -> None:
+    def test_plain_filename(self, x1_filepath: Path) -> None:
+        walker = iterparse(str(x1_filepath))
+        reveal_type(walker)
+        for event, elem in walker:
+            reveal_type(event)
+            reveal_type(elem)
+
+    def test_binary_io(self, x1_filepath: Path) -> None:
         with open(x1_filepath, "rb") as f:
-            walker = iterparse(f, ["start", "end", "start-ns", "end-ns"])
+            walker = iterparse(f)
             reveal_type(walker)
             for event, elem in walker:
                 reveal_type(event)
                 reveal_type(elem)
+
+    def test_text_io(self, x1_filepath: Path) -> None:
+        with pytest.raises(
+            TypeError,
+            match='reading file objects must return bytes objects'):
+            with open(x1_filepath, "r") as f:
+                walker = iterparse(f)  # pyright: ignore
+                for event, elem in walker:  # pyright: ignore
+                    print(event, elem)  # pyright: ignore
