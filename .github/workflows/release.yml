@@ -4,8 +4,6 @@ on:
   push:
     tags:
       - '20*'
-permissions:
-  contents: write
 
 jobs:
   all_tests:
@@ -16,6 +14,10 @@ jobs:
   release:
     needs: all_tests
     runs-on: ubuntu-latest
+    environment: pypi
+    permissions:
+      id-token: write
+      contents: write
     steps:
 
     - name: Download artifact
@@ -37,19 +39,10 @@ jobs:
         contains(github.ref_name, 'pre')
       uses: pypa/gh-action-pypi-publish@release/v1
       with:
-        user: __token__
-        password: ${{ secrets.testpypi_token }}
         repository-url: https://test.pypi.org/legacy/
-        verbose: true
-        print-hash: true
 
     - name: Publish to PyPI
       if: >
         ! contains(github.ref_name, 'rc') &&
         ! contains(github.ref_name, 'pre')
       uses: pypa/gh-action-pypi-publish@release/v1
-      with:
-        user: __token__
-        password: ${{ secrets.pypi_token }}
-        verbose: true
-        print-hash: true
