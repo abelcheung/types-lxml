@@ -85,7 +85,9 @@ class _FeedParser(Generic[_ET_co]):
         ```
         """
         ...
-    @deprecated("Removed since 5.0; deprecated since v2.0 (2008); renamed to set_element_class_lookup()")
+    @deprecated(
+        "Removed since 5.0; deprecated since v2.0 (2008); renamed to set_element_class_lookup()"
+    )
     def setElementClassLookup(
         self, lookup: ElementClassLookup | None = ...
     ) -> None: ...

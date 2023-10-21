@@ -1,7 +1,8 @@
 from typing import Any, Callable, Literal, overload
 
-from ._types import _ET, _FilePath
 from lxml.etree import LxmlSyntaxError, _Element, _ElementTree
+
+from ._types import _ET, _FilePath
 
 class FatalIncludeError(LxmlSyntaxError): ...
 class LimitedRecursiveIncludeError(FatalIncludeError): ...

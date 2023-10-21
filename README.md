@@ -6,27 +6,24 @@ This repository contains [external type annotations](https://peps.python.org/pep
 
 ## Goal ①: Completion
 
-Now the coverage of major `lxml` submodules is complete, thus no more [considered as `partial`](https://peps.python.org/pep-0561/#partial-stub-packages):
-  - [x] `lxml.etree`: 100%
-    - `etree.Schematron` is obsolete and superseded by `lxml.isoschematron`, so won't implement
-  - [x] `lxml.html` proper: 100%
-  - [x] `lxml.objectify`: 100%
-  - [x] `lxml.builder`: 100%
-  - [x] `lxml.cssselect`: 100%
-  - [x] `lxml.sax`: 100%
-
-Following list reflects current situation for less used `lxml` / `html` submodules:
-
-  - [x] `lxml.ElementInclude`
+Now the coverage of `lxml` submodules is complete (unless intentionally rejected, see further below), thus no more [considered as `partial`](https://peps.python.org/pep-0561/#partial-stub-packages):
+  - [x] `lxml.etree`
+  - [x] `lxml.html`
+    - [x] `lxml.html.builder`
+    - [x] `lxml.html.clean`
+    - [x] `lxml.html.diff`
+    - [x] `lxml.html.html5parser`
+    - [x] `lxml.html.soupparser`
   - [x] `lxml.isoschematron`
-  - [x] `lxml.html.builder`
-  - [x] `lxml.html.clean`
-  - [x] `lxml.html.diff`
-  - [x] `lxml.html.html5parser`
-  - [x] `lxml.html.soupparser`
+  - [x] `lxml.objectify`
+  - [x] `lxml.builder`
+  - [x] `lxml.cssselect`
+  - [x] `lxml.sax`
+  - [x] `lxml.ElementInclude`
 
 Following submodules will not be implemented due to irrelevance to type checking or other reasons:
 
+  - `lxml.etree.Schematron` (obsolete and superseded by `lxml.isoschematron`)
   - `lxml.usedoctest`
   - `lxml.html.usedoctest`
   - `lxml.html.formfill` (shouldn't have existed, this would belong to HTTP libraries like `requests` or `httpx`)
@@ -44,11 +41,9 @@ In the future, there is plan to bring even more type checker support.
 - [x] All prior `lxml-stubs` contributions are reviewed thoroughly, bringing coherency of annotation across the whole package
 - [x] Much more extensive test cases
   - [x] Mypy test suite already vastly expanded
-    - But still, only managed to cover about half of the whole package
-  - [x] Perform runtime check, and compare against static type checker result
-    - This guarantees annotations are indeed valid
-    - [x] Proof of concept for incorporating `pyright` result under progress
-    - [ ] `mypy` support under consideration later
+  - [x] Perform runtime check, and compare against static type checker result; this guarantees annotations are indeed working in real code, not just in some cooked up test suite
+    - [x] Proof of concept for incorporating `pyright` result under progress, currently just comparing `reveal_type()` results
+    - [ ] Migrate static `mypy` tests to runtime `pyright` tests in future
 - [x] Modernize package building infrastructure
 
 ## Goal ④: Support for IDEs

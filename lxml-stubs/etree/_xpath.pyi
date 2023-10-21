@@ -42,7 +42,9 @@ class _XPathEvaluatorBase(Protocol):
     def __call__(self, _arg: Any, /, **__var: _XPathVarArg) -> _XPathObject: ...
     # evaluate() should have been abstract like __call__(), but requiring all
     # subclasses to add deprecated method is idiocy
-    @deprecated("Removed since 5.0; deprecated since v2.0 (2008); call the object directly")
+    @deprecated(
+        "Removed since 5.0; deprecated since v2.0 (2008); call the object directly"
+    )
     def evaluate(self, _arg: Any, /, **__var: _XPathVarArg) -> _XPathObject: ...
 
 class XPath(_XPathEvaluatorBase):

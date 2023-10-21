@@ -10,7 +10,7 @@ from ._funcs import _HtmlDoc_T, _HtmlElemOrTree
 _HTagSelector: TypeAlias = Union[str, bytes, _ElemFactory[_Element]]
 
 # Similar to _funcs._HtmlDoc_T, but also supports ET; only used in Cleaner
-_DT = TypeVar('_DT', str, bytes, HtmlElement, _ElementTree[HtmlElement])
+_DT = TypeVar("_DT", str, bytes, HtmlElement, _ElementTree[HtmlElement])
 
 class Cleaner:
     # allow_tags and remove_unknown_tags can't coexist

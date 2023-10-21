@@ -139,7 +139,7 @@ class iterparse(Iterator[_T_co]):
     def __new__(
         cls,
         source: _FilePath | IO[bytes] | SupportsReadClose[bytes],
-        events: Iterable[Literal['start-ns', 'end-ns']],
+        events: Iterable[Literal["start-ns", "end-ns"]],
         *,
         tag: _TagSelector | Iterable[_TagSelector] | None = ...,
         attribute_defaults: bool = ...,
@@ -159,8 +159,8 @@ class iterparse(Iterator[_T_co]):
         collect_ids: bool = ...,
         schema: XMLSchema | None = ...,
     ) -> iterparse[
-            tuple[Literal['start-ns'], tuple[str, str]]
-            | tuple[Literal['end-ns'], None]]: ...
+        tuple[Literal["start-ns"], tuple[str, str]] | tuple[Literal["end-ns"], None]
+    ]: ...
     @overload  # xml mode, catch all
     def __new__(
         cls,
@@ -186,8 +186,8 @@ class iterparse(Iterator[_T_co]):
         schema: XMLSchema | None = ...,
     ) -> iterparse[
         tuple[_NoNSEventNames, _Element]
-        | tuple[Literal['start-ns'], tuple[str, str]]
-        | tuple[Literal['end-ns'], None]
+        | tuple[Literal["start-ns"], tuple[str, str]]
+        | tuple[Literal["end-ns"], None]
     ]: ...
     def __next__(self) -> _T_co: ...
     # root property only present after parsing is done
@@ -257,11 +257,10 @@ class iterwalk(Iterator[_T_co]):
     def __new__(
         cls,
         element_or_tree: _ET_co | _ElementTree[_ET_co],
-        events: Iterable[Literal['start-ns', 'end-ns']],
+        events: Iterable[Literal["start-ns", "end-ns"]],
         tag: _TagSelector | Iterable[_TagSelector] | None = ...,
     ) -> iterwalk[
-        tuple[Literal['start-ns'], tuple[str, str]]
-        | tuple[Literal['end-ns'], None]
+        tuple[Literal["start-ns"], tuple[str, str]] | tuple[Literal["end-ns"], None]
     ]: ...
     @overload  # catch-all
     def __new__(
@@ -271,8 +270,8 @@ class iterwalk(Iterator[_T_co]):
         tag: _TagSelector | Iterable[_TagSelector] | None = ...,
     ) -> iterwalk[
         tuple[_NoNSEventNames, _ET_co]
-        | tuple[Literal['start-ns'], tuple[str, str]]
-        | tuple[Literal['end-ns'], None]
+        | tuple[Literal["start-ns"], tuple[str, str]]
+        | tuple[Literal["end-ns"], None]
     ]: ...
     def __next__(self) -> _T_co: ...
     def skip_subtree(self) -> None: ...
