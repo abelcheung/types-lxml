@@ -17,16 +17,19 @@ Now the coverage of major `lxml` submodules is complete, thus no more [considere
 
 Following list reflects current situation for less used `lxml` / `html` submodules:
 
-  - [ ] `lxml.ElementInclude`
+  - [x] `lxml.ElementInclude`
   - [x] `lxml.isoschematron`
-  - [ ] `lxml.usedoctest`
   - [x] `lxml.html.builder`
   - [x] `lxml.html.clean`
   - [x] `lxml.html.diff`
-  - [ ] `lxml.html.formfill` (may not implement)
   - [x] `lxml.html.html5parser`
   - [x] `lxml.html.soupparser`
-  - [ ] `lxml.html.usedoctest`
+
+Following submodules will not be implemented due to irrelevance to type checking or other reasons:
+
+  - `lxml.usedoctest`
+  - `lxml.html.usedoctest`
+  - `lxml.html.formfill` (shouldn't have existed, this would belong to HTTP libraries like `requests` or `httpx`)
 
 Check out [project page](https://github.com/abelcheung/types-lxml/projects/1) for future plans and progress.
 
