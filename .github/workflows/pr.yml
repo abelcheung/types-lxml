@@ -24,7 +24,7 @@ jobs:
         python-version: "3.10"
 
     - name: Install dependencies
-      run: pip install -v types-beautifulsoup4
+      run: pip install types-beautifulsoup4
 
     - name: Mypy review
       id: mypy
@@ -35,6 +35,7 @@ jobs:
         workdir: lxml-stubs
         fail_on_error: true
         ignore_note: true
+        setup_command: pip install 'mypy >= 1.1, < 1.4'
 
     - name: Pyright review
       id: pyright
@@ -45,6 +46,7 @@ jobs:
         level: warning
         workdir: lxml-stubs
         fail_on_error: true
+        pyright_version: 1.1.331
 
   all_tests:
     needs: type_checkers
