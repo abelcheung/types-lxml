@@ -4,7 +4,7 @@
 
 This repository contains [external type annotations](https://peps.python.org/pep-0561/) for [`lxml`](http://lxml.de/). It can be used by type-checking tools (currently supporting [`mypy`](https://pypi.org/project/mypy/) and [`pyright`](https://github.com/Microsoft/pyright)) to check code that uses `lxml`, or used within IDEs like [VSCode](https://code.visualstudio.com/) or [PyCharm](https://www.jetbrains.com/pycharm/) to facilitate development.
 
-## Goal ①: Completion
+## Goal ① : Completion
 
 Now the coverage of `lxml` submodules is complete (unless intentionally rejected, see further below), thus no more [considered as `partial`](https://peps.python.org/pep-0561/#partial-stub-packages):
   - [x] `lxml.etree`
@@ -30,7 +30,7 @@ Following submodules will not be implemented due to irrelevance to type checking
 
 Check out [project page](https://github.com/abelcheung/types-lxml/projects/1) for future plans and progress.
 
-## Goal ②: Support multiple type checkers
+## Goal ② : Support multiple type checkers
 
 Currently the annotations are validated for both `mypy` and `pyright` strict mode.
 
@@ -46,13 +46,11 @@ In the future, there is plan to bring even more type checker support.
     - [ ] Migrate static `mypy` tests to runtime `pyright` tests in future
 - [x] Modernize package building infrastructure
 
-## Goal ④: Support for IDEs
+## Goal ④ : Support for IDEs
 
-Despite having no official PEP, some IDEs support showing docstring from external annotations. This package is try to bring more and more of the original `lxml` class and function docstrings, since the majorify of `lxml` is written in Cython, and IDEs sometimes won't show Cython docstrings during code development. Following screenshots show what would look like, behaving if docstrings are coming from real python code:
+Despite having no official PEP, some IDEs support showing docstring from external annotations. This package tries to bring type annotation specific docstrings for some `lxml` classes and functions, explaining how they can be used. Following screenshots show what would look like in Visual Studio Code, behaving as if docstrings come from real python code:
 
-![Stub docstring in PyCharm Documentation Tool](https://user-images.githubusercontent.com/83110/160575574-c20b29d0-ddda-40d4-82e3-724f59663d7e.png)
-
-![Stub docstring in VSCode mouseover tooltip](https://user-images.githubusercontent.com/83110/160575818-168f1a98-074d-46f4-b166-3f18af56232e.png)
+![Stub docstring in VSCode mouseover tooltip](https://user-images.githubusercontent.com/83110/277119481-debbd929-afbd-4f59-b9e6-52a1f7f23241.png)
 
 Besides docstring, current annotations are geared towards convenience for code writers instead of absolute logical 'correctness'. The [deviation of class inheritance](https://github.com/abelcheung/types-lxml/wiki/Element-inheritance-change) for `HtmlComment` and friends is one prominent example.
 
