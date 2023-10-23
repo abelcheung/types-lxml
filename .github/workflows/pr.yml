@@ -36,6 +36,7 @@ jobs:
         fail_on_error: true
         ignore_note: true
         setup_command: pip install 'mypy >= 1.1, < 1.4'
+        setup_method: install
 
     - name: Pyright review
       id: pyright
