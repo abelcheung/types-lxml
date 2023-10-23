@@ -50,6 +50,7 @@ jobs:
   test-stub:
     needs: build
     strategy:
+      fail-fast: false
       matrix:
         pyver:
           - "3.8"
@@ -101,6 +102,7 @@ jobs:
   test-rt:
     needs: build
     strategy:
+      fail-fast: false
       matrix:
         pyver:
           - "3.10"

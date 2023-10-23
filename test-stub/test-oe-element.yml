@@ -226,9 +226,10 @@
     reveal_type(-be)  # NR: .+ "[\w\.]+\.int"$
     reveal_type(~be)  # NR: .+ "[\w\.]+\.int"$
 
-    reveal_type(be ** b )  # NR: .+ "Union\[.+]"$
-    reveal_type(be ** i )  # NR: .+ "Union\[.+]"$
-    reveal_type(be ** f )  # NR: .+ "[\w\.]+\.float"$
+    # __pow__() Temporarily removed in stub
+    # reveal_type(be ** b )  # NR .+ "Union\[.+]"$
+    # reveal_type(be ** i )  # NR .+ "Union\[.+]"$
+    # reveal_type(be ** f )  # NR .+ "[\w\.]+\.float"$
 
     reveal_type(be +  i )  # NR: .+ "[\w\.]+\.int"$
     reveal_type(be %  i )  # NR: .+ "[\w\.]+\.int"$
