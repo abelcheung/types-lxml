@@ -96,5 +96,3 @@ jobs:
       - uses: jakebailey/pyright-action@v1
         with:
           version: ${{ matrix.prver }}
-      - name: Perform check on source
-        run: pyright lxml-stubs
