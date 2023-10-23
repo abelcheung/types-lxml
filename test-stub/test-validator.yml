@@ -135,7 +135,7 @@
   main: |
     from inc import rng, dtd, schema, tron, tree, elem
     {{ obj }}{{^is_call}}.validate{{/is_call}}()  # E: Missing positional argument "etree" in call to {{#is_call}}"__call__" of "{{cls}}"{{/is_call}}{{^is_call}}"validate" of "_Validator"{{/is_call}}  [call-arg]
-    {{ obj }}{{^is_call}}.validate{{/is_call}}(None)  # E: Argument 1 to {{#is_call}}"__call__" of "{{cls}}"{{/is_call}}{{^is_call}}"validate" of "_Validator"{{/is_call}} has incompatible type "None"; expected "Union[_Element, _ElementTree[_Element]]"  [arg-type]
+    {{ obj }}{{^is_call}}.validate{{/is_call}}(None)  # E: Argument 1 to {{#is_call}}"__call__" of "{{cls}}"{{/is_call}}{{^is_call}}"validate" of "_Validator"{{/is_call}} has incompatible type "None"; expected "_Element | _ElementTree[_Element]"  [arg-type]
     {{ obj }}{{^is_call}}.validate{{/is_call}}(tree, None)  # E: Too many arguments for {{#is_call}}"__call__" of "{{cls}}"{{/is_call}}{{^is_call}}"validate" of "_Validator"{{/is_call}}  [call-arg]
     {{ obj }}{{^is_call}}.validate{{/is_call}}(badarg=tree)  # E: Unexpected keyword argument "badarg" for {{#is_call}}"__call__" of "{{cls}}"{{/is_call}}{{^is_call}}"validate" of "_Validator"{{/is_call}}  [call-arg]
 
