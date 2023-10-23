@@ -37,6 +37,7 @@ jobs:
         ignore_note: true
         setup_command: pip install mypy>=1.1,<1.4
         setup_method: install
+        install_types: false
 
     - name: Pyright review
       id: pyright
