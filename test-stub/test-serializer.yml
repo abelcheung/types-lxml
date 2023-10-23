@@ -147,7 +147,7 @@
     from lxml.etree import C14NWriterTarget
     sio: StringIO
     t = C14NWriterTarget(sio.write, {{ opt }}=[1])  # E: List item 0 has incompatible type "int"; expected "str"  [list-item]
-    t = C14NWriterTarget(sio.write, {{ opt }}=1)  # E: Argument "{{ opt }}" to "C14NWriterTarget" has incompatible type "int"; expected "Iterable[str] | None"  [arg-type]
+    t = C14NWriterTarget(sio.write, {{ opt }}=1)  # E: Argument "{{ opt }}" to "C14NWriterTarget" has incompatible type "int"; expected "Optional[Iterable[str]]"  [arg-type]
 
 
 - case: c14ntarget_kw_list_bad_2
@@ -223,11 +223,11 @@
   - arg: encoding
     val: 1
     wrong_t: int
-    right_t: str | bytes | None
+    right_t: Optional[Union[str, bytes]]
   - arg: compression
     val: s
     wrong_t: str
-    right_t: int | None
+    right_t: Optional[int]
   - arg: close
     val: None
     wrong_t: None

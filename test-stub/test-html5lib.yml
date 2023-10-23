@@ -64,7 +64,7 @@
     b: bytes
     html5parser.{{ func }}(b, guess_charset=True)
     html5parser.{{ func }}(b, guess_charset=None)
-    html5parser.{{ func }}(b, guess_charset=b)  # E: Argument "guess_charset" to "{{ func }}" has incompatible type "bytes"; expected "bool | None"  [arg-type]
+    html5parser.{{ func }}(b, guess_charset=b)  # E: Argument "guess_charset" to "{{ func }}" has incompatible type "bytes"; expected "Optional[bool]"  [arg-type]
 
 - case: parser_arg_type
   parametrized:
@@ -80,7 +80,7 @@
     b: bytes
     html5parser.{{ func }}(b, parser=None)
     html5parser.{{ func }}(b, parser=p)
-    html5parser.{{ func }}(b, parser=b)  # E: Argument "parser" to "{{ func }}" has incompatible type "bytes"; expected "HTMLParser | None"  [arg-type]
+    html5parser.{{ func }}(b, parser=b)  # E: Argument "parser" to "{{ func }}" has incompatible type "bytes"; expected "Optional[HTMLParser]"  [arg-type]
 
 - case: other_arg_types
   parametrized:
@@ -89,7 +89,7 @@
       exp_t: bool
     - func: fragment_fromstring
       param: create_parent
-      exp_t: bool | str | bytes
+      exp_t: Union[bool, Union[str, bytes]]
   main: |
     from lxml.html import html5parser
     b: bytes

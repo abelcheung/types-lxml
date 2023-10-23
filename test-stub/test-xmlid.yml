@@ -22,7 +22,7 @@
   files: *INC
   main: |
     from inc import e, s, b, hh_parser, o_parser, eh_parser
-    reveal_type(e.XMLID(b))  # NR: .+ "tuple\[.+]"$
+    reveal_type(e.XMLID(b))  # NR: .+ "Tuple\[.+]"$
     elem1, dic1 = e.XMLID(s)
     reveal_type(elem1)  # NR: .+ "[\w\.]+\._Element"$
     reveal_type(dic1)  # NR: .+ "[\w\.]+\.dict\[[\w\.]+\.str, [\w\.]+\._Element]"$
@@ -54,7 +54,7 @@
   files: *INC
   main: |
     from inc import e, s, b, hx_parser, o_parser, ex_parser
-    reveal_type(e.XMLDTDID(b))  # NR: .+ "tuple\[.+]"$
+    reveal_type(e.XMLDTDID(b))  # NR: .+ "Tuple\[.+]"$
     elem1, dic1 = e.XMLDTDID(s)
     reveal_type(elem1)  # NR: .+ "[\w\.]+\._Element"$
     reveal_type(dic1)  # NR: .+ "[\w\.]+\._IDDict\[[\w\.]+\._Element]"$
@@ -86,9 +86,9 @@
   files: *INC
   main: |
     from inc import e, s, b, hx_parser, o_parser, ex_parser, file_path, file_io
-    reveal_type(e.parseid(s))  # NR: .+ "tuple\[.+]"$
-    reveal_type(e.parseid(file_path))  # NR: .+ "tuple\[.+]"$
-    reveal_type(e.parseid(file_io))  # NR: .+ "tuple\[.+]"$
+    reveal_type(e.parseid(s))  # NR: .+ "Tuple\[.+]"$
+    reveal_type(e.parseid(file_path))  # NR: .+ "Tuple\[.+]"$
+    reveal_type(e.parseid(file_io))  # NR: .+ "Tuple\[.+]"$
     tree1, dic1 = e.parseid(s)
     reveal_type(tree1)  # NR: .+ "[\w\.]+\._ElementTree\[[\w\.]+\._Element]"$
     reveal_type(dic1)  # NR: .+ "[\w\.]+\._IDDict\[[\w\.]+\._Element]"$

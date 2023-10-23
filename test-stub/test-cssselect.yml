@@ -57,7 +57,7 @@
     from lxml import etree
     root: etree._Element
     result = root.cssselect('tag', 'xml')  # E: Too many positional arguments for "cssselect" of "_Element"  [misc]
-    result = root.cssselect('tag', translator='junk')  # E: Argument "translator" to "cssselect" of "_Element" has incompatible type "Literal['junk']"; expected "Literal['xml', 'html', 'xhtml'] | LxmlTranslator"  [arg-type]
+    result = root.cssselect('tag', translator='junk')  # E: Argument "translator" to "cssselect" of "_Element" has incompatible type "Literal['junk']"; expected "Union[LxmlTranslator, Literal['xml', 'html', 'xhtml']]"  [arg-type]
 
 - case: html_cssselect_method
   parametrized:
@@ -92,4 +92,4 @@
     from lxml.html import HtmlElement
     elem: HtmlElement
     expr: str
-    result = elem.cssselect(expr, translator='junk')  # ER: Argument "translator" to "cssselect" of "HtmlElement" has incompatible type "Literal\['junk']"; expected ".+"  \[arg-type]
+    result = elem.cssselect(expr, translator='junk')  # ER: Argument "translator" to "cssselect" of "HtmlElement" has incompatible type "Literal\['junk']"; expected "Union\[.+]"  \[arg-type]

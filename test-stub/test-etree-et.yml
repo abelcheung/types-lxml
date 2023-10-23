@@ -61,7 +61,7 @@
     r = et.{{ method }}(et)
     reveal_type(r)  # N: Revealed type is "builtins.bool"
     r = et.{{ method }}()  # E: Missing positional argument "{{ method }}" in call to "{{ method }}" of "_ElementTree"  [call-arg]
-    r = et.{{ method }}(None)  # E: Argument 1 to "{{ method }}" of "_ElementTree" has incompatible type "None"; expected "_Element | _ElementTree[_Element]"  [arg-type]
+    r = et.{{ method }}(None)  # E: Argument 1 to "{{ method }}" of "_ElementTree" has incompatible type "None"; expected "Union[_Element, _ElementTree[_Element]]"  [arg-type]
 
 - case: elementpath_family
   parametrized:
@@ -131,8 +131,8 @@
     ok_path: str
     bad_path: bytes
     bad_nsmap = {'a': 1}
-    _ = et.{{ method }}(bad_path)  # E: Argument 1 to "{{ method }}" of "_ElementTree" has incompatible type "bytes"; expected "str | QName"  [arg-type]
-    _ = et.{{ method }}(ok_path, bad_nsmap)  # E: Argument 2 to "{{ method }}" of "_ElementTree" has incompatible type "dict[str, int]"; expected "Mapping[None, str | bytes] | Mapping[str, str | bytes] | Mapping[str | None, str | bytes] | None"  [arg-type]
+    _ = et.{{ method }}(bad_path)  # E: Argument 1 to "{{ method }}" of "_ElementTree" has incompatible type "bytes"; expected "Union[str, QName]"  [arg-type]
+    _ = et.{{ method }}(ok_path, bad_nsmap)  # E: Argument 2 to "{{ method }}" of "_ElementTree" has incompatible type "Dict[str, int]"; expected "Union[Mapping[None, Union[str, bytes]], Mapping[str, Union[str, bytes]], Mapping[Optional[str], Union[str, bytes]], None]"  [arg-type]
     _ = et.{{ method }}(ok_path, None, 1)  # E: Too many arguments for "{{ method }}" of "_ElementTree"  [call-arg]
     _ = et.{{ method }}(ok_path, badarg=True)  # E: Unexpected keyword argument "badarg" for "{{ method }}" of "_ElementTree"  [call-arg]
 

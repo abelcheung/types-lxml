@@ -152,7 +152,7 @@
     from inc import el
     reveal_type(el.keys())  # NR: .+ "[\w\.]+\.list\[[\w\.]+\.str]"$
     reveal_type(el.values())  # NR: .+ "[\w\.]+\.list\[[\w\.]+\.str]"$
-    reveal_type(el.items())  # NR: .+ "[\w\.]+\.list\[tuple\[[\w\.]+\.str, [\w\.]+\.str]]"$
+    reveal_type(el.items())  # NR: .+ "[\w\.]+\.list\[Tuple\[[\w\.]+\.str, [\w\.]+\.str]]"$
 
 - case: get_goodargs
   files: *INC
@@ -376,7 +376,7 @@
     from inc import el, s, b, qn
     # XXX see overzealous_inferred_type test case for info
     # crazy_nsmap = {None: s, s: b}
-    crazy_nsmap: Dict[str | None, str | bytes]
+    crazy_nsmap: Dict[Optional[str], Union[str, bytes]]
     nsmap = {None: s, s: s}
     myattrib = {s: s}
     reveal_type(el.makeelement(s))  # NR: .+ "[\w\.]+\._Element"
