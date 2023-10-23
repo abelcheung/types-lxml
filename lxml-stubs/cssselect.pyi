@@ -45,7 +45,7 @@ class CSSSelector(XPath):
         **_variables: _XPathVarArg,
     ) -> list[_ET]: ...
     @overload
-    def __call__(
+    def __call__(  # pyright: ignore[reportIncompatibleMethodOverride]
         self,
         _etree_or_element: _ElementTree[_ET],
         /,

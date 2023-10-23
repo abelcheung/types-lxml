@@ -163,12 +163,18 @@ class BoolElement(IntElement):
     def __bool__(self) -> bool: ...
     def __int__(self) -> int: ...
     def __float__(self) -> float: ...
-    # Unlike arbitrary floating point / integer powers,
-    # power involving bool always have fixed values
-    @overload  # type: ignore[override]
-    def __pow__(self, __x: int, __mod: int | None = ...) -> Literal[0, 1]: ...
-    @overload
-    def __pow__(self, __x: float, __mod: None = ...) -> float: ...
+    # FIXME Unlike arbitrary floating point / integer powers,
+    # power involving bool always have fixed results (0 or 1).
+    # However, python maintainers have delved into some disgusting
+    # sort of "type annotation arithmatics" -- like
+    # - int**0  = Literal[1]
+    # - int**25 = int
+    # - int**26 = Any
+    # - int**-20 = float
+    # - int**-21 = Any
+    # It isn't a wise decision spending time to construct overloads
+    # matching that idiocy, so let's skip implementing __pow__ for
+    # now, until BoolElement become independent.
     @overload
     def __and__(self, __n: bool | BoolElement) -> bool: ...
     @overload

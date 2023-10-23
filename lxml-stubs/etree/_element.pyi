@@ -388,12 +388,21 @@ class _Attrib:
 # Element types and content node types
 #
 
+#
+# Mypy: Liskov!
+# Lxml: No Liskov!
+# Mypy: I am *THE* authority here!
+# Lxml: I will *NEVER* submit to you! Fuck off!
+# Mypy: Now die!
+#
+# So here we are.
+#
 # It is decided to not decouple other content only elements
 # from _Element, even though their interfaces are vastly different
 # from _Element. The notion of or'ing different kind of elements
 # throughout all element methods would cause great inconvenience
-# for me and all users alike -- _AnyHtmlElement turns out to be a
-# failure.
+# for me and all users alike -- using some _AnyHtmlElement alias
+# to represent union of all elements was a failure for users.
 # We opt for convenience and ease of use in the future.
 class __ContentOnlyElement(_Element):
     #
@@ -402,16 +411,9 @@ class __ContentOnlyElement(_Element):
     @property
     def text(self) -> str | None: ...
     @text.setter
-    def text(self, value: _t._AnyStr | None) -> None: ...
-    #
-    # Mypy: Liskov!
-    # Lxml: No Liskov!
-    # Mypy: I am *THE* authority here!
-    # Lxml: I will *NEVER* submit to you! Fuck off!
-    # Mypy: Now die!
-    #
-    # So here we are.
-    #
+    def text(  # pyright: ignore[reportIncompatibleMethodOverride]
+        self, value: _t._AnyStr | None
+    ) -> None: ...
     @property
     def attrib(self) -> Mapping[_t.Unused, _t.Unused]: ...  # type: ignore[override]
     def get(self, key: _t.Unused, default: _t.Unused = ...) -> None: ...  # type: ignore[override]

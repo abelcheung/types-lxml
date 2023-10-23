@@ -24,8 +24,8 @@ from ._xmlschema import XMLSchema
 _DefEtreeParsers = XMLParser[_ET_co] | HTMLParser[_ET_co]
 
 class ParseError(LxmlSyntaxError):
-    lineno: int
-    offset: int
+    lineno: int  # pyright: ignore[reportIncompatibleVariableOverride]
+    offset: int  # pyright: ignore[reportIncompatibleVariableOverride]
     code: int
     filename: str | None
     position: tuple[int, int]

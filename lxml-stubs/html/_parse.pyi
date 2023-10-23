@@ -157,7 +157,9 @@ class HtmlElementClassLookup(etree.CustomElementClassLookup):
         # docstring says mixins is mapping, but implementation says otherwise
         mixins: Iterable[tuple[str, type[HtmlElement]]] = ...,
     ) -> None: ...
-    def lookup(
+    # Both argument names and types are incompatible with base class
+    # This is a standard practise for lxml
+    def lookup(  # pyright: ignore[reportIncompatibleMethodOverride]
         self,
         node_type: _ElemClsLookupArg | None,
         document: Unused,
