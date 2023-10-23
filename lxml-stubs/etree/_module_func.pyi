@@ -1,5 +1,5 @@
 from typing import Any, Iterable, Literal, final, overload
-from typing_extensions import TypeGuard
+from typing_extensions import TypeGuard, deprecated
 
 from .._types import (
     _ET,
@@ -9,7 +9,6 @@ from .._types import (
     _FileReadSource,
     _KnownEncodings,
     _OutputMethodArg,
-    deprecated,
 )
 from ._element import _Element, _ElementTree
 from ._parser import HTMLParser, XMLParser, _DefEtreeParsers

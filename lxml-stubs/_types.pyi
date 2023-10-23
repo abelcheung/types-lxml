@@ -1,4 +1,4 @@
-from _typeshed import _T, SupportsRead, SupportsWrite, _KT_co, _T_co, _VT_co
+from _typeshed import SupportsRead, SupportsWrite, _KT_co, _T_co, _VT_co
 from os import PathLike
 from typing import (
     IO,
@@ -168,11 +168,3 @@ _FileReadSource = (
 )
 # fmt: on
 _FileWriteSource = _FilePath | SupportsWrite[bytes]
-
-# Draft PEP 702, add support here since it is pretty unintrusive
-# Type checker that doesn't support it would ignore silently
-# Following signature borrowed from typing_extensions 4.5
-#
-def deprecated(
-    __msg: str, *, category: type[Warning] | None = ..., stacklevel: int = ...
-) -> Callable[[_T], _T]: ...

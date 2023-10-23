@@ -4,14 +4,13 @@
 
 import abc
 from typing import Any, ClassVar, Literal, final, overload
-from typing_extensions import TypeAlias, TypedDict
+from typing_extensions import TypeAlias, TypedDict, deprecated
 
 from .._types import (
     SupportsLaxedItems,
     _AnyStr,
     _ElementOrTree,
     _FileWriteSource,
-    deprecated,
 )
 from ._classlookup import PIBase
 from ._element import _Element, _ElementTree

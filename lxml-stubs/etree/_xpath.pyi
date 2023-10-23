@@ -5,6 +5,7 @@
 
 from abc import abstractmethod
 from typing import Any, Callable, Generic, Mapping, Protocol, final, overload
+from typing_extensions import deprecated
 
 from .._types import (
     _ET,
@@ -14,7 +15,6 @@ from .._types import (
     _XPathExtFuncArg,
     _XPathObject,
     _XPathVarArg,
-    deprecated,
 )
 from ._element import _Element, _ElementTree
 from ._module_misc import LxmlError, LxmlSyntaxError

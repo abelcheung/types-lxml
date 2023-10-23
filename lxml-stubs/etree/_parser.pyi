@@ -1,6 +1,6 @@
 from _typeshed import _T
 from typing import Any, Generic, Iterable, Iterator
-from typing_extensions import LiteralString, Self
+from typing_extensions import LiteralString, Self, deprecated
 
 from .._types import (
     SupportsLaxedItems,
@@ -10,7 +10,6 @@ from .._types import (
     _SaxEventNames,
     _TagName,
     _TagSelector,
-    deprecated,
 )
 from ._classlookup import ElementClassLookup
 from ._docloader import _ResolverRegistry

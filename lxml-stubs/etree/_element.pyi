@@ -1,6 +1,6 @@
 from _typeshed import _T
 from typing import Any, Generic, Iterable, Iterator, Literal, Mapping, overload
-from typing_extensions import Never, Self
+from typing_extensions import Never, Self, deprecated
 
 from .. import _types as _t
 from ..cssselect import _CSSTransArg
@@ -184,11 +184,11 @@ class _Element:
         *,
         translator: _CSSTransArg = ...,
     ) -> list[Self]: ...
-    @_t.deprecated("Since v2.0 (2008); use list(element) or iterate over element")
+    @deprecated("Since v2.0 (2008); use list(element) or iterate over element")
     def getchildren(self) -> list[Self]: ...
     # Should have been overloaded for accuracy, but we can turn a blind eye
     # for something that is marked deprecated for 15 years
-    @_t.deprecated("Since v2.0 (2008); renamed to .iter()")
+    @deprecated("Since v2.0 (2008); renamed to .iter()")
     def getiterator(
         self, tag: _t._TagSelector | None = ..., *tags: _t._TagSelector
     ) -> Iterator[Self]: ...
@@ -228,7 +228,7 @@ class _ElementTree(Generic[_t._ET_co]):
     #     - no compression
     #
     @overload  # deprecated usage of docstring param
-    @_t.deprecated('Since v3.8.0; use "doctype" parameter instead')
+    @deprecated('Since v3.8.0; use "doctype" parameter instead')
     def write(
         self,
         file: Any,
@@ -330,11 +330,11 @@ class _ElementTree(Generic[_t._ET_co]):
     def xinclude(self) -> None: ...
     # Should have been overloaded for accuracy, but we can turn a blind eye
     # for something that is marked deprecated for 15 years
-    @_t.deprecated("Since v2.0 (2008); renamed to .iter()")
+    @deprecated("Since v2.0 (2008); renamed to .iter()")
     def getiterator(
         self, tag: _t._TagSelector | None = ..., *tags: _t._TagSelector
     ) -> Iterator[_t._ET_co]: ...
-    @_t.deprecated('Since v4.4; use .write() with method="c14n" argument')
+    @deprecated('Since v4.4; use .write() with method="c14n" argument')
     def write_c14n(
         self,
         file: _t._FileWriteSource,
