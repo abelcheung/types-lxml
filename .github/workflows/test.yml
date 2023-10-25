@@ -5,6 +5,7 @@ on:
     branches-ignore:
       - 'dependabot/**'
     paths-ignore:
+      - '.editorconfig'
       - '.git*'
       - '**.md'
       - 'LICENSE'
