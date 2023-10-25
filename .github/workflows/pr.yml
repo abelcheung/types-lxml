@@ -30,6 +30,7 @@ jobs:
       id: mypy
       uses: tsuyoshicho/action-mypy@v4
       with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
         reporter: github-pr-review
         level: warning
         workdir: lxml-stubs
@@ -44,6 +45,7 @@ jobs:
       if: success() || steps.mypy.conclusion == 'failure'
       uses: jordemort/action-pyright@v1
       with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
         reporter: github-pr-review
         level: warning
         workdir: lxml-stubs
