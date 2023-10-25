@@ -18,9 +18,19 @@ def pytest_collection_finish(session: pytest.Session) -> None:
 
 
 @pytest.fixture
-def h_filepath() -> Path:
+def h1_filepath() -> Path:
     # hand edited to chop off many inline script blocks
     return Path(__file__).parent / "data" / "sample.html"
+
+
+@pytest.fixture
+def h1_str(h1_filepath: Path) -> str:
+    return h1_filepath.read_text()
+
+
+@pytest.fixture
+def h1_bytes(h1_filepath: Path) -> bytes:
+    return h1_filepath.read_bytes()
 
 
 @pytest.fixture
@@ -34,9 +44,9 @@ def x2_filepath() -> Path:
 
 
 @pytest.fixture
-def html_tree(h_filepath: Path) -> _ElementTree[HtmlElement]:
-    with open(h_filepath, "r", encoding="utf-8") as f:
-        tree = parse(f, base_url="https://example.com/some/url/")
+def html_tree(h1_filepath: Path) -> _ElementTree[HtmlElement]:
+    with open(h1_filepath, "r", encoding="utf-8") as f:
+        tree = parse(f)
     return tree
 
 

@@ -1,4 +1,4 @@
-from typing import Callable, Iterator, Literal, TypeVar, overload
+from typing import AnyStr, Callable, Iterator, Literal, TypeVar, overload
 from typing_extensions import TypeAlias
 
 from .. import etree
@@ -23,34 +23,83 @@ _HtmlElemOrTree: TypeAlias = HtmlElement | etree._ElementTree[HtmlElement]
 # 2. Although extra 'copy' argument is available, it is intended
 #    only for internal use by each function, not something to be
 #    arbitrarily changed by users, thus not available in stub.
+#
+# HACK Interesting, a 15+ yrs bug remains undiscovered,
+# probably nobody is using them at all?
+# All these standalone link funcs make use of _MethodFunc
+# internal class in html/__init__.py, which has bug when
+# converting input data. If input is not Element, the class
+# automatically converts input to Element via fromstring(),
+# taking in all keyword args used in link function call.
+# Many of these keywords are unknown to fromstring(),
+# thus causing Exception. Workaround this using @overload.
 
+@overload
 def find_rel_links(
-    doc: _HtmlDoc_T,
+    doc: HtmlElement,
     rel: str,
 ) -> list[HtmlElement]: ...
+@overload
+def find_rel_links(
+    doc: _AnyStr,
+    rel: str,
+    /,
+) -> list[HtmlElement]: ...
+@overload
 def find_class(
-    doc: _HtmlDoc_T,
+    doc: HtmlElement,
     class_name: _AnyStr,
 ) -> list[HtmlElement]: ...
+@overload
+def find_class(
+    doc: _AnyStr,
+    class_name: _AnyStr,
+    /,
+) -> list[HtmlElement]: ...
+@overload
 def make_links_absolute(
-    doc: _HtmlDoc_T,
+    doc: HtmlElement,
     base_url: str | None = ...,
     resolve_base_href: bool = ...,
     handle_failures: _HANDLE_FAILURES | None = ...,
-) -> _HtmlDoc_T: ...
-def resolve_base_href(
-    doc: _HtmlDoc_T,
+) -> HtmlElement: ...
+@overload
+def make_links_absolute(
+    doc: AnyStr,
+    base_url: str | None = ...,
+    resolve_base_href: bool = ...,
     handle_failures: _HANDLE_FAILURES | None = ...,
-) -> _HtmlDoc_T: ...
+    /,
+) -> AnyStr: ...
+@overload
+def resolve_base_href(
+    doc: HtmlElement,
+    handle_failures: _HANDLE_FAILURES | None = ...,
+) -> HtmlElement: ...
+@overload
+def resolve_base_href(
+    doc: AnyStr,
+    handle_failures: _HANDLE_FAILURES | None = ...,
+    /,
+) -> AnyStr: ...
 def iterlinks(
     doc: _HtmlDoc_T,
 ) -> Iterator[tuple[HtmlElement, str | None, str, int]]: ...
+@overload
 def rewrite_links(
-    doc: _HtmlDoc_T,
+    doc: HtmlElement,
     link_repl_func: Callable[[str], str | None],
     resolve_base_href: bool = ...,
     base_href: str | None = ...,
-) -> _HtmlDoc_T: ...
+) -> HtmlElement: ...
+@overload
+def rewrite_links(
+    doc: AnyStr,
+    link_repl_func: Callable[[str], str | None],
+    resolve_base_href: bool = ...,
+    base_href: str | None = ...,
+    /,
+) -> AnyStr: ...
 
 #
 # Tree conversion
