@@ -1,0 +1,55 @@
+name: Formatting
+
+on:
+  schedule:
+    - cron: "20 6 * * 3"
+  workflow_dispatch:
+
+jobs:
+  black:
+    runs-on: ubuntu-22.04
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install python packages
+        run: >
+          pip install --progress-bar off
+          typeguard pytest bs4 cssselect lxml typing_extensions
+
+      - name: Black action
+        id: black_step
+        uses: rickstaa/action-black@v1
+        with:
+          black_args: '.'
+
+      - name: Isort action
+        id: isort_step
+        uses: isort/isort-action@v1
+        with:
+          configuration: ''
+
+      - name: Create pull request
+        if: >
+          steps.black_step.outputs.is_formatted == 'true' ||
+          contains(steps.isort_step.outputs.isort_result, 'Fixing ')
+        uses: peter-evans/create-pull-request@v5
+        with:
+          branch: create-pull-request/black-isort
+          delete-branch: true
+          title: 'Black/isort formatting changes'
+          commit-message: 'chore: automated black/isort formatting'
+          labels: bot
+          author: 'github-action[bot] <41898282+github-actions[bot]@users.noreply.github.com>'
+          body: >
+            Automated formatting by
+            [action-black](https://github.com/rickstaa/action-black),
+            [isort-action](https://github.com/isort/isort-action) and
+            [create-pull-request](https://github.com/peter-evans/create-pull-request)
+
