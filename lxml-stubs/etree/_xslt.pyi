@@ -6,12 +6,7 @@ import abc
 from typing import Any, ClassVar, Literal, final, overload
 from typing_extensions import TypeAlias, TypedDict, deprecated
 
-from .._types import (
-    SupportsLaxedItems,
-    _AnyStr,
-    _ElementOrTree,
-    _FileWriteSource,
-)
+from .._types import SupportsLaxedItems, _AnyStr, _ElementOrTree, _FileWriteSource
 from ._classlookup import PIBase
 from ._element import _Element, _ElementTree
 from ._module_misc import LxmlError
