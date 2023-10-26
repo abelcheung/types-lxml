@@ -31,7 +31,7 @@ def _get_var_name(frame: inspect.FrameInfo) -> str:
     code = code[idx].strip()
 
     walker = RevealTypeExtractor()
-    walker.visit(ast.parse(code, mode='eval'))
+    walker.visit(ast.parse(code, mode="eval"))
     try:
         return ast.get_source_segment(code, walker.target)  # type: ignore
     except:
@@ -99,7 +99,7 @@ def reveal_type_wrapper(var: _T) -> _T:
     globalns = caller.frame.f_globals
     localns = caller.frame.f_locals
 
-    type_ast = ast.parse(result.type, mode='eval')
+    type_ast = ast.parse(result.type, mode="eval")
     walker = NameCollector(globalns, localns)
     walker.visit(type_ast)
     localns |= walker.names
@@ -107,10 +107,10 @@ def reveal_type_wrapper(var: _T) -> _T:
     try:
         check_type_internal(var, ref, memo)
     except TypeError as exc:
-        if 'is not subscriptable' not in exc.args[0]:
+        if "is not subscriptable" not in exc.args[0]:
             raise
         if not isinstance(type_ast.body, ast.Subscript):
-            raise TypeCheckError('Inconsistency between type and parsed AST tree')
+            raise TypeCheckError("Inconsistency between type and parsed AST tree")
         # Have to concede by verifying unsubscripted type
         # Specialized classes is a stub-only thing here, and
         # all classes in lxml do not support __class_getitem__

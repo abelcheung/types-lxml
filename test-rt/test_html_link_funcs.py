@@ -210,9 +210,7 @@ class TestBadArgs:
             _ = resolve_base_href(h1_str, cast(Any, "junk"))
 
     def test_rewrite_links(self, h1_str: str) -> None:
-        with pytest.raises(
-            TypeError, match="'NoneType' object is not callable"
-        ):
+        with pytest.raises(TypeError, match="'NoneType' object is not callable"):
             _ = rewrite_links(h1_str, cast(Any, None))
         with pytest.raises(
             TypeError, match="takes 0 positional arguments but 1 was given"
@@ -222,11 +220,11 @@ class TestBadArgs:
             TypeError, match="Argument must be bytes or unicode, got 'int'"
         ):
             _ = rewrite_links(h1_str, lambda _: 1)  # pyright: ignore
+
         def repl_func(orig: bytes) -> bytes:
-            return orig.replace(b'http', b'ftp')
-        with pytest.raises(
-            TypeError, match="argument 1 must be str, not bytes"
-        ):
+            return orig.replace(b"http", b"ftp")
+
+        with pytest.raises(TypeError, match="argument 1 must be str, not bytes"):
             _ = rewrite_links(h1_str, cast(Any, repl_func))
 
     #
@@ -247,11 +245,13 @@ class TestBadArgs:
             with pytest.raises(
                 TypeError, match="got an unexpected keyword argument 'handle_failures'"
             ):
-                _ = make_links_absolute(doc=cast(Any, input), base_url=None, handle_failures=None)
+                _ = make_links_absolute(
+                    doc=cast(Any, input), base_url=None, handle_failures=None
+                )
         with pytest.raises(
             TypeError, match="got an unexpected keyword argument 'class_name'"
         ):
-            _ = find_class(cast(Any, h1_str), class_name='something')
+            _ = find_class(cast(Any, h1_str), class_name="something")
         # kw are fine for Element input
         result = make_links_absolute(html_tree.getroot(), "", handle_failures=None)
         reveal_type(result)
