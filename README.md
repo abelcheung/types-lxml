@@ -2,6 +2,12 @@
 ![Supported Python](https://img.shields.io/pypi/pyversions/types-lxml.svg)
 ![Wheel](https://img.shields.io/pypi/wheel/types-lxml.svg)
 
+## Important note
+
+Currently `types-lxml` shouldn't be used with `mypy` ≥ 1.6. The untested 1.6.0 [simply segfaults](https://github.com/python/mypy/issues/16278), while all later versions don't support `@overload` with `@deprecation`, which is [scheduled for Python 3.13](https://peps.python.org/pep-0702/).
+
+## Introduction
+
 This repository contains [external type annotations](https://peps.python.org/pep-0561/) for [`lxml`](http://lxml.de/). It can be used by type-checking tools (currently supporting [`mypy`](https://pypi.org/project/mypy/) and [`pyright`](https://github.com/Microsoft/pyright)) to check code that uses `lxml`, or used within IDEs like [VSCode](https://code.visualstudio.com/) or [PyCharm](https://www.jetbrains.com/pycharm/) to facilitate development.
 
 ## Goal ① : Completion
