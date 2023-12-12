@@ -5,8 +5,10 @@ on:
     branches-ignore:
       - 'dependabot/**'
     paths-ignore:
+      - '**/dependabot.yml'
       - '.editorconfig'
-      - '.git*'
+      - '**/.gitignore'
+      - '**/.gitattributes'
       - '**.md'
       - 'LICENSE'
 
