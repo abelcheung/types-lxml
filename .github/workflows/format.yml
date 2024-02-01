@@ -39,7 +39,7 @@ jobs:
         if: >
           steps.black_step.outputs.is_formatted == 'true' ||
           contains(steps.isort_step.outputs.isort_result, 'Fixing ')
-        uses: peter-evans/create-pull-request@v5
+        uses: peter-evans/create-pull-request@v6
         with:
           branch: create-pull-request/black-isort
           delete-branch: true

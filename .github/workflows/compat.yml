@@ -110,6 +110,6 @@ jobs:
         run: >
           pip install types-beautifulsoup4
           'typing_extensions >= 4.5'
-      - uses: jakebailey/pyright-action@v1
+      - uses: jakebailey/pyright-action@v2
         with:
           version: ${{ matrix.prver }}
