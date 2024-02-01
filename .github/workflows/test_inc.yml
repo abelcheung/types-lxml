@@ -26,7 +26,7 @@ jobs:
       with:
         python-version: ${{ matrix.pyver }}
 
-    - uses: actions/cache@v3
+    - uses: actions/cache@v4
       with:
         path: ${{ env.pythonLocation }}
         key: ${{ matrix.os }}-${{ env.pythonLocation }}-${{ hashFiles('tox.ini', 'pyproject.toml') }}
@@ -41,7 +41,7 @@ jobs:
       run: tox run -v -e build
 
     - name: Upload artifact
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: dist
         path: dist/*
@@ -68,13 +68,13 @@ jobs:
       with:
         python-version: ${{ matrix.pyver }}
 
-    - uses: actions/cache@v3
+    - uses: actions/cache@v4
       with:
         path: ${{ env.pythonLocation }}
         key: ${{ matrix.os }}-${{ env.pythonLocation }}-${{ hashFiles('tox.ini', 'pyproject.toml') }}
 
     - name: Download artifact
-      uses: actions/download-artifact@v3
+      uses: actions/download-artifact@v4
       with:
         name: dist
 
@@ -93,7 +93,7 @@ jobs:
         --result-json test-stub-${{ strategy.job-index }}.json
 
     - name: Upload log artifact
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: log
         path: test-stub-*.json
@@ -118,13 +118,13 @@ jobs:
       with:
         python-version: ${{ matrix.pyver }}
 
-    - uses: actions/cache@v3
+    - uses: actions/cache@v4
       with:
         path: ${{ env.pythonLocation }}
         key: ${{ matrix.os }}-${{ env.pythonLocation }}-${{ hashFiles('tox.ini', 'pyproject.toml') }}
 
     - name: Download artifact
-      uses: actions/download-artifact@v3
+      uses: actions/download-artifact@v4
       with:
         name: dist
 
@@ -143,7 +143,7 @@ jobs:
         --result-json test-rt-${{ strategy.job-index }}.json
 
     - name: Upload log artifact
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: log
         path: test-rt-*.json
