@@ -33,7 +33,9 @@ class ObjectifiedElement(etree.ElementBase):
 
     # Readonly, unlike _Element counterpart
     @property  # type: ignore[misc]
-    def text(self) -> str | None: ...  # pyright: ignore[reportIncompatibleMethodOverride]
+    def text(  # pyright: ignore[reportIncompatibleMethodOverride]
+        self,
+    ) -> str | None: ...
     # addattr() value is stringified before adding to attribute
     def addattr(self, tag: _TagName, value: object) -> None: ...
     def countchildren(self) -> int: ...
