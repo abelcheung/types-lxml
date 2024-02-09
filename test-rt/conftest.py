@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import typing as typing
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 
 import pytest
 import typeguard
@@ -51,7 +51,15 @@ def html_tree(h1_filepath: Path) -> _ElementTree[HtmlElement]:
 
 
 @pytest.fixture
-def xml_tree(x1_filepath: Path) -> _ElementTree[_Element]:
-    with open(x1_filepath, "r", encoding="ascii") as f:
+def xml_tree(x2_filepath: Path) -> _ElementTree[_Element]:
+    with open(x2_filepath, "r", encoding="ascii") as f:
         tree = parse(f)
     return tree
+
+@pytest.fixture
+def xinc_sample_data(x2_filepath: Path) -> str:
+    purepath = PurePosixPath(x2_filepath.relative_to(Path(__file__).parent.parent))
+    return """<doc xmlns:xi="http://www.w3.org/2001/XInclude">
+        <foo/><xi:include href="{}" /></doc>""".format(
+        purepath
+    )
