@@ -61,13 +61,13 @@
     - method: values
       rt: builtins.list[builtins.str]
     - method: items
-      rt: builtins.list[Tuple[builtins.str, builtins.str]]
+      rt: builtins.list[tuple[builtins.str, builtins.str]]
     - method: iterkeys
       rt: typing.Iterator[builtins.str]
     - method: itervalues
       rt: typing.Iterator[builtins.str]
     - method: iteritems
-      rt: typing.Iterator[Tuple[builtins.str, builtins.str]]
+      rt: typing.Iterator[tuple[builtins.str, builtins.str]]
   main: |
     from lxml.etree import _Attrib
     attr: _Attrib

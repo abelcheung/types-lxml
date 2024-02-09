@@ -119,7 +119,7 @@
     from lxml.html import HtmlElement
     elem: HtmlElement
     result = elem.iterlinks()
-    reveal_type(result)  # NR: Revealed type is "typing\.Iterator\[Tuple\[[\w\.]+\.HtmlElement, Union\[builtins\.str, None], builtins\.str, builtins\.int]]"
+    reveal_type(result)  # NR: Revealed type is "typing\.Iterator\[tuple\[[\w\.]+\.HtmlElement, Union\[builtins\.str, None], builtins\.str, builtins\.int]]"
     result = elem.iterlinks(None)  # E: Too many arguments for "iterlinks" of "HtmlElement"  [call-arg]
 
 - case: mixin_method_make_links_absolute
@@ -146,7 +146,7 @@
     from lxml.html import HtmlElement
     elem: HtmlElement
     elem.resolve_base_href()
-    elem.resolve_base_href(b'ignore')  # E: Argument 1 to "resolve_base_href" of "HtmlElement" has incompatible type "Literal[b'ignore']"; expected "Optional[Literal['ignore', 'discard']]"  [arg-type]
+    elem.resolve_base_href(b'ignore')  # E: Argument 1 to "resolve_base_href" of "HtmlElement" has incompatible type "Literal[b'ignore']"; expected "Literal['ignore', 'discard'] | None"  [arg-type]
     elem.resolve_base_href(handle_failures='discard')
     elem.resolve_base_href(badarg=1)  # E: Unexpected keyword argument "badarg" for "resolve_base_href" of "HtmlElement"  [call-arg]
     elem.resolve_base_href(None, None)  # E: Too many arguments for "resolve_base_href" of "HtmlElement"  [call-arg]
