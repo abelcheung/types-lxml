@@ -225,10 +225,10 @@ class Classes(MutableSet[str]):
 #
 # Types of other HTML elements
 #
-# Note that HtmlProcessingInstruction is removed from this world.
-# It has never been seen in real life;
-# mozilla also explicitly says it won't be supported.
-# https://developer.mozilla.org/en-US/docs/Web/API/ProcessingInstruction
+# Processing Instruction is only useful for XML in real life;
+# it is considered bogus error in HTML spec, but still allowed
+# to be constructed in lxml nontheless.
+# https://html.spec.whatwg.org/multipage/parsing.html#tag-open-state
 #
 # HtmlEntity is also rare; it can only appear if a specially constructed
 # HTML parser is used. By default entities are merged into text content.
@@ -236,6 +236,7 @@ class Classes(MutableSet[str]):
 # Note the reversed MRO order -- fatal dunders from __ContentOnlyElement
 # are dominant in runtime
 #
+class HtmlProcessingInstruction(etree.PIBase, HtmlElement): ...  # type: ignore
 class HtmlComment(etree.CommentBase, HtmlElement): ...  # type: ignore
 class HtmlEntity(etree.EntityBase, HtmlElement): ...  # type: ignore
 

@@ -6,6 +6,7 @@ from ._element import (
     HtmlComment as HtmlComment,
     HtmlElement as HtmlElement,
     HtmlEntity as HtmlEntity,
+    HtmlProcessingInstruction as HtmlProcessingInstruction,
 )
 from ._form import (
     CheckboxGroup as CheckboxGroup,
