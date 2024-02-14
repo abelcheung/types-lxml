@@ -56,6 +56,7 @@ def xml_tree(x2_filepath: Path) -> _ElementTree[_Element]:
         tree = parse(f)
     return tree
 
+
 @pytest.fixture
 def xinc_sample_data(x2_filepath: Path) -> str:
     purepath = PurePosixPath(x2_filepath.relative_to(Path(__file__).parent.parent))
