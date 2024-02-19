@@ -107,6 +107,6 @@ class TestIterparse:
             TypeError, match="reading file objects must return bytes objects"
         ):
             with open(x1_filepath, "r") as f:
-                walker = iterparse(f)  # pyright: ignore
+                walker = iterparse(f)  # type: ignore[arg-type]
                 for event, elem in walker:  # pyright: ignore
                     print(event, elem)  # pyright: ignore

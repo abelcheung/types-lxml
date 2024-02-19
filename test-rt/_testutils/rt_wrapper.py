@@ -28,14 +28,14 @@ class RevealTypeExtractor(ast.NodeVisitor):
 def _get_var_name(frame: inspect.FrameInfo) -> str:
     code, idx = frame.code_context, frame.index
     assert code is not None and idx is not None
-    code = code[idx].strip()
+    code_str = code[idx].strip()
 
     walker = RevealTypeExtractor()
-    walker.visit(ast.parse(code, mode="eval"))
+    walker.visit(ast.parse(code_str, mode="eval"))
     try:
-        return ast.get_source_segment(code, walker.target)  # type: ignore
+        return ast.get_source_segment(code_str, walker.target)  # type: ignore
     except:
-        raise TypeCheckError("Failed to get variable name " f'from expression "{code}"')
+        raise TypeCheckError(f'Failed to get variable name from expression "{code_str}"')
 
 
 def reveal_type_wrapper(var: _T) -> _T:

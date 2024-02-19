@@ -76,7 +76,7 @@ reportUnnecessaryIsInstance = false
 typeCheckingMode = 'strict'
 
 [tool.mypy]
-packages = 'lxml-stubs'
+files = ['lxml-stubs', 'test-rt']
 strict = true
 show_error_context = true
 pretty = true
