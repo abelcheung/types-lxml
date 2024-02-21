@@ -1,0 +1,78 @@
+# Test functions with lxml type annotations.
+- case: annaotate_element
+  mypy_config: |
+    strict=True
+    # Ignore error in typeshed.
+    disallow_subclassing_any=False
+  main: |
+    from lxml import etree as e
+
+    def view_element(el: e._Element) -> None:
+        reveal_type(el)  # N: Revealed type is "lxml.etree._element._Element"
+        assert isinstance(e, e._Element)
+
+    def call_view_element() -> None:
+        el = e.Element("test")
+        view_element(el)
+
+- case: annaotate_tree
+  mypy_config: |
+    strict=True
+    disallow_subclassing_any=False
+  main: |
+    from lxml import etree as e
+
+    def tree_root(tree: e._ElementTree[e._Element]) -> None:
+        el = tree.getroot()
+        reveal_type(el)  # N: Revealed type is "lxml.etree._element._Element"
+
+    def tree_is_generic(et: e._ElementTree) -> None:  # E: Missing type parameters for generic type "_ElementTree"  [type-arg]
+        pass
+
+    def tree_of_int(et: e._ElementTree[int]) -> None:  # E: Type argument "int" of "_ElementTree" must be a subtype of "_Element"  [type-var]
+        pass
+
+    def get_tree(el: e._Element) -> None:
+        tree = e.ElementTree(el)
+        tree_root(tree)
+
+- case: annaotate_comment
+  mypy_config: |
+    strict=True
+    disallow_subclassing_any=False
+  main: |
+    from lxml import etree as e
+
+    def get_element(el: e._Element) -> None:
+        reveal_type(el.tag)  # N: Revealed type is "builtins.str"
+
+    def get_comment(comm: e._Comment) -> None:
+        reveal_type(comm)  # N: Revealed type is "lxml.etree._element._Comment"
+        reveal_type(comm.tag)  # N: Revealed type is "def (*Any, **Any) -> lxml.etree._element._Comment"
+        get_element(comm)
+
+    def check_if_element_is_comment(el: e._Element) -> bool:
+        # The following should not be an error.
+        # It is a valid check that an element is a comment.
+        return el.tag == e.Comment  # E: Non-overlapping equality check (left operand type: "str", right operand type: "Callable[[str | bytes | None], _Comment]")  [comparison-overlap]
+
+    comm = e.Comment("comment")
+    print(comm.tag == e.Comment)
+    check_if_element_is_comment(comm)
+
+- case: annaotate_html
+  mypy_config: |
+    strict=True
+    disallow_subclassing_any=False
+  main: |
+    from lxml import etree as e
+    from lxml import html as h
+
+    def element_tree(et: e._ElementTree[e._Element]) -> None:
+        pass
+
+    def html_tree(et: e._ElementTree[h.HtmlElement]) -> None:
+        element_tree(et)
+
+    def element_tree_not_html(et: e._ElementTree[e._Element]) -> None:
+        html_tree(et)  # E: Argument 1 to "html_tree" has incompatible type "_ElementTree[_Element]"; expected "_ElementTree[HtmlElement]"  [arg-type]
