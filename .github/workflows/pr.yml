@@ -50,7 +50,6 @@ jobs:
         level: warning
         workdir: lxml-stubs
         fail_on_error: true
-        pyright_version: 1.1.331
 
   all_tests:
     needs: type_checkers
