@@ -27,16 +27,15 @@ reveal_type = getattr(_testutils, "reveal_type_wrapper")
 class TestXInclude:
     def test_init_and_prop(self) -> None:
         with pytest.raises(TypeError, match="takes exactly 0 positional arguments"):
-            xinc = XInclude(None)  # pyright: ignore
+            xinc = XInclude(None)  # type: ignore[call-arg]
         xinc = XInclude()
         reveal_type(xinc.error_log)
 
     def test_xinclude_as_method(self, xinc_sample_data: str) -> None:
         elem = fromstring(xinc_sample_data)
         tree = elem.getroottree()
-        result = tree.xinclude()
         reveal_type(tree)
-        reveal_type(result)
+        tree.xinclude()
 
     def test_xinclude_as_func(self, xinc_sample_data: str) -> None:
         xinc = XInclude()
@@ -52,6 +51,5 @@ class TestXInclude:
         with pytest.raises(TypeError, match="Argument 'node' has incorrect type"):
             xinc(cast(Any, tree))
 
-        result = xinc(elem)
+        xinc(elem)
         reveal_type(elem)
-        reveal_type(result)
