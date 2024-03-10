@@ -8,6 +8,8 @@ on:
 jobs:
   all_tests:
     uses: ./.github/workflows/test_inc.yml
+    permissions:
+      actions: write
     with:
       gitref: ${{ github.ref }}
 
@@ -21,7 +23,7 @@ jobs:
     steps:
 
     - name: Download artifact
-      uses: actions/download-artifact@v3
+      uses: actions/download-artifact@v4
       with:
         name: dist
         path: dist

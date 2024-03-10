@@ -54,5 +54,7 @@ jobs:
   all_tests:
     needs: type_checkers
     uses: ./.github/workflows/test_inc.yml
+    permissions:
+      actions: write
     with:
       gitref: ${{ github.ref }}
