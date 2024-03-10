@@ -20,6 +20,7 @@ jobs:
           - 1.7.0
           - 1.7.1
           - 1.8.0
+          - 1.9.0
     runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v4
@@ -102,6 +103,8 @@ jobs:
           - 1.1.349
           - 1.1.350
           - 1.1.351
+          - 1.1.352
+          - 1.1.353
     runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v4
