@@ -4,8 +4,6 @@
 
 ## Important note
 
-(The following restriction would be removed in future releases after 2024.02.09)
-
 Currently `types-lxml` shouldn't be used with `mypy` ≥ 1.6. The untested 1.6.0 [simply segfaults](https://github.com/python/mypy/issues/16278), while all later versions don't support `@overload` with `@deprecation`, which is [scheduled for Python 3.13](https://peps.python.org/pep-0702/).
 
 ## Introduction
