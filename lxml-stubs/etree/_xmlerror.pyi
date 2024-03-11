@@ -223,6 +223,7 @@ class ErrorDomains(enum.IntEnum):
     BUFFER = ...
     URI = ...
 
+# TODO implement ErrorTypes enum, looks like unavoidable
 class ErrorTypes(enum.IntEnum):
     """The actual libxml2 error code
 

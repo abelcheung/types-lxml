@@ -6,7 +6,14 @@ from pathlib import Path, PurePosixPath
 import pytest
 import typeguard
 from _testutils import run_pyright_on
-from lxml.etree import _Element, _ElementTree
+from lxml.etree import (
+    XMLParser,
+    XMLSyntaxError,
+    _Element,
+    _ElementTree,
+    _ListErrorLog,
+    fromstring,
+)
 from lxml.html import HtmlElement, parse
 
 typeguard.config.forward_ref_policy = typeguard.ForwardRefPolicy.ERROR
@@ -64,3 +71,17 @@ def xinc_sample_data(x2_filepath: Path) -> str:
         <foo/><xi:include href="{}" /></doc>""".format(
         purepath
     )
+
+
+@pytest.fixture
+def list_log() -> _ListErrorLog:
+    bad_data = "<bad><a><b></a>&qwerty;</bad>"
+    p = XMLParser()
+    try:
+        _ = fromstring(bad_data, parser=p)
+    except XMLSyntaxError:
+        err = p.error_log
+    else:
+        raise RuntimeError("Unknown error when creating error_log fixture")
+
+    return err
