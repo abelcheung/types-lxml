@@ -63,7 +63,7 @@ class _BaseErrorLog(metaclass=ABCMeta):
     # shouldn't be used. So move copy() to the only other subclass
     # inherited from _BaseErrorLog, that is _ListErrorLog.
     @abstractmethod
-    def receive(self, log_entry: _LogEntry) -> None: ...
+    def receive(self, entry: _LogEntry) -> None: ...
 
 class _ListErrorLog(_BaseErrorLog, Collection[_LogEntry]):
     """Immutable base version of a list based error log"""
@@ -91,7 +91,7 @@ class _ListErrorLog(_BaseErrorLog, Collection[_LogEntry]):
     # copy() is originally implemented in _BaseErrorLog, see
     # comment there for more info.
     def copy(self) -> _ListErrorLog: ...  # not Self, subclasses won't survive
-    def receive(self, log_entry: _LogEntry) -> None: ...
+    def receive(self, entry: _LogEntry) -> None: ...
 
 # The interaction between _ListErrorLog and _ErrorLog is interesting
 def _ErrorLog() -> _ListErrorLog:
@@ -156,7 +156,7 @@ class PyErrorLog(_BaseErrorLog):
     # copy() is disallowed, implementation chooses to fail in a
     # silent way by returning dummy _ListErrorLog. We skip it altogether.
     def log(self, log_entry: _LogEntry, message: str, *args: object) -> None: ...
-    def receive(self, log_entry: _LogEntry) -> None: ...
+    def receive(self, log_entry: _LogEntry) -> None: ...  # pyright: ignore[reportIncompatibleMethodOverride]
 
 def clear_error_log() -> None: ...
 def use_global_python_log(log: PyErrorLog) -> None: ...
