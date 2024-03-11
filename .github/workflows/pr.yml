@@ -36,7 +36,7 @@ jobs:
         workdir: lxml-stubs
         fail_on_error: true
         ignore_note: true
-        setup_command: pip install mypy==1.5.1
+        setup_command: pip install mypy
         setup_method: install
         install_types: false
 
