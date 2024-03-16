@@ -17,11 +17,18 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
+          cache: 'pip'
 
       - name: Install python packages
         run: >
           pip install --progress-bar off
-          typeguard pytest bs4 cssselect lxml typing_extensions
+          typeguard
+          pytest
+          bs4
+          cssselect
+          lxml
+          typing_extensions
+          tox
 
       - name: Black action
         id: black_step
@@ -34,6 +41,12 @@ jobs:
         uses: isort/isort-action@v1
         with:
           configuration: ''
+
+      - name: Type checker validation on source
+        run: >
+          tox run-parallel
+          --parallel-no-spinner -v
+          -e mypy,pyright
 
       - name: Create pull request
         if: >
