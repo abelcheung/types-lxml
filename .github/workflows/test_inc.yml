@@ -88,7 +88,7 @@ jobs:
       shell: bash
       run: >
         tox run -v
-        --skip-env='.*-rt$'
+        --skip-env='.*-rt-.*'
         --installpkg *.tar.gz
         --result-json test-stub-py${{ matrix.pyver }}.json
 
@@ -109,7 +109,9 @@ jobs:
           - "3.11"
           - "3.12"
         os:
-          - "ubuntu-22.04"
+          - ubuntu-22.04
+          - windows-2022
+          - macos-13
     runs-on: ${{ matrix.os }}
     steps:
     - uses: actions/checkout@v4
@@ -140,12 +142,12 @@ jobs:
         tox run -v
         --skip-env='.*-stub$'
         --installpkg *.tar.gz
-        --result-json test-rt-py${{ matrix.pyver }}.json
+        --result-json test-rt-${{ matrix.os }}-py${{ matrix.pyver }}.json
 
     - name: Upload log artifact
       uses: actions/upload-artifact@v4
       with:
-        name: log-rt-py${{ matrix.pyver }}
+        name: log-rt-${{ matrix.os }}-py${{ matrix.pyver }}
         path: test-rt-*.json
         if-no-files-found: error
 
