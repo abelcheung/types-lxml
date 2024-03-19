@@ -1,22 +1,25 @@
 name: PR review
 
 on:
-  pull_request:
-    branches-ignore:
-      - 'dependabot/**'
+  pull_request_target:
     paths-ignore:
-      - '.git*'
+      - '**/dependabot.yml'
+      - '.editorconfig'
+      - '**/.gitignore'
+      - '**/.gitattributes'
       - '**.md'
       - 'LICENSE'
 
 jobs:
-  type_checkers:
+  review:
     runs-on: ubuntu-22.04
     permissions:
       contents: read
       pull-requests: write
     steps:
     - uses: actions/checkout@v4
+      with:
+        ref: ${{ github.event.pull_request.head.sha }}
 
     - name: Set up Python
       uses: actions/setup-python@v5
@@ -30,7 +33,6 @@ jobs:
       id: mypy
       uses: tsuyoshicho/action-mypy@v4
       with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
         reporter: github-pr-review
         level: warning
         workdir: lxml-stubs
@@ -45,16 +47,8 @@ jobs:
       if: success() || steps.mypy.conclusion == 'failure'
       uses: jordemort/action-pyright@v1
       with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
         reporter: github-pr-review
         level: warning
         workdir: lxml-stubs
         fail_on_error: true
 
-  all_tests:
-    needs: type_checkers
-    uses: ./.github/workflows/test_inc.yml
-    permissions:
-      actions: write
-    with:
-      gitref: ${{ github.ref }}
