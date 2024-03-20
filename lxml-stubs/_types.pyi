@@ -1,7 +1,6 @@
-from _typeshed import SupportsRead, SupportsWrite, _KT_co, _T_co, _VT_co
+from _typeshed import SupportsRead, SupportsWrite, _KT_co, _VT_co
 from os import PathLike
 from typing import (
-    IO,
     Any,
     Callable,
     Collection,
@@ -152,19 +151,13 @@ class SupportsLaxedItems(Protocol[_KT_co, _VT_co]):
 
     def items(self) -> Collection[tuple[_KT_co, _VT_co]]: ...
 
-# Borrow from typeshed xml.sax
-class SupportsReadClose(SupportsRead[_T_co], Protocol[_T_co]):
-    def close(self) -> None: ...
-
 _FilePath = _AnyStr | PathLike[str] | PathLike[bytes]
 # _parseDocument() from parser.pxi
 # fmt: off
 _FileReadSource = (
     _FilePath
-    | IO[str]
-    | IO[bytes]
-    | SupportsReadClose[str]
-    | SupportsReadClose[bytes]
+    | SupportsRead[str]
+    | SupportsRead[bytes]
 )
 # fmt: on
 _FileWriteSource = _FilePath | SupportsWrite[bytes]

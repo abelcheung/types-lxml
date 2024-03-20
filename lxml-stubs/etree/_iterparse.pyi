@@ -1,10 +1,9 @@
-from _typeshed import _T_co
+from _typeshed import SupportsRead, _T_co
 from typing import IO, Iterable, Iterator, Literal, overload
 from typing_extensions import LiteralString, TypeAlias
 
 from .._types import (
     SupportsLaxedItems,
-    SupportsReadClose,
     _AnyStr,
     _ET_co,
     _FilePath,
@@ -66,7 +65,7 @@ class iterparse(Iterator[_T_co]):
     @overload  # default values, only 'end' event emitted
     def __new__(
         cls,
-        source: _FilePath | IO[bytes] | SupportsReadClose[bytes],
+        source: _FilePath | IO[bytes] | SupportsRead[bytes],
         events: None = ...,
         *,
         tag: _TagSelector | Iterable[_TagSelector] | None = ...,
@@ -90,7 +89,7 @@ class iterparse(Iterator[_T_co]):
     @overload  # element-only events
     def __new__(
         cls,
-        source: _FilePath | IO[bytes] | SupportsReadClose[bytes],
+        source: _FilePath | IO[bytes] | SupportsRead[bytes],
         events: Iterable[_NoNSEventNames],
         *,
         tag: _TagSelector | Iterable[_TagSelector] | None = ...,
@@ -114,7 +113,7 @@ class iterparse(Iterator[_T_co]):
     @overload  # html mode -> namespace events suppressed
     def __new__(
         cls,
-        source: _FilePath | IO[bytes] | SupportsReadClose[bytes],
+        source: _FilePath | IO[bytes] | SupportsRead[bytes],
         events: Iterable[_SaxEventNames],
         *,
         tag: _TagSelector | Iterable[_TagSelector] | None = ...,
@@ -138,7 +137,7 @@ class iterparse(Iterator[_T_co]):
     @overload  # xml mode & NS-only events
     def __new__(
         cls,
-        source: _FilePath | IO[bytes] | SupportsReadClose[bytes],
+        source: _FilePath | IO[bytes] | SupportsRead[bytes],
         events: Iterable[Literal["start-ns", "end-ns"]],
         *,
         tag: _TagSelector | Iterable[_TagSelector] | None = ...,
@@ -164,7 +163,7 @@ class iterparse(Iterator[_T_co]):
     @overload  # xml mode, catch all
     def __new__(
         cls,
-        source: _FilePath | IO[bytes] | SupportsReadClose[bytes],
+        source: _FilePath | IO[bytes] | SupportsRead[bytes],
         events: Iterable[_SaxEventNames],
         *,
         tag: _TagSelector | Iterable[_TagSelector] | None = ...,
