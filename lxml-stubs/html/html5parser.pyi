@@ -3,6 +3,8 @@
 # See https://github.com/html5lib/html5lib-python/issues/102
 #
 
+from _typeshed import SupportsRead
+
 import html5lib as _html5lib
 
 from .._types import _AnyStr
@@ -52,7 +54,8 @@ def fromstring(
     parser: HTMLParser | None = ...,
 ) -> _Element: ...
 def parse(
-    filename_url_or_file: _AnyStr,
+    # html5lib doesn't support pathlib
+    filename_url_or_file: _AnyStr | SupportsRead[bytes] | SupportsRead[str],
     guess_charset: bool | None = ...,
     parser: HTMLParser | None = ...,
 ) -> _ElementTree[_Element]: ...
