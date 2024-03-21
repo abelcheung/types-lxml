@@ -4,6 +4,7 @@
 #
 
 from _typeshed import SupportsRead
+from typing import Literal, overload
 
 import html5lib as _html5lib
 
@@ -36,12 +37,21 @@ html_parser: HTMLParser
 def document_fromstring(
     html: _AnyStr, guess_charset: bool | None = ..., parser: HTMLParser | None = ...
 ) -> _Element: ...
+@overload
+def fragments_fromstring(  # type: ignore
+    html: _AnyStr,
+    no_leading_text: Literal[True],
+    guess_charset: bool | None = None,
+    parser: HTMLParser | None = None,
+) -> list[_Element]: ...
+# The first item in the list may be a string
+@overload
 def fragments_fromstring(
     html: _AnyStr,
-    no_leading_text: bool = ...,
-    guess_charset: bool | None = ...,
-    parser: HTMLParser | None = ...,
-) -> list[_Element]: ...
+    no_leading_text: bool = False,
+    guess_charset: bool | None = None,
+    parser: HTMLParser | None = None,
+) -> list[str | _Element]: ...
 def fragment_fromstring(
     html: _AnyStr,
     create_parent: bool | _AnyStr = ...,
