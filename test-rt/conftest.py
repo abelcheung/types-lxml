@@ -41,6 +41,21 @@ def h1_bytes(h1_filepath: Path) -> bytes:
 
 
 @pytest.fixture
+def h2_filepath() -> Path:
+    return Path(__file__).parent / "data" / "mdn-sample.html"
+
+
+@pytest.fixture
+def h2_str(h2_filepath: Path) -> str:
+    return h2_filepath.read_text()
+
+
+@pytest.fixture
+def h2_bytes(h2_filepath: Path) -> bytes:
+    return h2_filepath.read_bytes()
+
+
+@pytest.fixture
 def x1_filepath() -> Path:
     return Path(__file__).parent / "data" / "w3c-example.svg"
 
