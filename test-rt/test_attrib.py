@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import copy
+from typing import Any, cast
 
 import _testutils
 import pytest
@@ -26,7 +27,7 @@ class TestXmlAttrib:
         reveal_type(attrib.get("orderid"))
         reveal_type(attrib.has_key("whatever"))
         with pytest.raises(TypeError, match="Argument must be bytes or unicode"):
-            attrib["x"] = 1  # type: ignore
+            attrib["x"] = cast(Any, 1)
         # Will fail, possibly got evaluated twice
         # v1 = attrib.pop('orderid')
         # reveal_type(v1)
