@@ -37,7 +37,7 @@
     - val: utf8
       rt: builtins.bytes
     - val: unknown_encoding
-      rt: Union[builtins.str, builtins.bytes]
+      rt: builtins.bytes
     - val: unicode
       rt: builtins.str
   main: |

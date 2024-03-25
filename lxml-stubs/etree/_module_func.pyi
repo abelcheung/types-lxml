@@ -7,7 +7,6 @@ from .._types import (
     _ElementOrTree,
     _ET_co,
     _FileReadSource,
-    _KnownEncodings,
     _OutputMethodArg,
 )
 from ._element import _Element, _ElementTree
@@ -79,63 +78,49 @@ def fromstringlist(
     strings: Iterable[_AnyStr],
     parser: None = ...,
 ) -> _Element: ...
-@overload  # Native str, no XML declaration
-def tostring(
-    element_or_tree: _ElementOrTree,
-    *,
-    encoding: type[str] | Literal["unicode"],
-    method: _OutputMethodArg = ...,
-    pretty_print: bool = ...,
-    with_tail: bool = ...,
-    standalone: bool | None = ...,
-    doctype: str | None = ...,
-) -> str: ...
-@overload  # byte str, no XML declaration
-def tostring(
-    element_or_tree: _ElementOrTree,
-    *,
-    encoding: _KnownEncodings | None = ...,
-    method: _OutputMethodArg = ...,
-    xml_declaration: bool | None = ...,
-    pretty_print: bool = ...,
-    with_tail: bool = ...,
-    standalone: bool | None = ...,
-    doctype: str | None = ...,
-) -> bytes: ...
+
+# Under XML Canonicalization (C14N) mode, most arguments are ignored,
+# some arguments would even raise exception outright if specified.
 @overload  # method="c14n"
 def tostring(
-    # Under XML Canonicalization (C14N) mode, most arguments are ignored,
-    # some arguments would even raise exception outright if specified.
     element_or_tree: _ElementOrTree,
     *,
     method: Literal["c14n"],
-    exclusive: bool = ...,
-    inclusive_ns_prefixes: Iterable[_AnyStr] | None = ...,
-    with_comments: bool = ...,
+    exclusive: bool = False,
+    inclusive_ns_prefixes: Iterable[_AnyStr] | None = None,
+    with_comments: bool = True,
 ) -> bytes: ...
 @overload  # method="c14n2"
 def tostring(
     element_or_tree: _ElementOrTree,
     *,
     method: Literal["c14n2"],
-    with_comments: bool = ...,
-    strip_text: bool = ...,
+    with_comments: bool = True,
+    strip_text: bool = False,
 ) -> bytes: ...
-@overload  # catch all
+@overload  # Native str, no XML declaration
+def tostring(  # type: ignore[misc]
+    element_or_tree: _ElementOrTree,
+    *,
+    encoding: type[str] | Literal["unicode"],
+    method: _OutputMethodArg = "xml",
+    pretty_print: bool = False,
+    with_tail: bool = True,
+    standalone: bool | None = None,
+    doctype: str | None = None,
+) -> str: ...
+@overload  # byte str, no XML declaration
 def tostring(
     element_or_tree: _ElementOrTree,
     *,
-    encoding: str | type[str] = ...,
-    method: str = ...,
-    xml_declaration: bool | None = ...,
-    pretty_print: bool = ...,
-    with_tail: bool = ...,
-    standalone: bool | None = ...,
-    doctype: str | None = ...,
-    exclusive: bool = ...,
-    with_comments: bool = ...,
-    inclusive_ns_prefixes: Any = ...,
-) -> _AnyStr: ...
+    encoding: str | None = None,
+    method: _OutputMethodArg = "xml",
+    xml_declaration: bool | None = None,
+    pretty_print: bool = False,
+    with_tail: bool = True,
+    standalone: bool | None = None,
+    doctype: str | None = None,
+) -> bytes: ...
 def indent(
     element_or_tree: _ElementOrTree,
     space: str = ...,
@@ -227,6 +212,7 @@ class _MemDebug:
             Note that libxml2 constrains this value to a C int, which limits
             the accuracy on 64 bit systems.
         """
+
     def blocks_used(self) -> int:
         """
         Returns
@@ -236,6 +222,7 @@ class _MemDebug:
             Note that libxml2 constrains this value to a C int, which limits
             the accuracy on 64 bit systems.
         """
+
     def dict_size(self) -> int:
         """
         Returns
@@ -244,6 +231,7 @@ class _MemDebug:
             The current size of the global name dictionary used by libxml2
             for the current thread.  Each thread has its own dictionary.
         """
+
     def dump(
         self, output_file: _AnyStr | None = ..., byte_count: int | None = ...
     ) -> None:
@@ -256,6 +244,7 @@ class _MemDebug:
         byte_count : int, optional
             Limits number of bytes in the dump, default is None (unlimited)
         """
+
     def show(
         self, output_file: _AnyStr | None = ..., block_count: int | None = ...
     ) -> None:

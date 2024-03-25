@@ -2,7 +2,7 @@ from typing import AnyStr, Callable, Iterator, Literal, TypeVar, overload
 from typing_extensions import TypeAlias
 
 from .. import etree
-from .._types import _AnyStr, _KnownEncodings, _OutputMethodArg
+from .._types import _AnyStr, _OutputMethodArg
 from ._element import _HANDLE_FAILURES, HtmlElement
 
 _HtmlDoc_T = TypeVar("_HtmlDoc_T", str, bytes, HtmlElement)
@@ -124,7 +124,7 @@ def xhtml_to_html(xhtml: _HtmlElemOrTree) -> None: ...
 #    Besides, no c14n specific arguments are accepted here, so it is
 #    better to let etree.tostring() handle C14N.
 @overload  # encoding=str / "unicode"
-def tostring(
+def tostring(  # type: ignore[misc]
     doc: _HtmlElemOrTree,
     *,
     pretty_print: bool = ...,
@@ -140,22 +140,11 @@ def tostring(
     *,
     pretty_print: bool = ...,
     include_meta_content_type: bool = ...,
-    encoding: _KnownEncodings | None = ...,
+    encoding: str | None = ...,
     method: _OutputMethodArg = ...,
     with_tail: bool = ...,
     doctype: str | None = ...,
 ) -> bytes: ...
-@overload  # catch all
-def tostring(
-    doc: _HtmlElemOrTree,
-    *,
-    pretty_print: bool = ...,
-    include_meta_content_type: bool = ...,
-    encoding: str | type,
-    method: _OutputMethodArg = ...,
-    with_tail: bool = ...,
-    doctype: str | None = ...,
-) -> _AnyStr: ...
 
 #
 # Debug

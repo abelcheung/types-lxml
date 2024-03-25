@@ -92,20 +92,6 @@ _XPathVarArg = (
 # https://lxml.de/element_classes.html#custom-element-class-lookup
 _ElemClsLookupArg = Literal["element", "comment", "PI", "entity"]
 
-# For tostring() encoding. In theory it should be any encoding name
-# except "unicode", but is not representable in current typing system.
-# Settle for commonly encodings explicitly checked by lxml.
-_KnownEncodings = Literal[
-    "ASCII",
-    "ascii",
-    "UTF-8",
-    "utf-8",
-    "UTF8",
-    "utf8",
-    "US-ASCII",
-    "us-ascii",
-]
-
 # serializer.pxi _findOutputMethod()
 _OutputMethodArg = Literal[
     "html",
