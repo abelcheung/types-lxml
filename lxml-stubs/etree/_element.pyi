@@ -1,6 +1,16 @@
+import sys
 from _typeshed import _T
 from typing import Any, Generic, Iterable, Iterator, Literal, Mapping, overload
-from typing_extensions import Never, Self, deprecated
+
+if sys.version_info >= (3, 11):
+    from typing import Never, Self
+else:
+    from typing_extensions import Never, Self
+
+if sys.version_info >= (3, 13):
+    from typing import deprecated
+else:
+    from typing_extensions import deprecated
 
 from .. import _types as _t
 from ..cssselect import _CSSTransArg
@@ -318,8 +328,9 @@ class _ElementTree(Generic[_t._ET_co]):
         self,
         _xslt: _t._ElementOrTree,
         /,
-        extensions: _t.SupportsLaxedItems[tuple[_t._AnyStr, _t._AnyStr], XSLTExtension]
-        | None = ...,
+        extensions: (
+            _t.SupportsLaxedItems[tuple[_t._AnyStr, _t._AnyStr], XSLTExtension] | None
+        ) = ...,
         access_control: XSLTAccessControl | None = ...,
         *,  # all keywords are passed to XSLT.__call__
         profile_run: bool = ...,
@@ -354,9 +365,11 @@ class _Attrib:
     # explicitly checks for dict and _Attrib
     def update(
         self,
-        sequence_or_dict: _Attrib
-        | dict[Any, Any]  # Compromise with MutableMapping key/val invariance
-        | Iterable[tuple[_t._AttrName, _t._AttrVal]],
+        sequence_or_dict: (
+            _Attrib
+            | dict[Any, Any]  # Compromise with MutableMapping key/val invariance
+            | Iterable[tuple[_t._AttrName, _t._AttrVal]]
+        ),
     ) -> None: ...
     # Signature is pop(self, key, *default), yet followed by runtime
     # check and raise exception if multiple default argument is supplied

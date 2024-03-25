@@ -3,9 +3,14 @@
 # etree/_extension.pxi are merged here.
 #
 
+import sys
 from abc import abstractmethod
 from typing import Any, Callable, Generic, Mapping, Protocol, final, overload
-from typing_extensions import deprecated
+
+if sys.version_info >= (3, 13):
+    from typing import deprecated
+else:
+    from typing_extensions import deprecated
 
 from .._types import (
     _ET,

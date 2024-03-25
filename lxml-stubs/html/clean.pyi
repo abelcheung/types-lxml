@@ -1,5 +1,10 @@
+import sys
 from typing import Iterable, Pattern, TypeVar, Union, overload
-from typing_extensions import TypeAlias
+
+if sys.version_info >= (3, 10):
+    from typing import TypeAlias
+else:
+    from typing_extensions import TypeAlias
 
 from .._types import Unused, _ElemFactory
 from ..etree import _Element, _ElementTree

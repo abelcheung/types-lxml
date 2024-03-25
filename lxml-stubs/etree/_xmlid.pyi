@@ -1,5 +1,10 @@
+import sys
 from typing import Collection, Generic, Iterator, overload
-from typing_extensions import Self
+
+if sys.version_info >= (3, 11):
+    from typing import Self
+else:
+    from typing_extensions import Self
 
 from .._types import _ET, _AnyStr, _FileReadSource
 from ._element import _Element, _ElementTree

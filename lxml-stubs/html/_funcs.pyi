@@ -1,12 +1,17 @@
+import sys
 from typing import AnyStr, Callable, Iterator, Literal, TypeVar, overload
-from typing_extensions import TypeAlias
 
-from .. import etree
+if sys.version_info >= (3, 10):
+    from typing import TypeAlias
+else:
+    from typing_extensions import TypeAlias
+
 from .._types import _AnyStr, _OutputMethodArg
+from ..etree import _ElementTree
 from ._element import _HANDLE_FAILURES, HtmlElement
 
 _HtmlDoc_T = TypeVar("_HtmlDoc_T", str, bytes, HtmlElement)
-_HtmlElemOrTree: TypeAlias = HtmlElement | etree._ElementTree[HtmlElement]
+_HtmlElemOrTree: TypeAlias = HtmlElement | _ElementTree[HtmlElement]
 
 # These are HtmlMixin methods converted to standard functions,
 # with element or HTML string as first argument followed by all

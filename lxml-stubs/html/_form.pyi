@@ -1,3 +1,4 @@
+import sys
 from typing import (
     Any,
     Callable,
@@ -7,7 +8,16 @@ from typing import (
     MutableMapping,
     MutableSet,
 )
-from typing_extensions import Never, TypeAlias
+
+if sys.version_info >= (3, 10):
+    from typing import TypeAlias
+else:
+    from typing_extensions import TypeAlias
+
+if sys.version_info >= (3, 11):
+    from typing import Never
+else:
+    from typing_extensions import Never
 
 from .._types import SupportsLaxedItems, _AnyStr
 from ._element import HtmlElement

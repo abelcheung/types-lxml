@@ -2,9 +2,14 @@
 # lxml.etree helper classes, exceptions and constants
 #
 
+import sys
 from abc import ABCMeta, abstractmethod
 from typing import overload
-from typing_extensions import LiteralString
+
+if sys.version_info >= (3, 11):
+    from typing import LiteralString
+else:
+    from typing_extensions import LiteralString
 
 from .._types import _AnyStr, _ElementOrTree, _TagName
 from ._dtd import DTD

@@ -3,13 +3,19 @@
 #
 
 import abc
+import sys
 from typing import Any, Callable, Iterable, Iterator, Literal, overload
-from typing_extensions import LiteralString, Self, SupportsIndex
+from typing_extensions import SupportsIndex
 
-from .. import etree
+if sys.version_info >= (3, 11):
+    from typing import LiteralString, Self
+else:
+    from typing_extensions import LiteralString, Self
+
 from .._types import _AnyStr, _TagName
+from ..etree import CDATA, ElementBase
 
-class ObjectifiedElement(etree.ElementBase):
+class ObjectifiedElement(ElementBase):
     """Main XML Element class
 
     Original Docstring
@@ -75,7 +81,7 @@ class ObjectifiedDataElement(ObjectifiedElement):
     @property
     @abc.abstractmethod
     def pyval(self) -> Any: ...
-    def _setText(self, s: _AnyStr | etree.CDATA | None) -> None:
+    def _setText(self, s: _AnyStr | CDATA | None) -> None:
         """Modify text content of objectified element directly.
 
         Original Docstring
@@ -83,6 +89,7 @@ class ObjectifiedDataElement(ObjectifiedElement):
         For use in subclasses only. Don't use unless you know what you are
         doing.
         """
+
     def _setValueParser(self, function: Callable[[Any], Any]) -> None:
         """Set the function that parses the Python value from a string
 

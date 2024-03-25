@@ -1,5 +1,10 @@
+import sys
 from typing import Any, ClassVar, overload
-from typing_extensions import LiteralString
+
+if sys.version_info >= (3, 11):
+    from typing import LiteralString
+else:
+    from typing_extensions import LiteralString
 
 from . import etree as _e
 from ._types import _ElementOrTree, _FileReadSource

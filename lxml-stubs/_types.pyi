@@ -1,3 +1,4 @@
+import sys
 from _typeshed import SupportsRead, SupportsWrite, _KT_co, _VT_co
 from os import PathLike
 from typing import (
@@ -10,7 +11,11 @@ from typing import (
     Protocol,
     TypeVar,
 )
-from typing_extensions import TypeAlias
+
+if sys.version_info >= (3, 10):
+    from typing import TypeAlias
+else:
+    from typing_extensions import TypeAlias
 
 from .etree import QName, _Element, _ElementTree
 

@@ -1,6 +1,16 @@
+import sys
 from _typeshed import _T
 from typing import Any, Generic, Iterable, Iterator
-from typing_extensions import LiteralString, Self, deprecated
+
+if sys.version_info >= (3, 11):
+    from typing import LiteralString, Self
+else:
+    from typing_extensions import LiteralString, Self
+
+if sys.version_info >= (3, 13):
+    from typing import deprecated
+else:
+    from typing_extensions import deprecated
 
 from .._types import (
     SupportsLaxedItems,
@@ -84,6 +94,7 @@ class _FeedParser(Generic[_ET_co]):
         ```
         """
         ...
+
     @deprecated(
         "Removed since 5.0; deprecated since v2.0 (2008); renamed to set_element_class_lookup()"
     )

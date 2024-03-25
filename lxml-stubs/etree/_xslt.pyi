@@ -3,8 +3,18 @@
 #
 
 import abc
-from typing import Any, ClassVar, Literal, final, overload
-from typing_extensions import TypeAlias, TypedDict, deprecated
+import sys
+from typing import Any, ClassVar, Literal, TypedDict, final, overload
+
+if sys.version_info >= (3, 10):
+    from typing import TypeAlias
+else:
+    from typing_extensions import TypeAlias
+
+if sys.version_info >= (3, 13):
+    from typing import deprecated
+else:
+    from typing_extensions import deprecated
 
 from .._types import SupportsLaxedItems, _AnyStr, _ElementOrTree, _FileWriteSource
 from ._classlookup import PIBase
@@ -46,6 +56,7 @@ class _XSLTResultTree(_ElementTree[_Element]):
         As opposed to the generic ``.write()`` method, ``.write_output()`` serialises
         the result as defined by the ``<xsl:output>`` tag.
         """
+
     @property
     def xslt_profile(self) -> _ElementTree[_Element] | None:
         """Return an ElementTree with profiling data for the stylesheet run"""
@@ -128,8 +139,9 @@ class XSLT:
     def __init__(
         self,
         xslt_input: _ElementOrTree,
-        extensions: SupportsLaxedItems[tuple[_AnyStr, _AnyStr], XSLTExtension]
-        | None = ...,
+        extensions: (
+            SupportsLaxedItems[tuple[_AnyStr, _AnyStr], XSLTExtension] | None
+        ) = ...,
         regexp: bool = ...,
         access_control: XSLTAccessControl | None = ...,
     ) -> None: ...
@@ -197,6 +209,7 @@ class XSLTExtension(metaclass=abc.ABCMeta):
         is no parent element in the current context (e.g. no content
         was added to the output tree yet).
         """
+
     @overload
     def apply_templates(
         self,
@@ -247,6 +260,7 @@ class XSLTExtension(metaclass=abc.ABCMeta):
         Note that the string discarding options will be ignored in this
         case.
         """
+
     @overload
     def process_children(
         self,

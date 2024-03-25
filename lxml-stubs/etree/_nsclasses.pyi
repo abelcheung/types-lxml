@@ -1,3 +1,4 @@
+import sys
 from _typeshed import _KT, _T, _VT
 from typing import (
     Any,
@@ -9,7 +10,11 @@ from typing import (
     final,
     overload,
 )
-from typing_extensions import ParamSpec
+
+if sys.version_info >= (3, 10):
+    from typing import ParamSpec
+else:
+    from typing_extensions import ParamSpec
 
 from .._types import SupportsLaxedItems
 from ._classlookup import ElementBase, ElementClassLookup, FallbackElementClassLookup

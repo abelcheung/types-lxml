@@ -1,5 +1,15 @@
+import sys
 from typing import Any, Iterable, Literal, final, overload
-from typing_extensions import TypeGuard, deprecated
+
+if sys.version_info >= (3, 10):
+    from typing import TypeGuard
+else:
+    from typing_extensions import TypeGuard
+
+if sys.version_info >= (3, 13):
+    from typing import deprecated
+else:
+    from typing_extensions import deprecated
 
 from .._types import (
     _ET,

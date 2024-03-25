@@ -1,6 +1,16 @@
+import sys
 from _typeshed import SupportsRead, _T_co
 from typing import IO, Iterable, Iterator, Literal, overload
-from typing_extensions import LiteralString, TypeAlias
+
+if sys.version_info >= (3, 10):
+    from typing import TypeAlias
+else:
+    from typing_extensions import TypeAlias
+
+if sys.version_info >= (3, 11):
+    from typing import LiteralString
+else:
+    from typing_extensions import LiteralString
 
 from .._types import (
     SupportsLaxedItems,

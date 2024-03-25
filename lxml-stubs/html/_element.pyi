@@ -1,6 +1,11 @@
+import sys
 from _typeshed import _T
 from typing import Callable, Iterable, Iterator, Literal, MutableSet, overload
-from typing_extensions import Self
+
+if sys.version_info >= (3, 11):
+    from typing import Self
+else:
+    from typing_extensions import Self
 
 from .. import etree
 from .._types import (
