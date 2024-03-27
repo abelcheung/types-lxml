@@ -89,7 +89,6 @@ class ObjectifiedDataElement(ObjectifiedElement):
         For use in subclasses only. Don't use unless you know what you are
         doing.
         """
-
     def _setValueParser(self, function: Callable[[Any], Any]) -> None:
         """Set the function that parses the Python value from a string
 

@@ -44,6 +44,7 @@ def fragments_fromstring(  # type: ignore
     guess_charset: bool | None = None,
     parser: HTMLParser | None = None,
 ) -> list[_Element]: ...
+
 # The first item in the list may be a string
 @overload
 def fragments_fromstring(
