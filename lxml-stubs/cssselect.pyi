@@ -1,22 +1,25 @@
-from typing import Literal, overload
+from typing import Literal
+
+import cssselect as _csel
+from cssselect.parser import Function
+from cssselect.xpath import XPathExpr
 
 from ._types import _ET, _NonDefaultNSMapArg, _XPathVarArg
 from .etree import XPath, _ElementTree
 
 _CSSTransArg = LxmlTranslator | Literal["xml", "html", "xhtml"]
 
-class SelectorError(Exception): ...
-class SelectorSyntaxError(SelectorError, SyntaxError): ...
-class ExpressionError(SelectorError, RuntimeError): ...
+SelectorError = _csel.SelectorError
+SelectorSyntaxError = _csel.SelectorSyntaxError
+ExpressionError = _csel.ExpressionError
 
-# Cssselect has never had stub in typeshed or official repo.
-# Only include the bare minimum init argument to make following
-# classes self-contained, as long as users are not creating
-# customized translators.
-class LxmlTranslator: ...
+class LxmlTranslator(_csel.GenericTranslator):
+    def xpath_contains_function(
+        self, xpath: XPathExpr, function: Function
+    ) -> XPathExpr: ...
 
-class LxmlHTMLTranslator(LxmlTranslator):
-    def __init__(self, xhtml: bool = ...) -> None: ...
+class LxmlHTMLTranslator(LxmlTranslator, _csel.HTMLTranslator):
+    pass
 
 class CSSSelector(XPath):
     # Although 'css' is implemented as plain attribute, it is
@@ -37,17 +40,9 @@ class CSSSelector(XPath):
     # representable in original element tree, because CSS expression
     # is transformed into XPath via css_to_xpath() which doesn't support
     # pseudo-element by default.
-    @overload
     def __call__(
         self,
-        _etree_or_element: _ET,
-        /,
-        **_variables: _XPathVarArg,
-    ) -> list[_ET]: ...
-    @overload
-    def __call__(  # pyright: ignore[reportIncompatibleMethodOverride]
-        self,
-        _etree_or_element: _ElementTree[_ET],
+        _etree_or_element: _ET | _ElementTree[_ET],
         /,
         **_variables: _XPathVarArg,
     ) -> list[_ET]: ...
