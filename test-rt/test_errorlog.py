@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import inspect
+import logging
 from typing import Any, cast
 
 import _testutils
@@ -10,13 +11,29 @@ from lxml.etree import (
     ErrorDomains,
     ErrorLevels,
     ErrorTypes as ErrorTypes,
+    PyErrorLog,
     XMLSyntaxError,
     _ListErrorLog,
     _LogEntry as _LogEntry,
+    clear_error_log,
     fromstring,
+    use_global_python_log,
 )
 
 reveal_type = getattr(_testutils, "reveal_type_wrapper")
+
+
+### NOTES
+#
+# - Not testing manual construction of _ErrorLog; technically
+# feasible, but it does not make sense creating a collection
+# of error entries out of context
+#
+# - Not testing _DomainErrorLog as it is completely unused
+#
+# - Not testing _RotatingErrorLog, which is only used in
+# global lxml logging, and doesn't expose any attributes
+# other than those already present in _ListErrorLog
 
 
 def _method_no_kwarg() -> bool:
@@ -176,9 +193,71 @@ class TestEmptyLog:
         reveal_type(e_copy)
 
 
-# TODO PyErrorLog, _RotatingErrorLog
-# The unused _DomainErrorLog is ignored
+class TestModuleFunc:
 
-# Not testing manual construction of _ErrorLog; technically
-# feasible, but it does not make sense creating a collection
-# of error entries out of context
+    def test_sig(self) -> None:
+        sig = inspect.signature(clear_error_log)
+        param = list(sig.parameters.values())
+        assert len(param) == 0
+        del sig, param
+
+        sig = inspect.signature(use_global_python_log)
+        param = list(sig.parameters.values())
+        assert len(param) == 1
+        assert param[0].name == "log"
+        assert param[0].kind == inspect.Parameter.POSITIONAL_OR_KEYWORD
+        del sig, param
+
+        with pytest.raises(
+            TypeError, match=r"expected lxml\.etree\.PyErrorLog, got int"
+        ):
+            use_global_python_log(cast(Any, 1))
+
+        # exception if used after use_global_python_log
+        clear_error_log()
+
+        pylog = PyErrorLog()
+        use_global_python_log(pylog)
+
+
+class TestPyErrorLog:
+    def test_construct(self) -> None:
+        pylog = PyErrorLog()
+        use_global_python_log(pylog)
+        del pylog
+
+        pylog = PyErrorLog("foobar")
+        use_global_python_log(pylog)
+        del pylog
+
+        with pytest.raises(TypeError, match="logger name must be a string"):
+            _ = PyErrorLog(cast(Any, 1))
+
+        pylog = PyErrorLog(logger_name="foobar")
+        use_global_python_log(pylog)
+        del pylog
+
+        logger = logging.Logger("foobar")
+        pylog = PyErrorLog(logger=logger)
+        use_global_python_log(pylog)
+        del pylog
+
+        with pytest.raises(AttributeError, match="has no attribute 'log'"):
+            _ = PyErrorLog(logger=cast(Any, "foobar"))
+
+    def test_properties(self) -> None:
+        pylog = PyErrorLog()
+        use_global_python_log(pylog)
+
+        reveal_type(pylog.last_error)  # None initially
+        for mapping in pylog.level_map.items():
+            reveal_type(mapping[0])
+            reveal_type(mapping[1])
+
+        broken_xml = "<doc><a><b></a>&bar;</doc>"
+        with pytest.raises(XMLSyntaxError):
+            _ = fromstring(broken_xml)
+
+        assert pylog.last_error is not None
+        reveal_type(pylog.last_error)
+        pylog.receive(pylog.last_error)
