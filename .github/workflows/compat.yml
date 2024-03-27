@@ -27,11 +27,11 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: 3.11
+          cache: 'pip'
       - name: Install requirements
-        run: >
-          pip install types-beautifulsoup4
-          'typing_extensions >= 4.5'
-          'mypy == ${{ matrix.myver }}'
+        run: |
+          pip install --progress-bar=off -r requirements.txt
+          pip install --progress-bar=off 'mypy == ${{ matrix.myver }}'
       - name: Perform check on source
         run: mypy lxml-stubs
 
@@ -111,10 +111,9 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: 3.11
+          cache: 'pip'
       - name: Install requirements
-        run: >
-          pip install types-beautifulsoup4
-          'typing_extensions >= 4.5'
+        run: pip install --progress-bar=off -r requirements.txt
       - uses: jakebailey/pyright-action@v2
         with:
           version: ${{ matrix.prver }}

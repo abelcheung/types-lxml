@@ -27,7 +27,7 @@ jobs:
         python-version: "3.10"
 
     - name: Install dependencies
-      run: pip install types-beautifulsoup4
+      run: pip install --progress-bar=off -r requirements.txt
 
     - name: Mypy review
       id: mypy

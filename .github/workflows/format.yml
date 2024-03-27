@@ -20,15 +20,9 @@ jobs:
           cache: 'pip'
 
       - name: Install python packages
-        run: >
-          pip install --progress-bar off
-          typeguard
-          pytest
-          bs4
-          cssselect
-          lxml
-          typing_extensions
-          tox
+        run: |
+          pip install --progress-bar=off .[test]
+          pip uninstall -q -y types-lxml
 
       - name: Black action
         id: black_step

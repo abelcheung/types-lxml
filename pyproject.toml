@@ -13,7 +13,8 @@ requires-python = '>=3.8'
 license = {text = 'Apache-2.0'}
 dependencies = [
     'types-beautifulsoup4',
-    'typing_extensions ~= 4.5'
+    'typing_extensions ~= 4.5',
+    'cssselect ~= 1.2'  # cssselect uses inline annotation
 ]
 keywords = ['lxml', 'typing', 'stubs', 'annotation']
 authors = [
@@ -36,8 +37,15 @@ classifiers = [
 homepage = 'https://github.com/abelcheung/types-lxml'
 
 [project.optional-dependencies]
-dev = [
+test = [
     'tox ~= 4.0',
+    'mypy == 1.5.1',
+    'pyright >= 1.1.289',
+    'typeguard >= 3.0, < 5',
+    'pytest >= 7.0, < 9',
+    'html5lib == 1.1',
+    'pytest-mypy-plugins ~= 1.10, != 1.10.0',
+    'lxml == 5.1.*',
 ]
 
 [tool.pdm.version]
