@@ -145,9 +145,7 @@ class PyErrorLog(_BaseErrorLog):
     """
 
     @property
-    def level_map(
-        self,
-    ) -> dict[ErrorLevels, int]: ...  # TypedDict req valid identifier keys
+    def level_map(self) -> dict[int, int]: ...
     # Only either one of the 2 args in __init__ is effective;
     # when both are specified, 'logger_name' is ignored
     @overload
