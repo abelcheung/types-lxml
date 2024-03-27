@@ -5,7 +5,7 @@
 import enum
 from abc import ABCMeta, abstractmethod
 from logging import Logger, LoggerAdapter
-from typing import Any, Collection, Iterable, Iterator, final
+from typing import Any, Collection, Iterable, Iterator, final, overload
 
 @final
 class _LogEntry:
@@ -148,10 +148,18 @@ class PyErrorLog(_BaseErrorLog):
     def level_map(
         self,
     ) -> dict[ErrorLevels, int]: ...  # TypedDict req valid identifier keys
+    # Only either one of the 2 args in __init__ is effective;
+    # when both are specified, 'logger_name' is ignored
+    @overload
     def __init__(
         self,
-        logger_name: str | None = ...,
-        logger: Logger | LoggerAdapter[Any] | None = ...,
+        logger_name: str | None = None,
+    ) -> None: ...
+    @overload
+    def __init__(
+        self,
+        *,
+        logger: Logger | LoggerAdapter[Any] | None = None,
     ) -> None: ...
     # copy() is disallowed, implementation chooses to fail in a
     # silent way by returning dummy _ListErrorLog. We skip it altogether.
