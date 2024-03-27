@@ -28,7 +28,6 @@ def _method_no_kwarg() -> bool:
 
 
 class TestListLog:
-
     def test_from_broken_string(self) -> None:
         src = "<bad><a><b></a>&qwerty;</bad>"
         try:
@@ -87,7 +86,6 @@ class TestListLog:
             _ = list_log.filter_domains(cast(Any, None))
 
     def test_filter_levels(self, list_log: _ListErrorLog) -> None:
-
         sig = inspect.signature(list_log.filter_levels)
         param = list(sig.parameters.values())
         assert len(param) == 1
@@ -112,7 +110,6 @@ class TestListLog:
             _ = list_log.filter_levels(cast(Any, None))
 
     def test_filter_levels_shortcut(self, list_log: _ListErrorLog) -> None:
-
         sig = inspect.signature(list_log.filter_from_level)
         param = list(sig.parameters.values())
         assert len(param) == 1
@@ -140,7 +137,6 @@ class TestListLog:
     # new_log = list_log.filter_types(ErrorTypes.???)
 
     def test_other_methods(self, list_log: _ListErrorLog) -> None:
-
         sig = inspect.signature(list_log.receive)
         param = list(sig.parameters.values())
         assert len(param) == 1
@@ -165,7 +161,6 @@ class TestListLog:
 
 
 class TestEmptyLog:
-
     # validate some methods and props works for empty log too
     def test_create_empty_log(self) -> None:
         data = "<doc><a>1</a></doc>"

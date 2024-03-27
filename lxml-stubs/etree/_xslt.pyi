@@ -56,7 +56,6 @@ class _XSLTResultTree(_ElementTree[_Element]):
         As opposed to the generic ``.write()`` method, ``.write_output()`` serialises
         the result as defined by the ``<xsl:output>`` tag.
         """
-
     @property
     def xslt_profile(self) -> _ElementTree[_Element] | None:
         """Return an ElementTree with profiling data for the stylesheet run"""
@@ -209,7 +208,6 @@ class XSLTExtension(metaclass=abc.ABCMeta):
         is no parent element in the current context (e.g. no content
         was added to the output tree yet).
         """
-
     @overload
     def apply_templates(
         self,
@@ -260,7 +258,6 @@ class XSLTExtension(metaclass=abc.ABCMeta):
         Note that the string discarding options will be ignored in this
         case.
         """
-
     @overload
     def process_children(
         self,
