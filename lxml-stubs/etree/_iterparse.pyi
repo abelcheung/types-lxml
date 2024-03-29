@@ -15,6 +15,7 @@ else:
 from .._types import (
     SupportsLaxedItems,
     _AnyStr,
+    _ElementOrTree,
     _ET_co,
     _FilePath,
     _NSMapArg,
@@ -24,7 +25,7 @@ from .._types import (
 )
 from ._classlookup import ElementClassLookup
 from ._docloader import _ResolverRegistry
-from ._element import _Element, _ElementTree
+from ._element import _Element
 from ._xmlerror import _ListErrorLog
 from ._xmlschema import XMLSchema
 
@@ -251,21 +252,21 @@ class iterwalk(Iterator[_T_co]):
     @overload  # default events
     def __new__(
         cls,
-        element_or_tree: _ET_co | _ElementTree[_ET_co],
+        element_or_tree: _ElementOrTree[_ET_co],
         events: None = ...,
         tag: _TagSelector | Iterable[_TagSelector] | None = ...,
     ) -> iterwalk[tuple[Literal["end"], _ET_co]]: ...
     @overload  # element-only events
     def __new__(
         cls,
-        element_or_tree: _ET_co | _ElementTree[_ET_co],
+        element_or_tree: _ElementOrTree[_ET_co],
         events: Iterable[_NoNSEventNames],
         tag: _TagSelector | Iterable[_TagSelector] | None = ...,
     ) -> iterwalk[tuple[_NoNSEventNames, _ET_co]]: ...
     @overload  # namespace-only events
     def __new__(
         cls,
-        element_or_tree: _ET_co | _ElementTree[_ET_co],
+        element_or_tree: _ElementOrTree[_ET_co],
         events: Iterable[Literal["start-ns", "end-ns"]],
         tag: _TagSelector | Iterable[_TagSelector] | None = ...,
     ) -> iterwalk[
@@ -274,7 +275,7 @@ class iterwalk(Iterator[_T_co]):
     @overload  # catch-all
     def __new__(
         cls,
-        element_or_tree: _ET_co | _ElementTree[_ET_co],
+        element_or_tree: _ElementOrTree[_ET_co],
         events: Iterable[_SaxEventNames],
         tag: _TagSelector | Iterable[_TagSelector] | None = ...,
     ) -> iterwalk[
