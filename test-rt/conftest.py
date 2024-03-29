@@ -9,7 +9,6 @@ from _testutils import run_pyright_on
 from lxml.etree import (
     XMLParser,
     XMLSyntaxError,
-    _Element,
     _ElementTree,
     _ListErrorLog,
     fromstring,
@@ -73,7 +72,7 @@ def html_tree(h1_filepath: Path) -> _ElementTree[HtmlElement]:
 
 
 @pytest.fixture
-def xml_tree(x2_filepath: Path) -> _ElementTree[_Element]:
+def xml_tree(x2_filepath: Path) -> _ElementTree:
     with open(x2_filepath, "r", encoding="ascii") as f:
         tree = parse(f)
     return tree

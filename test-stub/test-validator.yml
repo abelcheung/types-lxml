@@ -109,7 +109,7 @@
     - obj: rng
     - obj: dtd
     - obj: schema
-    - obj: tron
+    # - obj: tron  # see mypy_not_matching_pep696 test
   main: |
     from inc import rng, dtd, schema, tron, tree, elem
     reveal_type({{ obj }}(tree))  # NR: .+ "[\w\.]+\.bool"$

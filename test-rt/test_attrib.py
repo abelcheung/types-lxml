@@ -5,13 +5,13 @@ from typing import Any, cast
 
 import _testutils
 import pytest
-from lxml.etree import _Element, _ElementTree
+from lxml.etree import _ElementTree
 
 reveal_type = getattr(_testutils, "reveal_type_wrapper")
 
 
 class TestXmlAttrib:
-    def test_behavior(self, xml_tree: _ElementTree[_Element]) -> None:
+    def test_behavior(self, xml_tree: _ElementTree) -> None:
         e = copy.deepcopy(xml_tree.getroot())
         attrib = e.attrib
         reveal_type(len(attrib))

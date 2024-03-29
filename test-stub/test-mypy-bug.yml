@@ -47,3 +47,20 @@
     el.tag = b
     el.text = b
     el.tail = b
+
+# original test: test-validator.yml::superclass_validate_method
+# Mypy failed to match _Element or _ElementTree against TypeVar
+# with bound and default type value
+# And somehow this only appeared for Schematron but not other
+# validators
+# Besides, pyright just works
+- case: mypy_not_matching_pep696
+  expect_fail: true
+  main: |
+    from lxml.isoschematron import Schematron
+    from lxml.etree import _Element, _ElementTree
+    sch: Schematron
+    elem: _Element
+    tree: _ElementTree
+    reveal_type(sch(elem))  # NR: .+ "[\w\.]+\.bool"$
+    reveal_type(sch(tree))  # NR: .+ "[\w\.]+\.bool"$

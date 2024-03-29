@@ -26,7 +26,7 @@
         el = tree.getroot()
         reveal_type(el)  # N: Revealed type is "lxml.etree._element._Element"
 
-    def tree_is_generic(et: e._ElementTree) -> None:  # E: Missing type parameters for generic type "_ElementTree"  [type-arg]
+    def tree_is_generic(et: e._ElementTree) -> None:
         pass
 
     def tree_of_int(et: e._ElementTree[int]) -> None:  # E: Type argument "int" of "_ElementTree" must be a subtype of "_Element"  [type-var]
