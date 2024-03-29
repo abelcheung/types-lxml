@@ -2,7 +2,7 @@ from typing import Generic, overload
 from xml.sax.handler import ContentHandler
 
 from ._types import _ElementOrTree, _ElemFactory, _ET_co
-from .etree import LxmlError, _Element, _ElementTree
+from .etree import LxmlError, _ElementTree
 
 class SaxError(LxmlError): ...
 
@@ -17,7 +17,7 @@ class ElementTreeContentHandler(Generic[_ET_co], ContentHandler):
     @overload
     def __new__(
         cls, makeelement: None = ...
-    ) -> ElementTreeContentHandler[_Element]: ...
+    ) -> ElementTreeContentHandler: ...
     @property
     def etree(self) -> _ElementTree[_ET_co]: ...
 

@@ -3,10 +3,10 @@
 #
 
 from _typeshed import _T
-from typing import Iterable, overload
+from typing import Iterable, TypeVar, overload
 
 from .. import etree
-from .._types import _ET, _AnyStr, _FileReadSource
+from .._types import _AnyStr, _FileReadSource
 from ._element import ObjectifiedDataElement, ObjectifiedElement
 
 #
@@ -130,6 +130,12 @@ def fromstring(
     """
 
 XML = fromstring
+
+# Not using ._types._ET, which supports PEP 696, but causes
+# problem in 2nd overload of ObjectPath.__call__()
+# if _ET has a default type, then all subsequent argument
+# typevars need default type too (namely, _default: _T)
+_ET = TypeVar('_ET', bound=etree._Element)
 
 #
 # ObjectPath -- only used within lxml.objectify

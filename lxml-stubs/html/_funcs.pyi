@@ -1,17 +1,9 @@
-import sys
 from typing import AnyStr, Callable, Iterator, Literal, TypeVar, overload
 
-if sys.version_info >= (3, 10):
-    from typing import TypeAlias
-else:
-    from typing_extensions import TypeAlias
-
-from .._types import _AnyStr, _OutputMethodArg
-from ..etree import _ElementTree
+from .._types import _AnyStr, _ElementOrTree, _OutputMethodArg
 from ._element import _HANDLE_FAILURES, HtmlElement
 
 _HtmlDoc_T = TypeVar("_HtmlDoc_T", str, bytes, HtmlElement)
-_HtmlElemOrTree: TypeAlias = HtmlElement | _ElementTree[HtmlElement]
 
 # These are HtmlMixin methods converted to standard functions,
 # with element or HTML string as first argument followed by all
@@ -109,8 +101,8 @@ def rewrite_links(
 #
 # Tree conversion
 #
-def html_to_xhtml(html: _HtmlElemOrTree) -> None: ...
-def xhtml_to_html(xhtml: _HtmlElemOrTree) -> None: ...
+def html_to_xhtml(html: _ElementOrTree[HtmlElement]) -> None: ...
+def xhtml_to_html(xhtml: _ElementOrTree[HtmlElement]) -> None: ...
 
 #
 # Tree output
@@ -130,7 +122,7 @@ def xhtml_to_html(xhtml: _HtmlElemOrTree) -> None: ...
 #    better to let etree.tostring() handle C14N.
 @overload  # encoding=str / "unicode"
 def tostring(  # type: ignore[overload-overlap]
-    doc: _HtmlElemOrTree,
+    doc: _ElementOrTree[HtmlElement],
     *,
     pretty_print: bool = ...,
     include_meta_content_type: bool = ...,
@@ -141,7 +133,7 @@ def tostring(  # type: ignore[overload-overlap]
 ) -> str: ...
 @overload  # encoding="..." / None, no encoding arg
 def tostring(
-    doc: _HtmlElemOrTree,
+    doc: _ElementOrTree[HtmlElement],
     *,
     pretty_print: bool = ...,
     include_meta_content_type: bool = ...,
@@ -155,5 +147,5 @@ def tostring(
 # Debug
 #
 def open_in_browser(
-    doc: _HtmlElemOrTree, encoding: str | type[str] | None = ...
+    doc: _ElementOrTree[HtmlElement], encoding: str | type[str] | None = ...
 ) -> None: ...

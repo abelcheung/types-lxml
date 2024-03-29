@@ -6,13 +6,13 @@ if sys.version_info >= (3, 10):
 else:
     from typing_extensions import TypeAlias
 
-from .._types import Unused, _ElemFactory
-from ..etree import _Element, _ElementTree
+from .._types import Unused, _ElementOrTree, _ElemFactory
+from ..etree import _ElementTree
 from . import HtmlElement
-from ._funcs import _HtmlDoc_T, _HtmlElemOrTree
+from ._funcs import _HtmlDoc_T
 
 # Version of tag selector that doesn't support QName helper
-_HTagSelector: TypeAlias = Union[str, bytes, _ElemFactory[_Element]]
+_HTagSelector: TypeAlias = Union[str, bytes, _ElemFactory]
 
 # Similar to _funcs._HtmlDoc_T, but also supports ET; only used in Cleaner
 _DT = TypeVar("_DT", str, bytes, HtmlElement, _ElementTree[HtmlElement])
@@ -71,11 +71,11 @@ class Cleaner:
         host_whitelist: Iterable[str] = ...,
         whitelist_tags: Iterable[str] | None = ...,
     ) -> None: ...
-    def __call__(self, doc: _HtmlElemOrTree) -> None: ...
+    def __call__(self, doc: _ElementOrTree[HtmlElement]) -> None: ...
     def allow_follow(self, anchor: HtmlElement) -> bool: ...
     def allow_element(self, el: HtmlElement) -> bool: ...
     def allow_embedded_url(self, el: HtmlElement, url: str) -> bool: ...
-    def kill_conditional_comments(self, doc: _HtmlElemOrTree) -> None: ...
+    def kill_conditional_comments(self, doc: _ElementOrTree[HtmlElement]) -> None: ...
     def clean_html(self, html: _DT) -> _DT: ...
 
 clean: Cleaner

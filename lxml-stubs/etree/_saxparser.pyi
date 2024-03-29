@@ -85,8 +85,8 @@ class TreeBuilder(ParserTarget[_Element]):
     def __init__(
         self,
         *,
-        element_factory: _ElemFactory[_Element] | None = ...,
-        parser: _DefEtreeParsers[_Element] | None = ...,
+        element_factory: _ElemFactory | None = ...,
+        parser: _DefEtreeParsers | None = ...,
         comment_factory: _ElemFactory[_Comment] | None = ...,
         pi_factory: _ElemFactory[_ProcessingInstruction] | None = ...,
         insert_comments: bool = ...,

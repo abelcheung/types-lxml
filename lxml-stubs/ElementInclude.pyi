@@ -1,6 +1,6 @@
 from typing import Any, Callable, Literal, overload
 
-from lxml.etree import LxmlSyntaxError, _Element, _ElementTree
+from lxml.etree import LxmlSyntaxError, _ElementTree
 
 from ._types import _ET, _FilePath
 
@@ -14,7 +14,7 @@ def default_loader(
     href: _FilePath,
     parse: Literal["xml", "text"],
     encoding: str | None = None,
-) -> _ElementTree[_Element] | str: ...
+) -> _ElementTree | str: ...
 @overload
 def include(
     elem: _ET,

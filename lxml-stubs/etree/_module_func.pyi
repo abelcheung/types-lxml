@@ -63,7 +63,7 @@ def parse(
     parser: None = ...,
     *,
     base_url: _AnyStr | None = ...,
-) -> _ElementTree[_Element]: ...
+) -> _ElementTree: ...
 @overload
 def fromstring(
     text: _AnyStr,
@@ -165,7 +165,7 @@ def adopt_external_document(
 def adopt_external_document(
     capsule: object,
     parser: None = ...,
-) -> _ElementTree[_Element]:
+) -> _ElementTree:
     """
     Original Docstring
     ------------------

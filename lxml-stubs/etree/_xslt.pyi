@@ -47,7 +47,7 @@ class XSLTExtensionError(XSLTError):
     """Error registering an XSLT extension"""
 
 @final
-class _XSLTResultTree(_ElementTree[_Element]):
+class _XSLTResultTree(_ElementTree):
     """The result of an XSLT evaluation"""
 
     def write_output(self, file: _FileWriteSource, *, compression: int = ...) -> None:
@@ -57,7 +57,7 @@ class _XSLTResultTree(_ElementTree[_Element]):
         the result as defined by the ``<xsl:output>`` tag.
         """
     @property
-    def xslt_profile(self) -> _ElementTree[_Element] | None:
+    def xslt_profile(self) -> _ElementTree | None:
         """Return an ElementTree with profiling data for the stylesheet run"""
 
 @final
@@ -170,13 +170,13 @@ class XSLT:
     @deprecated("Since v2.0 (2008); use str(result_tree) instead")
     def tostring(
         self,
-        result_tree: _ElementTree[_Element],
+        result_tree: _ElementTree,
     ) -> str: ...
 
 class _XSLTProcessingInstruction(PIBase):
     def parseXSL(
-        self, parser: _DefEtreeParsers[_Element] | None = ...
-    ) -> _ElementTree[_Element]: ...
+        self, parser: _DefEtreeParsers | None = ...
+    ) -> _ElementTree: ...
     def set(self, key: Literal["href"], value: str) -> None: ...  # type: ignore[override]
 
 # Nodes are usually some opaque or read-only wrapper of _Element.
