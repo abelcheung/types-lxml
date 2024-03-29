@@ -154,7 +154,7 @@ def tounicode(
 ) -> None: ...
 def iselement(element: object) -> TypeGuard[_Element]: ...
 
-# XXX PyCapsule needs annotation of ctypes.pythonapi, which has no
+# HACK PyCapsule needs annotation of ctypes.pythonapi, which has no
 # annotation support currently. Use generic object for now.
 @overload
 def adopt_external_document(
@@ -222,6 +222,7 @@ class _MemDebug:
             Note that libxml2 constrains this value to a C int, which limits
             the accuracy on 64 bit systems.
         """
+
     def blocks_used(self) -> int:
         """
         Returns
@@ -231,6 +232,7 @@ class _MemDebug:
             Note that libxml2 constrains this value to a C int, which limits
             the accuracy on 64 bit systems.
         """
+
     def dict_size(self) -> int:
         """
         Returns
@@ -239,6 +241,7 @@ class _MemDebug:
             The current size of the global name dictionary used by libxml2
             for the current thread.  Each thread has its own dictionary.
         """
+
     def dump(
         self, output_file: _AnyStr | None = ..., byte_count: int | None = ...
     ) -> None:
@@ -251,6 +254,7 @@ class _MemDebug:
         byte_count : int, optional
             Limits number of bytes in the dump, default is None (unlimited)
         """
+
     def show(
         self, output_file: _AnyStr | None = ..., block_count: int | None = ...
     ) -> None:
