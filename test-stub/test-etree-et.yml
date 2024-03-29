@@ -15,8 +15,8 @@
     from lxml.etree import _ElementTree, _Element
     root: _Element
     et: _ElementTree[_Element]
-    r = et.xinclude()  # E: "xinclude" of "_ElementTree" does not return a value  [func-returns-value]
-    r = et._setroot(root)  # E: "_setroot" of "_ElementTree" does not return a value  [func-returns-value]
+    r = et.xinclude()  # E: "xinclude" of "_ElementTree" does not return a value (it only ever returns None)  [func-returns-value]
+    r = et._setroot(root)  # E: "_setroot" of "_ElementTree" does not return a value (it only ever returns None)  [func-returns-value]
     reveal_type(et.getroot())  # NR: .+ "[\w\.]+\._Element"$
     et._setroot(et)  # E: Argument 1 to "_setroot" of "_ElementTree" has incompatible type "_ElementTree[_Element]"; expected "_Element"  [arg-type]
 

@@ -39,7 +39,7 @@ homepage = 'https://github.com/abelcheung/types-lxml'
 [project.optional-dependencies]
 test = [
     'tox ~= 4.0',
-    'mypy == 1.5.1',
+    'mypy == 1.9.*',
     'pyright >= 1.1.289',
     'typeguard >= 3.0, < 5',
     'pytest >= 7.0, < 9',

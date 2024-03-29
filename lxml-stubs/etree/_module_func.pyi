@@ -109,7 +109,7 @@ def tostring(
     strip_text: bool = False,
 ) -> bytes: ...
 @overload  # Native str, no XML declaration
-def tostring(  # type: ignore[misc]
+def tostring(  # type: ignore[overload-overlap]
     element_or_tree: _ElementOrTree,
     *,
     encoding: type[str] | Literal["unicode"],

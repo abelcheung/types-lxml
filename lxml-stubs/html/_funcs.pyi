@@ -129,7 +129,7 @@ def xhtml_to_html(xhtml: _HtmlElemOrTree) -> None: ...
 #    Besides, no c14n specific arguments are accepted here, so it is
 #    better to let etree.tostring() handle C14N.
 @overload  # encoding=str / "unicode"
-def tostring(  # type: ignore[misc]
+def tostring(  # type: ignore[overload-overlap]
     doc: _HtmlElemOrTree,
     *,
     pretty_print: bool = ...,

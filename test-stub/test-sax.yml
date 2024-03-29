@@ -85,7 +85,7 @@
     et: _ElementTree[_Element]
     el: _Element
     p = ElementTreeProducer(el, ch)
-    _ = p.saxify()  # E: "saxify" of "ElementTreeProducer" does not return a value  [func-returns-value]
+    _ = p.saxify()  # E: "saxify" of "ElementTreeProducer" does not return a value (it only ever returns None)  [func-returns-value]
     p.saxify(1)  # E: Too many arguments for "saxify" of "ElementTreeProducer"  [call-arg]
 
 - case: saxify_func_goodargs
@@ -102,7 +102,7 @@
     ch: MyHandler
     et: _ElementTree[_Element]
     el: _Element
-    _ = saxify({{ args }})  # E: "saxify" does not return a value  [func-returns-value]
+    _ = saxify({{ args }})  # E: "saxify" does not return a value (it only ever returns None)  [func-returns-value]
 
 - case: saxify_func_badargs
   expect_fail: true

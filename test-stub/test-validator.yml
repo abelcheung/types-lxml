@@ -149,5 +149,5 @@
   main: |
     from inc import rng, dtd, schema, tron, tree, elem
     reveal_type({{ obj }}.error_log)  # NR: .+ "[\w\.]+\._ListErrorLog"
-    _ = {{ obj }}.assertValid(tree)  # E: "assertValid" of "_Validator" does not return a value  [func-returns-value]
-    _ = {{ obj }}.assert_(elem)  # E: "assert_" of "_Validator" does not return a value  [func-returns-value]
+    _ = {{ obj }}.assertValid(tree)  # E: "assertValid" of "_Validator" does not return a value (it only ever returns None)  [func-returns-value]
+    _ = {{ obj }}.assert_(elem)  # E: "assert_" of "_Validator" does not return a value (it only ever returns None)  [func-returns-value]

@@ -167,7 +167,7 @@
     from lxml.html.clean import autolink, word_break
     from lxml.html import HtmlElement
     root: HtmlElement
-    _ = {{ func }}(root)  # E: "{{ func }}" does not return a value  [func-returns-value]
+    _ = {{ func }}(root)  # E: "{{ func }}" does not return a value (it only ever returns None)  [func-returns-value]
 
 - case: inplace_funcs_badargs
   expect_fail: true
@@ -219,7 +219,7 @@
     avoid_hosts = (pattern, pattern)
     avoid_cls = {s, s}
     root: HtmlElement
-    _ = autolink(root, {{ args }})  # E: "autolink" does not return a value  [func-returns-value]
+    _ = autolink(root, {{ args }})  # E: "autolink" does not return a value (it only ever returns None)  [func-returns-value]
 
 - case: autolink_html_goodargs
   parametrized:
@@ -250,7 +250,7 @@
     from lxml.html import HtmlElement
     avoid_cls = {'x', 'y'}
     root: HtmlElement
-    _ = word_break(root, {{ args }})  # E: "word_break" does not return a value  [func-returns-value]
+    _ = word_break(root, {{ args }})  # E: "word_break" does not return a value (it only ever returns None)  [func-returns-value]
 
 - case: word_break_html_goodargs
   parametrized:
