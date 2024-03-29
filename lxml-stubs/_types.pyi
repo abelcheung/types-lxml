@@ -102,9 +102,6 @@ _OutputMethodArg = Literal[
     "html",
     "text",
     "xml",
-    "HTML",
-    "TEXT",
-    "XML",
 ]
 
 # saxparser.pxi _buildParseEventFilter()
