@@ -4,7 +4,8 @@
 
 ## Important note
 
-Currently `types-lxml` shouldn't be used with `mypy` ≥ 1.6. The untested 1.6.0 [simply segfaults](https://github.com/python/mypy/issues/16278), while all later versions don't support `@overload` with `@deprecation`, which is [scheduled for Python 3.13](https://peps.python.org/pep-0702/).
+- `types-lxml 2024.03.27` release requires [cssselect package](https://pypi.org/project/cssselect/) to work, since `lxml.cssselect` submodule utilises inline annotation from `cssselect 1.2.0`.
+- `2024.03.27` is the last release supporting `mypy 1.5`; future releases would need at least `mypy 1.9`
 
 ## Introduction
 
