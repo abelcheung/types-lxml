@@ -112,6 +112,9 @@ jobs:
           - ubuntu-22.04
           - windows-2022
           - macos-13
+        exclude:
+          - pyver: "3.10"  # lxml package cache hash mismatch
+            os: "macos-13"
     runs-on: ${{ matrix.os }}
     steps:
     - uses: actions/checkout@v4
