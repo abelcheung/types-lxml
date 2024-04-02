@@ -35,7 +35,7 @@ jobs:
       with:
         reporter: github-pr-review
         level: warning
-        workdir: lxml-stubs
+        target: lxml-stubs
         fail_on_error: true
         ignore_note: true
         setup_command: pip install mypy==1.9.*
