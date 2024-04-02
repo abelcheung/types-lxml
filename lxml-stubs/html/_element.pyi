@@ -87,9 +87,10 @@ class HtmlElement(etree.ElementBase):
     @overload
     def get_element_by_id(self, id: _AnyStr, default: _T) -> HtmlElement | _T: ...
     # text_content() uses XPath behind the scene, and smart string
-    # subscript should point to original element type
-    # XXX But acutally the result is always None, as it uses XPath
-    # string() to merge text content and destroy element heritage info
+    # subscript should point to original element type.
+    # But unfortunately, the getparent() result of HtmlElement.text_content()
+    # is always None, as it uses XPath string() to merge text content,
+    # thus destroying element heritage info
     def text_content(self) -> etree._ElementUnicodeResult[Self]: ...
     #
     # HtmlMixin Link functions
