@@ -5,21 +5,21 @@ from typing import Any, cast
 
 import _testutils
 import pytest
-from lxml.etree import _Element, _ElementTree, iterparse, iterwalk
+from lxml.etree import _Element as _Element, _ElementTree, iterparse, iterwalk
 from lxml.html import HtmlElement
 
 reveal_type = getattr(_testutils, "reveal_type_wrapper")
 
 
 class TestIterwalk:
-    def test_xml_default_event(self, xml_tree: _ElementTree[_Element]) -> None:
+    def test_xml_default_event(self, xml_tree: _ElementTree) -> None:
         walker = iterwalk(xml_tree)
         reveal_type(walker)
         for event, elem in walker:
             reveal_type(event)
             reveal_type(elem)
 
-    def test_xml_more_event(self, xml_tree: _ElementTree[_Element]) -> None:
+    def test_xml_more_event(self, xml_tree: _ElementTree) -> None:
         walker = iterwalk(xml_tree, ["start", "end", "start-ns", "end-ns", "comment"])
         reveal_type(walker)
         # Generated values are not unpacked here to test type narrowing

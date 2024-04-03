@@ -30,7 +30,7 @@ class ElementMaker(Generic[_ET_co]):
         namespace: str | None = ...,
         nsmap: _NSMapArg | None = ...,
         makeelement: None = ...,
-    ) -> ElementMaker[_Element]: ...
+    ) -> ElementMaker: ...
     def __call__(
         self,
         tag: str | QName,  # No bytes here
@@ -47,4 +47,4 @@ class ElementMaker(Generic[_ET_co]):
     # like "class" and "for", which are common in HTML)
     def __getattr__(self, name: str) -> _ElemFactory[_ET_co]: ...
 
-E: ElementMaker[_Element]
+E: ElementMaker

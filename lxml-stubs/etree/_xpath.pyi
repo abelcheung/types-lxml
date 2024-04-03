@@ -95,7 +95,7 @@ class XPathElementEvaluator(_XPathEvaluatorBase):
 class XPathDocumentEvaluator(XPathElementEvaluator):
     def __init__(
         self,
-        etree: _ElementTree[_Element],
+        etree: _ElementTree,
         *,
         namespaces: _NonDefaultNSMapArg | None = ...,
         extensions: _XPathExtFuncArg | None = ...,
@@ -114,7 +114,7 @@ def XPathEvaluator(
 ) -> XPathElementEvaluator: ...
 @overload
 def XPathEvaluator(
-    etree_or_element: _ElementTree[_Element],
+    etree_or_element: _ElementTree,
     *,
     namespaces: _NonDefaultNSMapArg | None = ...,
     extensions: _XPathExtFuncArg | None = ...,

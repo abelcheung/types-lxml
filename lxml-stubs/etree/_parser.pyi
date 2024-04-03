@@ -23,7 +23,6 @@ from .._types import (
 )
 from ._classlookup import ElementClassLookup
 from ._docloader import _ResolverRegistry
-from ._element import _Element
 from ._module_misc import LxmlError, LxmlSyntaxError
 from ._saxparser import ParserTarget
 from ._xmlerror import _ListErrorLog
@@ -140,7 +139,7 @@ class XMLParser(_ParserTargetMixin[Any], _FeedParser[_ET_co]):
         collect_ids: bool = ...,
         target: ParserTarget[Any] | None = ...,
         compact: bool = ...,
-    ) -> XMLParser[_Element]: ...
+    ) -> XMLParser: ...
 
 class XMLPullParser(_PullParserMixin, XMLParser[_ET_co]):
     def __new__(
@@ -167,7 +166,7 @@ class XMLPullParser(_PullParserMixin, XMLParser[_ET_co]):
         collect_ids: bool = ...,
         target: ParserTarget[Any] | None = ...,
         compact: bool = ...,
-    ) -> XMLPullParser[_Element]: ...
+    ) -> XMLPullParser: ...
 
 # This is XMLParser with some preset keyword arguments, and without
 # 'collect_ids' argument. Removing those keywords here, otherwise
@@ -190,7 +189,7 @@ class ETCompatXMLParser(XMLParser[_ET_co]):
         strip_cdata: bool = ...,
         target: ParserTarget[Any] | None = ...,
         compact: bool = ...,
-    ) -> ETCompatXMLParser[_Element]: ...
+    ) -> ETCompatXMLParser: ...
 
 def set_default_parser(parser: _DefEtreeParsers[Any] | None) -> None: ...
 def get_default_parser() -> _DefEtreeParsers[Any]: ...
@@ -212,7 +211,7 @@ class HTMLParser(_ParserTargetMixin[Any], _FeedParser[_ET_co]):
         default_doctype: bool = ...,
         collect_ids: bool = ...,
         huge_tree: bool = ...,
-    ) -> HTMLParser[_Element]: ...
+    ) -> HTMLParser: ...
 
 class HTMLPullParser(_PullParserMixin, HTMLParser[_ET_co]):
     def __new__(
@@ -235,4 +234,4 @@ class HTMLPullParser(_PullParserMixin, HTMLParser[_ET_co]):
         default_doctype: bool = ...,
         collect_ids: bool = ...,
         huge_tree: bool = ...,
-    ) -> HTMLPullParser[_Element]: ...
+    ) -> HTMLPullParser: ...

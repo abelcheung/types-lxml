@@ -114,8 +114,8 @@ _SaxEventNames = Literal[
     "pi",
 ]
 
-_ET = TypeVar("_ET", bound=_Element)
-_ET_co = TypeVar("_ET_co", bound=_Element, covariant=True)
+_ET = TypeVar("_ET", bound=_Element, default=_Element)
+_ET_co = TypeVar("_ET_co", bound=_Element, default=_Element, covariant=True)
 
 # Generic element factory function type. Because arguments are
 # mostly optional, accurate typing can't be done.
@@ -125,9 +125,9 @@ _ElemFactory: TypeAlias = Callable[..., _ET]
 # but checks for exact element *factory functions* instead
 # (etree.Element() and friends). Python typing system doesn't
 # support such outlandish usage. Use a generic callable instead.
-_TagSelector: TypeAlias = _TagName | _ElemFactory[_Element]
+_TagSelector: TypeAlias = _TagName | _ElemFactory
 
-_ElementOrTree: TypeAlias = _Element | _ElementTree[_Element]
+_ElementOrTree: TypeAlias = _ET | _ElementTree[_ET]
 
 class SupportsLaxedItems(Protocol[_KT_co, _VT_co]):
     """Relaxed form of SupportsItems

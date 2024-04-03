@@ -4,8 +4,8 @@ import cssselect as _csel
 from cssselect.parser import Function
 from cssselect.xpath import XPathExpr
 
-from ._types import _ET, _NonDefaultNSMapArg, _XPathVarArg
-from .etree import XPath, _ElementTree
+from ._types import _ET, _ElementOrTree, _NonDefaultNSMapArg, _XPathVarArg
+from .etree import XPath
 
 _CSSTransArg = LxmlTranslator | Literal["xml", "html", "xhtml"]
 
@@ -42,7 +42,7 @@ class CSSSelector(XPath):
     # pseudo-element by default.
     def __call__(
         self,
-        _etree_or_element: _ET | _ElementTree[_ET],
+        _etree_or_element: _ElementOrTree[_ET],
         /,
         **_variables: _XPathVarArg,
     ) -> list[_ET]: ...

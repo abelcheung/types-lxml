@@ -42,7 +42,7 @@ def XMLDTDID(
     parser: None = ...,
     *,
     base_url: _AnyStr | None = ...,
-) -> tuple[_Element, _IDDict[_Element]]: ...
+) -> tuple[_Element, _IDDict]: ...
 @overload
 def parseid(
     source: _FileReadSource,
@@ -56,7 +56,7 @@ def parseid(
     parser: None = ...,
     *,
     base_url: _AnyStr | None = ...,
-) -> tuple[_ElementTree[_Element], _IDDict[_Element]]: ...
+) -> tuple[_ElementTree, _IDDict]: ...
 
 class _IDDict(Collection[str], Generic[_ET]):
     """Dictionary-like proxy class that mapps ID attributes to elements
