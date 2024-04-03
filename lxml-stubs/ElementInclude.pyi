@@ -29,7 +29,7 @@ class LoaderProtocol(Protocol):
         _mode: Literal["xml"],
         /,
         encoding: Any = None,  # Under XML mode this param is ignored
-                               # but must be present nontheless
+        # but must be present nontheless
     ) -> _Element: ...
     @overload
     def __call__(

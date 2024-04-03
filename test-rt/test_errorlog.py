@@ -194,7 +194,6 @@ class TestEmptyLog:
 
 
 class TestModuleFunc:
-
     def test_sig(self) -> None:
         sig = inspect.signature(clear_error_log)
         param = list(sig.parameters.values())
