@@ -19,6 +19,7 @@ __all__ = (
     "iso_svrl_for_xslt1",
     "svrl_validation_errors",
     "schematron_schema_valid",
+    "schematron_schema_valid_supported",
     "stylesheet_params",
     "Schematron",
     # Namespace constants
@@ -40,6 +41,7 @@ iso_abstract_expand: _e.XSLT
 iso_svrl_for_xslt1: _e.XSLT
 svrl_validation_errors: _e.XPath
 schematron_schema_valid: _e.RelaxNG
+schematron_schema_valid_supported: bool
 
 def stylesheet_params(**__kw: str | _e.XPath | Any) -> dict[str, _Stylesheet_Param]: ...
 

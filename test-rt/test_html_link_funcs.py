@@ -237,10 +237,8 @@ class TestBadArgs:
             _ = rewrite_links(h1_str, cast(Any, repl_func))
 
     #
-    # XXX lxml bug
-    # For standalone link funcs,
     # non-Element input + keyword args = Exception
-    # See html/_funcs.pyi for detail
+    # See comment on module level functions in html/_funcs.pyi
     #
 
     def test_bad_methodfunc(

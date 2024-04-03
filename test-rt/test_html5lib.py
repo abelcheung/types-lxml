@@ -266,7 +266,7 @@ class TestCharsetArg:
         reveal_type(tree)
         del tree
 
-    # XXX Should this belong to application logic and not the domain
+    # TODO Should this belong to application logic and not the domain
     # of type annotation?
     def test_conflict(self, h2_str: str) -> None:
         with pytest.raises(TypeError, match="unexpected keyword argument"):

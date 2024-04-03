@@ -157,9 +157,7 @@ class XSLT:
     def strparam(strval: _AnyStr) -> _XSLTQuotedStringParam: ...
     @staticmethod
     def set_global_max_depth(max_depth: int) -> None: ...
-    @deprecated(
-        "Removed since 5.0; deprecated since v2.0 (2008); call instance directly instead"
-    )
+    @deprecated("Removed since 5.0; call instance directly instead")
     def apply(
         self,
         _input: _ElementOrTree,

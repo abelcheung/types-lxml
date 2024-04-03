@@ -154,7 +154,7 @@ def tounicode(
 ) -> None: ...
 def iselement(element: object) -> TypeGuard[_Element]: ...
 
-# XXX PyCapsule needs annotation of ctypes.pythonapi, which has no
+# HACK PyCapsule needs annotation of ctypes.pythonapi, which has no
 # annotation support currently. Use generic object for now.
 @overload
 def adopt_external_document(

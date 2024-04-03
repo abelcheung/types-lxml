@@ -226,7 +226,8 @@
     reveal_type(-be)  # NR: .+ "[\w\.]+\.int"$
     reveal_type(~be)  # NR: .+ "[\w\.]+\.int"$
 
-    # __pow__() Temporarily removed in stub
+    # Not testing __pow__() and reverse operators,
+    # see bug #13
     # reveal_type(be ** b )  # NR .+ "Union\[.+]"$
     # reveal_type(be ** i )  # NR .+ "Union\[.+]"$
     # reveal_type(be ** f )  # NR .+ "[\w\.]+\.float"$
@@ -249,4 +250,3 @@
     reveal_type(i  ^  be)  # NR: .+ "[\w\.]+\.int"$
     reveal_type(be >= be)  # NR: .+ "[\w\.]+\.bool"$
     reveal_type(be |  be)  # NR: .+ "[\w\.]+\.bool"$
-    # TODO Reverse operations don't work for now
