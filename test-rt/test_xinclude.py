@@ -63,11 +63,15 @@ class TestXInclude:
 @overload
 def good_loader(
     href: str, mode: Literal["xml"], encoding: str | None = None
-) -> _Element: ...
+) -> _Element:
+    ...
+
+
 @overload
-def good_loader(
-    href: str, mode: Literal["text"], encoding: str | None = None
-) -> str: ...
+def good_loader(href: str, mode: Literal["text"], encoding: str | None = None) -> str:
+    ...
+
+
 def good_loader(href: str, mode: str, encoding: str | None = None) -> Any:
     # Over simplified version of _lxml_default_loader without network
     if mode == "xml":
@@ -156,7 +160,7 @@ class TestElementInclude:
 
         temp_el = copy.copy(elem)
         # Coerce loader into text mode, this is REALLY artificial though
-        temp_el[1].attrib['parse'] = 'text'
+        temp_el[1].attrib["parse"] = "text"
         with pytest.raises(TypeError, match="can only concatenate str"):
             EI.include(temp_el, cast(Any, bad_loader_3))
         del temp_el
