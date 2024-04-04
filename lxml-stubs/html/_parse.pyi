@@ -1,5 +1,5 @@
 import sys
-from typing import Any, Iterable, MutableMapping
+from typing import Any, Iterable, Literal, MutableMapping, overload
 
 if sys.version_info >= (3, 10):
     from typing import TypeAlias
@@ -122,13 +122,22 @@ def document_fromstring(
     *,
     base_url: str | None = ...,
 ) -> HtmlElement: ...
+@overload
 def fragments_fromstring(
     html: _AnyStr,
-    no_leading_text: bool = ...,
+    no_leading_text: Literal[True],
     base_url: str | None = ...,
     parser: _HtmlElemParser | None = ...,
     **kw: Unused,
 ) -> list[HtmlElement]: ...
+@overload
+def fragments_fromstring(
+    html: _AnyStr,
+    no_leading_text: Literal[False] = ...,
+    base_url: str | None = ...,
+    parser: _HtmlElemParser | None = ...,
+    **kw: Unused,
+) -> list[str | HtmlElement]: ...
 def fragment_fromstring(
     html: _AnyStr,
     create_parent: bool = ...,
