@@ -19,7 +19,7 @@ _HtmlElemParser: TypeAlias = etree._parser._DefEtreeParsers[HtmlElement]
 # Stub version before March 2023 used to omit 'target' parameter, which
 # would nullify default HTML element lookup behavior, degenerating html
 # submodule parsers into etree ones. Since it is decided to not support
-# custom target parser for now, we just add back 'target' parameter for
+# custom target parser for now, we just use superclass constructor for
 # coherence. Same for XHTMLParser below.
 class HTMLParser(etree.HTMLParser[HtmlElement]):
     """An HTML parser configured to return ``lxml.html`` Element
@@ -33,24 +33,6 @@ class HTMLParser(etree.HTMLParser[HtmlElement]):
     etree parsers with ``set_element_class_lookup()`` method instead.
     In that case, see ``_FeedParser.set_element_class_lookup()`` for more info.
     """
-
-    def __init__(
-        self,
-        *,
-        encoding: _AnyStr | None = ...,
-        remove_blank_text: bool = ...,
-        remove_comments: bool = ...,
-        remove_pis: bool = ...,
-        strip_cdata: bool = ...,
-        no_network: bool = ...,
-        target: etree.ParserTarget[Any] | None = ...,
-        schema: etree.XMLSchema | None = ...,
-        recover: bool = ...,
-        compact: bool = ...,
-        default_doctype: bool = ...,
-        collect_ids: bool = ...,
-        huge_tree: bool = ...,
-    ) -> None: ...
     @property
     def target(self) -> None: ...
 
@@ -58,8 +40,8 @@ class XHTMLParser(etree.XMLParser[HtmlElement]):
     """An XML parser configured to return ``lxml.html`` Element
     objects.
 
-    Notes
-    -----
+    Annotation
+    ----------
     This subclass is not specialized, unlike the ``etree`` counterpart.
     They are designed to always handle ``HtmlElement``;
     for generating other kinds of ``_Elements``, one should use
@@ -81,28 +63,6 @@ class XHTMLParser(etree.XMLParser[HtmlElement]):
 
     For catalog support, see http://www.xmlsoft.org/catalog.html.
     """
-
-    def __init__(
-        self,
-        *,
-        encoding: _AnyStr | None = ...,
-        attribute_defaults: bool = ...,
-        dtd_validation: bool = ...,
-        load_dtd: bool = ...,
-        no_network: bool = ...,
-        target: etree.ParserTarget[Any] | None = ...,
-        ns_clean: bool = ...,
-        recover: bool = ...,
-        schema: etree.XMLSchema | None = ...,
-        huge_tree: bool = ...,
-        remove_blank_text: bool = ...,
-        resolve_entities: bool = ...,
-        remove_comments: bool = ...,
-        remove_pis: bool = ...,
-        strip_cdata: bool = ...,
-        collect_ids: bool = ...,
-        compact: bool = ...,
-    ) -> None: ...
     @property
     def target(self) -> None: ...
 

@@ -1,6 +1,6 @@
 import sys
 from _typeshed import _T
-from typing import Any, Generic, Iterable, Iterator
+from typing import Any, Generic, Iterable, Iterator, Literal
 
 if sys.version_info >= (3, 11):
     from typing import LiteralString, Self
@@ -85,11 +85,15 @@ class _FeedParser(Generic[_ET_co]):
         manually from ``lxml.etree.HTMLParser``::
 
         ```python
-        parser = lxml.etree.HTMLParser()  # type is HTMLParser[_Element]
+        parser = etree.HTMLParser()
+        reveal_type(parser)  # HTMLParser[_Element]
         if TYPE_CHECKING:
-            parser = cast('HTMLParser[HtmlElement]', parser)
+            parser = cast('etree.HTMLParser[HtmlElement]', parser)
         else:
-            parser.set_element_class_lookup(lxml.html.HtmlElementClassLookup())
+            parser.set_element_class_lookup(
+                html.HtmlElementClassLookup())
+        result = etree.fromstring(data, parser=parser)
+        reveal_type(result)  # HtmlElement
         ```
         """
         ...
@@ -119,103 +123,103 @@ class _PullParserMixin:
 # So far all attempts would cause usage of annotation unnecessarily
 # complex and convoluted, yet still can't get everything right.
 class XMLParser(_ParserTargetMixin[Any], _FeedParser[_ET_co]):
-    def __new__(
-        cls,
+    def __init__(
+        self,
         *,
-        encoding: _AnyStr | None = ...,
-        attribute_defaults: bool = ...,
-        dtd_validation: bool = ...,
-        load_dtd: bool = ...,
-        no_network: bool = ...,
-        ns_clean: bool = ...,
-        recover: bool = ...,
-        schema: XMLSchema | None = ...,
-        huge_tree: bool = ...,
-        remove_blank_text: bool = ...,
-        resolve_entities: bool = ...,
-        remove_comments: bool = ...,
-        remove_pis: bool = ...,
-        strip_cdata: bool = ...,
-        collect_ids: bool = ...,
-        target: ParserTarget[Any] | None = ...,
-        compact: bool = ...,
-    ) -> XMLParser: ...
+        encoding: _AnyStr | None = None,
+        attribute_defaults: bool = False,
+        dtd_validation: bool = False,
+        load_dtd: bool = False,
+        no_network: bool = True,
+        ns_clean: bool = False,
+        recover: bool = False,
+        schema: XMLSchema | None = None,
+        huge_tree: bool = False,
+        remove_blank_text: bool = False,
+        resolve_entities: bool | Literal['internal'] = 'internal',
+        remove_comments: bool = False,
+        remove_pis: bool = False,
+        strip_cdata: bool = True,
+        collect_ids: bool = True,
+        target: ParserTarget[Any] | None = None,
+        compact: bool = True,
+    ) -> None: ...
 
 class XMLPullParser(_PullParserMixin, XMLParser[_ET_co]):
-    def __new__(
-        cls,
-        events: Iterable[_SaxEventNames] | None = ...,
+    def __init__(
+        self,
+        events: Iterable[_SaxEventNames] | None = None,
         *,
-        tag: _TagSelector | Iterable[_TagSelector] | None = ...,
-        base_url: _AnyStr | None = ...,
+        tag: _TagSelector | Iterable[_TagSelector] | None = None,
+        base_url: _AnyStr | None = None,
         # All arguments from XMLParser
-        encoding: _AnyStr | None = ...,
-        attribute_defaults: bool = ...,
-        dtd_validation: bool = ...,
-        load_dtd: bool = ...,
-        no_network: bool = ...,
-        ns_clean: bool = ...,
-        recover: bool = ...,
-        schema: XMLSchema | None = ...,
-        huge_tree: bool = ...,
-        remove_blank_text: bool = ...,
-        resolve_entities: bool = ...,
-        remove_comments: bool = ...,
-        remove_pis: bool = ...,
-        strip_cdata: bool = ...,
-        collect_ids: bool = ...,
-        target: ParserTarget[Any] | None = ...,
-        compact: bool = ...,
-    ) -> XMLPullParser: ...
+        encoding: _AnyStr | None = None,
+        attribute_defaults: bool = False,
+        dtd_validation: bool = False,
+        load_dtd: bool = False,
+        no_network: bool = True,
+        ns_clean: bool = False,
+        recover: bool = False,
+        schema: XMLSchema | None = None,
+        huge_tree: bool = False,
+        remove_blank_text: bool = False,
+        resolve_entities: bool | Literal['internal'] = 'internal',
+        remove_comments: bool = False,
+        remove_pis: bool = False,
+        strip_cdata: bool = True,
+        collect_ids: bool = True,
+        target: ParserTarget[Any] | None = None,
+        compact: bool = True,
+    ) -> None: ...
 
 # This is XMLParser with some preset keyword arguments, and without
 # 'collect_ids' argument. Removing those keywords here, otherwise
 # ETCompatXMLParser has no reason to exist.
 class ETCompatXMLParser(XMLParser[_ET_co]):
-    def __new__(
-        cls,
+    def __init__(
+        self,
         *,
-        encoding: _AnyStr | None = ...,
-        attribute_defaults: bool = ...,
-        dtd_validation: bool = ...,
-        load_dtd: bool = ...,
-        no_network: bool = ...,
-        ns_clean: bool = ...,
-        recover: bool = ...,
-        schema: XMLSchema | None = ...,
-        huge_tree: bool = ...,
-        remove_blank_text: bool = ...,
-        resolve_entities: bool = ...,
-        strip_cdata: bool = ...,
-        target: ParserTarget[Any] | None = ...,
-        compact: bool = ...,
-    ) -> ETCompatXMLParser: ...
+        encoding: _AnyStr | None = None,
+        attribute_defaults: bool = False,
+        dtd_validation: bool = False,
+        load_dtd: bool = False,
+        no_network: bool = True,
+        ns_clean: bool = False,
+        recover: bool = False,
+        schema: XMLSchema | None = None,
+        huge_tree: bool = False,
+        remove_blank_text: bool = False,
+        resolve_entities: bool | Literal['internal'] = True,
+        strip_cdata: bool = True,
+        target: ParserTarget[Any] | None = None,
+        compact: bool = True,
+    ) -> None: ...
 
 def set_default_parser(parser: _DefEtreeParsers[Any] | None) -> None: ...
 def get_default_parser() -> _DefEtreeParsers[Any]: ...
 
 class HTMLParser(_ParserTargetMixin[Any], _FeedParser[_ET_co]):
-    def __new__(
-        cls,
+    def __init__(
+        self,
         *,
-        encoding: _AnyStr | None = ...,
-        remove_blank_text: bool = ...,
-        remove_comments: bool = ...,
-        remove_pis: bool = ...,
-        strip_cdata: bool = ...,
-        no_network: bool = ...,
-        target: ParserTarget[Any] | None = ...,
-        schema: XMLSchema | None = ...,
-        recover: bool = ...,
-        compact: bool = ...,
-        default_doctype: bool = ...,
-        collect_ids: bool = ...,
-        huge_tree: bool = ...,
-    ) -> HTMLParser: ...
+        encoding: _AnyStr | None = None,
+        remove_blank_text: bool = False,
+        remove_comments: bool = False,
+        remove_pis: bool = False,
+        strip_cdata: bool = True,
+        no_network: bool = True,
+        target: ParserTarget[Any] | None = None,
+        schema: XMLSchema | None = None,
+        recover: bool = True,
+        compact: bool = True,
+        default_doctype: bool = True,
+        collect_ids: bool = True,
+        huge_tree: bool = False,
+    ) -> None: ...
 
 class HTMLPullParser(_PullParserMixin, HTMLParser[_ET_co]):
-    def __new__(
-        cls,
+    def __init__(
+        self,
         events: Iterable[_SaxEventNames] | None = ...,
         *,
         tag: _TagSelector | Iterable[_TagSelector] | None = ...,
@@ -234,4 +238,4 @@ class HTMLPullParser(_PullParserMixin, HTMLParser[_ET_co]):
         default_doctype: bool = ...,
         collect_ids: bool = ...,
         huge_tree: bool = ...,
-    ) -> HTMLPullParser: ...
+    ) -> None: ...
