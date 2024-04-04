@@ -123,7 +123,7 @@ def document_fromstring(
     base_url: str | None = ...,
 ) -> HtmlElement: ...
 @overload
-def fragments_fromstring(
+def fragments_fromstring(  # type: ignore[overload-overlap]
     html: _AnyStr,
     no_leading_text: Literal[True],
     base_url: str | None = ...,
@@ -133,7 +133,7 @@ def fragments_fromstring(
 @overload
 def fragments_fromstring(
     html: _AnyStr,
-    no_leading_text: Literal[False] = ...,
+    no_leading_text: bool = ...,
     base_url: str | None = ...,
     parser: _HtmlElemParser | None = ...,
     **kw: Unused,
