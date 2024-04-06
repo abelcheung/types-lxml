@@ -1,12 +1,15 @@
 import sys
+from _typeshed import _T
 from typing import (
     Any,
     Callable,
     Collection,
     Iterable,
     Iterator,
+    Literal,
     MutableMapping,
     MutableSet,
+    overload,
 )
 
 if sys.version_info >= (3, 10):
@@ -141,12 +144,28 @@ class LabelElement(HtmlElement):
     @for_element.setter
     def for_element(self, __v: HtmlElement) -> None: ...
 
+# open_http argument has signature (method, url, values) -> Any
+# Result for default open_http implementation
+# (that is open_http_urllib) is aliased to Any
+@overload
 def submit_form(
     form: FormElement,
-    extra_values: _FormValues | SupportsLaxedItems[str, str] | None = ...,
-    # open_http(method, url, values)
-    open_http: Callable[[str, str, _FormValues], Any] | None = ...,
-) -> Any: ...  # result depends on open_http callback used
+    extra_values: _FormValues | SupportsLaxedItems[str, str] | None = None,
+    open_http: None = None,
+) -> Any: ...  # See typeshed _UrlOpenRet
+@overload  # open_http as positional argument
+def submit_form(
+    form: FormElement,
+    extra_values: _FormValues | SupportsLaxedItems[str, str] | None,
+    open_http: Callable[[Literal["GET", "POST"], str, _FormValues], _T],
+) -> _T: ...
+@overload  # open_http as keyword argument
+def submit_form(
+    form: FormElement,
+    extra_values: _FormValues | SupportsLaxedItems[str, str] | None = None,
+    *,
+    open_http: Callable[[Literal["GET", "POST"], str, _FormValues], _T],
+) -> _T: ...
 
 # No need to annotate open_http_urllib.
 # Only intended as callback func object in submit_form() argument,
