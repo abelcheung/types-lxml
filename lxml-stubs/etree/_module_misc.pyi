@@ -56,7 +56,7 @@ class QName:
     def __init__(
         self,
         text_or_uri_or_element: _TagName | _Element,
-        tag: _TagName | None = ...,
+        tag: _TagName | None = None,
     ) -> None: ...
     @overload
     def __init__(
@@ -83,7 +83,7 @@ class Error(Exception): ...
 
 class LxmlError(Error):
     def __init__(
-        self, message: object, error_log: _BaseErrorLog | None = ...
+        self, message: object, error_log: _BaseErrorLog | None = None
     ) -> None: ...
     # Even when LxmlError is initiated with PyErrorLog, it fools
     # error_log property by creating a dummy _ListErrorLog object

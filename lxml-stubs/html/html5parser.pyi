@@ -16,7 +16,10 @@ from ..etree import _Element, _ElementTree
 # Other arguments good for html5lib >= 1.0
 class HTMLParser(_html5lib.HTMLParser):
     def __init__(
-        self, strict: bool = ..., namespaceHTMLElements: bool = ..., debug: bool = ...
+        self,
+        strict: bool = False,
+        namespaceHTMLElements: bool = True,
+        debug: bool = False,
     ) -> None: ...
 
 html_parser: HTMLParser
@@ -35,7 +38,7 @@ html_parser: HTMLParser
 #   init argument tweaking instead.
 
 def document_fromstring(
-    html: _AnyStr, guess_charset: bool | None = ..., parser: HTMLParser | None = ...
+    html: _AnyStr, guess_charset: bool | None = None, parser: HTMLParser | None = None
 ) -> _Element: ...
 @overload
 def fragments_fromstring(  # type: ignore
@@ -55,18 +58,18 @@ def fragments_fromstring(
 ) -> list[str | _Element]: ...
 def fragment_fromstring(
     html: _AnyStr,
-    create_parent: bool | _AnyStr = ...,
-    guess_charset: bool | None = ...,
-    parser: HTMLParser | None = ...,
+    create_parent: bool | _AnyStr = False,
+    guess_charset: bool | None = None,
+    parser: HTMLParser | None = None,
 ) -> _Element: ...
 def fromstring(
     html: _AnyStr,
-    guess_charset: bool | None = ...,
-    parser: HTMLParser | None = ...,
+    guess_charset: bool | None = None,
+    parser: HTMLParser | None = None,
 ) -> _Element: ...
 def parse(
     # html5lib doesn't support pathlib
     filename_url_or_file: _AnyStr | SupportsRead[bytes] | SupportsRead[str],
-    guess_charset: bool | None = ...,
-    parser: HTMLParser | None = ...,
+    guess_charset: bool | None = None,
+    parser: HTMLParser | None = None,
 ) -> _ElementTree: ...

@@ -77,11 +77,11 @@ class _Element:
     def set(self, key: _t._AttrName, value: _t._AttrVal) -> None: ...
     def append(self, element: Self) -> None: ...
     def extend(self, elements: Iterable[Self]) -> None: ...
-    def clear(self, keep_tail: bool = ...) -> None: ...
+    def clear(self, keep_tail: bool = False) -> None: ...
     def insert(self, index: int, element: Self) -> None: ...
     def remove(self, element: Self) -> None: ...
     def index(
-        self, child: Self, start: int | None = ..., end: int | None = ...
+        self, child: Self, start: int | None = None, end: int | None = None
     ) -> int: ...
     @overload
     def get(self, key: _t._AttrName) -> str | None: ...
@@ -102,57 +102,57 @@ class _Element:
     def getroottree(self) -> _ElementTree[Self]: ...
     @overload
     def itersiblings(
-        self, *tags: _t._TagSelector, preceding: bool = ...
+        self, *tags: _t._TagSelector, preceding: bool = False
     ) -> Iterator[Self]: ...
     @overload
     def itersiblings(
-        self, *, tag: Iterable[_t._TagSelector] | None = ..., preceding: bool = ...
+        self, *, tag: Iterable[_t._TagSelector] | None = None, preceding: bool = False
     ) -> Iterator[Self]: ...
     @overload
     def iterancestors(self, *tags: _t._TagSelector) -> Iterator[Self]: ...
     @overload
     def iterancestors(
-        self, *, tag: Iterable[_t._TagSelector] | None = ...
+        self, *, tag: Iterable[_t._TagSelector] | None = None
     ) -> Iterator[Self]: ...
     @overload
     def iterdescendants(self, *tags: _t._TagSelector) -> Iterator[Self]: ...
     @overload
     def iterdescendants(
-        self, *, tag: Iterable[_t._TagSelector] | None = ...
+        self, *, tag: Iterable[_t._TagSelector] | None = None
     ) -> Iterator[Self]: ...
     @overload
     def iterchildren(
-        self, *tags: _t._TagSelector, reversed: bool = ...
+        self, *tags: _t._TagSelector, reversed: bool = False
     ) -> Iterator[Self]: ...
     @overload
     def iterchildren(
-        self, *, tag: Iterable[_t._TagSelector] | None = ..., reversed: bool = ...
+        self, *, tag: Iterable[_t._TagSelector] | None = None, reversed: bool = False
     ) -> Iterator[Self]: ...
     @overload
     def iter(self, *tags: _t._TagSelector) -> Iterator[Self]: ...
     @overload
     def iter(
-        self, *, tag: Iterable[_t._TagSelector] | None = ...
+        self, *, tag: Iterable[_t._TagSelector] | None = None
     ) -> Iterator[Self]: ...
     @overload
     def itertext(
-        self, *tags: _t._TagSelector, with_tail: bool = ...
+        self, *tags: _t._TagSelector, with_tail: bool = True
     ) -> Iterator[str]: ...
     @overload
     def itertext(
-        self, *, tag: Iterable[_t._TagSelector] | None = ..., with_tail: bool = ...
+        self, *, tag: Iterable[_t._TagSelector] | None = None, with_tail: bool = True
     ) -> Iterator[str]: ...
     def makeelement(
         self,
         _tag: _t._TagName,
         /,
         # Final result is sort of like {**attrib, **_extra}
-        attrib: _t.SupportsLaxedItems[str, _t._AnyStr] | None = ...,
-        nsmap: _t._NSMapArg | None = ...,
+        attrib: _t.SupportsLaxedItems[str, _t._AnyStr] | None = None,
+        nsmap: _t._NSMapArg | None = None,
         **_extra: _t._AnyStr,
     ) -> Self: ...
     def find(
-        self, path: _t._ElemPathArg, namespaces: _t._NSMapArg | None = ...
+        self, path: _t._ElemPathArg, namespaces: _t._NSMapArg | None = None
     ) -> Self | None: ...
     # Original method has no star. If somebody only supplies
     # 'path' and 'default' argument as positional one, it
@@ -163,36 +163,36 @@ class _Element:
         self,
         path: _t._ElemPathArg,
         *,
-        namespaces: _t._NSMapArg | None = ...,
+        namespaces: _t._NSMapArg | None = None,
     ) -> str | None: ...
     @overload
     def findtext(
         self,
         path: _t._ElemPathArg,
         default: _T,
-        namespaces: _t._NSMapArg | None = ...,
+        namespaces: _t._NSMapArg | None = None,
     ) -> str | _T: ...
     def findall(
-        self, path: _t._ElemPathArg, namespaces: _t._NSMapArg | None = ...
+        self, path: _t._ElemPathArg, namespaces: _t._NSMapArg | None = None
     ) -> list[Self]: ...
     def iterfind(
-        self, path: _t._ElemPathArg, namespaces: _t._NSMapArg | None = ...
+        self, path: _t._ElemPathArg, namespaces: _t._NSMapArg | None = None
     ) -> Iterator[Self]: ...
     def xpath(
         self,
         _path: _t._AnyStr,
         /,
         *,
-        namespaces: _t._NonDefaultNSMapArg | None = ...,
-        extensions: _t._XPathExtFuncArg | None = ...,
-        smart_strings: bool = ...,
+        namespaces: _t._NonDefaultNSMapArg | None = None,
+        extensions: _t._XPathExtFuncArg | None = None,
+        smart_strings: bool = True,
         **_variables: _t._XPathVarArg,
     ) -> _t._XPathObject: ...
     def cssselect(
         self,
         expr: str,
         *,
-        translator: _CSSTransArg = ...,
+        translator: _CSSTransArg = "xml",
     ) -> list[Self]: ...
     @deprecated("Since v2.0 (2008); use list(element) or iterate over element")
     def getchildren(self) -> list[Self]: ...
@@ -200,7 +200,7 @@ class _Element:
     # for something that is marked deprecated for 15 years
     @deprecated("Since v2.0 (2008); renamed to .iter()")
     def getiterator(
-        self, tag: _t._TagSelector | None = ..., *tags: _t._TagSelector
+        self, tag: _t._TagSelector | None = None, *tags: _t._TagSelector
     ) -> Iterator[Self]: ...
 
 # ET class notation is specialized, indicating the type of element
@@ -218,9 +218,9 @@ class _ElementTree(Generic[_t._ET_co]):
     def parse(
         self,
         source: _t._FileReadSource,
-        parser: _DefEtreeParsers[_t._ET_co] | None = ...,
+        parser: _DefEtreeParsers[_t._ET_co] | None = None,
         *,
-        base_url: _t._AnyStr | None = ...,
+        base_url: _t._AnyStr | None = None,
     ) -> None: ...
     # Changes root node; in terms of typing, this means changing
     # specialization of ElementTree. This is not expressible in
@@ -253,10 +253,10 @@ class _ElementTree(Generic[_t._ET_co]):
         file: _t._FileWriteSource,
         *,
         method: Literal["c14n"],
-        exclusive: bool = ...,
-        with_comments: bool = ...,
-        compression: int | None = ...,
-        inclusive_ns_prefixes: Iterable[_t._AnyStr] | None = ...,
+        exclusive: bool = False,
+        with_comments: bool = True,
+        compression: int | None = 0,
+        inclusive_ns_prefixes: Iterable[_t._AnyStr] | None = None,
     ) -> None: ...
     @overload  # method=c14n2
     def write(
@@ -264,65 +264,65 @@ class _ElementTree(Generic[_t._ET_co]):
         file: _t._FileWriteSource,
         *,
         method: Literal["c14n2"],
-        with_comments: bool = ...,
-        compression: int | None = ...,
-        strip_text: bool = ...,
+        with_comments: bool = True,
+        compression: int | None = 0,
+        strip_text: bool = False,
     ) -> None: ...
     @overload  # other write methods
     def write(
         self,
         file: _t._FileWriteSource,
         *,
-        encoding: str | None = ...,  # unicode not allowed
-        method: _t._OutputMethodArg = ...,
-        pretty_print: bool = ...,
-        xml_declaration: bool | None = ...,
-        with_tail: bool = ...,
-        standalone: bool | None = ...,
-        doctype: str | None = ...,
-        compression: int | None = ...,
+        encoding: str | None = None,  # unicode not allowed
+        method: _t._OutputMethodArg = "xml",
+        pretty_print: bool = False,
+        xml_declaration: bool | None = None,
+        with_tail: bool = True,
+        standalone: bool | None = None,
+        doctype: str | None = None,
+        compression: int | None = 0,
     ) -> None: ...
     def getpath(self: _ElementTree[_t._ET], element: _t._ET) -> str: ...
     def getelementpath(self: _ElementTree[_t._ET], element: _t._ET) -> str: ...
     @overload
     def iter(self, *tags: _t._TagSelector) -> Iterator[_t._ET_co]: ...
     @overload
-    def iter(self, *, tag: _t._TagSelector | None = ...) -> Iterator[_t._ET_co]: ...
+    def iter(self, *, tag: _t._TagSelector | None = None) -> Iterator[_t._ET_co]: ...
     #
     # ElementPath methods calls the same method on root node,
     # so signature should be the same as _Element ones
     #
     def find(
-        self, path: _t._ElemPathArg, namespaces: _t._NSMapArg | None = ...
+        self, path: _t._ElemPathArg, namespaces: _t._NSMapArg | None = None
     ) -> _t._ET_co | None: ...
     @overload
     def findtext(
         self,
         path: _t._ElemPathArg,
         *,
-        namespaces: _t._NSMapArg | None = ...,
+        namespaces: _t._NSMapArg | None = None,
     ) -> str | None: ...
     @overload
     def findtext(
         self,
         path: _t._ElemPathArg,
         default: _T,
-        namespaces: _t._NSMapArg | None = ...,
+        namespaces: _t._NSMapArg | None = None,
     ) -> str | _T: ...
     def findall(
-        self, path: _t._ElemPathArg, namespaces: _t._NSMapArg | None = ...
+        self, path: _t._ElemPathArg, namespaces: _t._NSMapArg | None = None
     ) -> list[_t._ET_co]: ...
     def iterfind(
-        self, path: _t._ElemPathArg, namespaces: _t._NSMapArg | None = ...
+        self, path: _t._ElemPathArg, namespaces: _t._NSMapArg | None = None
     ) -> Iterator[_t._ET_co]: ...
     def xpath(
         self,
         _path: _t._AnyStr,
         /,
         *,
-        namespaces: _t._NonDefaultNSMapArg | None = ...,
-        extensions: _t._XPathExtFuncArg | None = ...,
-        smart_strings: bool = ...,
+        namespaces: _t._NonDefaultNSMapArg | None = None,
+        extensions: _t._XPathExtFuncArg | None = None,
+        smart_strings: bool = True,
         **_variables: _t._XPathVarArg,
     ) -> _t._XPathObject: ...
     def xslt(
@@ -331,10 +331,10 @@ class _ElementTree(Generic[_t._ET_co]):
         /,
         extensions: (
             _t.SupportsLaxedItems[tuple[_t._AnyStr, _t._AnyStr], XSLTExtension] | None
-        ) = ...,
-        access_control: XSLTAccessControl | None = ...,
+        ) = None,
+        access_control: XSLTAccessControl | None = None,
         *,  # all keywords are passed to XSLT.__call__
-        profile_run: bool = ...,
+        profile_run: bool = False,
         **__kw: _Stylesheet_Param,
     ) -> _XSLTResultTree: ...
     def relaxng(self, relaxng: _t._ElementOrTree) -> bool: ...
@@ -344,17 +344,17 @@ class _ElementTree(Generic[_t._ET_co]):
     # for something that is marked deprecated for 15 years
     @deprecated("Since v2.0 (2008); renamed to .iter()")
     def getiterator(
-        self, tag: _t._TagSelector | None = ..., *tags: _t._TagSelector
+        self, tag: _t._TagSelector | None = None, *tags: _t._TagSelector
     ) -> Iterator[_t._ET_co]: ...
     @deprecated('Since v4.4; use .write() with method="c14n" argument')
     def write_c14n(
         self,
         file: _t._FileWriteSource,
         *,
-        exclusive: bool = ...,
-        with_comments: bool = ...,
-        compression: int | None = ...,
-        inclusive_ns_prefixes: Iterable[_t._AnyStr] | None = ...,
+        exclusive: bool = False,
+        with_comments: bool = True,
+        compression: int | None = 0,
+        inclusive_ns_prefixes: Iterable[_t._AnyStr] | None = None,
     ) -> None: ...
 
 # Behaves like MutableMapping but deviates a lot in details
@@ -430,7 +430,7 @@ class __ContentOnlyElement(_Element):
     ) -> None: ...
     @property
     def attrib(self) -> Mapping[_t.Unused, _t.Unused]: ...  # type: ignore[override]
-    def get(self, key: _t.Unused, default: _t.Unused = ...) -> None: ...  # type: ignore[override]
+    def get(self, key: _t.Unused, default: _t.Unused = None) -> None: ...  # type: ignore[override]
     def set(self, key: Never, value: Never) -> Never: ...  # type: ignore[override]
     def append(self, element: Never) -> Never: ...  # type: ignore[override]
     def insert(self, index: Never, value: Never) -> Never: ...  # type: ignore[override]

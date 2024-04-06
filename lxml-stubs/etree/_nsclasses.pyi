@@ -50,7 +50,7 @@ class _NamespaceRegistry(MutableMapping[_KT, _VT]):
 class _ClassNamespaceRegistry(_NamespaceRegistry[str | None, type[ElementBase]]):
     @overload  # @ns(None), @ns('tag')
     def __call__(
-        self, __tag: str | None, __cls: None = ...
+        self, __tag: str | None, __cls: None = None
     ) -> Callable[[type[_Public_ET]], type[_Public_ET]]: ...
     @overload  # plain @ns
     def __call__(self, __cls: type[_Public_ET]) -> type[_Public_ET]: ...
@@ -76,7 +76,7 @@ class ElementNamespaceClassLookup(FallbackElementClassLookup):
 
     def __init__(
         self,
-        fallback: ElementClassLookup | None = ...,
+        fallback: ElementClassLookup | None = None,
     ) -> None: ...
     def get_namespace(self, ns_uri: str | None) -> _ClassNamespaceRegistry:
         """Retrieve the namespace object associated with the given URI
@@ -97,7 +97,7 @@ class _FunctionNamespaceRegistry(_NamespaceRegistry[str, Callable[..., Any]]):
     def prefix(self, __v: str | None) -> None: ...
     @overload  # @ns('name')
     def __call__(
-        self, __name: str, __func: None = ...
+        self, __name: str, __func: None = None
     ) -> Callable[[Callable[_P, _T]], Callable[_P, _T]]: ...
     @overload  # plain @ns
     def __call__(self, __func: Callable[_P, _T]) -> Callable[_P, _T]: ...

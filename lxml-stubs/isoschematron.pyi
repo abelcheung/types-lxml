@@ -58,64 +58,68 @@ class Schematron(_e._Validator):
     _compile: ClassVar[_e.XSLT]
     _validation_errors: ClassVar[_e.XPath]
     # _extract() can be a mean of customisation like some of the vars above
-    def _extract(self, element: _e._Element) -> _e._ElementTree[_e._Element] | None: ...
+    def _extract(self, element: _e._Element) -> _e._ElementTree | None: ...
 
-    # The overload arg matrix is daunting (3 * 2**3) without much benefit:
+    # The overload arg matrix would have been daunting (3 * 2**3):
     # - etree / file
     # - include / include_params
     # - expand / expand_params
     # - compile_params / phase
-    # Following other validators, just distinguish etree and file arg.
+    # Therefore we just distinguish etree and file arg, following
+    # how other validators are done.
+    # Besides, error_finder default value is too complex, and
+    # validate_schema default is dependent on runtime system,
+    # so ellipsis is preserved here instead of explicitly listing.
     @overload
     def __init__(
         self,
         etree: _ElementOrTree,
-        file: None = ...,
-        include: bool = ...,
-        expand: bool = ...,
-        include_params: dict[str, _Stylesheet_Param] = ...,
-        expand_params: dict[str, _Stylesheet_Param] = ...,
-        compile_params: dict[str, _Stylesheet_Param] = ...,
-        store_schematron: bool = ...,
-        store_xslt: bool = ...,
-        store_report: bool = ...,
-        phase: str | None = ...,
-        error_finder: _e.XPath = ...,
-        validate_schema: bool = ...,
+        file: None = None,
+        include: bool = True,
+        expand: bool = True,
+        include_params: dict[str, _Stylesheet_Param] = {},
+        expand_params: dict[str, _Stylesheet_Param] = {},
+        compile_params: dict[str, _Stylesheet_Param] = {},
+        store_schematron: bool = False,
+        store_xslt: bool = False,
+        store_report: bool = False,
+        phase: str | None = None,
+        error_finder: _e.XPath = ...,  # keep ellipsis
+        validate_schema: bool = ...,  # keep ellipsis
     ) -> None: ...
     @overload
     def __init__(
         self,
         etree: None,
         file: _FileReadSource,
-        include: bool = ...,
-        expand: bool = ...,
-        include_params: dict[str, _Stylesheet_Param] = ...,
-        expand_params: dict[str, _Stylesheet_Param] = ...,
-        compile_params: dict[str, _Stylesheet_Param] = ...,
-        store_schematron: bool = ...,
-        store_xslt: bool = ...,
-        store_report: bool = ...,
-        phase: str | None = ...,
-        error_finder: _e.XPath = ...,
-        validate_schema: bool = ...,
+        include: bool = True,
+        expand: bool = True,
+        include_params: dict[str, _Stylesheet_Param] = {},
+        expand_params: dict[str, _Stylesheet_Param] = {},
+        compile_params: dict[str, _Stylesheet_Param] = {},
+        store_schematron: bool = False,
+        store_xslt: bool = False,
+        store_report: bool = False,
+        phase: str | None = None,
+        error_finder: _e.XPath = ...,  # keep ellipsis
+        validate_schema: bool = ...,  # keep ellipsis
     ) -> None: ...
     @overload
     def __init__(
         self,
         *,
         file: _FileReadSource,
-        include: bool = ...,
-        expand: bool = ...,
-        include_params: dict[str, _Stylesheet_Param] = ...,
-        expand_params: dict[str, _Stylesheet_Param] = ...,
-        compile_params: dict[str, _Stylesheet_Param] = ...,
-        store_schematron: bool = ...,
-        store_xslt: bool = ...,
-        store_report: bool = ...,
-        phase: str | None = ...,
-        error_finder: _e.XPath = ...,
-        validate_schema: bool = ...,
+        include: bool = True,
+        expand: bool = True,
+        include_params: dict[str, _Stylesheet_Param] = {},
+        expand_params: dict[str, _Stylesheet_Param] = {},
+        compile_params: dict[str, _Stylesheet_Param] = {},
+        store_schematron: bool = False,
+        store_xslt: bool = False,
+        store_report: bool = False,
+        phase: str | None = None,
+        error_finder: _e.XPath = ...,  # keep ellipsis
+        validate_schema: bool = ...,  # keep ellipsis
     ) -> None: ...
     def __call__(self, etree: _ElementOrTree) -> bool: ...
     @property

@@ -56,27 +56,27 @@ def find_class(
 @overload
 def make_links_absolute(
     doc: HtmlElement,
-    base_url: str | None = ...,
-    resolve_base_href: bool = ...,
-    handle_failures: _HANDLE_FAILURES | None = ...,
+    base_url: str | None = None,
+    resolve_base_href: bool = True,
+    handle_failures: _HANDLE_FAILURES | None = None,
 ) -> HtmlElement: ...
 @overload
 def make_links_absolute(
     doc: AnyStr,
-    base_url: str | None = ...,
-    resolve_base_href: bool = ...,
-    handle_failures: _HANDLE_FAILURES | None = ...,
+    base_url: str | None = None,
+    resolve_base_href: bool = True,
+    handle_failures: _HANDLE_FAILURES | None = None,
     /,
 ) -> AnyStr: ...
 @overload
 def resolve_base_href(
     doc: HtmlElement,
-    handle_failures: _HANDLE_FAILURES | None = ...,
+    handle_failures: _HANDLE_FAILURES | None = None,
 ) -> HtmlElement: ...
 @overload
 def resolve_base_href(
     doc: AnyStr,
-    handle_failures: _HANDLE_FAILURES | None = ...,
+    handle_failures: _HANDLE_FAILURES | None = None,
     /,
 ) -> AnyStr: ...
 def iterlinks(
@@ -86,15 +86,15 @@ def iterlinks(
 def rewrite_links(
     doc: HtmlElement,
     link_repl_func: Callable[[str], str | None],
-    resolve_base_href: bool = ...,
-    base_href: str | None = ...,
+    resolve_base_href: bool = True,
+    base_href: str | None = None,
 ) -> HtmlElement: ...
 @overload
 def rewrite_links(
     doc: AnyStr,
     link_repl_func: Callable[[str], str | None],
-    resolve_base_href: bool = ...,
-    base_href: str | None = ...,
+    resolve_base_href: bool = True,
+    base_href: str | None = None,
     /,
 ) -> AnyStr: ...
 
@@ -124,28 +124,28 @@ def xhtml_to_html(xhtml: _ElementOrTree[HtmlElement]) -> None: ...
 def tostring(  # type: ignore[overload-overlap]
     doc: _ElementOrTree[HtmlElement],
     *,
-    pretty_print: bool = ...,
-    include_meta_content_type: bool = ...,
+    pretty_print: bool = False,
+    include_meta_content_type: bool = False,
     encoding: type[str] | Literal["unicode"],
-    method: _OutputMethodArg = ...,
-    with_tail: bool = ...,
-    doctype: str | None = ...,
+    method: _OutputMethodArg = "html",
+    with_tail: bool = True,
+    doctype: str | None = None,
 ) -> str: ...
 @overload  # encoding="..." / None, no encoding arg
 def tostring(
     doc: _ElementOrTree[HtmlElement],
     *,
-    pretty_print: bool = ...,
-    include_meta_content_type: bool = ...,
-    encoding: str | None = ...,
-    method: _OutputMethodArg = ...,
-    with_tail: bool = ...,
-    doctype: str | None = ...,
+    pretty_print: bool = False,
+    include_meta_content_type: bool = False,
+    encoding: str | None = None,
+    method: _OutputMethodArg = "html",
+    with_tail: bool = True,
+    doctype: str | None = None,
 ) -> bytes: ...
 
 #
 # Debug
 #
 def open_in_browser(
-    doc: _ElementOrTree[HtmlElement], encoding: str | type[str] | None = ...
+    doc: _ElementOrTree[HtmlElement], encoding: str | type[str] | None = None
 ) -> None: ...

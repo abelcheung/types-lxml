@@ -3,7 +3,7 @@
 #
 
 from _typeshed import _T
-from typing import Iterable, TypeVar, overload
+from typing import Iterable, Literal, TypeVar, overload
 
 from .. import etree
 from .._types import _AnyStr, _FileReadSource
@@ -25,8 +25,8 @@ class ObjectifyElementClassLookup(etree.ElementClassLookup):
 
     def __init__(
         self,
-        tree_class: type[ObjectifiedElement] | None = ...,
-        empty_data_class: type[ObjectifiedDataElement] | None = ...,
+        tree_class: type[ObjectifiedElement] | None = None,
+        empty_data_class: type[ObjectifiedDataElement] | None = None,
     ) -> None:
         """
         Parameters
@@ -47,7 +47,7 @@ class ObjectifyElementClassLookup(etree.ElementClassLookup):
 def set_default_parser(
     # Not joking, it uses isinstance check
     new_parser: etree.XMLParser[ObjectifiedElement]
-    | None = ...,
+    | None = None,
 ) -> None:
     """Replace the default parser used by objectify's `Element()`
     and `fromstring()` functions.
@@ -60,24 +60,26 @@ def set_default_parser(
         original parser.
     """
 
+# All XMLParser() arguments, except that remove_black_text
+# default value is True
 def makeparser(
     *,
-    encoding: _AnyStr | None = ...,
-    attribute_defaults: bool = ...,
-    dtd_validation: bool = ...,
-    load_dtd: bool = ...,
-    no_network: bool = ...,
-    ns_clean: bool = ...,
-    recover: bool = ...,
-    schema: etree.XMLSchema | None = ...,
-    huge_tree: bool = ...,
-    remove_blank_text: bool = ...,
-    resolve_entities: bool = ...,
-    remove_comments: bool = ...,
-    remove_pis: bool = ...,
-    strip_cdata: bool = ...,
-    collect_ids: bool = ...,
-    compact: bool = ...,
+    encoding: _AnyStr | None = None,
+    attribute_defaults: bool = False,
+    dtd_validation: bool = False,
+    load_dtd: bool = False,
+    no_network: bool = True,
+    ns_clean: bool = False,
+    recover: bool = False,
+    schema: etree.XMLSchema | None = None,
+    huge_tree: bool = False,
+    remove_blank_text: bool = True,
+    resolve_entities: bool | Literal['internal'] = 'internal',
+    remove_comments: bool = False,
+    remove_pis: bool = False,
+    strip_cdata: bool = True,
+    collect_ids: bool = True,
+    compact: bool = True,
 ) -> etree.XMLParser[ObjectifiedElement]:
     """Create a new XML parser for objectify trees.
 
@@ -91,9 +93,9 @@ def makeparser(
 
 def parse(
     source: _FileReadSource,
-    parser: etree._parser._DefEtreeParsers[ObjectifiedElement] | None = ...,
+    parser: etree._parser._DefEtreeParsers[ObjectifiedElement] | None = None,
     *,
-    base_url: _AnyStr | None = ...,
+    base_url: _AnyStr | None = None,
 ) -> etree._ElementTree[ObjectifiedElement]:
     """Parse a file or file-like object with objectify parser
 
@@ -111,9 +113,9 @@ def parse(
 
 def fromstring(
     xml: _AnyStr,
-    parser: etree._parser._DefEtreeParsers[ObjectifiedElement] | None = ...,
+    parser: etree._parser._DefEtreeParsers[ObjectifiedElement] | None = None,
     *,
-    base_url: _AnyStr | None = ...,
+    base_url: _AnyStr | None = None,
 ) -> ObjectifiedElement:
     """Variant of corresponding `lxml.etree` function that uses objectify parser
 

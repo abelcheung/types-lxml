@@ -4,8 +4,8 @@ from .._types import _AnyStr, _ElementOrTree, _NSMapArg, _TagSelector
 
 def cleanup_namespaces(
     tree_or_element: _ElementOrTree,
-    top_nsmap: _NSMapArg | None = ...,
-    keep_ns_prefixes: Iterable[_AnyStr] | None = ...,
+    top_nsmap: _NSMapArg | None = None,
+    keep_ns_prefixes: Iterable[_AnyStr] | None = None,
 ) -> None: ...
 
 # For functions below, the first `tree_or_element` argument
@@ -26,14 +26,14 @@ def strip_attributes(
 def strip_elements(
     __tree_or_elem: _ElementOrTree,
     *tag_names: _TagSelector,
-    with_tail: bool = ...,
+    with_tail: bool = True,
 ) -> None: ...
 @overload
 def strip_elements(
     __tree_or_elem: _ElementOrTree,
     __tag: Iterable[_TagSelector] | None,
     /,
-    with_tail: bool = ...,
+    with_tail: bool = True,
 ) -> None: ...
 @overload
 def strip_tags(

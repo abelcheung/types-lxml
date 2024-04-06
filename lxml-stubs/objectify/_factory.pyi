@@ -12,10 +12,10 @@ _DataElem_T = TypeVar("_DataElem_T", bound=_e.ObjectifiedDataElement)
 def Element(
     _tag: _TagName,
     /,
-    attrib: SupportsLaxedItems[str, _AnyStr] | None = ...,
-    nsmap: _NSMapArg | None = ...,
+    attrib: SupportsLaxedItems[str, _AnyStr] | None = None,
+    nsmap: _NSMapArg | None = None,
     *,
-    _pytype: str | None = ...,
+    _pytype: str | None = None,
     **__attr: _AnyStr,
 ) -> _e.ObjectifiedElement:
     """Objectify specific version of `lxml.etree` `Element()` factory
@@ -47,8 +47,8 @@ def SubElement(
     _parent: _e.ObjectifiedElement,
     _tag: _TagName,
     /,
-    attrib: SupportsLaxedItems[str, _AnyStr] | None = ...,
-    nsmap: _NSMapArg | None = ...,
+    attrib: SupportsLaxedItems[str, _AnyStr] | None = None,
+    nsmap: _NSMapArg | None = None,
     **__attr: _AnyStr,
 ) -> _e.ObjectifiedElement: ...
 
@@ -61,132 +61,132 @@ def SubElement(
 def DataElement(
     _value: _DataElem_T,
     /,
-    attrib: SupportsLaxedItems[str, _AnyStr] | None = ...,
-    nsmap: _NSMapArg | None = ...,
+    attrib: SupportsLaxedItems[str, _AnyStr] | None = None,
+    nsmap: _NSMapArg | None = None,
     *,
-    _pytype: None = ...,
-    _xsi: None = ...,
+    _pytype: None = None,
+    _xsi: None = None,
     **__attr: _AnyStr,
 ) -> _DataElem_T: ...
 @overload  # native type None
 def DataElement(
     _value: None,
     /,
-    attrib: SupportsLaxedItems[str, _AnyStr] | None = ...,
-    nsmap: _NSMapArg | None = ...,
+    attrib: SupportsLaxedItems[str, _AnyStr] | None = None,
+    nsmap: _NSMapArg | None = None,
     *,
-    _pytype: None = ...,
-    _xsi: None = ...,
+    _pytype: None = None,
+    _xsi: None = None,
     **__attr: _AnyStr,
 ) -> _e.NoneElement: ...
 @overload  # native type str
 def DataElement(
     _value: str,
     /,
-    attrib: SupportsLaxedItems[str, _AnyStr] | None = ...,
-    nsmap: _NSMapArg | None = ...,
+    attrib: SupportsLaxedItems[str, _AnyStr] | None = None,
+    nsmap: _NSMapArg | None = None,
     *,
-    _pytype: None = ...,
-    _xsi: None = ...,
+    _pytype: None = None,
+    _xsi: None = None,
     **__attr: _AnyStr,
 ) -> _e.StringElement: ...
 @overload  # native type bool
 def DataElement(  # pyright: ignore[reportOverlappingOverload]
     _value: bool,
     /,
-    attrib: SupportsLaxedItems[str, _AnyStr] | None = ...,
-    nsmap: _NSMapArg | None = ...,
+    attrib: SupportsLaxedItems[str, _AnyStr] | None = None,
+    nsmap: _NSMapArg | None = None,
     *,
-    _pytype: None = ...,
-    _xsi: None = ...,
+    _pytype: None = None,
+    _xsi: None = None,
     **__attr: _AnyStr,
 ) -> _e.BoolElement: ...
 @overload  # native type int
 def DataElement(
     _value: int,
     /,
-    attrib: SupportsLaxedItems[str, _AnyStr] | None = ...,
-    nsmap: _NSMapArg | None = ...,
+    attrib: SupportsLaxedItems[str, _AnyStr] | None = None,
+    nsmap: _NSMapArg | None = None,
     *,
-    _pytype: None = ...,
-    _xsi: None = ...,
+    _pytype: None = None,
+    _xsi: None = None,
     **__attr: _AnyStr,
 ) -> _e.IntElement: ...
 @overload  # native type float
 def DataElement(
     _value: float,
     /,
-    attrib: SupportsLaxedItems[str, _AnyStr] | None = ...,
-    nsmap: _NSMapArg | None = ...,
+    attrib: SupportsLaxedItems[str, _AnyStr] | None = None,
+    nsmap: _NSMapArg | None = None,
     *,
-    _pytype: None = ...,
-    _xsi: None = ...,
+    _pytype: None = None,
+    _xsi: None = None,
     **__attr: _AnyStr,
 ) -> _e.FloatElement: ...
 @overload  # pytype None
 def DataElement(
     _value: object,
     /,
-    attrib: SupportsLaxedItems[str, _AnyStr] | None = ...,
-    nsmap: _NSMapArg | None = ...,
+    attrib: SupportsLaxedItems[str, _AnyStr] | None = None,
+    nsmap: _NSMapArg | None = None,
     *,
     _pytype: Literal["NoneType", "none"],
-    _xsi: str | None = ...,
+    _xsi: str | None = None,
     **__attr: _AnyStr,
 ) -> _e.NoneElement: ...
 @overload  # pytype str
 def DataElement(
     _value: object,
     /,
-    attrib: SupportsLaxedItems[str, _AnyStr] | None = ...,
-    nsmap: _NSMapArg | None = ...,
+    attrib: SupportsLaxedItems[str, _AnyStr] | None = None,
+    nsmap: _NSMapArg | None = None,
     *,
     _pytype: Literal["str"],
-    _xsi: str | None = ...,
+    _xsi: str | None = None,
     **__attr: _AnyStr,
 ) -> _e.StringElement: ...
 @overload  # pytype bool
 def DataElement(
     _value: object,
     /,
-    attrib: SupportsLaxedItems[str, _AnyStr] | None = ...,
-    nsmap: _NSMapArg | None = ...,
+    attrib: SupportsLaxedItems[str, _AnyStr] | None = None,
+    nsmap: _NSMapArg | None = None,
     *,
     _pytype: Literal["bool"],
-    _xsi: str | None = ...,
+    _xsi: str | None = None,
     **__attr: _AnyStr,
 ) -> _e.BoolElement: ...
 @overload  # pytype int
 def DataElement(
     _value: object,
     /,
-    attrib: SupportsLaxedItems[str, _AnyStr] | None = ...,
-    nsmap: _NSMapArg | None = ...,
+    attrib: SupportsLaxedItems[str, _AnyStr] | None = None,
+    nsmap: _NSMapArg | None = None,
     *,
     _pytype: Literal["int"],
-    _xsi: str | None = ...,
+    _xsi: str | None = None,
     **__attr: _AnyStr,
 ) -> _e.IntElement: ...
 @overload  # pytype float
 def DataElement(
     _value: object,
     /,
-    attrib: SupportsLaxedItems[str, _AnyStr] | None = ...,
-    nsmap: _NSMapArg | None = ...,
+    attrib: SupportsLaxedItems[str, _AnyStr] | None = None,
+    nsmap: _NSMapArg | None = None,
     *,
     _pytype: Literal["float"],
-    _xsi: str | None = ...,
+    _xsi: str | None = None,
     **__attr: _AnyStr,
 ) -> _e.FloatElement: ...
 @overload  # Generic fallback
 def DataElement(
     _value: object,
     /,
-    attrib: SupportsLaxedItems[str, _AnyStr] | None = ...,
-    nsmap: _NSMapArg | None = ...,
+    attrib: SupportsLaxedItems[str, _AnyStr] | None = None,
+    nsmap: _NSMapArg | None = None,
     *,
-    _pytype: str | None = ...,
-    _xsi: str | None = ...,
+    _pytype: str | None = None,
+    _xsi: str | None = None,
     **__attr: _AnyStr,
 ) -> _e.ObjectifiedElement:
     """Create a new element from a Python value and XML attributes taken
@@ -280,10 +280,10 @@ class ElementMaker:
     def __init__(
         self,
         *,
-        namespace: str | None = ...,
-        nsmap: _NSMapArg | None = ...,
-        annotate: bool = ...,
-        makeelement: _ElemFactory[_e.ObjectifiedElement] | None = ...,
+        namespace: str | None = None,
+        nsmap: _NSMapArg | None = None,
+        annotate: bool = True,
+        makeelement: _ElemFactory[_e.ObjectifiedElement] | None = None,
     ) -> None: ...
     def __call__(
         self,

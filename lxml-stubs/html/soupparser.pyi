@@ -9,17 +9,17 @@ from . import HtmlElement
 
 def fromstring(
     data: _AnyStr | SupportsRead[str] | SupportsRead[bytes],
-    beautifulsoup: type[BeautifulSoup] | None = ...,
-    makeelement: _ElemFactory[HtmlElement] | None = ...,
+    beautifulsoup: type[BeautifulSoup] | None = None,
+    makeelement: _ElemFactory[HtmlElement] | None = None,
     **bsargs: Any,
 ) -> HtmlElement: ...
 def parse(
     file: _AnyStr | SupportsRead[str] | SupportsRead[bytes],
-    beautifulsoup: type[BeautifulSoup] | None = ...,
-    makeelement: _ElemFactory[HtmlElement] | None = ...,
+    beautifulsoup: type[BeautifulSoup] | None = None,
+    makeelement: _ElemFactory[HtmlElement] | None = None,
     **bsargs: Any,
 ) -> _ElementTree[HtmlElement]: ...
 def convert_tree(
     beautiful_soup_tree: BeautifulSoup,
-    makeelement: _ElemFactory[HtmlElement] | None = ...,
+    makeelement: _ElemFactory[HtmlElement] | None = None,
 ) -> list[HtmlElement]: ...

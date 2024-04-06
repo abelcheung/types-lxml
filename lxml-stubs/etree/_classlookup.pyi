@@ -59,8 +59,8 @@ class ElementBase(_Element):
     def __init__(
         self,
         *children: object,
-        attrib: SupportsLaxedItems[str, _AnyStr] | None = ...,
-        nsmap: _NSMapArg | None = ...,
+        attrib: SupportsLaxedItems[str, _AnyStr] | None = None,
+        nsmap: _NSMapArg | None = None,
         **_extra: _AnyStr,
     ) -> None: ...
     def _init(self) -> None: ...
@@ -81,7 +81,7 @@ class CommentBase(_Comment):
     """
 
     @final
-    def __init__(self, text: _AnyStr | None = ...) -> None: ...
+    def __init__(self, text: _AnyStr | None) -> None: ...
     def _init(self) -> None: ...
 
 class PIBase(_ProcessingInstruction):
@@ -101,7 +101,7 @@ class PIBase(_ProcessingInstruction):
     """
 
     @final
-    def __init__(self, target: _AnyStr, text: _AnyStr | None = ...) -> None: ...
+    def __init__(self, target: _AnyStr, text: _AnyStr | None = None) -> None: ...
     def _init(self) -> None: ...
 
 class EntityBase(_Entity):
@@ -134,7 +134,7 @@ class FallbackElementClassLookup(ElementClassLookup):
 
     @property
     def fallback(self) -> ElementClassLookup | None: ...
-    def __init__(self, fallback: ElementClassLookup | None = ...) -> None: ...
+    def __init__(self, fallback: ElementClassLookup | None = None) -> None: ...
     def set_fallback(self, lookup: ElementClassLookup) -> None:
         """Sets the fallback scheme for this lookup method"""
 
@@ -155,10 +155,10 @@ class ElementDefaultClassLookup(ElementClassLookup):
     def entity_class(self) -> type[_Entity]: ...
     def __init__(
         self,
-        element: type[ElementBase] | None = ...,
-        comment: type[CommentBase] | None = ...,
-        pi: type[PIBase] | None = ...,
-        entity: type[EntityBase] | None = ...,
+        element: type[ElementBase] | None = None,
+        comment: type[CommentBase] | None = None,
+        pi: type[PIBase] | None = None,
+        entity: type[EntityBase] | None = None,
     ) -> None: ...
 
 class AttributeBasedElementClassLookup(FallbackElementClassLookup):
@@ -180,9 +180,10 @@ class AttributeBasedElementClassLookup(FallbackElementClassLookup):
     def __init__(
         self,
         attribute_name: _AttrName,
-        class_mapping: Mapping[str, type[_Element]]
-        | Mapping[str | None, type[_Element]],
-        fallback: ElementClassLookup | None = ...,
+        class_mapping: (
+            Mapping[str, type[_Element]] | Mapping[str | None, type[_Element]]
+        ),
+        fallback: ElementClassLookup | None = None,
     ) -> None: ...
 
 class ParserBasedElementClassLookup(FallbackElementClassLookup):
@@ -275,7 +276,7 @@ class PythonElementClassLookup(FallbackElementClassLookup, metaclass=ABCMeta):
         element: _Element,  # quasi-Element with all attributes read-only
     ) -> type[_Element] | None: ...
 
-def set_element_class_lookup(lookup: ElementClassLookup | None = ...) -> None:
+def set_element_class_lookup(lookup: ElementClassLookup | None = None) -> None:
     """Set the global element class lookup method
 
     Original Docstring

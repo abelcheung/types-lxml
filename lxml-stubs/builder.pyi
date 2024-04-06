@@ -1,7 +1,7 @@
 from typing import Any, Callable, Generic, Mapping, overload
 
-from ._types import _ElemFactory, _ET_co, _NSMapArg
-from .etree import QName, _Element
+from ._types import _ElemFactory, _ET_co, _NSMapArg, _TagName
+from .etree import _Element
 
 _TypeMapArg = Mapping[Any, Callable[[_Element, Any], None]]
 
@@ -9,9 +9,9 @@ class ElementMaker(Generic[_ET_co]):
     @overload
     def __new__(
         cls,
-        typemap: _TypeMapArg | None = ...,
-        namespace: str | None = ...,
-        nsmap: _NSMapArg | None = ...,
+        typemap: _TypeMapArg | None = None,
+        namespace: str | None = None,
+        nsmap: _NSMapArg | None = None,
         *,
         makeelement: _ElemFactory[_ET_co],
     ) -> ElementMaker[_ET_co]: ...
@@ -26,14 +26,14 @@ class ElementMaker(Generic[_ET_co]):
     @overload
     def __new__(
         cls,
-        typemap: _TypeMapArg | None = ...,
-        namespace: str | None = ...,
-        nsmap: _NSMapArg | None = ...,
-        makeelement: None = ...,
+        typemap: _TypeMapArg | None = None,
+        namespace: str | None = None,
+        nsmap: _NSMapArg | None = None,
+        makeelement: None = None,
     ) -> ElementMaker: ...
     def __call__(
         self,
-        tag: str | QName,  # No bytes here
+        tag: _TagName,
         # Although, by default, the ElementMaker only accepts _Element and types
         # interpretable by the default typemap (that is str, CDATA and dict)
         # as children, the typemap can be expanded to make sure items of any

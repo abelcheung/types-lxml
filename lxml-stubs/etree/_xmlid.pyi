@@ -17,14 +17,14 @@ def XMLID(
     text: _AnyStr,
     parser: _DefEtreeParsers[_ET],
     *,
-    base_url: _AnyStr | None = ...,
+    base_url: _AnyStr | None = None,
 ) -> tuple[_ET, dict[str, _ET]]: ...
 @overload
 def XMLID(
     text: _AnyStr,
-    parser: None = ...,
+    parser: None = None,
     *,
-    base_url: _AnyStr | None = ...,
+    base_url: _AnyStr | None = None,
 ) -> tuple[_Element, dict[str, _Element]]: ...
 
 # It is interesting how _IDDict is used below but not above
@@ -34,28 +34,28 @@ def XMLDTDID(
     text: _AnyStr,
     parser: _DefEtreeParsers[_ET],
     *,
-    base_url: _AnyStr | None = ...,
+    base_url: _AnyStr | None = None,
 ) -> tuple[_ET, _IDDict[_ET]]: ...
 @overload
 def XMLDTDID(
     text: _AnyStr,
-    parser: None = ...,
+    parser: None = None,
     *,
-    base_url: _AnyStr | None = ...,
+    base_url: _AnyStr | None = None,
 ) -> tuple[_Element, _IDDict]: ...
 @overload
 def parseid(
     source: _FileReadSource,
     parser: _DefEtreeParsers[_ET],
     *,
-    base_url: _AnyStr | None = ...,
+    base_url: _AnyStr | None = None,
 ) -> tuple[_ElementTree[_ET], _IDDict[_ET]]: ...
 @overload
 def parseid(
     source: _FileReadSource,
-    parser: None = ...,
+    parser: None = None,
     *,
-    base_url: _AnyStr | None = ...,
+    base_url: _AnyStr | None = None,
 ) -> tuple[_ElementTree, _IDDict]: ...
 
 class _IDDict(Collection[str], Generic[_ET]):

@@ -77,45 +77,40 @@ xhtml_parser: XHTMLParser
 # fromstring(text, parser, *, base_url)
 def document_fromstring(
     html: _AnyStr,
-    parser: _HtmlElemParser | None = ...,
-    ensure_head_body: bool = ...,
+    parser: _HtmlElemParser | None = None,
+    ensure_head_body: bool = False,
     *,
-    base_url: str | None = ...,
+    base_url: str | None = None,
 ) -> HtmlElement: ...
 @overload
 def fragments_fromstring(  # type: ignore[overload-overlap]
     html: _AnyStr,
     no_leading_text: Literal[True],
-    base_url: str | None = ...,
-    parser: _HtmlElemParser | None = ...,
-    **kw: Unused,
+    base_url: str | None = None,
+    parser: _HtmlElemParser | None = None,
 ) -> list[HtmlElement]: ...
 @overload
 def fragments_fromstring(
     html: _AnyStr,
-    no_leading_text: bool = ...,
-    base_url: str | None = ...,
-    parser: _HtmlElemParser | None = ...,
-    **kw: Unused,
+    no_leading_text: bool = False,
+    base_url: str | None = None,
+    parser: _HtmlElemParser | None = None,
 ) -> list[str | HtmlElement]: ...
 def fragment_fromstring(
     html: _AnyStr,
-    create_parent: bool = ...,
-    base_url: str | None = ...,
-    parser: _HtmlElemParser | None = ...,
-    **kw: Unused,
+    create_parent: bool = False,
+    base_url: str | None = None,
+    parser: _HtmlElemParser | None = None,
 ) -> HtmlElement: ...
 def fromstring(
     html: _AnyStr,
-    base_url: str | None = ...,
-    parser: _HtmlElemParser | None = ...,
-    **kw: Unused,
+    base_url: str | None = None,
+    parser: _HtmlElemParser | None = None,
 ) -> HtmlElement: ...
 def parse(
     filename_or_url: _FileReadSource,
-    parser: _HtmlElemParser | None = ...,
-    base_url: str | None = ...,
-    **kw: Unused,
+    parser: _HtmlElemParser | None = None,
+    base_url: str | None = None,
 ) -> etree._ElementTree[HtmlElement]: ...
 
 #
@@ -127,9 +122,9 @@ class HtmlElementClassLookup(etree.CustomElementClassLookup):
         self,
         # Should have been something like Mapping[str, type[HtmlElement]],
         # but unfortunately classes mapping is required to be mutable
-        classes: MutableMapping[str, Any] | None = ...,
+        classes: MutableMapping[str, Any] | None = None,
         # docstring says mixins is mapping, but implementation says otherwise
-        mixins: Iterable[tuple[str, type[HtmlElement]]] = ...,
+        mixins: Iterable[tuple[str, type[HtmlElement]]] | None = None,
     ) -> None: ...
     # Both argument names and types are incompatible with base class
     # This is a standard practise for lxml

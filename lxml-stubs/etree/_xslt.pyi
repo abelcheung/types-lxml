@@ -50,7 +50,7 @@ class XSLTExtensionError(XSLTError):
 class _XSLTResultTree(_ElementTree):
     """The result of an XSLT evaluation"""
 
-    def write_output(self, file: _FileWriteSource, *, compression: int = ...) -> None:
+    def write_output(self, file: _FileWriteSource, *, compression: int = 0) -> None:
         """Serialise the XSLT output to a file or file-like object
 
         As opposed to the generic ``.write()`` method, ``.write_output()`` serialises
@@ -100,11 +100,11 @@ class XSLTAccessControl:
     def __init__(
         self,
         *,
-        read_file: bool = ...,
-        write_file: bool = ...,
-        create_dir: bool = ...,
-        read_network: bool = ...,
-        write_network: bool = ...,
+        read_file: bool = True,
+        write_file: bool = True,
+        create_dir: bool = True,
+        read_network: bool = True,
+        write_network: bool = True,
     ) -> None: ...
     @property
     def options(self) -> __AccessControlConfig: ...
@@ -140,15 +140,15 @@ class XSLT:
         xslt_input: _ElementOrTree,
         extensions: (
             SupportsLaxedItems[tuple[_AnyStr, _AnyStr], XSLTExtension] | None
-        ) = ...,
-        regexp: bool = ...,
-        access_control: XSLTAccessControl | None = ...,
+        ) = None,
+        regexp: bool = True,
+        access_control: XSLTAccessControl | None = None,
     ) -> None: ...
     def __call__(
         self,
         _input: _ElementOrTree,
         /,
-        profile_run: bool = ...,
+        profile_run: bool = False,
         **__kw: _Stylesheet_Param,
     ) -> _XSLTResultTree: ...
     @property
@@ -162,7 +162,7 @@ class XSLT:
         self,
         _input: _ElementOrTree,
         /,
-        profile_run: bool = ...,
+        profile_run: bool = False,
         **__kw: _Stylesheet_Param,
     ) -> _XSLTResultTree: ...
     @deprecated("Since v2.0 (2008); use str(result_tree) instead")
@@ -173,7 +173,7 @@ class XSLT:
 
 class _XSLTProcessingInstruction(PIBase):
     def parseXSL(
-        self, parser: _DefEtreeParsers | None = ...
+        self, parser: _DefEtreeParsers | None = None
     ) -> _ElementTree: ...
     def set(self, key: Literal["href"], value: str) -> None: ...  # type: ignore[override]
 
@@ -213,28 +213,28 @@ class XSLTExtension(metaclass=abc.ABCMeta):
         node: Any,
         output_parent: _Element,
         *,
-        elements_only: bool = ...,
-        remove_blank_text: bool = ...,
+        elements_only: bool = False,
+        remove_blank_text: bool = False,
     ) -> None: ...
     @overload
-    def apply_templates(
+    def apply_templates(  # type: ignore[overload-overlap]
         self,
         context: Any,
         node: Any,
-        output_parent: None = ...,
+        output_parent: None = None,
         *,
         elements_only: Literal[True],
-        remove_blank_text: bool = ...,
+        remove_blank_text: bool = False,
     ) -> list[_Element]: ...
     @overload
     def apply_templates(
         self,
         context: Any,
         node: Any,
-        output_parent: None = ...,
+        output_parent: None = None,
         *,
-        elements_only: Literal[False] = ...,
-        remove_blank_text: bool = ...,
+        elements_only: bool = False,
+        remove_blank_text: bool = False,
     ) -> list[str | _Element]:
         """Call this method to retrieve the result of applying templates
         to an element
@@ -262,26 +262,26 @@ class XSLTExtension(metaclass=abc.ABCMeta):
         context: Any,  # _XSLTContext,
         output_parent: _Element,
         *,
-        elements_only: bool = ...,
-        remove_blank_text: bool = ...,
+        elements_only: bool = False,
+        remove_blank_text: bool = False,
     ) -> None: ...
     @overload
-    def process_children(
+    def process_children(  # type: ignore[overload-overlap]
         self,
         context: Any,
-        output_parent: None = ...,
+        output_parent: None = None,
         *,
         elements_only: Literal[True],
-        remove_blank_text: bool = ...,
+        remove_blank_text: bool = False,
     ) -> list[_Element]: ...
     @overload
     def process_children(
         self,
         context: Any,
-        output_parent: None = ...,
+        output_parent: None = None,
         *,
-        elements_only: Literal[False] = ...,
-        remove_blank_text: bool = ...,
+        elements_only: bool = False,
+        remove_blank_text: bool = False,
     ) -> list[str | _Element]:
         """Call this method to process the XSLT content of the extension
         element itself.

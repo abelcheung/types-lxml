@@ -29,7 +29,7 @@ class Resolver(metaclass=ABCMeta):
         string: _AnyStr,
         context: _ResolverContext,
         *,
-        base_url: _AnyStr | None = ...,
+        base_url: _AnyStr | None = None,
     ) -> _InputDocument | None: ...
     def resolve_filename(
         self, filename: _AnyStr, context: _ResolverContext

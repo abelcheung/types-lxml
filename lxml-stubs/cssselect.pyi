@@ -33,8 +33,8 @@ class CSSSelector(XPath):
     def __init__(
         self,
         css: str,
-        namespaces: _NonDefaultNSMapArg | None = ...,
-        translator: _CSSTransArg = ...,
+        namespaces: _NonDefaultNSMapArg | None = None,
+        translator: _CSSTransArg = 'xml',
     ) -> None: ...
     # It is safe to assume cssselect always selects element
     # representable in original element tree, because CSS expression

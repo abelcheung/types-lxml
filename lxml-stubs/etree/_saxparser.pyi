@@ -66,7 +66,7 @@ class ParserTarget(Protocol[_T_co]):
         self,
         tag: str,
         attrib: _Attrib | Mapping[str, str] | None,
-        nsmap: Mapping[str, str] | None = ...,
+        nsmap: Mapping[str, str] | None = None,
     ) -> None: ...
     # Methods below are undocumented. Lxml has described
     # 'start-ns' and 'end-ns' events however.
@@ -85,11 +85,11 @@ class TreeBuilder(ParserTarget[_Element]):
     def __init__(
         self,
         *,
-        element_factory: _ElemFactory | None = ...,
-        parser: _DefEtreeParsers | None = ...,
-        comment_factory: _ElemFactory[_Comment] | None = ...,
-        pi_factory: _ElemFactory[_ProcessingInstruction] | None = ...,
-        insert_comments: bool = ...,
-        insert_pis: bool = ...,
+        element_factory: _ElemFactory | None = None,
+        parser: _DefEtreeParsers | None = None,
+        comment_factory: _ElemFactory[_Comment] | None = None,
+        pi_factory: _ElemFactory[_ProcessingInstruction] | None = None,
+        insert_comments: bool =True,
+        insert_pis: bool = True,
     ) -> None: ...
     def close(self) -> _Element: ...

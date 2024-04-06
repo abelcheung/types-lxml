@@ -14,15 +14,15 @@ class XMLSchema(_Validator):
         self,
         etree: _ElementOrTree,
         *,
-        file: None = ...,
-        attribute_defaults: bool = ...,
+        file: None = None,
+        attribute_defaults: bool = False,
     ) -> None: ...
     @overload
     def __init__(
         self,
-        etree: None = ...,
+        etree: None = None,
         *,
         file: _FileReadSource,
-        attribute_defaults: bool = ...,
+        attribute_defaults: bool = False,
     ) -> None: ...
     def __call__(self, etree: _ElementOrTree) -> bool: ...

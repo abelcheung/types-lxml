@@ -50,16 +50,16 @@ class PyType:
         name: _AnyStr,
         type_check: Callable[[Any], None] | None,
         type_class: type[ObjectifiedDataElement],
-        stringify: Callable[[Any], str] | None = ...,
+        stringify: Callable[[Any], str] | None = None,
     ) -> None: ...
     def register(
         self,
-        before: Iterable[str] | None = ...,
-        after: Iterable[str] | None = ...,
+        before: Iterable[str] | None = None,
+        after: Iterable[str] | None = None,
     ) -> None: ...
     def unregister(self) -> None: ...
 
-def set_pytype_attribute_tag(attribute_tag: str | None = ...) -> None:
+def set_pytype_attribute_tag(attribute_tag: str | None = None) -> None:
     """Change name and namespace of the XML attribute that holds Python
     type information
 
@@ -97,9 +97,9 @@ def getRegisteredTypes() -> list[PyType]:
 def pyannotate(
     element_or_tree: _ElementOrTree,
     *,
-    ignore_old: bool = ...,
-    ignore_xsi: bool = ...,
-    empty_pytype: _AnyStr | None = ...,
+    ignore_old: bool = False,
+    ignore_xsi: bool = False,
+    empty_pytype: _AnyStr | None = None,
 ) -> None:
     """Recursively annotates elements of an XML tree with `py:pytype` attributes
 
@@ -123,9 +123,9 @@ def pyannotate(
 def xsiannotate(
     element_or_tree: _ElementOrTree,
     *,
-    ignore_old: bool = ...,
-    ignore_pytype: bool = ...,
-    empty_type: _AnyStr | None = ...,
+    ignore_old: bool = False,
+    ignore_pytype: bool = False,
+    empty_type: _AnyStr | None = None,
 ) -> None:
     """Recursively annotates elements of an XML tree with `xsi:type` attributes
 
@@ -155,12 +155,13 @@ def xsiannotate(
 def annotate(
     element_or_tree: _ElementOrTree,
     *,
-    ignore_old: bool = ...,
-    ignore_xsi: bool = ...,
-    empty_pytype: _AnyStr | None = ...,
-    empty_type: _AnyStr | None = ...,
-    annotate_xsi: bool = ...,
-    annotate_pytype: bool = ...,
+    ignore_old: bool = True,
+    ignore_xsi: bool = False,
+    empty_pytype: _AnyStr | None = None,
+    empty_type: _AnyStr | None = None,
+    # following arguments are typed 'bint' in source
+    annotate_xsi: bool = False,
+    annotate_pytype: bool = True,
 ) -> None:
     """Recursively annotates elements of an XML tree with `py:pytype`
     and/or `xsi:type` attributes
@@ -204,10 +205,10 @@ def annotate(
 def deannotate(
     element_or_tree: _ElementOrTree,
     *,
-    pytype: bool = ...,
-    xsi: bool = ...,
-    xsi_nil: bool = ...,
-    cleanup_namespaces: bool = ...,
+    pytype: bool = True,
+    xsi: bool = True,
+    xsi_nil: bool = False,
+    cleanup_namespaces: bool = False,
 ) -> None:
     """Recursively de-annotate elements of an XML tree
 

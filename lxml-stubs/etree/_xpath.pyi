@@ -55,10 +55,10 @@ class XPath(_XPathEvaluatorBase):
         self,
         path: _AnyStr,
         *,
-        namespaces: _NonDefaultNSMapArg | None = ...,
-        extensions: _XPathExtFuncArg | None = ...,
-        regexp: bool = ...,
-        smart_strings: bool = ...,
+        namespaces: _NonDefaultNSMapArg | None = None,
+        extensions: _XPathExtFuncArg | None = None,
+        regexp: bool = True,
+        smart_strings: bool = True,
     ) -> None: ...
     def __call__(
         self, _etree_or_element: _ElementOrTree, /, **_variables: _XPathVarArg
@@ -71,9 +71,9 @@ class ETXPath(XPath):
         self,
         path: _AnyStr,
         *,
-        extensions: _XPathExtFuncArg | None = ...,
-        regexp: bool = ...,
-        smart_strings: bool = ...,
+        extensions: _XPathExtFuncArg | None = None,
+        regexp: bool = True,
+        smart_strings: bool = True,
     ) -> None: ...
 
 class XPathElementEvaluator(_XPathEvaluatorBase):
@@ -81,10 +81,10 @@ class XPathElementEvaluator(_XPathEvaluatorBase):
         self,
         element: _Element,
         *,
-        namespaces: _NonDefaultNSMapArg | None = ...,
-        extensions: _XPathExtFuncArg | None = ...,
-        regexp: bool = ...,
-        smart_strings: bool = ...,
+        namespaces: _NonDefaultNSMapArg | None = None,
+        extensions: _XPathExtFuncArg | None = None,
+        regexp: bool = True,
+        smart_strings: bool = True,
     ) -> None: ...
     def __call__(
         self, _path: _AnyStr, /, **_variables: _XPathVarArg
@@ -97,29 +97,29 @@ class XPathDocumentEvaluator(XPathElementEvaluator):
         self,
         etree: _ElementTree,
         *,
-        namespaces: _NonDefaultNSMapArg | None = ...,
-        extensions: _XPathExtFuncArg | None = ...,
-        regexp: bool = ...,
-        smart_strings: bool = ...,
+        namespaces: _NonDefaultNSMapArg | None = None,
+        extensions: _XPathExtFuncArg | None = None,
+        regexp: bool = True,
+        smart_strings: bool = True,
     ) -> None: ...
 
 @overload
 def XPathEvaluator(
     etree_or_element: _Element,
     *,
-    namespaces: _NonDefaultNSMapArg | None = ...,
-    extensions: _XPathExtFuncArg | None = ...,
-    regexp: bool = ...,
-    smart_strings: bool = ...,
+    namespaces: _NonDefaultNSMapArg | None = None,
+    extensions: _XPathExtFuncArg | None = None,
+    regexp: bool = True,
+    smart_strings: bool = True,
 ) -> XPathElementEvaluator: ...
 @overload
 def XPathEvaluator(
     etree_or_element: _ElementTree,
     *,
-    namespaces: _NonDefaultNSMapArg | None = ...,
-    extensions: _XPathExtFuncArg | None = ...,
-    regexp: bool = ...,
-    smart_strings: bool = ...,
+    namespaces: _NonDefaultNSMapArg | None = None,
+    extensions: _XPathExtFuncArg | None = None,
+    regexp: bool = True,
+    smart_strings: bool = True,
 ) -> XPathDocumentEvaluator: ...
 @final
 class _ElementUnicodeResult(str, Generic[_ET]):
@@ -143,9 +143,9 @@ class _ElementUnicodeResult(str, Generic[_ET]):
 
 def Extension(
     module: object,
-    function_mapping: Mapping[str, str] | None = ...,
+    function_mapping: Mapping[str, str] | None = None,
     *,
-    ns: str | None = ...,
+    ns: str | None = None,
 ) -> dict[tuple[str | None, str], Callable[..., Any]]:
     """Build a dictionary of extension functions from the functions
     defined in a module or the methods of an object.

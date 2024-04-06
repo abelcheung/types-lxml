@@ -27,56 +27,56 @@ def HTML(
     text: _AnyStr,
     parser: HTMLParser[_ET_co],
     *,
-    base_url: _AnyStr | None = ...,
+    base_url: _AnyStr | None = None,
 ) -> _ET_co: ...
 @overload
 def HTML(
     text: _AnyStr,
-    parser: None = ...,
+    parser: None = None,
     *,
-    base_url: _AnyStr | None = ...,
+    base_url: _AnyStr | None = None,
 ) -> _Element: ...
 @overload
 def XML(
     text: _AnyStr,
     parser: XMLParser[_ET_co],
     *,
-    base_url: _AnyStr | None = ...,
+    base_url: _AnyStr | None = None,
 ) -> _ET_co: ...
 @overload
 def XML(
     text: _AnyStr,
-    parser: None = ...,
+    parser: None = None,
     *,
-    base_url: _AnyStr | None = ...,
+    base_url: _AnyStr | None = None,
 ) -> _Element: ...
 @overload
 def parse(
     source: _FileReadSource,
     parser: _DefEtreeParsers[_ET_co],
     *,
-    base_url: _AnyStr | None = ...,
+    base_url: _AnyStr | None = None,
 ) -> _ElementTree[_ET_co]: ...
 @overload
 def parse(
     source: _FileReadSource,
-    parser: None = ...,
+    parser: None = None,
     *,
-    base_url: _AnyStr | None = ...,
+    base_url: _AnyStr | None = None,
 ) -> _ElementTree: ...
 @overload
 def fromstring(
     text: _AnyStr,
     parser: _DefEtreeParsers[_ET_co],
     *,
-    base_url: _AnyStr | None = ...,
+    base_url: _AnyStr | None = None,
 ) -> _ET_co: ...
 @overload
 def fromstring(
     text: _AnyStr,
-    parser: None = ...,
+    parser: None = None,
     *,
-    base_url: _AnyStr | None = ...,
+    base_url: _AnyStr | None = None,
 ) -> _Element: ...
 @overload
 def fromstringlist(
@@ -86,7 +86,7 @@ def fromstringlist(
 @overload
 def fromstringlist(
     strings: Iterable[_AnyStr],
-    parser: None = ...,
+    parser: None = None,
 ) -> _Element: ...
 
 # Under XML Canonicalization (C14N) mode, most arguments are ignored,
@@ -133,9 +133,9 @@ def tostring(
 ) -> bytes: ...
 def indent(
     element_or_tree: _ElementOrTree,
-    space: str = ...,
+    space: str = "  ",
     *,
-    level: int = ...,
+    level: int = 0,
 ) -> None: ...
 @deprecated(
     "For ElementTree 1.3 compat only; result is tostring() output wrapped inside a list"
@@ -147,10 +147,10 @@ def tostringlist(
 def tounicode(
     element_or_tree: _ElementOrTree,
     *,
-    method: str,
-    pretty_print: bool = ...,
-    with_tail: bool = ...,
-    doctype: str | None = ...,
+    method: str = "xml",
+    pretty_print: bool = False,
+    with_tail: bool = True,
+    doctype: str | None = None,
 ) -> None: ...
 def iselement(element: object) -> TypeGuard[_Element]: ...
 
@@ -164,7 +164,7 @@ def adopt_external_document(
 @overload
 def adopt_external_document(
     capsule: object,
-    parser: None = ...,
+    parser: None = None,
 ) -> _ElementTree:
     """
     Original Docstring
@@ -205,7 +205,7 @@ def register_namespace(prefix: _AnyStr, uri: _AnyStr) -> None:
     removed."""
 
 # Debugging only
-def dump(elem: _Element, *, pretty_print: bool = ..., with_tail: bool = ...) -> None:
+def dump(elem: _Element, *, pretty_print: bool = True, with_tail: bool = True) -> None:
     """Writes an element tree or element structure to sys.stdout.
     This function should be used for debugging only."""
 
@@ -240,7 +240,7 @@ class _MemDebug:
             for the current thread.  Each thread has its own dictionary.
         """
     def dump(
-        self, output_file: _AnyStr | None = ..., byte_count: int | None = ...
+        self, output_file: _AnyStr | None = None, byte_count: int | None = None
     ) -> None:
         """Dumps the current memory blocks allocated by libxml2 to a file
 
@@ -252,7 +252,7 @@ class _MemDebug:
             Limits number of bytes in the dump, default is None (unlimited)
         """
     def show(
-        self, output_file: _AnyStr | None = ..., block_count: int | None = ...
+        self, output_file: _AnyStr | None = None, block_count: int | None = None
     ) -> None:
         """Dumps the current memory blocks allocated by libxml2 to a file
         The output file format is suitable for line diffing.

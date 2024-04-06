@@ -32,13 +32,13 @@ class C14NWriterTarget:
         self,
         write: Callable[[str], Any],
         *,
-        with_comments: bool = ...,
-        strip_text: bool = ...,
-        rewrite_prefixes: bool = ...,
-        qname_aware_tags: Iterable[str] | None = ...,
-        qname_aware_attrs: Iterable[str] | None = ...,
-        exclude_attrs: Iterable[str] | None = ...,
-        exclude_tags: Iterable[str] | None = ...,
+        with_comments: bool = False,
+        strip_text: bool = False,
+        rewrite_prefixes: bool = False,
+        qname_aware_tags: Iterable[str] | None = None,
+        qname_aware_attrs: Iterable[str] | None = None,
+        exclude_attrs: Iterable[str] | None = None,
+        exclude_tags: Iterable[str] | None = None,
     ) -> None: ...
     def data(self, data: str) -> None: ...
     def start_ns(self, prefix: str, uri: str) -> None: ...
@@ -57,54 +57,54 @@ def canonicalize(
     xml_data: _AnyStr | _ElementOrTree,
     *,
     out: SupportsWrite[str],
-    with_comments: bool = ...,
-    strip_text: bool = ...,
-    rewrite_prefixes: bool = ...,
-    qname_aware_tags: Iterable[str] | None = ...,
-    qname_aware_attrs: Iterable[str] | None = ...,
-    exclude_attrs: Iterable[str] | None = ...,
-    exclude_tags: Iterable[str] | None = ...,
+    with_comments: bool = False,
+    strip_text: bool = False,
+    rewrite_prefixes: bool = False,
+    qname_aware_tags: Iterable[str] | None = None,
+    qname_aware_attrs: Iterable[str] | None = None,
+    exclude_attrs: Iterable[str] | None = None,
+    exclude_tags: Iterable[str] | None = None,
 ) -> None: ...
 @overload
 def canonicalize(
-    xml_data: None = ...,
+    xml_data: None = None,
     *,
     out: SupportsWrite[str],
     from_file: _FileReadSource,
-    with_comments: bool = ...,
-    strip_text: bool = ...,
-    rewrite_prefixes: bool = ...,
-    qname_aware_tags: Iterable[str] | None = ...,
-    qname_aware_attrs: Iterable[str] | None = ...,
-    exclude_attrs: Iterable[str] | None = ...,
-    exclude_tags: Iterable[str] | None = ...,
+    with_comments: bool = False,
+    strip_text: bool = False,
+    rewrite_prefixes: bool = False,
+    qname_aware_tags: Iterable[str] | None = None,
+    qname_aware_attrs: Iterable[str] | None = None,
+    exclude_attrs: Iterable[str] | None = None,
+    exclude_tags: Iterable[str] | None = None,
 ) -> None: ...
 @overload
 def canonicalize(
     xml_data: _AnyStr | _ElementOrTree,
     *,
-    out: None = ...,
-    with_comments: bool = ...,
-    strip_text: bool = ...,
-    rewrite_prefixes: bool = ...,
-    qname_aware_tags: Iterable[str] | None = ...,
-    qname_aware_attrs: Iterable[str] | None = ...,
-    exclude_attrs: Iterable[str] | None = ...,
-    exclude_tags: Iterable[str] | None = ...,
+    out: None = None,
+    with_comments: bool = False,
+    strip_text: bool = False,
+    rewrite_prefixes: bool = False,
+    qname_aware_tags: Iterable[str] | None = None,
+    qname_aware_attrs: Iterable[str] | None = None,
+    exclude_attrs: Iterable[str] | None = None,
+    exclude_tags: Iterable[str] | None = None,
 ) -> str: ...
 @overload
 def canonicalize(
-    xml_data: None = ...,
+    xml_data: None = None,
     *,
-    out: None = ...,
+    out: None = None,
     from_file: _FileReadSource,
-    with_comments: bool = ...,
-    strip_text: bool = ...,
-    rewrite_prefixes: bool = ...,
-    qname_aware_tags: Iterable[str] | None = ...,
-    qname_aware_attrs: Iterable[str] | None = ...,
-    exclude_attrs: Iterable[str] | None = ...,
-    exclude_tags: Iterable[str] | None = ...,
+    with_comments: bool = False,
+    strip_text: bool = False,
+    rewrite_prefixes: bool = False,
+    qname_aware_tags: Iterable[str] | None = None,
+    qname_aware_attrs: Iterable[str] | None = None,
+    exclude_attrs: Iterable[str] | None = None,
+    exclude_tags: Iterable[str] | None = None,
 ) -> str: ...
 
 #
@@ -121,26 +121,26 @@ def canonicalize(
 class _IncrementalFileWriter:
     def write_declaration(
         self,
-        version: _AnyStr | None = ...,
-        standalone: bool | None = ...,
-        doctype: _AnyStr | None = ...,
+        version: _AnyStr | None = None,
+        standalone: bool | None = None,
+        doctype: _AnyStr | None = None,
     ) -> None: ...
     def write_doctype(self, doctype: _AnyStr | None) -> None: ...
     def write(
         self,
         *args: _AnyStr | _Element,
-        with_tail: bool = ...,
-        pretty_print: bool = ...,
-        method: _OutputMethodArg | None = ...,
+        with_tail: bool = True,
+        pretty_print: bool = False,
+        method: _OutputMethodArg | None = None,
     ) -> None: ...
     def flush(self) -> None: ...
     def method(self, method: _OutputMethodArg | None) -> ContextManager[None]: ...
     def element(
         self,
         tag: _TagName,
-        attrib: SupportsLaxedItems[str, _AnyStr] | None = ...,
-        nsmap: _NSMapArg | None = ...,
-        method: _OutputMethodArg | None = ...,
+        attrib: SupportsLaxedItems[str, _AnyStr] | None = None,
+        nsmap: _NSMapArg | None = None,
+        method: _OutputMethodArg | None = None,
         **_extra: _AnyStr,
     ) -> ContextManager[None]: ...
 
@@ -148,26 +148,26 @@ class _IncrementalFileWriter:
 class _AsyncIncrementalFileWriter:
     async def write_declaration(
         self,
-        version: _AnyStr | None = ...,
-        standalone: bool | None = ...,
-        doctype: _AnyStr | None = ...,
+        version: _AnyStr | None = None,
+        standalone: bool | None = None,
+        doctype: _AnyStr | None = None,
     ) -> None: ...
     async def write_doctype(self, doctype: _AnyStr | None) -> None: ...
     async def write(
         self,
         *args: _AnyStr | _Element | None,
-        with_tail: bool = ...,
-        pretty_print: bool = ...,
-        method: _OutputMethodArg | None = ...,
+        with_tail: bool = True,
+        pretty_print: bool = False,
+        method: _OutputMethodArg | None = None,
     ) -> None: ...
     async def flush(self) -> None: ...
     def method(self, method: _OutputMethodArg | None) -> AsyncContextManager[None]: ...
     def element(
         self,
         tag: _TagName,
-        attrib: SupportsLaxedItems[str, _AnyStr] | None = ...,
-        nsmap: _NSMapArg | None = ...,
-        method: _OutputMethodArg | None = ...,
+        attrib: SupportsLaxedItems[str, _AnyStr] | None = None,
+        nsmap: _NSMapArg | None = None,
+        method: _OutputMethodArg | None = None,
         **_extra: _AnyStr,
     ) -> AsyncContextManager[None]: ...
 
@@ -178,10 +178,10 @@ class xmlfile(
     def __init__(
         self,
         output_file: _FileWriteSource,
-        encoding: _AnyStr | None = ...,
-        compression: int | None = ...,
-        close: bool = ...,
-        buffered: bool = ...,
+        encoding: _AnyStr | None = None,
+        compression: int | None = None,
+        close: bool = False,
+        buffered: bool = True,
     ) -> None: ...
     def __exit__(
         self,
