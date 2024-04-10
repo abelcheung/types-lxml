@@ -45,6 +45,11 @@ def h2_filepath() -> Path:
 
 
 @pytest.fixture
+def h2_fileuri(h2_filepath: Path) -> str:
+    return 'file:///' + str(h2_filepath)
+
+
+@pytest.fixture
 def h2_str(h2_filepath: Path) -> str:
     return h2_filepath.read_text()
 
