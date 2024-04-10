@@ -99,7 +99,6 @@ class _FeedParser(Generic[_ET_co]):
         ```
         """
         ...
-
     @deprecated("Removed since 5.0; renamed to set_element_class_lookup()")
     def setElementClassLookup(
         self, lookup: ElementClassLookup | None = None
@@ -232,7 +231,7 @@ class HTMLPullParser(_PullParserMixin, HTMLParser[_ET_co]):
         remove_blank_text: bool = False,
         remove_comments: bool = False,
         remove_pis: bool = False,
-        strip_cdata: bool =True,
+        strip_cdata: bool = True,
         no_network: bool = True,
         target: ParserTarget[Any] | None = None,
         schema: XMLSchema | None = None,

@@ -172,9 +172,7 @@ class XSLT:
     ) -> str: ...
 
 class _XSLTProcessingInstruction(PIBase):
-    def parseXSL(
-        self, parser: _DefEtreeParsers | None = None
-    ) -> _ElementTree: ...
+    def parseXSL(self, parser: _DefEtreeParsers | None = None) -> _ElementTree: ...
     def set(self, key: Literal["href"], value: str) -> None: ...  # type: ignore[override]
 
 # Nodes are usually some opaque or read-only wrapper of _Element.

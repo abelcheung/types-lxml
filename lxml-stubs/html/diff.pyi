@@ -1,5 +1,5 @@
-from typing import Callable, Iterable
 from _typeshed import _T
+from typing import Callable, Iterable
 
 from .._types import _AnyStr
 from ..etree import _Element
