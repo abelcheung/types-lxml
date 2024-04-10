@@ -89,7 +89,7 @@ class TreeBuilder(ParserTarget[_Element]):
         parser: _DefEtreeParsers | None = None,
         comment_factory: _ElemFactory[_Comment] | None = None,
         pi_factory: _ElemFactory[_ProcessingInstruction] | None = None,
-        insert_comments: bool =True,
+        insert_comments: bool = True,
         insert_pis: bool = True,
     ) -> None: ...
     def close(self) -> _Element: ...

@@ -74,7 +74,7 @@ def makeparser(
     schema: etree.XMLSchema | None = None,
     huge_tree: bool = False,
     remove_blank_text: bool = True,
-    resolve_entities: bool | Literal['internal'] = 'internal',
+    resolve_entities: bool | Literal["internal"] = "internal",
     remove_comments: bool = False,
     remove_pis: bool = False,
     strip_cdata: bool = True,
@@ -137,7 +137,7 @@ XML = fromstring
 # problem in 2nd overload of ObjectPath.__call__()
 # if _ET has a default type, then all subsequent argument
 # typevars need default type too (namely, _default: _T)
-_ET = TypeVar('_ET', bound=etree._Element)
+_ET = TypeVar("_ET", bound=etree._Element)
 
 #
 # ObjectPath -- only used within lxml.objectify

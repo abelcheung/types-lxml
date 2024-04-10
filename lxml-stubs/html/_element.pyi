@@ -177,7 +177,9 @@ class HtmlElement(etree.ElementBase):
         self, *, tag: Iterable[_TagSelector] | None = None
     ) -> Iterator[HtmlElement]: ...
     @overload
-    def itertext(self, *tags: _TagSelector, with_tail: bool = True) -> Iterator[str]: ...
+    def itertext(
+        self, *tags: _TagSelector, with_tail: bool = True
+    ) -> Iterator[str]: ...
     @overload
     def itertext(
         self, *, tag: Iterable[_TagSelector] | None = None, with_tail: bool = True

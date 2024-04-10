@@ -33,6 +33,7 @@ class HTMLParser(etree.HTMLParser[HtmlElement]):
     etree parsers with ``set_element_class_lookup()`` method instead.
     In that case, see ``_FeedParser.set_element_class_lookup()`` for more info.
     """
+
     @property
     def target(self) -> None: ...
 
@@ -63,6 +64,7 @@ class XHTMLParser(etree.XMLParser[HtmlElement]):
 
     For catalog support, see http://www.xmlsoft.org/catalog.html.
     """
+
     @property
     def target(self) -> None: ...
 
