@@ -106,19 +106,22 @@ class _Element:
     ) -> Iterator[Self]: ...
     @overload
     def itersiblings(
-        self, *, tag: Iterable[_t._TagSelector] | None = None, preceding: bool = False
+        self,
+        *,
+        tag: _t._TagSelector | Iterable[_t._TagSelector] | None = None,
+        preceding: bool = False,
     ) -> Iterator[Self]: ...
     @overload
     def iterancestors(self, *tags: _t._TagSelector) -> Iterator[Self]: ...
     @overload
     def iterancestors(
-        self, *, tag: Iterable[_t._TagSelector] | None = None
+        self, *, tag: _t._TagSelector | Iterable[_t._TagSelector] | None = None
     ) -> Iterator[Self]: ...
     @overload
     def iterdescendants(self, *tags: _t._TagSelector) -> Iterator[Self]: ...
     @overload
     def iterdescendants(
-        self, *, tag: Iterable[_t._TagSelector] | None = None
+        self, *, tag: _t._TagSelector | Iterable[_t._TagSelector] | None = None
     ) -> Iterator[Self]: ...
     @overload
     def iterchildren(
@@ -126,13 +129,16 @@ class _Element:
     ) -> Iterator[Self]: ...
     @overload
     def iterchildren(
-        self, *, tag: Iterable[_t._TagSelector] | None = None, reversed: bool = False
+        self,
+        *,
+        tag: _t._TagSelector | Iterable[_t._TagSelector] | None = None,
+        reversed: bool = False,
     ) -> Iterator[Self]: ...
     @overload
     def iter(self, *tags: _t._TagSelector) -> Iterator[Self]: ...
     @overload
     def iter(
-        self, *, tag: Iterable[_t._TagSelector] | None = None
+        self, *, tag: _t._TagSelector | Iterable[_t._TagSelector] | None = None
     ) -> Iterator[Self]: ...
     @overload
     def itertext(
@@ -140,7 +146,10 @@ class _Element:
     ) -> Iterator[str]: ...
     @overload
     def itertext(
-        self, *, tag: Iterable[_t._TagSelector] | None = None, with_tail: bool = True
+        self,
+        *,
+        tag: _t._TagSelector | Iterable[_t._TagSelector] | None = None,
+        with_tail: bool = True,
     ) -> Iterator[str]: ...
     def makeelement(
         self,
