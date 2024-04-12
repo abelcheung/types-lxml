@@ -196,8 +196,11 @@ class HtmlElement(etree.ElementBase):
         self, path: _ElemPathArg, namespaces: _NSMapArg | None = None
     ) -> HtmlElement | None: ...
     def findtext(
-        self, path, default=None, namespaces=None
-    ) -> str: ...
+        self, 
+        path: _ElemPathArg,
+        default: _T | None = None, 
+        namespaces: _NSMapArg | None = None, 
+    ) -> str | _T: ...
     def findall(
         self, path: _ElemPathArg, namespaces: _NSMapArg | None = None
     ) -> list[HtmlElement]: ...
@@ -205,7 +208,13 @@ class HtmlElement(etree.ElementBase):
         self, path: _ElemPathArg, namespaces: _NSMapArg | None = None
     ) -> Iterator[HtmlElement]: ...
     def xpath(
-        self, _path, *, namespaces=None, extensions=None, smart_strings=True, **_variables
+        self,
+        _path: _AnyStr,
+        *,
+        namespaces: _NonDefaultNSMapArg | None = None,
+        extensions: _XPathExtFuncArg | None = None,
+        smart_strings: bool = True,
+        **_variables: _XPathVarArg
     ) -> list[HTMLElement]: ...
     def cssselect(
         self,
