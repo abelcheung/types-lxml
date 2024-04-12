@@ -19,6 +19,7 @@ from .._types import (
     _TagName,
     _TagSelector,
     _XPathExtFuncArg,
+    _XPathObject,
     _XPathVarArg,
 )
 from ..cssselect import _CSSTransArg
