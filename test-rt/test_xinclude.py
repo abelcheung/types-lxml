@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import copy
-from inspect import Parameter, _ParameterKind, signature
+from inspect import Parameter, _ParameterKind
 from io import StringIO
 from pathlib import Path
 from typing import Any, Literal, cast, overload
@@ -63,13 +63,13 @@ class TestXInclude:
 @overload
 def good_loader(
     href: str, mode: Literal["xml"], encoding: str | None = None
-) -> _Element:
-    ...
+) -> _Element: ...
 
 
 @overload
-def good_loader(href: str, mode: Literal["text"], encoding: str | None = None) -> str:
-    ...
+def good_loader(
+    href: str, mode: Literal["text"], encoding: str | None = None
+) -> str: ...
 
 
 def good_loader(href: str, mode: str, encoding: str | None = None) -> Any:
@@ -93,33 +93,22 @@ def bad_loader_3(href: str, mode: str, _) -> _Element:
 
 
 class TestElementInclude:
+
     # fmt: off
-    param_data = [
+    @_testutils.signature_tester(EI.include, (
         ('elem'     , _ParameterKind.POSITIONAL_OR_KEYWORD, Parameter.empty),
         ('loader'   , _ParameterKind.POSITIONAL_OR_KEYWORD, None           ),
         ('base_url' , _ParameterKind.POSITIONAL_OR_KEYWORD, None           ),
         ('max_depth', _ParameterKind.POSITIONAL_OR_KEYWORD, 6              ),
-    ]
-    # fmt: on
-
-    def test_func_sig(self, xinc_sample_data: str) -> None:
-        sig = signature(EI.include)
-        param = list(sig.parameters.values())
-        for i in range(len(param)):
-            assert (
-                param[i].name,
-                param[i].kind,
-                param[i].default,
-            ) == self.param_data[i]
-
-        elem = fromstring(xinc_sample_data)
-        result = EI.include(elem)
-        reveal_type(result)
+    ))  # fmt: on
+    def test_func_sig(self) -> None:
+        pass
 
     def test_input_type(self, xinc_sample_data: str) -> None:
         elem = fromstring(xinc_sample_data)
-        EI.include(elem)
-        del elem
+        result = EI.include(elem)
+        reveal_type(result)
+        del elem, result
 
         sio = StringIO(xinc_sample_data)
         tree = parse(sio)

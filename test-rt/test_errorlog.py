@@ -1,7 +1,7 @@
 from __future__ import annotations
 
-import inspect
 import logging
+from inspect import Parameter, Signature, signature
 from typing import Any, cast
 
 import _testutils
@@ -83,15 +83,16 @@ class TestListLog:
         for e in list_log:
             reveal_type(e)
 
-    def test_filter_domains(self, list_log: _ListErrorLog) -> None:
-        sig = inspect.signature(list_log.filter_domains)
-        param = list(sig.parameters.values())
-        assert len(param) == 1
-        assert param[0].name == "domains"
-        assert param[0].kind == inspect.Parameter.POSITIONAL_OR_KEYWORD
-        del sig, param
 
-        filtered = list_log.filter_domains([ErrorDomains.PARSER, ErrorDomains.DTD])
+class TestListLogMethods:
+
+    # fmt: off
+    @_testutils.signature_tester(_ListErrorLog.filter_domains, (
+        None,
+        ("domains", Parameter.POSITIONAL_OR_KEYWORD, Parameter.empty),
+    ))  # fmt: on
+    def test_filter_domains(self, list_log: _ListErrorLog) -> None:
+        filtered = list_log.filter_domains([ErrorDomains.XINCLUDE, ErrorDomains.DTD])
         reveal_type(filtered)
         del filtered
 
@@ -102,14 +103,11 @@ class TestListLog:
         with pytest.raises(TypeError, match=r"argument .+ is not iterable"):
             _ = list_log.filter_domains(cast(Any, None))
 
+    @_testutils.signature_tester(_ListErrorLog.filter_levels, (
+        None,
+        ("levels", Parameter.POSITIONAL_OR_KEYWORD, Parameter.empty),
+    ))
     def test_filter_levels(self, list_log: _ListErrorLog) -> None:
-        sig = inspect.signature(list_log.filter_levels)
-        param = list(sig.parameters.values())
-        assert len(param) == 1
-        assert param[0].name == "levels"
-        assert param[0].kind == inspect.Parameter.POSITIONAL_OR_KEYWORD
-        del sig, param
-
         new_log = list_log.filter_levels(ErrorLevels.ERROR)
         reveal_type(new_log)
         del new_log
@@ -126,14 +124,11 @@ class TestListLog:
         with pytest.raises(TypeError, match=r"argument .+ is not iterable"):
             _ = list_log.filter_levels(cast(Any, None))
 
-    def test_filter_levels_shortcut(self, list_log: _ListErrorLog) -> None:
-        sig = inspect.signature(list_log.filter_from_level)
-        param = list(sig.parameters.values())
-        assert len(param) == 1
-        assert param[0].name == "level"
-        assert param[0].kind == inspect.Parameter.POSITIONAL_OR_KEYWORD
-        del sig, param
-
+    @_testutils.signature_tester(_ListErrorLog.filter_from_level, (
+        None,
+        ("level", Parameter.POSITIONAL_OR_KEYWORD, Parameter.empty),
+    ))
+    def test_filter_from_level(self, list_log: _ListErrorLog) -> None:
         if _method_no_kwarg():
             new_log = list_log.filter_from_level(ErrorLevels.NONE)
         else:
@@ -141,26 +136,24 @@ class TestListLog:
         reveal_type(new_log)
         del new_log
 
-        assert inspect.signature(list_log.filter_from_errors) == inspect.Signature()
+        assert signature(list_log.filter_from_errors) == Signature()
         reveal_type(list_log.filter_from_errors())
 
-        assert inspect.signature(list_log.filter_from_fatals) == inspect.Signature()
+        assert signature(list_log.filter_from_fatals) == Signature()
         reveal_type(list_log.filter_from_fatals())
 
-        assert inspect.signature(list_log.filter_from_warnings) == inspect.Signature()
+        assert signature(list_log.filter_from_warnings) == Signature()
         reveal_type(list_log.filter_from_warnings())
 
+    # TODO implement filter_types test when enums are completed in stub
     # def test_filter_types(self, list_log: _ListErrorLog) -> None:
     # new_log = list_log.filter_types(ErrorTypes.???)
 
-    def test_other_methods(self, list_log: _ListErrorLog) -> None:
-        sig = inspect.signature(list_log.receive)
-        param = list(sig.parameters.values())
-        assert len(param) == 1
-        assert param[0].name == "entry"
-        assert param[0].kind == inspect.Parameter.POSITIONAL_OR_KEYWORD
-        del sig, param
-
+    @_testutils.signature_tester(_ListErrorLog.receive, (
+        None,
+        ("entry", Parameter.POSITIONAL_OR_KEYWORD, Parameter.empty),
+    ))
+    def test_receive(self, list_log: _ListErrorLog) -> None:
         if _method_no_kwarg():
             ret = list_log.receive(list_log[0])
         else:
@@ -170,9 +163,11 @@ class TestListLog:
         with pytest.raises(TypeError, match=r"expected .+\._LogEntry, got int"):
             list_log.receive(cast(Any, 1))
 
-        # BEWARE: vanilla _ListErrorLog has no clear() method,
-        # thus can't be inspected
-        assert inspect.signature(list_log.copy) == inspect.Signature()
+    # BEWARE: vanilla _ListErrorLog has no clear() method,
+    # thus can't be inspected
+
+    def test_copy(self, list_log: _ListErrorLog) -> None:
+        assert signature(list_log.copy) == Signature()
         err_copy = list_log.copy()
         reveal_type(err_copy)
 
@@ -194,19 +189,14 @@ class TestEmptyLog:
 
 
 class TestModuleFunc:
+    @_testutils.signature_tester(
+        use_global_python_log,
+        (("log", Parameter.POSITIONAL_OR_KEYWORD, Parameter.empty),),
+    )
     def test_sig(self) -> None:
-        sig = inspect.signature(clear_error_log)
-        param = list(sig.parameters.values())
-        assert len(param) == 0
-        del sig, param
+        assert signature(clear_error_log) == Signature()
 
-        sig = inspect.signature(use_global_python_log)
-        param = list(sig.parameters.values())
-        assert len(param) == 1
-        assert param[0].name == "log"
-        assert param[0].kind == inspect.Parameter.POSITIONAL_OR_KEYWORD
-        del sig, param
-
+    def test_global_log_usage(self) -> None:
         with pytest.raises(
             TypeError, match=r"expected lxml\.etree\.PyErrorLog, got int"
         ):

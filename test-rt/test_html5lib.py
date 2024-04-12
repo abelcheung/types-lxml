@@ -1,9 +1,9 @@
 from __future__ import annotations
 
-import inspect
+from inspect import Parameter
 from io import BytesIO, StringIO
 from pathlib import Path
-from typing import Any, Sequence, cast
+from typing import Any, cast
 
 import _testutils
 import lxml.html.html5parser as h5
@@ -19,27 +19,28 @@ reveal_type = getattr(_testutils, "reveal_type_wrapper")
 
 
 class TestParserConstruct:
-    def test_no_args(self) -> None:
+    def test_default_parser(self) -> None:
         reveal_type(h5.html_parser)
-        p = HTMLParser()
-        reveal_type(p)
+
+    # fmt: off
+    @_testutils.signature_tester(HTMLParser.__init__, (
+        None,
+        ("strict", Parameter.POSITIONAL_OR_KEYWORD, False          ),
+        ("kwargs", Parameter.VAR_KEYWORD          , Parameter.empty),
+    ))  # fmt: on
+    def test_func_sig(self) -> None:
+        pass
 
     @pytest.mark.parametrize(
         ("args", "kw"),
         [
+            pytest.param((), {}),
             pytest.param((False,), {}),
             pytest.param((), {"strict": True, "debug": True}),
             pytest.param((True,), {"namespaceHTMLElements": True}),
         ],
     )
     def test_good_args(self, args: tuple[Any], kw: dict[str, Any]) -> None:
-        sig = inspect.signature(HTMLParser.__init__)
-        param = list(sig.parameters.values())
-        assert len(param) == 3
-        assert param[1].name == "strict"
-        assert param[1].kind == inspect.Parameter.POSITIONAL_OR_KEYWORD
-        assert param[2].kind == inspect.Parameter.VAR_KEYWORD
-
         p = HTMLParser(*args, **kw)
         reveal_type(p)
 
@@ -59,34 +60,14 @@ class TestParserConstruct:
 
 
 class TestFromstringFamily:
-    @pytest.mark.parametrize(
-        ("funcname", "argname"),
-        [
-            # fmt: off
-            ("document_fromstring",
-                ("html", "guess_charset", "parser")),
-            ("fragments_fromstring",
-                ("html", "no_leading_text", "guess_charset", "parser")),
-            ("fragment_fromstring",
-                ("html", "create_parent", "guess_charset", "parser")),
-            ("fromstring",
-                ("html", "guess_charset", "parser")),
-            ("parse",
-                ("filename_url_or_file", "guess_charset", "parser")),
-            # fmt: on
-        ],
-    )
-    def test_func_sig(self, funcname: str, argname: Sequence[str]) -> None:
-        sig = inspect.signature(getattr(h5, funcname))
-        param = list(sig.parameters.values())
-        assert len(param) == len(argname)
-        for i in range(len(argname)):
-            assert param[i].name == argname[i]
-            assert param[i].kind == inspect.Parameter.POSITIONAL_OR_KEYWORD
-            if i:
-                assert param[i].default != inspect.Parameter.empty
-            else:
-                assert param[i].default is inspect.Parameter.empty
+    # fmt: off
+    @_testutils.signature_tester(h5.document_fromstring, (
+        ("html"         , Parameter.POSITIONAL_OR_KEYWORD, Parameter.empty),
+        ("guess_charset", Parameter.POSITIONAL_OR_KEYWORD, None           ),
+        ("parser"       , Parameter.POSITIONAL_OR_KEYWORD, None           ),
+    ))  # fmt: on
+    def test_d_fs_sig(self) -> None:
+        pass
 
     def test_d_fs_src(self, h2_str: str, h2_bytes: bytes) -> None:
         elem = h5.document_fromstring(h2_str)
@@ -96,6 +77,16 @@ class TestFromstringFamily:
         elem = h5.document_fromstring(h2_bytes)
         reveal_type(elem)
         del elem
+
+    # fmt: off
+    @_testutils.signature_tester(h5.fragments_fromstring, (
+        ("html"           , Parameter.POSITIONAL_OR_KEYWORD, Parameter.empty),
+        ("no_leading_text", Parameter.POSITIONAL_OR_KEYWORD, False          ),
+        ("guess_charset"  , Parameter.POSITIONAL_OR_KEYWORD, None           ),
+        ("parser"         , Parameter.POSITIONAL_OR_KEYWORD, None           ),
+    ))  # fmt: on
+    def test_fs_fs_sig(self) -> None:
+        pass
 
     def test_fs_fs_src(self) -> None:
         src_s: str = '<div><img src=""/></div><span>nothing</span>'
@@ -119,6 +110,16 @@ class TestFromstringFamily:
             reveal_type(elem)
         del elems
 
+    # fmt: off
+    @_testutils.signature_tester(h5.fragment_fromstring, (
+        ("html"         , Parameter.POSITIONAL_OR_KEYWORD, Parameter.empty),
+        ("create_parent", Parameter.POSITIONAL_OR_KEYWORD, False          ),
+        ("guess_charset", Parameter.POSITIONAL_OR_KEYWORD, None           ),
+        ("parser"       , Parameter.POSITIONAL_OR_KEYWORD, None           ),
+    ))  # fmt: on
+    def test_f_fs_sig(self) -> None:
+        pass
+
     def test_f_fs_src(self) -> None:
         src_s: str = "<span>nothing</span>"
         src_b: bytes = src_s.encode()
@@ -130,6 +131,16 @@ class TestFromstringFamily:
         elem = h5.fragment_fromstring(src_b)
         reveal_type(elem)
         del elem
+
+    # fmt: off
+    @_testutils.signature_tester(h5.fromstring, (
+        ("html"         , Parameter.POSITIONAL_OR_KEYWORD, Parameter.empty),
+        ("guess_charset", Parameter.POSITIONAL_OR_KEYWORD, None           ),
+        ("parser"       , Parameter.POSITIONAL_OR_KEYWORD, None           ),
+    ))  # fmt: on
+    def test_fs_sig(self) -> None:
+        pass
+
 
     def test_fs_src(self, h2_str: str, h2_bytes: bytes) -> None:
         elem = h5.fromstring(h2_str)
@@ -157,6 +168,16 @@ class TestFromstringFamily:
                 func = getattr(h5, funcname)
                 _ = func(cast(Any, src))
         fh.close()
+
+    # fmt: off
+    @_testutils.signature_tester(h5.parse, (
+        ("filename_url_or_file", Parameter.POSITIONAL_OR_KEYWORD, Parameter.empty),
+        ("guess_charset"       , Parameter.POSITIONAL_OR_KEYWORD, None           ),
+        ("parser"              , Parameter.POSITIONAL_OR_KEYWORD, None           ),
+    ))  # fmt: on
+    def test_parse_sig(self) -> None:
+        pass
+
 
     def test_parse_src(self, h2_filepath: Path) -> None:
         with open(h2_filepath, "rb") as fh:

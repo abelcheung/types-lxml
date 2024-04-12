@@ -1,8 +1,9 @@
 from __future__ import annotations
 
+from inspect import Parameter
 from io import BytesIO, StringIO
 from pathlib import Path
-from typing import Any, ParamSpec, cast
+from typing import Any, cast
 from urllib.request import urlopen
 
 import _testutils
@@ -15,10 +16,17 @@ from lxml.html import HtmlElement as HtmlElement, soupparser as _soup
 
 reveal_type = getattr(_testutils, "reveal_type_wrapper")
 
-_P = ParamSpec("_P")
-
-
 class TestFromstring:
+    # fmt: off
+    @_testutils.signature_tester(_soup.fromstring, (
+        ("data"         , Parameter.POSITIONAL_OR_KEYWORD, Parameter.empty),
+        ("beautifulsoup", Parameter.POSITIONAL_OR_KEYWORD, None           ),
+        ("makeelement"  , Parameter.POSITIONAL_OR_KEYWORD, None           ),
+        ("bsargs"       , Parameter.VAR_KEYWORD          , Parameter.empty),
+    )) # fmt: on
+    def test_func_sig(self) -> None:
+        pass
+
     def test_input_type(self, h2_filepath: Path, h2_fileuri: str) -> None:
         result = _soup.fromstring(str(h2_filepath))
         del result
@@ -96,6 +104,16 @@ class TestFromstring:
 
 
 class TestParse:
+    # fmt: off
+    @_testutils.signature_tester(_soup.parse, (
+        ("file"         , Parameter.POSITIONAL_OR_KEYWORD, Parameter.empty),
+        ("beautifulsoup", Parameter.POSITIONAL_OR_KEYWORD, None           ),
+        ("makeelement"  , Parameter.POSITIONAL_OR_KEYWORD, None           ),
+        ("bsargs"       , Parameter.VAR_KEYWORD          , Parameter.empty),
+    ))  # fmt: on
+    def test_func_sig(self) -> None:
+        pass
+
     def test_input_type(
         self,
         h2_filepath: Path,
@@ -192,6 +210,14 @@ class TestParse:
 
 
 class TestConvertTree:
+    # fmt: on
+    @_testutils.signature_tester(_soup.convert_tree, (
+        ("beautiful_soup_tree", Parameter.POSITIONAL_OR_KEYWORD, Parameter.empty),
+        ("makeelement"        , Parameter.POSITIONAL_OR_KEYWORD, None           ),
+    ))  # fmt: off
+    def test_func_sig(self) -> None:
+        pass
+
     def test_input_type(self, h2_filepath: Path) -> None:
         for feat in ("lxml-html", "html.parser"):
             soup = BeautifulSoup(h2_filepath.read_text(), features=feat)
