@@ -198,6 +198,14 @@ class HtmlElement(etree.ElementBase):
     def find(
         self, path: _ElemPathArg, namespaces: _NSMapArg | None = None
     ) -> HtmlElement | None: ...
+    @overload
+    def findtext(
+        self,
+        path: _ElemPathArg,
+        *,
+        namespaces: _NSMapArg | None = None,
+    ) -> str | None: ...
+    @overload
     def findtext(
         self, 
         path: _ElemPathArg,
