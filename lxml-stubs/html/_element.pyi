@@ -17,6 +17,8 @@ from .._types import (
     _NSMapArg,
     _TagName,
     _TagSelector,
+    _XPathExtFuncArg,
+    _XPathVarArg,
 )
 from ..cssselect import _CSSTransArg
 from ._form import FormElement, LabelElement
@@ -211,7 +213,7 @@ class HtmlElement(etree.ElementBase):
         self,
         _path: _AnyStr,
         *,
-        namespaces: _NonDefaultNSMapArg | None = None,
+        namespaces: _NSMapArg | None = None,
         extensions: _XPathExtFuncArg | None = None,
         smart_strings: bool = True,
         **_variables: _XPathVarArg
