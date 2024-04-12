@@ -14,6 +14,7 @@ from .._types import (
     _AttrName,
     _AttrVal,
     _ElemPathArg,
+    _NonDefaultNSMapArg,
     _NSMapArg,
     _TagName,
     _TagSelector,
@@ -200,7 +201,7 @@ class HtmlElement(etree.ElementBase):
     def findtext(
         self, 
         path: _ElemPathArg,
-        default: _T | None = None, 
+        default: _T, 
         namespaces: _NSMapArg | None = None, 
     ) -> str | _T: ...
     def findall(
