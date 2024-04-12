@@ -430,13 +430,8 @@ class _Attrib:
 class __ContentOnlyElement(_Element):
     #
     # Useful properties
+    # .text and .tag are overridden in each concrete class below
     #
-    @property
-    def text(self) -> str | None: ...
-    @text.setter
-    def text(  # pyright: ignore[reportIncompatibleMethodOverride]
-        self, value: _t._AnyStr | None
-    ) -> None: ...
     @property
     def attrib(self) -> Mapping[_t.Unused, _t.Unused]: ...  # type: ignore[override]
     def get(self, key: _t.Unused, default: _t.Unused = None) -> None: ...  # type: ignore[override]
@@ -463,11 +458,23 @@ class __ContentOnlyElement(_Element):
 class _Comment(__ContentOnlyElement):
     @property  # type: ignore[misc]
     def tag(self) -> _t._ElemFactory[_Comment]: ...  # type: ignore[override]
+    @property  # type: ignore[override]
+    def text(self) -> str: ...
+    @text.setter
+    def text(  # pyright: ignore[reportIncompatibleMethodOverride]
+        self, value: _t._AnyStr | None
+    ) -> None: ...
 
 # signature of .get() for _PI and _Element are the same
 class _ProcessingInstruction(__ContentOnlyElement):
     @property  # type: ignore[misc]
     def tag(self) -> _t._ElemFactory[_ProcessingInstruction]: ...  # type: ignore[override]
+    @property  # type: ignore[override]
+    def text(self) -> str: ...
+    @text.setter
+    def text(  # pyright: ignore[reportIncompatibleMethodOverride]
+        self, value: _t._AnyStr | None
+    ) -> None: ...
     @property
     def target(self) -> str: ...
     @target.setter
