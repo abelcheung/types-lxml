@@ -213,17 +213,17 @@ class HtmlElement(etree.ElementBase):
         self,
         _path: _AnyStr,
         *,
-        namespaces: _NSMapArg | None = None,
+        namespaces: _NonDefaultNSMapArg | None = None,
         extensions: _XPathExtFuncArg | None = None,
         smart_strings: bool = True,
         **_variables: _XPathVarArg
-    ) -> list[HTMLElement]: ...
+    ) -> list[HtmlElement]: ...
     def cssselect(
         self,
         expr: str,
         *,
         translator: _CSSTransArg = "xml",
-    ) -> list[HtmlElement]: ...
+    ) -> _XPathObject: ...
 
 #
 # HTML element class attribute
