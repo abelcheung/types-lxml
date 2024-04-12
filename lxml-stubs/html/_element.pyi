@@ -222,6 +222,7 @@ class HtmlElement(etree.ElementBase):
     def xpath(
         self,
         _path: _AnyStr,
+        /,
         *,
         namespaces: _NonDefaultNSMapArg | None = None,
         extensions: _XPathExtFuncArg | None = None,
