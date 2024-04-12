@@ -148,19 +148,22 @@ class HtmlElement(etree.ElementBase):
     ) -> Iterator[HtmlElement]: ...
     @overload
     def itersiblings(
-        self, *, tag: Iterable[_TagSelector] | None = None, preceding: bool = False
+        self,
+        *,
+        tag: _TagSelector | Iterable[_TagSelector] | None = None,
+        preceding: bool = False,
     ) -> Iterator[HtmlElement]: ...
     @overload
     def iterancestors(self, *tags: _TagSelector) -> Iterator[HtmlElement]: ...
     @overload
     def iterancestors(
-        self, *, tag: Iterable[_TagSelector] | None = None
+        self, *, tag: _TagSelector | Iterable[_TagSelector] | None = None
     ) -> Iterator[HtmlElement]: ...
     @overload
     def iterdescendants(self, *tags: _TagSelector) -> Iterator[HtmlElement]: ...
     @overload
     def iterdescendants(
-        self, *, tag: Iterable[_TagSelector] | None = None
+        self, *, tag: _TagSelector | Iterable[_TagSelector] | None = None
     ) -> Iterator[HtmlElement]: ...
     @overload
     def iterchildren(
@@ -168,13 +171,16 @@ class HtmlElement(etree.ElementBase):
     ) -> Iterator[HtmlElement]: ...
     @overload
     def iterchildren(
-        self, *, tag: Iterable[_TagSelector] | None = None, reversed: bool = False
+        self,
+        *,
+        tag: _TagSelector | Iterable[_TagSelector] | None = None,
+        reversed: bool = False,
     ) -> Iterator[HtmlElement]: ...
     @overload
     def iter(self, *tags: _TagSelector) -> Iterator[HtmlElement]: ...
     @overload
     def iter(
-        self, *, tag: Iterable[_TagSelector] | None = None
+        self, *, tag: _TagSelector | Iterable[_TagSelector] | None = None
     ) -> Iterator[HtmlElement]: ...
     @overload
     def itertext(
@@ -182,7 +188,10 @@ class HtmlElement(etree.ElementBase):
     ) -> Iterator[str]: ...
     @overload
     def itertext(
-        self, *, tag: Iterable[_TagSelector] | None = None, with_tail: bool = True
+        self,
+        *,
+        tag: _TagSelector | Iterable[_TagSelector] | None = None,
+        with_tail: bool = True,
     ) -> Iterator[str]: ...
     def makeelement(
         self,
