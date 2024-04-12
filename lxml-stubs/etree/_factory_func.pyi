@@ -4,13 +4,13 @@ from .._types import (
     _ET,
     SupportsLaxedItems,
     _AnyStr,
+    _DefEtreeParsers,
     _ET_co,
     _FileReadSource,
     _NSMapArg,
     _TagName,
 )
 from ._element import _Comment, _Element, _ElementTree, _Entity, _ProcessingInstruction
-from ._parser import _DefEtreeParsers
 
 def Comment(text: _AnyStr | None = None) -> _Comment: ...
 def ProcessingInstruction(

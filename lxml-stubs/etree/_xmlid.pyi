@@ -6,9 +6,8 @@ if sys.version_info >= (3, 11):
 else:
     from typing_extensions import Self
 
-from .._types import _ET, _AnyStr, _FileReadSource
+from .._types import _ET, _AnyStr, _DefEtreeParsers, _FileReadSource
 from ._element import _Element, _ElementTree
-from ._parser import _DefEtreeParsers
 
 # arguments for these module funcs are the same as XML() and parse()
 

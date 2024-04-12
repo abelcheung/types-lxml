@@ -17,7 +17,7 @@ if sys.version_info >= (3, 10):
 else:
     from typing_extensions import TypeAlias
 
-from .etree import QName, _Element, _ElementTree
+from .etree import HTMLParser, QName, XMLParser, _Element, _ElementTree
 
 # Dup but deviate from recent _typeshed
 Unused: TypeAlias = Any
@@ -128,6 +128,9 @@ _ElemFactory: TypeAlias = Callable[..., _ET]
 _TagSelector: TypeAlias = _TagName | _ElemFactory
 
 _ElementOrTree: TypeAlias = _ET | _ElementTree[_ET]
+
+# The basic parsers bundled in lxml.etree
+_DefEtreeParsers = XMLParser[_ET_co] | HTMLParser[_ET_co]
 
 class SupportsLaxedItems(Protocol[_KT_co, _VT_co]):
     """Relaxed form of SupportsItems

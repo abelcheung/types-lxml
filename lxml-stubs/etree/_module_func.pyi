@@ -14,13 +14,14 @@ else:
 from .._types import (
     _ET,
     _AnyStr,
+    _DefEtreeParsers,
     _ElementOrTree,
     _ET_co,
     _FileReadSource,
     _OutputMethodArg,
 )
 from ._element import _Element, _ElementTree
-from ._parser import HTMLParser, XMLParser, _DefEtreeParsers
+from ._parser import HTMLParser, XMLParser
 
 @overload
 def HTML(

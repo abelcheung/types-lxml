@@ -2,9 +2,9 @@ from _typeshed import _T_co
 from abc import abstractmethod
 from typing import Mapping, Protocol
 
-from .._types import _ElemFactory
+from .._types import _DefEtreeParsers, _ElemFactory
 from ._element import _Attrib, _Comment, _Element, _ProcessingInstruction
-from ._parser import XMLSyntaxError, _DefEtreeParsers
+from ._parser import XMLSyntaxError
 
 class XMLSyntaxAssertionError(XMLSyntaxError, AssertionError): ...
 

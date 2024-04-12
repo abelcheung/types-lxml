@@ -15,7 +15,6 @@ else:
 from .. import _types as _t
 from ..cssselect import _CSSTransArg
 from ._module_misc import CDATA, DocInfo, QName
-from ._parser import _DefEtreeParsers
 from ._xslt import XSLTAccessControl, XSLTExtension, _Stylesheet_Param, _XSLTResultTree
 
 # The base of _Element is *almost* an amalgam of MutableSequence[_Element]
@@ -221,13 +220,13 @@ class _Element:
 # adds much complexity without any benefit.
 class _ElementTree(Generic[_t._ET_co]):
     @property
-    def parser(self) -> _DefEtreeParsers[_t._ET_co] | None: ...
+    def parser(self) -> _t._DefEtreeParsers[_t._ET_co] | None: ...
     @property
     def docinfo(self) -> DocInfo: ...
     def parse(
         self,
         source: _t._FileReadSource,
-        parser: _DefEtreeParsers[_t._ET_co] | None = None,
+        parser: _t._DefEtreeParsers[_t._ET_co] | None = None,
         *,
         base_url: _t._AnyStr | None = None,
     ) -> None: ...

@@ -6,7 +6,7 @@ from _typeshed import _T
 from typing import Iterable, Literal, TypeVar, overload
 
 from .. import etree
-from .._types import _AnyStr, _FileReadSource
+from .._types import _AnyStr, _DefEtreeParsers, _FileReadSource
 from ._element import ObjectifiedDataElement, ObjectifiedElement
 
 #
@@ -93,7 +93,7 @@ def makeparser(
 
 def parse(
     source: _FileReadSource,
-    parser: etree._parser._DefEtreeParsers[ObjectifiedElement] | None = None,
+    parser: _DefEtreeParsers[ObjectifiedElement] | None = None,
     *,
     base_url: _AnyStr | None = None,
 ) -> etree._ElementTree[ObjectifiedElement]:
@@ -113,7 +113,7 @@ def parse(
 
 def fromstring(
     xml: _AnyStr,
-    parser: etree._parser._DefEtreeParsers[ObjectifiedElement] | None = None,
+    parser: _DefEtreeParsers[ObjectifiedElement] | None = None,
     *,
     base_url: _AnyStr | None = None,
 ) -> ObjectifiedElement:

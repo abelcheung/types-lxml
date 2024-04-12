@@ -16,11 +16,16 @@ if sys.version_info >= (3, 13):
 else:
     from typing_extensions import deprecated
 
-from .._types import SupportsLaxedItems, _AnyStr, _ElementOrTree, _FileWriteSource
+from .._types import (
+    SupportsLaxedItems,
+    _AnyStr,
+    _DefEtreeParsers,
+    _ElementOrTree,
+    _FileWriteSource,
+)
 from ._classlookup import PIBase
 from ._element import _Element, _ElementTree
 from ._module_misc import LxmlError
-from ._parser import _DefEtreeParsers
 from ._serializer import SerialisationError
 from ._xmlerror import _ListErrorLog
 from ._xpath import XPath

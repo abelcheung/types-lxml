@@ -7,10 +7,16 @@ else:
     from typing_extensions import TypeAlias
 
 from .. import etree
-from .._types import Unused, _AnyStr, _ElemClsLookupArg, _FileReadSource
+from .._types import (
+    Unused,
+    _AnyStr,
+    _DefEtreeParsers,
+    _ElemClsLookupArg,
+    _FileReadSource,
+)
 from ._element import HtmlElement
 
-_HtmlElemParser: TypeAlias = etree._parser._DefEtreeParsers[HtmlElement]
+_HtmlElemParser: TypeAlias = _DefEtreeParsers[HtmlElement]
 
 #
 # Parser
