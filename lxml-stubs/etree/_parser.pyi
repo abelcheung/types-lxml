@@ -24,6 +24,7 @@ from .._types import (
 )
 from ._classlookup import ElementClassLookup
 from ._docloader import _ResolverRegistry
+from ._element import _Element
 from ._module_misc import LxmlError, LxmlSyntaxError
 from ._saxparser import ParserTarget
 from ._xmlerror import _ListErrorLog
@@ -117,7 +118,7 @@ class _PullParserMixin:
     # The iterated items from pull parser events may return anything.
     # Even etree.TreeBuilder, which produce element nodes by default, allows
     # overriding factory functions via arguments to generate anything.
-    def read_events(self) -> Iterator[tuple[str, Any]]: ...
+    def read_events(self) -> Iterator[tuple[str, _Element | Any]]: ...
 
 # It is unfortunate that, in the end, it is decided to forfeit
 # integration of custom target annotation (the 'target' parameter).

@@ -1,8 +1,8 @@
-from typing import Any, Literal, Protocol, overload
+from typing import Literal, Protocol, overload
 
 from lxml.etree import LxmlSyntaxError, _Element
 
-from ._types import _ElementOrTree
+from ._types import Unused, _ElementOrTree
 
 class FatalIncludeError(LxmlSyntaxError): ...
 class LimitedRecursiveIncludeError(FatalIncludeError): ...
@@ -28,7 +28,7 @@ class LoaderProtocol(Protocol):
         _href: str,  # URL or local path from href="..." attribute
         _mode: Literal["xml"],
         /,
-        encoding: Any = None,  # Under XML mode this param is ignored
+        encoding: Unused = None,  # Under XML mode this param is ignored
         # but must be present nontheless
     ) -> _Element: ...
     @overload
