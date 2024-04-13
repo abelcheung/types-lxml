@@ -1,8 +1,15 @@
-from typing import Literal, Protocol, overload
+from typing import Literal, LiteralString, Protocol, overload
 
 from lxml.etree import LxmlSyntaxError, _Element
 
 from ._types import Unused, _ElementOrTree
+
+# exported constants
+XINCLUDE: LiteralString
+XINCLUDE_INCLUDE: LiteralString
+XINCLUDE_FALLBACK: LiteralString
+XINCLUDE_ITER_TAG: LiteralString
+DEFAULT_MAX_INCLUSION_DEPTH: int
 
 class FatalIncludeError(LxmlSyntaxError): ...
 class LimitedRecursiveIncludeError(FatalIncludeError): ...
