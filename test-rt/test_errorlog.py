@@ -85,7 +85,6 @@ class TestListLog:
 
 
 class TestListLogMethods:
-
     # fmt: off
     @_testutils.signature_tester(_ListErrorLog.filter_domains, (
         None,

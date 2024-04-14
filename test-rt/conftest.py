@@ -46,7 +46,7 @@ def h2_filepath() -> Path:
 
 @pytest.fixture
 def h2_fileuri(h2_filepath: Path) -> str:
-    return 'file:///' + str(h2_filepath)
+    return "file:///" + str(h2_filepath)
 
 
 @pytest.fixture

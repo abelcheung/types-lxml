@@ -16,6 +16,7 @@ from lxml.html import HtmlElement as HtmlElement, soupparser as _soup
 
 reveal_type = getattr(_testutils, "reveal_type_wrapper")
 
+
 class TestFromstring:
     # fmt: off
     @_testutils.signature_tester(_soup.fromstring, (
@@ -211,10 +212,13 @@ class TestParse:
 
 class TestConvertTree:
     # fmt: on
-    @_testutils.signature_tester(_soup.convert_tree, (
-        ("beautiful_soup_tree", Parameter.POSITIONAL_OR_KEYWORD, Parameter.empty),
-        ("makeelement"        , Parameter.POSITIONAL_OR_KEYWORD, None           ),
-    ))  # fmt: off
+    @_testutils.signature_tester(
+        _soup.convert_tree,
+        (
+            ("beautiful_soup_tree", Parameter.POSITIONAL_OR_KEYWORD, Parameter.empty),
+            ("makeelement", Parameter.POSITIONAL_OR_KEYWORD, None),
+        ),
+    )  # fmt: off
     def test_func_sig(self) -> None:
         pass
 
