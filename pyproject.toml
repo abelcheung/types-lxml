@@ -12,7 +12,7 @@ readme = 'README.md'
 requires-python = '>=3.8'
 license = {text = 'Apache-2.0'}
 dependencies = [
-    'types-beautifulsoup4',
+    'types-beautifulsoup4 ~= 4.12',
     'typing_extensions ~= 4.5',
     'cssselect ~= 1.2'  # cssselect uses inline annotation
 ]
@@ -44,8 +44,9 @@ test = [
     'typeguard >= 3.0, < 5',
     'pytest >= 7.0, < 9',
     'html5lib == 1.1',
-    'pytest-mypy-plugins ~= 1.10, != 1.10.0',
-    'lxml == 5.1.*',
+    'pytest-mypy-plugins == 1.11.1',
+    'lxml >= 4.9',
+    'beautifulsoup4 ~= 4.8'
 ]
 
 [tool.pdm.version]
