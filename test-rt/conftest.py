@@ -6,14 +6,7 @@ from pathlib import Path, PurePosixPath
 import pytest
 import typeguard
 from _testutils import run_pyright_on
-from lxml.etree import (
-    XMLParser,
-    XMLSyntaxError,
-    _ElementTree,
-    _ListErrorLog,
-    fromstring,
-)
-from lxml.html import HtmlElement, parse
+from lxml import etree as _e, html as _h
 
 typeguard.config.forward_ref_policy = typeguard.ForwardRefPolicy.ERROR
 
@@ -70,16 +63,16 @@ def x2_filepath() -> Path:
 
 
 @pytest.fixture
-def html_tree(h1_filepath: Path) -> _ElementTree[HtmlElement]:
+def html_tree(h1_filepath: Path) -> _e._ElementTree[_h.HtmlElement]:
     with open(h1_filepath, "r", encoding="utf-8") as f:
-        tree = parse(f)
+        tree = _h.parse(f)
     return tree
 
 
 @pytest.fixture
-def xml_tree(x2_filepath: Path) -> _ElementTree:
+def xml_tree(x2_filepath: Path) -> _e._ElementTree:
     with open(x2_filepath, "r", encoding="ascii") as f:
-        tree = parse(f)
+        tree = _e.parse(f)
     return tree
 
 
@@ -93,12 +86,12 @@ def xinc_sample_data(x2_filepath: Path) -> str:
 
 
 @pytest.fixture
-def list_log() -> _ListErrorLog:
+def list_log() -> _e._ListErrorLog:
     bad_data = "<bad><a><b></a>&qwerty;</bad>"
-    p = XMLParser()
+    p = _e.XMLParser()
     try:
-        _ = fromstring(bad_data, parser=p)
-    except XMLSyntaxError:
+        _ = _e.fromstring(bad_data, parser=p)
+    except _e.XMLSyntaxError:
         err = p.error_log
     else:
         raise RuntimeError("Unknown error when creating error_log fixture")
