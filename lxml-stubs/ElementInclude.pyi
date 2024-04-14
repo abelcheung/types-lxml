@@ -1,4 +1,11 @@
-from typing import Literal, LiteralString, Protocol, overload
+import sys
+
+if sys.version_info >= (3, 11):
+    from typing import LiteralString
+else:
+    from typing_extensions import LiteralString
+
+from typing import Literal, Protocol, overload
 
 from lxml.etree import LxmlSyntaxError, _Element
 
