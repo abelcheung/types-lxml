@@ -97,6 +97,8 @@ jobs:
           - 1.1.354
           - 1.1.355
           - 1.1.356
+          - 1.1.357
+          - 1.1.358
     runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v4
