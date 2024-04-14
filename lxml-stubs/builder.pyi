@@ -3,7 +3,7 @@ from typing import Any, Callable, Generic, Mapping, overload
 from ._types import _ElemFactory, _ET_co, _NSMapArg, _TagName
 from .etree import _Element
 
-_TypeMapArg = Mapping[type[Any], Callable[[_Element, Any], None]]
+_TypeMapArg = Mapping[Any, Callable[[_Element, Any], None]]
 
 class ElementMaker(Generic[_ET_co]):
     @overload
