@@ -175,7 +175,7 @@ class BoolElement(IntElement):
     # FIXME Unlike arbitrary floating point / integer powers,
     # power involving bool always have fixed results (0 or 1).
     # However, python maintainers have delved into some disgusting
-    # sort of "type annotation arithmatics" -- like
+    # sort of half-arsed "type annotation arithmatics":
     # - int**0  = Literal[1]
     # - int**25 = int
     # - int**26 = Any

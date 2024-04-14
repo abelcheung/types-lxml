@@ -5,7 +5,7 @@
 ## Important note
 
 - `types-lxml 2024.03.27` release requires [cssselect package](https://pypi.org/project/cssselect/) to work, since `lxml.cssselect` submodule utilises inline annotation from `cssselect 1.2.0`.
-- `2024.03.27` is the last release supporting `mypy 1.5`; future releases would need at least `mypy 1.9`
+- Next release (`2024.04.14`) requires `mypy 1.9`; `2024.03.27` is the last release supporting `mypy 1.5`.
 
 ## Introduction
 
@@ -17,7 +17,7 @@ Now the coverage of `lxml` submodules is complete (unless intentionally rejected
   - [x] `lxml.etree`
   - [x] `lxml.html`
     - [x] `lxml.html.builder`
-    - [x] `lxml.html.clean`
+    - [x] `lxml.html.clean` (already removed in lxml 5.2.0, this project will follow suite in future)
     - [x] `lxml.html.diff`
     - [x] `lxml.html.html5parser`
     - [x] `lxml.html.soupparser`
@@ -39,7 +39,7 @@ Check out [project page](https://github.com/abelcheung/types-lxml/projects/1) fo
 
 ## Goal ② : Support multiple type checkers
 
-Currently the annotations are validated for both `mypy` and `pyright` strict mode.
+Currently the annotations are validated for both `mypy` and `pyright`.
 
 In the future, there is plan to bring even more type checker support.
 
@@ -50,7 +50,7 @@ In the future, there is plan to bring even more type checker support.
   - [x] Mypy test suite already vastly expanded
   - [x] Perform runtime check, and compare against static type checker result; this guarantees annotations are indeed working in real code, not just in some cooked up test suite
     - [x] Proof of concept for incorporating `pyright` result under progress, currently just comparing `reveal_type()` results
-    - [ ] Migrate static `mypy` tests to runtime `pyright` tests in future
+    - [ ] Migrate static `mypy` tests to runtime `pyright` tests in future (under progress)
 - [x] Modernize package building infrastructure
 
 ## Goal ④ : Support for IDEs
@@ -80,51 +80,9 @@ Head over to [latest release in GitHub](https://github.com/abelcheung/types-lxml
 
     pip install -U git+https://github.com/abelcheung/types-lxml.git
 
-## Special notes
-
-### Type checker support
-
-Actually, `pyright` is the preferred type checker to use for `lxml` code. `mypy` can be either too restrictive or doesn't support some feature needed by lxml.
-
-Here is one example: normalisation of element attributes.
-
-It is employed by many other projects, so that users can supply common type of value while setting object attributes, and the code internally canonicalise/converts supplied argument to specific type. This is a convenience for library users, so they don't always need to do internal conversion by themselves. Consider the example below:
-
-```python
-from typing_extensions import reveal_type
-from lxml.etree import fromstring, QName
-
-person = fromstring('<person><height>170</height></person>')
-reveal_type(person[0].tag)
-person[0].tag = QName('http://ns.prefix', person[0].tag)
-```
-
-Lxml supports stringify QNames when setting element tags. Of course, during runtime, everything work as expected:
-
-```pycon
->>> print(e.tostring(person, encoding=str))
-<person><ns0:height xmlns:ns0="http://ns.prefix">170</ns0:height></person>
-```
-
-`pyright` correctly reports element tag type, and don't complain about assignment:
-
-```
-information: Type of "person[0].tag" is "str"
-```
-
-But `mypy` barks loudly about the feature:
-
-```
-error: Incompatible types in assignment (expression has type "QName", variable has type "str")  [assignment]
-```
-
-There are many, many more places in lxml that employs such normalisation.
-
-### ParserTarget
-There is now only one stub-only classes that do not exist as concrete class in `lxml` &mdash; `lxml.etree.ParserTarget`. However the support of custom parser target is shelved, so this virtual class is not very relevant for now.
 
 ## History
 
-Type annotations for `lxml` were initially included in [typeshed](https://www.github.com/python/typeshed), but as it was still incomplete at that time, the stubs are [ripped out as a separate project](https://github.com/python/typeshed/issues/525). The code was extracted by Jelle Zijlstra and moved to `lxml-stubs` repository using `git filter-branch`.
+Type annotations for `lxml` were initially included in [typeshed](https://www.github.com/python/typeshed), but as it was still incomplete at that time, the stubs are [ripped out as a separate project](https://github.com/python/typeshed/issues/525). The code was since then under governance of lxml, until 2022 when this fork intended to revamp `lxml-stubs` completely and emerge into separate project.
 
 `types-lxml` is a fork of `lxml-stubs` that strives for the goals described above, so that most people would find it more useful.

@@ -145,8 +145,6 @@ class LabelElement(HtmlElement):
     def for_element(self, __v: HtmlElement) -> None: ...
 
 # open_http argument has signature (method, url, values) -> Any
-# Result for default open_http implementation
-# (that is open_http_urllib) is aliased to Any
 @overload
 def submit_form(
     form: FormElement,

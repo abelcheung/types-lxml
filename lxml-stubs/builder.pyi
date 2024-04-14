@@ -3,6 +3,10 @@ from typing import Any, Callable, Generic, Mapping, overload
 from ._types import _ElemFactory, _ET_co, _NSMapArg, _TagName
 from .etree import _Element
 
+# Mapping should have been something like
+# Mapping[type[_T], Callable[[_Element, _T], None]]
+# but invariant key/value causes it to be incompatible
+# with anything
 _TypeMapArg = Mapping[Any, Callable[[_Element, Any], None]]
 
 class ElementMaker(Generic[_ET_co]):
