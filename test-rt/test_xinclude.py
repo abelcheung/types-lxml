@@ -63,13 +63,13 @@ class TestXInclude:
 @overload
 def good_loader(
     href: str, mode: Literal["xml"], encoding: str | None = None
-) -> _Element: ...
+) -> _Element:
+    ...
 
 
 @overload
-def good_loader(
-    href: str, mode: Literal["text"], encoding: str | None = None
-) -> str: ...
+def good_loader(href: str, mode: Literal["text"], encoding: str | None = None) -> str:
+    ...
 
 
 def good_loader(href: str, mode: str, encoding: str | None = None) -> Any:
@@ -93,7 +93,6 @@ def bad_loader_3(href: str, mode: str, _) -> _Element:
 
 
 class TestElementInclude:
-
     # fmt: off
     @_testutils.signature_tester(EI.include, (
         ('elem'     , _ParameterKind.POSITIONAL_OR_KEYWORD, Parameter.empty),
