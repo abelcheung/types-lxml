@@ -130,7 +130,7 @@ class TestBasicBehavior:
             else:
                 match_re = "cannot be interpreted as an integer"
             with pytest.raises(TypeError, match=match_re):
-                    _ = elem.index(subelem, None, cast(Any, obj))
+                _ = elem.index(subelem, None, cast(Any, obj))
 
         del elem, subelem
 
