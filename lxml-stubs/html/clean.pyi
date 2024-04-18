@@ -10,21 +10,12 @@
 # values, it is better to look up API doc or source directly
 #
 
-import sys
-from typing import Iterable, Pattern, TypeVar, Union, overload
+from typing import Collection, Iterable, Pattern, TypeVar, overload
 
-if sys.version_info >= (3, 10):
-    from typing import TypeAlias
-else:
-    from typing_extensions import TypeAlias
-
-from .._types import _ElementOrTree, _ElemFactory
+from .._types import _ElementOrTree
 from ..etree import _ElementTree
 from . import HtmlElement
 from ._funcs import _HtmlDoc_T
-
-# Version of tag selector that doesn't support QName helper
-_HTagSelector: TypeAlias = Union[str, bytes, _ElemFactory]
 
 # Similar to _funcs._HtmlDoc_T, but also supports ET; only used in Cleaner
 _DT = TypeVar("_DT", str, bytes, HtmlElement, _ElementTree[HtmlElement])
@@ -47,14 +38,14 @@ class Cleaner:
         frames: bool = True,
         forms: bool = True,
         annoying_tags: bool = True,
-        remove_tags: Iterable[_HTagSelector] = (),
-        allow_tags: Iterable[_HTagSelector] = (),
-        kill_tags: Iterable[_HTagSelector] = (),
+        remove_tags: Collection[str] = (),
+        allow_tags: Collection[str] = (),
+        kill_tags: Collection[str] = (),
         safe_attrs_only: bool = True,
-        safe_attrs: Iterable[str] = ...,  # keep ellipsis
+        safe_attrs: Collection[str] = ...,  # keep ellipsis
         add_nofollow: bool = False,
-        host_whitelist: Iterable[str] = (),
-        whitelist_tags: Iterable[str] | None = {"iframe", "embed"},
+        host_whitelist: Collection[str] = (),
+        whitelist_tags: Collection[str] | None = {"iframe", "embed"},
     ) -> None: ...
     @overload  # vice versa
     def __init__(
@@ -73,14 +64,14 @@ class Cleaner:
         frames: bool = True,
         forms: bool = True,
         annoying_tags: bool = True,
-        remove_tags: Iterable[_HTagSelector] = (),
-        kill_tags: Iterable[_HTagSelector] = (),
+        remove_tags: Collection[str] = (),
+        kill_tags: Collection[str] = (),
         remove_unknown_tags: bool = True,
         safe_attrs_only: bool = True,
-        safe_attrs: Iterable[str] = ...,  # keep ellipsis
+        safe_attrs: Collection[str] = ...,  # keep ellipsis
         add_nofollow: bool = False,
-        host_whitelist: Iterable[str] = (),
-        whitelist_tags: Iterable[str] = {"iframe", "embed"},
+        host_whitelist: Collection[str] = (),
+        whitelist_tags: Collection[str] = {"iframe", "embed"},
     ) -> None: ...
     def __call__(self, doc: _ElementOrTree[HtmlElement]) -> None: ...
     def allow_follow(self, anchor: HtmlElement) -> bool: ...
@@ -95,28 +86,28 @@ clean_html = clean.clean_html
 def autolink(
     el: HtmlElement,
     link_regexes: Iterable[Pattern[str]] = ...,  # keep ellipsis
-    avoid_elements: Iterable[str] = ...,  # keep ellipsis
+    avoid_elements: Collection[str] = ...,  # keep ellipsis
     avoid_hosts: Iterable[Pattern[str]] = ...,  # keep ellipsis
-    avoid_classes: Iterable[str] = ["nolink"],
+    avoid_classes: Collection[str] = ["nolink"],
 ) -> None: ...
 def autolink_html(
     html: _HtmlDoc_T,
     link_regexes: Iterable[Pattern[str]] = ...,  # keep ellipsis
-    avoid_elements: Iterable[str] = ...,  # keep ellipsis
+    avoid_elements: Collection[str] = ...,  # keep ellipsis
     avoid_hosts: Iterable[Pattern[str]] = ...,  # keep ellipsis
-    avoid_classes: Iterable[str] = ["nolink"],
+    avoid_classes: Collection[str] = ["nolink"],
 ) -> _HtmlDoc_T: ...
 def word_break(
     el: HtmlElement,
     max_width: int = 40,
-    avoid_elements: Iterable[str] = ["pre", "textarea", "code"],
-    avoid_classes: Iterable[str] = ["nobreak"],
+    avoid_elements: Collection[str] = ["pre", "textarea", "code"],
+    avoid_classes: Collection[str] = ["nobreak"],
     break_character: str = chr(0x200B),
 ) -> None: ...
 def word_break_html(
     html: _HtmlDoc_T,
     max_width: int = 40,
-    avoid_elements: Iterable[str] = ["pre", "textarea", "code"],
-    avoid_classes: Iterable[str] = ["nobreak"],
+    avoid_elements: Collection[str] = ["pre", "textarea", "code"],
+    avoid_classes: Collection[str] = ["nobreak"],
     break_character: str = chr(0x200B),
 ) -> _HtmlDoc_T: ...
