@@ -3,14 +3,15 @@
 # and extracted into its own project.
 # https://github.com/fedora-python/lxml_html_clean/
 #
-# This stub will be kept for a while for compatibility,
+# Although this part of stub is merged into lxml_html_clean
+# project, it will be kept here for a while for compatibility,
 # until most people migrate to newer lxml versions.
 #
 # Some arguments comes with a complex or longish default
 # values, it is better to look up API doc or source directly
 #
 
-from typing import Collection, Iterable, Pattern, TypeVar, overload
+from typing import Collection, Iterable, Literal, Pattern, TypeVar, overload
 
 from .._types import _ElementOrTree
 from ..etree import _ElementTree
@@ -21,7 +22,7 @@ from ._funcs import _HtmlDoc_T
 _DT = TypeVar("_DT", str, bytes, HtmlElement, _ElementTree[HtmlElement])
 
 class Cleaner:
-    @overload  # allow_tags present and remove_unknown_tags absent
+    @overload  # if allow_tags present, remove_unknown_tags must be False
     def __init__(
         self,
         *,
@@ -41,13 +42,14 @@ class Cleaner:
         remove_tags: Collection[str] = (),
         allow_tags: Collection[str] = (),
         kill_tags: Collection[str] = (),
+        remove_unknown_tags: Literal[False] = False,
         safe_attrs_only: bool = True,
         safe_attrs: Collection[str] = ...,  # keep ellipsis
         add_nofollow: bool = False,
         host_whitelist: Collection[str] = (),
         whitelist_tags: Collection[str] | None = {"iframe", "embed"},
     ) -> None: ...
-    @overload  # vice versa
+    @overload  # ... otherwise allow_tags arg must not exist
     def __init__(
         self,
         *,
