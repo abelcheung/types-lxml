@@ -15,36 +15,6 @@
         qn: e.QName
   main: null
 
-- case: ro_properties
-  parametrized:
-    - prop: attrib
-      rt: '[\w\.]+\._Attrib'
-    - prop: prefix
-      rt: 'Union\[[\w\.]+\.str, None]'
-    - prop: nsmap
-      rt: '[\w\.]+\.dict\[Union\[[\w\.]+\.str, None], [\w\.]+\.str]'
-    - prop: sourceline
-      rt: 'Union\[[\w\.]+\.int, None]'
-  main: |
-    from lxml import etree
-    elem: etree._Element
-    reveal_type(elem.{{ prop }})  # NR: .+ "{{ rt }}"$
-    elem.{{ prop }} = elem.{{ prop }}  # E: Property "{{ prop }}" defined in "_Element" is read-only  [misc]
-
-# XXX See test case mypy_3004_element_prop
-- case: rw_properties
-  files: *INC
-  main: |
-    from inc import el, s
-    reveal_type(el.base)  # NR: .+ "Union\[[\w\.]+\.str, None]"$
-    reveal_type(el.tag)  # NR: .+ "[\w\.]+\.str"$
-    reveal_type(el.text)  # NR: .+ "Union\[[\w\.]+\.str, None]"$
-    reveal_type(el.tail)  # NR: .+ "Union\[[\w\.]+\.str, None]"$
-    el.base = s
-    el.tag = s
-    el.text = s
-    el.tail = s
-
 # get() and set() have their own tests
 - case: element_mapping_mixin
   files: *INC

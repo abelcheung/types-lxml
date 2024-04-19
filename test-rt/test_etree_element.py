@@ -12,6 +12,7 @@ from lxml.etree import (
     Comment,
     Entity,
     ProcessingInstruction,
+    _Attrib as _Attrib,
     _Element,
     _ElementTree,
 )
@@ -130,7 +131,7 @@ class TestBasicBehavior:
             else:
                 match_re = "cannot be interpreted as an integer"
             with pytest.raises(TypeError, match=match_re):
-                    _ = elem.index(subelem, None, cast(Any, obj))
+                _ = elem.index(subelem, None, cast(Any, obj))
 
         del elem, subelem
 
@@ -280,3 +281,66 @@ class TestBasicBehavior:
         elem.tail = "junk"
         elem.clear(keep_tail=True)
         assert len(elem) == 0
+
+
+class TestProperties:
+    def test_ro_properties(self, xml_tree: _ElementTree) -> None:
+        elem = deepcopy(xml_tree.getroot())
+
+        for subelem in elem:
+            if type(subelem) != _Element:
+                continue
+            reveal_type(subelem.attrib)
+            reveal_type(subelem.prefix)
+            reveal_type(subelem.nsmap)
+            reveal_type(subelem.sourceline)
+
+        with pytest.raises(AttributeError, match="objects is not writable"):
+            elem.attrib = elem.attrib  # pyright: ignore
+
+        with pytest.raises(AttributeError, match="objects is not writable"):
+            elem.prefix = elem.prefix  # pyright: ignore
+
+        with pytest.raises(AttributeError, match="objects is not writable"):
+            elem.nsmap = elem.nsmap  # pyright: ignore
+
+        # Not performing test for .sourceline ! We pretend it is not
+        # changeable in stub, but actually it is read-write
+
+        del elem
+
+    def test_rw_properties(self, xml_tree: _ElementTree) -> None:
+        elem = deepcopy(xml_tree.getroot())
+
+        for subelem in elem:
+            if type(subelem) != _Element:
+                continue
+            reveal_type(subelem.base)
+            reveal_type(subelem.tag)
+            reveal_type(subelem.text)
+            reveal_type(subelem.tail)
+
+        elem.base = b"http://dummy.site/"
+        elem.base = "http://dummy.site/"
+        elem.base = None
+        with pytest.raises(TypeError, match="must be string or unicode"):
+            elem.base = 1  # pyright: ignore
+
+        elem.tag = b"foo"
+        elem.tag = "foo"
+        with pytest.raises(TypeError, match="must be bytes or unicode"):
+            elem.tag = None  # pyright: ignore
+
+        elem.text = b"sometext"
+        elem.text = "sometext"
+        elem.text = None
+        with pytest.raises(TypeError, match="must be bytes or unicode"):
+            elem.text = 1  # pyright: ignore
+
+        elem.tail = b"sometail"
+        elem.tail = "sometail"
+        elem.tail = None
+        with pytest.raises(TypeError, match="must be bytes or unicode"):
+            elem.tail = 1  # pyright: ignore
+
+        del elem
