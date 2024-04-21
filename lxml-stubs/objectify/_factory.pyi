@@ -292,6 +292,9 @@ class ElementMaker:
         **kwargs: Any,
     ) -> _e.ObjectifiedElement: ...
     # TODO ElementMaker arguments
+    # __getattr__ here is special. ElementMaker supports using any
+    # attribute name as tag, which is sort of like a functools.partial
+    # object to ElementMaker.__call__() with tag argument prefilled.
     def __getattr__(self, tag: str) -> Callable[..., _e.ObjectifiedElement]: ...
 
 E: ElementMaker

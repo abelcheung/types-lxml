@@ -51,10 +51,9 @@ class ElementMaker(Generic[_ET_co]):
         *children: object,
         **attrib: str,
     ) -> _ET_co: ...
-    # __getattr__ here is special. ElementMaker is a factory that generates
-    # elements with any tag provided as attribute name, as long as the name
-    # does not conflict with the basic object methods (including python keywords
-    # like "class" and "for", which are common in HTML)
+    # __getattr__ here is special. ElementMaker supports using any
+    # attribute name as tag, which is sort of like a functools.partial
+    # object to ElementMaker.__call__() with tag argument prefilled.
     def __getattr__(self, name: str) -> Callable[..., _ET_co]: ...
 
 E: ElementMaker
