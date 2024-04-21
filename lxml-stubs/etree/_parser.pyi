@@ -13,13 +13,11 @@ else:
     from typing_extensions import deprecated
 
 from .._types import (
-    SupportsLaxedItems,
     _AnyStr,
     _DefEtreeParsers,
+    _ElementFactory,
     _ET_co,
-    _NSMapArg,
     _SaxEventNames,
-    _TagName,
     _TagSelector,
 )
 from ._classlookup import ElementClassLookup
@@ -57,14 +55,7 @@ class _FeedParser(Generic[_ET_co]):
     @property
     def version(self) -> LiteralString: ...
     def copy(self) -> Self: ...
-    def makeelement(
-        self,
-        _tag: _TagName,
-        /,
-        attrib: SupportsLaxedItems[str, _AnyStr] | None = None,
-        nsmap: _NSMapArg | None = None,
-        **_extra: _AnyStr,
-    ) -> _ET_co: ...
+    makeelement: _ElementFactory[_ET_co]
     # In terms of annotation, what setting class_lookup does
     # is change _ET_co (type specialization), which can't be
     # done automatically with current python typing system.
@@ -98,6 +89,7 @@ class _FeedParser(Generic[_ET_co]):
         ```
         """
         ...
+
     @deprecated("Removed since 5.0; renamed to set_element_class_lookup()")
     def setElementClassLookup(
         self, lookup: ElementClassLookup | None = None

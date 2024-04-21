@@ -85,9 +85,8 @@ class TestFromstring:
         with pytest.raises(TypeError, match="object is not callable"):
             _ = _soup.fromstring(h2_str, makeelement=cast(Any, 1))
 
-        # FIXME This is a reminder to use callback protocol for Element factory
         with pytest.raises(TypeError, match="unexpected keyword argument 'attrib"):
-            _ = _soup.fromstring(h2_str, makeelement=etree.CommentBase)
+            _ = _soup.fromstring(h2_str, makeelement=cast(Any, etree.CommentBase))
 
     # Just test capability to pass extra keywords to beautifulsoup
     # no intention to cover all keyword arguments supported by bs
@@ -188,9 +187,8 @@ class TestParse:
         with pytest.raises(TypeError, match="object is not callable"):
             _ = _soup.parse(str(h2_filepath), makeelement=cast(Any, 1))
 
-        # FIXME This is a reminder to use callback protocol for Element factory
         with pytest.raises(TypeError, match="unexpected keyword argument 'attrib"):
-            _ = _soup.parse(str(h2_filepath), makeelement=etree.CommentBase)
+            _ = _soup.parse(str(h2_filepath), makeelement=cast(Any, etree.CommentBase))
 
     # Just test capability to pass extra keywords to beautifulsoup
     # no intention to cover all keyword arguments supported by bs
@@ -261,6 +259,5 @@ class TestConvertTree:
         with pytest.raises(TypeError, match="object is not callable"):
             _ = _soup.convert_tree(soup, makeelement=cast(Any, 1))
 
-        # FIXME This is a reminder to use callback protocol for Element factory
         with pytest.raises(TypeError, match="unexpected keyword argument 'attrib"):
-            _ = _soup.convert_tree(soup, makeelement=etree.CommentBase)
+            _ = _soup.convert_tree(soup, makeelement=cast(Any, etree.CommentBase))

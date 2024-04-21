@@ -1,8 +1,8 @@
 from _typeshed import _T_co
 from abc import abstractmethod
-from typing import Mapping, Protocol
+from typing import Callable, Mapping, Protocol
 
-from .._types import _DefEtreeParsers, _ElemFactory
+from .._types import _DefEtreeParsers, _ElementFactory
 from ._element import _Attrib, _Comment, _Element, _ProcessingInstruction
 from ._parser import XMLSyntaxError
 
@@ -85,10 +85,10 @@ class TreeBuilder(ParserTarget[_Element]):
     def __init__(
         self,
         *,
-        element_factory: _ElemFactory | None = None,
+        element_factory: _ElementFactory[_Element] | None = None,
         parser: _DefEtreeParsers | None = None,
-        comment_factory: _ElemFactory[_Comment] | None = None,
-        pi_factory: _ElemFactory[_ProcessingInstruction] | None = None,
+        comment_factory: Callable[..., _Comment] | None = None,
+        pi_factory: Callable[..., _ProcessingInstruction] | None = None,
         insert_comments: bool = True,
         insert_pis: bool = True,
     ) -> None: ...

@@ -5,6 +5,7 @@ from .._types import (
     SupportsLaxedItems,
     _AnyStr,
     _DefEtreeParsers,
+    _ElementFactory,
     _ET_co,
     _FileReadSource,
     _NSMapArg,
@@ -22,13 +23,8 @@ def ProcessingInstruction(
 PI = ProcessingInstruction
 
 def Entity(name: _AnyStr) -> _Entity: ...
-def Element(  # Args identical to _Element.makeelement
-    _tag: _TagName,
-    /,
-    attrib: SupportsLaxedItems[str, _AnyStr] | None = None,
-    nsmap: _NSMapArg | None = None,
-    **_extra: _AnyStr,
-) -> _Element: ...
+
+Element: _ElementFactory
 
 # SubElement is a bit more complex than expected, as it
 # handles other kinds of element, like HtmlElement

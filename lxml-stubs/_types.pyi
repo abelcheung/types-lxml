@@ -5,6 +5,7 @@ from typing import (
     Any,
     Callable,
     Collection,
+    Generic,
     Iterable,
     Literal,
     Mapping,
@@ -117,15 +118,35 @@ _SaxEventNames = Literal[
 _ET = TypeVar("_ET", bound=_Element, default=_Element)
 _ET_co = TypeVar("_ET_co", bound=_Element, default=_Element, covariant=True)
 
-# Generic element factory function type. Because arguments are
-# mostly optional, accurate typing can't be done.
-_ElemFactory: TypeAlias = Callable[..., _ET]
+class _ElementFactory(Protocol, Generic[_ET_co]):
+    """Element factory protocol
+
+    This is callback protocol for `makeelement()` method of
+    various element objects, with following signature (which
+    is identical to `etree.Element()` function):
+
+    ```python
+    (_tag, attrib=..., nsmap=..., **_extra)
+    ```
+
+    The mapping in `attrib` argument and all `_extra` keyword
+    arguments would be merged together. The result is usually
+    `{**attrib, **_extra}`, but some places may deviate.
+    """
+    def __call__(
+        self,
+        _tag: _TagName,
+        /,
+        attrib: SupportsLaxedItems[str, _AnyStr] | None = None,
+        nsmap: _NSMapArg | None = None,
+        **_extra: _AnyStr,
+    ) -> _ET_co: ...
 
 # Note that _TagSelector filters element type not by classes,
 # but checks for exact element *factory functions* instead
 # (etree.Element() and friends). Python typing system doesn't
 # support such outlandish usage. Use a generic callable instead.
-_TagSelector: TypeAlias = _TagName | _ElemFactory
+_TagSelector: TypeAlias = _TagName | Callable[..., _Element]
 
 _ElementOrTree: TypeAlias = _ET | _ElementTree[_ET]
 

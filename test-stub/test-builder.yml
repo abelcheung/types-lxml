@@ -9,8 +9,8 @@
       et: _Element
     - args: makeelement=etree.Element
       et: _Element
-    - args: makeelement=etree.Comment
-      et: _Comment
+    # - args: makeelement=etree.Comment
+    #   et: _Comment
     - args: namespace=ns, nsmap=map
       et: _Element
     - args: typemap=typemap

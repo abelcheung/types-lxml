@@ -13,14 +13,12 @@ else:
     from typing_extensions import LiteralString
 
 from .._types import (
-    SupportsLaxedItems,
     _AnyStr,
+    _ElementFactory,
     _ElementOrTree,
     _ET_co,
     _FilePath,
-    _NSMapArg,
     _SaxEventNames,
-    _TagName,
     _TagSelector,
 )
 from ._classlookup import ElementClassLookup
@@ -212,14 +210,7 @@ class iterparse(Iterator[_T_co]):
         self,
         lookup: ElementClassLookup | None = None,
     ) -> None: ...
-    def makeelement(
-        self,
-        _tag: _TagName,
-        /,
-        attrib: SupportsLaxedItems[str, _AnyStr] | None = None,
-        nsmap: _NSMapArg | None = None,
-        **_extra: _AnyStr,
-    ) -> _Element: ...  # from etree pull parsers
+    makeelement: _ElementFactory
 
 class iterwalk(Iterator[_T_co]):
     """Tree walker that generates events from an existing tree as if it

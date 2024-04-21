@@ -1,6 +1,6 @@
 from typing import Any, Callable, Generic, Mapping, overload
 
-from ._types import _ElemFactory, _ET_co, _NSMapArg, _TagName
+from ._types import _ElementFactory, _ET_co, _NSMapArg, _TagName
 from .etree import _Element
 
 # Mapping should have been something like
@@ -9,25 +9,31 @@ from .etree import _Element
 # with anything
 _TypeMapArg = Mapping[Any, Callable[[_Element, Any], None]]
 
+# One might be tempted to use artibrary callable in
+# makeelement argument, because ElementMaker
+# constructor can actually accept any callable as
+# makeelement. However all element creation attempt
+# would fail, as 'nsmap' keyword argument is expected
+# to be usable in the makeelement function call.
 class ElementMaker(Generic[_ET_co]):
-    @overload
+    @overload  # makeelement is keyword
     def __new__(
         cls,
         typemap: _TypeMapArg | None = None,
         namespace: str | None = None,
         nsmap: _NSMapArg | None = None,
         *,
-        makeelement: _ElemFactory[_ET_co],
+        makeelement: _ElementFactory[_ET_co],
     ) -> ElementMaker[_ET_co]: ...
-    @overload
+    @overload  # makeelement is positional
     def __new__(
         cls,
         typemap: _TypeMapArg | None,
         namespace: str | None,
         nsmap: _NSMapArg | None,
-        makeelement: _ElemFactory[_ET_co],
+        makeelement: _ElementFactory[_ET_co],
     ) -> ElementMaker[_ET_co]: ...
-    @overload
+    @overload  # makeelement is default or absent
     def __new__(
         cls,
         typemap: _TypeMapArg | None = None,
@@ -49,6 +55,6 @@ class ElementMaker(Generic[_ET_co]):
     # elements with any tag provided as attribute name, as long as the name
     # does not conflict with the basic object methods (including python keywords
     # like "class" and "for", which are common in HTML)
-    def __getattr__(self, name: str) -> _ElemFactory[_ET_co]: ...
+    def __getattr__(self, name: str) -> Callable[..., _ET_co]: ...
 
 E: ElementMaker

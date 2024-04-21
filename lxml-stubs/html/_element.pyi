@@ -9,13 +9,12 @@ else:
 
 from .. import etree
 from .._types import (
-    SupportsLaxedItems,
+    _ElementFactory,
     _AnyStr,
     _AttrName,
     _AttrVal,
     _ElemPathArg,
     _NSMapArg,
-    _TagName,
     _TagSelector,
 )
 from ..cssselect import _CSSTransArg
@@ -193,14 +192,7 @@ class HtmlElement(etree.ElementBase):
         tag: _TagSelector | Iterable[_TagSelector] | None = None,
         with_tail: bool = True,
     ) -> Iterator[str]: ...
-    def makeelement(
-        self,
-        _tag: _TagName,
-        /,
-        attrib: SupportsLaxedItems[str, _AnyStr] | None = None,
-        nsmap: _NSMapArg | None = None,
-        **_extra: _AnyStr,
-    ) -> HtmlElement: ...
+    makeelement: _ElementFactory[HtmlElement]
     def find(
         self, path: _ElemPathArg, namespaces: _NSMapArg | None = None
     ) -> HtmlElement | None: ...
@@ -258,12 +250,7 @@ class HtmlComment(etree.CommentBase, HtmlElement): ...  # type: ignore
 class HtmlEntity(etree.EntityBase, HtmlElement): ...  # type: ignore
 
 #
-# Factory func, signature same as etree.Element
+# Factory func, there is no counterpart for SubElement though
+# (use etree.SubElement())
 #
-def Element(
-    _tag: _TagName,
-    /,
-    attrib: SupportsLaxedItems[str, _AnyStr] | None = None,
-    nsmap: _NSMapArg | None = None,
-    **extra: _AnyStr,
-) -> HtmlElement: ...
+Element: _ElementFactory[HtmlElement]

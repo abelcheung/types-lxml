@@ -2,6 +2,7 @@ import sys
 from _typeshed import _T
 from typing import (
     Any,
+    Callable,
     Generic,
     Iterable,
     Iterator,
@@ -166,15 +167,7 @@ class _Element:
         tag: _t._TagSelector | Iterable[_t._TagSelector] | None = None,
         with_tail: bool = True,
     ) -> Iterator[str]: ...
-    def makeelement(
-        self,
-        _tag: _t._TagName,
-        /,
-        # Final result is sort of like {**attrib, **_extra}
-        attrib: _t.SupportsLaxedItems[str, _t._AnyStr] | None = None,
-        nsmap: _t._NSMapArg | None = None,
-        **_extra: _t._AnyStr,
-    ) -> Self: ...
+    makeelement: _t._ElementFactory[Self]
     def find(
         self, path: _t._ElemPathArg, namespaces: _t._NSMapArg | None = None
     ) -> Self | None: ...
@@ -472,7 +465,7 @@ class __ContentOnlyElement(_Element):
 
 class _Comment(__ContentOnlyElement):
     @property  # type: ignore[misc]
-    def tag(self) -> _t._ElemFactory[_Comment]: ...  # type: ignore[override]
+    def tag(self) -> Callable[..., _Comment]: ...  # type: ignore[override]
     @property  # type: ignore[override]
     def text(self) -> str: ...
     @text.setter
@@ -483,7 +476,7 @@ class _Comment(__ContentOnlyElement):
 # signature of .get() for _PI and _Element are the same
 class _ProcessingInstruction(__ContentOnlyElement):
     @property  # type: ignore[misc]
-    def tag(self) -> _t._ElemFactory[_ProcessingInstruction]: ...  # type: ignore[override]
+    def tag(self) -> Callable[..., _ProcessingInstruction]: ...  # type: ignore[override]
     @property  # type: ignore[override]
     def text(self) -> str: ...
     @text.setter
@@ -499,7 +492,7 @@ class _ProcessingInstruction(__ContentOnlyElement):
 
 class _Entity(__ContentOnlyElement):
     @property  # type: ignore[misc]
-    def tag(self) -> _t._ElemFactory[_Entity]: ...  # type: ignore[override]
+    def tag(self) -> Callable[..., _Entity]: ...  # type: ignore[override]
     @property  # type: ignore[misc]
     def text(self) -> str: ...  # type: ignore[override]
     @property

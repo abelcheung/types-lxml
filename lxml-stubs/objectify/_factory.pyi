@@ -2,9 +2,9 @@
 # Element factories
 #
 
-from typing import Any, Literal, TypeVar, overload
+from typing import Any, Callable, Literal, TypeVar, overload
 
-from .._types import SupportsLaxedItems, _AnyStr, _ElemFactory, _NSMapArg, _TagName
+from .._types import SupportsLaxedItems, _AnyStr, _ElementFactory, _NSMapArg, _TagName
 from . import _element as _e
 
 _DataElem_T = TypeVar("_DataElem_T", bound=_e.ObjectifiedDataElement)
@@ -283,14 +283,15 @@ class ElementMaker:
         namespace: str | None = None,
         nsmap: _NSMapArg | None = None,
         annotate: bool = True,
-        makeelement: _ElemFactory[_e.ObjectifiedElement] | None = None,
+        makeelement: _ElementFactory[_e.ObjectifiedElement] | None = None,
     ) -> None: ...
     def __call__(
         self,
         tag: str,
-        *args: Any,
+        *args: Any,  # TODO _ObjectifyElementMakerCaller.__call__
         **kwargs: Any,
     ) -> _e.ObjectifiedElement: ...
-    def __getattr__(self, tag: str) -> _ElemFactory[_e.ObjectifiedElement]: ...
+    # TODO ElementMaker arguments
+    def __getattr__(self, tag: str) -> Callable[..., _e.ObjectifiedElement]: ...
 
 E: ElementMaker

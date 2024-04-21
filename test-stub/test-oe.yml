@@ -16,7 +16,9 @@
 - case: elementmaker_customize
   parametrized:
     - args: namespace=ns
-    - args: makeelement=ObjectifiedElement
+    # makeelement not choking on ObjectifiedElement is just
+    # an accident. Resulting XML is broken and unusable.
+    # - args: makeelement=ObjectifiedElement
     - args: namespace=ns, nsmap=map
     - args: annotate=True
   main: |

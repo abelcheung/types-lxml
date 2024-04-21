@@ -4,7 +4,7 @@ from typing import Any, Sequence, overload
 from bs4 import BeautifulSoup, PageElement, SoupStrainer
 from bs4.builder import TreeBuilder
 
-from .._types import _ET, _AnyStr, _ElemFactory
+from .._types import _ET, _AnyStr, _ElementFactory
 from ..etree import _ElementTree
 from . import HtmlElement
 
@@ -24,7 +24,7 @@ from . import HtmlElement
 def fromstring(
     data: _AnyStr | SupportsRead[str] | SupportsRead[bytes],
     beautifulsoup: type[BeautifulSoup] | None,
-    makeelement: _ElemFactory[_ET],
+    makeelement: _ElementFactory[_ET],
     *,
     features: str | Sequence[str] = "html.parser",
     builder: TreeBuilder | type[TreeBuilder] | None = None,
@@ -38,7 +38,7 @@ def fromstring(
     data: _AnyStr | SupportsRead[str] | SupportsRead[bytes],
     beautifulsoup: type[BeautifulSoup] | None = None,
     *,
-    makeelement: _ElemFactory[_ET],
+    makeelement: _ElementFactory[_ET],
     features: str | Sequence[str] = "html.parser",
     builder: TreeBuilder | type[TreeBuilder] | None = None,
     parse_only: SoupStrainer | None = None,
@@ -66,7 +66,7 @@ def fromstring(
 def parse(
     file: _AnyStr | SupportsRead[str] | SupportsRead[bytes],
     beautifulsoup: type[BeautifulSoup] | None,
-    makeelement: _ElemFactory[_ET],
+    makeelement: _ElementFactory[_ET],
     *,
     features: str | Sequence[str] = "html.parser",
     builder: TreeBuilder | type[TreeBuilder] | None = None,
@@ -80,7 +80,7 @@ def parse(  # makeelement is kw
     file: _AnyStr | SupportsRead[str] | SupportsRead[bytes],
     beautifulsoup: type[BeautifulSoup] | None = None,
     *,
-    makeelement: _ElemFactory[_ET],
+    makeelement: _ElementFactory[_ET],
     features: str | Sequence[str] = "html.parser",
     builder: TreeBuilder | type[TreeBuilder] | None = None,
     parse_only: SoupStrainer | None = None,
@@ -104,7 +104,7 @@ def parse(
 @overload
 def convert_tree(
     beautiful_soup_tree: BeautifulSoup,
-    makeelement: _ElemFactory[_ET],
+    makeelement: _ElementFactory[_ET],
 ) -> list[_ET]: ...
 @overload
 def convert_tree(
