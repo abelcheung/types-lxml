@@ -9,10 +9,10 @@ else:
 
 from .. import etree
 from .._types import (
-    _ElementFactory,
     _AnyStr,
     _AttrName,
     _AttrVal,
+    _ElementFactory,
     _ElemPathArg,
     _NSMapArg,
     _TagSelector,
