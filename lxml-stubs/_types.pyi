@@ -133,6 +133,7 @@ class _ElementFactory(Protocol, Generic[_ET_co]):
     arguments would be merged together. The result is usually
     `{**attrib, **_extra}`, but some places may deviate.
     """
+
     def __call__(
         self,
         _tag: _TagName,
