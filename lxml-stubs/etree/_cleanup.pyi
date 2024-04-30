@@ -1,4 +1,4 @@
-from typing import Iterable, overload
+from typing import Collection, Iterable, overload
 
 from .._types import _AnyStr, _ElementOrTree, _NSMapArg, _TagSelector
 
@@ -20,7 +20,7 @@ def strip_attributes(
 ) -> None: ...
 @overload
 def strip_attributes(
-    __tree_or_elem: _ElementOrTree, __attrib: Iterable[str] | None, /
+    __tree_or_elem: _ElementOrTree, __attrib: Collection[str], /
 ) -> None: ...
 @overload
 def strip_elements(
@@ -31,7 +31,7 @@ def strip_elements(
 @overload
 def strip_elements(
     __tree_or_elem: _ElementOrTree,
-    __tag: Iterable[_TagSelector] | None,
+    __tag: Collection[_TagSelector],
     /,
     with_tail: bool = True,
 ) -> None: ...
@@ -42,5 +42,5 @@ def strip_tags(
 ) -> None: ...
 @overload
 def strip_tags(
-    __tree_or_elem: _ElementOrTree, __tag: Iterable[_TagSelector] | None, /
+    __tree_or_elem: _ElementOrTree, __tag: Collection[_TagSelector], /
 ) -> None: ...
