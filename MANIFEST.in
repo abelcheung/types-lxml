@@ -1,0 +1,3 @@
+exclude .git *.py
+global-exclude .gitattributes .gitignore *.bak
+recursive-exclude .github *
