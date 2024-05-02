@@ -13,7 +13,7 @@
         def bad_repl_func(href: bytes): return href[1:]
         def extfunc1(context, a): return ''
         def extfunc2(context, a, b): return 0
-  main: null
+  main: ""
 
 - case: mixin_properties_ro
   files: *INC

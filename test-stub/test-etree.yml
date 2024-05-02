@@ -153,7 +153,7 @@
   main: |
     from lxml.etree import DocInfo
     d: DocInfo
-    reveal_type(d.{{ prop }})  # NR: Revealed type is "{{#optional}}Union\[{{/optional}}{{rt}}{{#optional}}, None]{{/optional}}"
+    reveal_type(d.{{ prop }})  # NR: Revealed type is "{%- if optional -%}Union\[{{rt}}, None\]{%- else -%}{{rt}}{%- endif -%}"
 
 - case: docinfo_properties_write
   parametrized:

@@ -54,8 +54,12 @@
     d_resv: DTDResolver
     p_resv: PrefixResolver
     p: XMLParser[_Element]
-    {{#rt}}result = {{/rt}}p.resolvers.{{method}}{{args}}
-    {{#rt}}reveal_type(result)  # NR: Revealed type is "{{rt}}"{{/rt}}
+    {% if rt %}
+    result = p.resolvers.{{method}}{{args}}
+    reveal_type(result)  # NR: Revealed type is "{{rt}}"
+    {% else %}
+    p.resolvers.{{method}}{{args}}
+    {% endif %}
 
 - case: registry_methods_badargs
   files: *INC
@@ -91,4 +95,4 @@
     p_resv: PrefixResolver
     s: str
     p: XMLParser[_Element]
-    {{#rt}}result = {{/rt}}p.resolvers.{{method}}{{args}}  # ER: .+ \[{{errtype}}]$
+    {% if rt -%}result = {%- endif -%}p.resolvers.{{method}}{{args}}  # ER: .+ \[{{errtype}}]$

@@ -19,7 +19,7 @@
         se: StringElement
         ne: NoneElement
         be: BoolElement
-  main: null
+  main: ""
 
 - case: oe_has_arbitrary_attribute
   parametrized:

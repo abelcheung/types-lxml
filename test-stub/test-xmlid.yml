@@ -16,7 +16,7 @@
         from pathlib import Path
         file_path = Path(s)
         file_io = open('somefile', 'r')
-  main: null
+  main: ""
 
 - case: xmlid_goodargs
   files: *INC

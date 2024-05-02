@@ -11,7 +11,7 @@
         tron: Schematron
         tree: etree._ElementTree[etree._Element]
         elem: etree._Element
-  main: null
+  main: ""
 
 - case: xmlschema_create
   main: |
@@ -134,10 +134,10 @@
       is_call: false
   main: |
     from inc import rng, dtd, schema, tron, tree, elem
-    {{ obj }}{{^is_call}}.validate{{/is_call}}()  # E: Missing positional argument "etree" in call to {{#is_call}}"__call__" of "{{cls}}"{{/is_call}}{{^is_call}}"validate" of "_Validator"{{/is_call}}  [call-arg]
-    {{ obj }}{{^is_call}}.validate{{/is_call}}(None)  # E: Argument 1 to {{#is_call}}"__call__" of "{{cls}}"{{/is_call}}{{^is_call}}"validate" of "_Validator"{{/is_call}} has incompatible type "None"; expected "_Element | _ElementTree[_Element]"  [arg-type]
-    {{ obj }}{{^is_call}}.validate{{/is_call}}(tree, None)  # E: Too many arguments for {{#is_call}}"__call__" of "{{cls}}"{{/is_call}}{{^is_call}}"validate" of "_Validator"{{/is_call}}  [call-arg]
-    {{ obj }}{{^is_call}}.validate{{/is_call}}(badarg=tree)  # E: Unexpected keyword argument "badarg" for {{#is_call}}"__call__" of "{{cls}}"{{/is_call}}{{^is_call}}"validate" of "_Validator"{{/is_call}}  [call-arg]
+    {{ obj }}{%- if not is_call -%}.validate{%- endif -%}()  # E: Missing positional argument "etree" in call to {% if is_call -%}"__call__" of "{{cls}}"{%- else -%}"validate" of "_Validator"{%- endif %}  [call-arg]
+    {{ obj }}{%- if not is_call -%}.validate{%- endif -%}(None)  # E: Argument 1 to {% if is_call -%}"__call__" of "{{cls}}"{%- else -%}"validate" of "_Validator"{%- endif %} has incompatible type "None"; expected "_Element | _ElementTree[_Element]"  [arg-type]
+    {{ obj }}{%- if not is_call -%}.validate{%- endif -%}(tree, None)  # E: Too many arguments for {% if is_call -%}"__call__" of "{{cls}}"{%- else -%}"validate" of "_Validator"{%- endif %}  [call-arg]
+    {{ obj }}{%- if not is_call -%}.validate{%- endif -%}(badarg=tree)  # E: Unexpected keyword argument "badarg" for {% if is_call -%}"__call__" of "{{cls}}"{%- else -%}"validate" of "_Validator"{%- endif %}  [call-arg]
 
 - case: superclass_other_methods
   files: *INC

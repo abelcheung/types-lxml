@@ -44,7 +44,7 @@ test = [
     'typeguard >= 3.0, < 5',
     'pytest >= 7.0, < 9',
     'html5lib == 1.1',
-    'pytest-mypy-plugins == 1.11.1',
+    'pytest-mypy-plugins >= 2.0',
     'lxml >= 4.9',
     'beautifulsoup4 ~= 4.8'
 ]

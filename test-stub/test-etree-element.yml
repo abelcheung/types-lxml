@@ -13,7 +13,7 @@
         i: int
         o: object
         qn: e.QName
-  main: null
+  main: ""
 
 # get() and set() have their own tests
 - case: element_mapping_mixin

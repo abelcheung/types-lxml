@@ -50,7 +50,7 @@
         dtd_attr = dtd_el.attributes()[0]
         root: _Element
         tree: _ElementTree[_Element]
-  main:
+  main: ""
 
 - case: dtd_properties
   files: *INC
