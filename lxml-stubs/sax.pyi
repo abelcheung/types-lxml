@@ -6,8 +6,8 @@ from .etree import LxmlError, _ElementTree
 
 class SaxError(LxmlError): ...
 
-# Most annotation should be done in xml.sax.handler,
-# which is unannotated as of writing. Only properties and methods
+# xml.sax.handler is annotated in typeshed since Sept 2023.
+# For brevity, only properties and methods
 # not present in superclass are listed here.
 class ElementTreeContentHandler(Generic[_ET_co], ContentHandler):
     @overload
