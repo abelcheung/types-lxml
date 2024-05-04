@@ -8,10 +8,12 @@ from typing import Any, cast
 import _testutils
 import pytest
 from lxml.etree import (
+    CDATA,
     LXML_VERSION,
     Comment,
     Entity,
     ProcessingInstruction,
+    QName,
     _Attrib as _Attrib,
     _Element,
     _ElementTree,
@@ -326,27 +328,37 @@ class TestProperties:
             reveal_type(subelem.text)
             reveal_type(subelem.tail)
 
+        cdata = CDATA("foo")
+        qname = QName("dummyns", "dummytext")
+
         elem.base = b"http://dummy.site/"
         elem.base = "http://dummy.site/"
         elem.base = None
-        with pytest.raises(TypeError, match="must be string or unicode"):
-            elem.base = 1  # pyright: ignore
+        for data in (1, cdata, qname):
+            with pytest.raises(TypeError, match="must be string or unicode"):
+                elem.base = cast(Any, data)
 
         elem.tag = b"foo"
         elem.tag = "foo"
-        with pytest.raises(TypeError, match="must be bytes or unicode"):
-            elem.tag = None  # pyright: ignore
+        elem.tag = qname
+        for data in (None, 1, cdata):
+            with pytest.raises(TypeError, match="must be bytes or unicode"):
+                elem.tag = cast(Any, data)
 
         elem.text = b"sometext"
         elem.text = "sometext"
         elem.text = None
+        elem.text = cdata
+        elem.text = qname
         with pytest.raises(TypeError, match="must be bytes or unicode"):
-            elem.text = 1  # pyright: ignore
+            elem.text = cast(Any, 1)
 
         elem.tail = b"sometail"
         elem.tail = "sometail"
         elem.tail = None
-        with pytest.raises(TypeError, match="must be bytes or unicode"):
-            elem.tail = 1  # pyright: ignore
+        elem.tail = cdata
+        for data in (1, qname):
+            with pytest.raises(TypeError, match="must be bytes or unicode"):
+                elem.tail = cast(Any, data)
 
         del elem
