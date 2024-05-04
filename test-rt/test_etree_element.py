@@ -54,13 +54,19 @@ class TestBasicBehavior:
         o = object()
         reveal_type(o in elem)
 
+        with pytest.raises(TypeError, match="cannot be interpreted as an integer"):
+            _ = elem[cast(int, "0")]
+
+        del elem, subelem
+
+    def test_sequence_modify(self, xml_tree: _ElementTree) -> None:
+        elem = deepcopy(xml_tree.getroot())
+
+        subelem = elem[3]
         del elem[0]
         assert elem.index(subelem) == 2
         del elem[0:2]
         assert elem.index(subelem) == 0
-
-        with pytest.raises(TypeError, match="cannot be interpreted as an integer"):
-            _ = elem["0"]  # pyright: ignore
 
         comment = Comment("comment")
         comment2 = Comment("foo")
