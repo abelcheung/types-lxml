@@ -1,4 +1,4 @@
-from typing import Literal
+from typing import Literal, overload
 
 import cssselect as _csel
 from cssselect.parser import Function
@@ -6,6 +6,8 @@ from cssselect.xpath import XPathExpr
 
 from ._types import _ET, _ElementOrTree, _NonDefaultNSMapArg, _XPathVarArg
 from .etree import XPath
+from .html import HtmlElement
+from .objectify import ObjectifiedElement
 
 _CSSTransArg = LxmlTranslator | Literal["xml", "html", "xhtml"]
 
@@ -37,9 +39,27 @@ class CSSSelector(XPath):
         translator: _CSSTransArg = "xml",
     ) -> None: ...
     # It is safe to assume cssselect always selects element
-    # representable in original element tree, because CSS expression
-    # is transformed into XPath via css_to_xpath() which doesn't support
-    # pseudo-element by default.
+    # representable in original element tree, because CSS
+    # expression is transformed into XPath via css_to_xpath()
+    # which doesn't support pseudo-element by default.
+    # OTOH, the overload situation is similar to SubElement();
+    # we handle the 2 built-in element families (HtmlElement
+    # and ObjectifiedElement), but the rest is up to users.
+    @overload
+    def __call__(
+        self,
+        _etree_or_element: _ElementOrTree[ObjectifiedElement],
+        /,
+        **_variables: _XPathVarArg,
+    ) -> list[ObjectifiedElement]: ...
+    @overload
+    def __call__(
+        self,
+        _etree_or_element: _ElementOrTree[HtmlElement],
+        /,
+        **_variables: _XPathVarArg,
+    ) -> list[HtmlElement]: ...
+    @overload
     def __call__(
         self,
         _etree_or_element: _ElementOrTree[_ET],

@@ -13,6 +13,7 @@ else:
     from typing_extensions import LiteralString, Self
 
 from .._types import _AnyStr, _TagName
+from ..cssselect import _CSSTransArg
 from ..etree import CDATA, ElementBase
 
 class ObjectifiedElement(ElementBase):
@@ -64,6 +65,14 @@ class ObjectifiedElement(ElementBase):
     def __setitem__(self, __k: slice, __v: Iterable[object]) -> None: ...
     def __delitem__(self, __k: int | slice) -> None: ...
     # TODO Check if _Element methods need overriding
+    # CSS selector is not a normal use case for objectified
+    # element (and unnecessary), but still usable nontheless
+    def cssselect(
+        self,
+        expr: str,
+        *,
+        translator: _CSSTransArg = "xml",
+    ) -> list[ObjectifiedElement]: ...
 
 class ObjectifiedDataElement(ObjectifiedElement):
     """The base class for all data type Elements
