@@ -122,13 +122,13 @@
   parametrized:
     - prop: root_name
       rt: 'builtins\.str'
-      optional: true
+      optional: false
     - prop: xml_version
       rt: 'builtins\.str'
-      optional: true
+      optional: false
     - prop: encoding
       rt: 'builtins\.str'
-      optional: true
+      optional: false
     - prop: standalone
       rt: 'builtins\.bool'
       optional: true
