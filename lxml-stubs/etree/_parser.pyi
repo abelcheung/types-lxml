@@ -1,6 +1,6 @@
 import sys
 from _typeshed import _T
-from typing import Any, Generic, Iterable, Iterator, Literal
+from typing import Any, Collection, Generic, Iterable, Iterator, Literal
 
 if sys.version_info >= (3, 11):
     from typing import LiteralString, Self
@@ -89,6 +89,7 @@ class _FeedParser(Generic[_ET_co]):
         ```
         """
         ...
+
     @deprecated("Removed since 5.0; renamed to set_element_class_lookup()")
     def setElementClassLookup(
         self, lookup: ElementClassLookup | None = None
@@ -142,7 +143,7 @@ class XMLPullParser(_PullParserMixin, XMLParser[_ET_co]):
         self,
         events: Iterable[_SaxEventNames] | None = None,
         *,
-        tag: _TagSelector | Iterable[_TagSelector] | None = None,
+        tag: _TagSelector | Collection[_TagSelector] | None = None,
         base_url: _AnyStr | None = None,
         # All arguments from XMLParser
         encoding: _AnyStr | None = None,
@@ -214,7 +215,7 @@ class HTMLPullParser(_PullParserMixin, HTMLParser[_ET_co]):
         self,
         events: Iterable[_SaxEventNames] | None = None,
         *,
-        tag: _TagSelector | Iterable[_TagSelector] | None = None,
+        tag: _TagSelector | Collection[_TagSelector] | None = None,
         base_url: _AnyStr | None = None,
         # All arguments from HTMLParser
         encoding: _AnyStr | None = None,
