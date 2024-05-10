@@ -1,7 +1,7 @@
 from typing import Any, Callable, Generic, Mapping, overload
 
 from ._types import _ElementFactory, _ET_co, _NSMapArg, _TagName
-from .etree import _Element
+from .etree import CDATA, _Element
 
 # Mapping should have been something like
 # Mapping[type[_T], Callable[[_Element, _T], None]]
@@ -48,8 +48,13 @@ class ElementMaker(Generic[_ET_co]):
         # interpretable by the default typemap (that is str, CDATA and dict)
         # as children, the typemap can be expanded to make sure items of any
         # type are accepted.
-        *children: object,
-        **attrib: str,
+        *__child: object
+        | str
+        | CDATA
+        | dict[Any, Any]
+        | _Element
+        | Callable[[], object],
+        **__attr: str,
     ) -> _ET_co: ...
     # __getattr__ here is special. ElementMaker supports using any
     # attribute name as tag, which is sort of like a functools.partial
