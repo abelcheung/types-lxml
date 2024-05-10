@@ -1,5 +1,14 @@
+from functools import partial
+
 from ..builder import ElementMaker
-from . import HtmlElement
+from ._element import HtmlElement
+from ._form import (
+    FormElement,
+    InputElement,
+    LabelElement,
+    SelectElement,
+    TextareaElement,
+)
 
 E: ElementMaker[HtmlElement]
 
@@ -35,7 +44,7 @@ DT = E.dt
 EM = E.em
 FIELDSET = E.fieldset
 FONT = E.font
-FORM = E.form
+FORM: partial[FormElement]
 FRAME = E.frame
 FRAMESET = E.frameset
 H1 = E.h1
@@ -50,11 +59,11 @@ HTML = E.html
 I = E.i
 IFRAME = E.iframe
 IMG = E.img
-INPUT = E.input
+INPUT: partial[InputElement]
 INS = E.ins
 ISINDEX = E.isindex
 KBD = E.kbd
-LABEL = E.label
+LABEL: partial[LabelElement]
 LEGEND = E.legend
 LI = E.li
 LINK = E.link
@@ -74,7 +83,7 @@ Q = E.q
 S = E.s
 SAMP = E.samp
 SCRIPT = E.script
-SELECT = E.select
+SELECT: partial[SelectElement]
 SMALL = E.small
 SPAN = E.span
 STRIKE = E.strike
@@ -85,7 +94,7 @@ SUP = E.sup
 TABLE = E.table
 TBODY = E.tbody
 TD = E.td
-TEXTAREA = E.textarea
+TEXTAREA: partial[TextareaElement]
 TFOOT = E.tfoot
 TH = E.th
 THEAD = E.thead
