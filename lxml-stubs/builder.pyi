@@ -1,4 +1,5 @@
 from typing import Any, Callable, Generic, Mapping, overload
+from functools import partial
 
 from ._types import _ElementFactory, _ET_co, _NSMapArg, _TagName
 from .etree import CDATA, _Element
@@ -57,8 +58,8 @@ class ElementMaker(Generic[_ET_co]):
         **__attr: str,
     ) -> _ET_co: ...
     # __getattr__ here is special. ElementMaker supports using any
-    # attribute name as tag, which is sort of like a functools.partial
+    # attribute name as tag, returning a functools.partial
     # object to ElementMaker.__call__() with tag argument prefilled.
-    def __getattr__(self, name: str) -> Callable[..., _ET_co]: ...
+    def __getattr__(self, name: str) -> partial[_ET_co]: ...
 
 E: ElementMaker

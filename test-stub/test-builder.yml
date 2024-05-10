@@ -38,7 +38,7 @@
     - method: __nonExistent__
   main: |
     from lxml.builder import E
-    reveal_type(E.{{ method }})  # NR: .+ "def \(.+\) -> [\w\.]+\._Element"$
+    reveal_type(E.{{ method }})  # NR: .+ "functools\.partial\[[\w\.]+\._Element\]"$
     reveal_type(E.{{ method }}())  # NR: .+ "[\w\.]+\._Element"$
 
 # Directly taken from lxml.builder docstring example
@@ -78,16 +78,16 @@
     - method: __nonExistent__
   main: |
     from lxml.html.builder import E
-    reveal_type(E.{{ method }})  # NR: Revealed type is "def \(\*Any, \*\*Any\) -> [\w\.]+\.HtmlElement"
-    reveal_type(E.{{ method }}())  # NR: Revealed type is "[\w\.]+\.HtmlElement"
+    reveal_type(E.{{ method }})  # NR: .+ "functools\.partial\[[\w\.]+\.HtmlElement\]"$
+    reveal_type(E.{{ method }}())  # NR: .+ "[\w\.]+\.HtmlElement"$
 
 - case: html_builder_existing_tag
   main: |
     from lxml.html.builder import TABLE, TR, TD
-    reveal_type(TD)  # NR: Revealed type is "def \(\*Any, \*\*Any\) -> [\w\.]+\.HtmlElement"
-    reveal_type(TD("content", id="cell"))  # NR: Revealed type is "[\w\.]+\.HtmlElement"
+    reveal_type(TD)  # NR: .+ "functools\.partial\[[\w\.]+\.HtmlElement\]"$
+    reveal_type(TD("content", id="cell"))  # NR: .+ "[\w\.]+\.HtmlElement"$
     result = TABLE(TR(TD("content")))
-    reveal_type(result)  # NR: Revealed type is "[\w\.]+\.HtmlElement"
+    reveal_type(result)  # NR: .+ "[\w\.]+\.HtmlElement"$
 
 # Modified from html.builder docstring example
 - case: html_builder_complex_example
@@ -101,4 +101,4 @@
         id="content",
       )
     )
-    reveal_type(html)  # NR: Revealed type is "[\w\.]+\.HtmlElement"
+    reveal_type(html)  # NR: .+ "[\w\.]+\.HtmlElement"
