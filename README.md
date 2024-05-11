@@ -35,7 +35,7 @@ Following submodules will not be implemented due to irrelevance to type checking
   - `lxml.html.usedoctest`
   - `lxml.html.formfill` (shouldn't have existed, this would belong to HTTP libraries like `requests` or `httpx`)
 
-Check out [project page](https://github.com/abelcheung/types-lxml/projects/1) for future plans and progress.
+Check out [project page](https://github.com/abelcheung/types-lxml/projects) for future plans and progress.
 
 ## Goal ② : Support multiple type checkers
 
