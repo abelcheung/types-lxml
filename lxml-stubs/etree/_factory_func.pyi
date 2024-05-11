@@ -13,7 +13,7 @@ from .._types import (
 )
 from ..html import HtmlElement
 from ..objectify import ObjectifiedElement, StringElement
-from ._element import _Comment, _Element, _ElementTree, _Entity, _ProcessingInstruction
+from ._element import _Comment, _ElementTree, _Entity, _ProcessingInstruction
 
 def Comment(text: _AnyStr | None = None) -> _Comment: ...
 def ProcessingInstruction(
@@ -41,7 +41,7 @@ Element: _ElementFactory
 # type annotation attribute is modified.
 # OE users need to use E-factory for more flexibility.
 @overload
-def SubElement(
+def SubElement(  # type: ignore[overload-overlap]
     _parent: ObjectifiedElement,
     _tag: _TagName,
     /,
@@ -60,13 +60,13 @@ def SubElement(
 ) -> HtmlElement: ...
 @overload
 def SubElement(
-    _parent: _Element,
+    _parent: _ET,
     _tag: _TagName,
     /,
     attrib: SupportsLaxedItems[str, _AnyStr] | None = None,
     nsmap: _NSMapArg | None = None,
     **_extra: _AnyStr,
-) -> _Element: ...
+) -> _ET: ...
 @overload  # from element, parser ignored
 def ElementTree(element: _ET) -> _ElementTree[_ET]: ...
 @overload  # from file source, custom parser
