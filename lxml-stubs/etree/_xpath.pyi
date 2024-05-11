@@ -5,7 +5,8 @@
 
 import sys
 from abc import abstractmethod
-from typing import Any, Callable, Generic, Mapping, Protocol, final, overload
+from types import ModuleType
+from typing import Any, Callable, Collection, Generic, Protocol, final, overload
 
 if sys.version_info >= (3, 13):
     from typing import deprecated
@@ -141,12 +142,20 @@ class _ElementUnicodeResult(str, Generic[_ET]):
     def attrname(self) -> str | None: ...
     def getparent(self: _ElementUnicodeResult[_ET]) -> _ET | None: ...
 
+@overload  # no namespace
 def Extension(
-    module: object,
-    function_mapping: Mapping[str, str] | None = None,
+    module: object | ModuleType,
+    function_mapping: dict[str, str] | Collection[str] | None = None,
     *,
-    ns: str | None = None,
-) -> dict[tuple[str | None, str], Callable[..., Any]]:
+    ns: None = None,
+) -> dict[tuple[None, str], Callable[..., Any]]: ...
+@overload  # namespace present
+def Extension(
+    module: object | ModuleType,
+    function_mapping: dict[str, str] | Collection[str] | None = None,
+    *,
+    ns: str,
+) -> dict[tuple[str, str], Callable[..., Any]]:
     """Build a dictionary of extension functions from the functions
     defined in a module or the methods of an object.
 
