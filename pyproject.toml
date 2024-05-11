@@ -1,8 +1,8 @@
 #:schema https://json.schemastore.org/pyproject.json
 
 [build-system]
-requires = ['setuptools >= 64', 'setuptools_scm ~= 8.0']
-build-backend = 'setuptools.build_meta'
+requires = ['pdm-backend ~= 2.3']
+build-backend = 'pdm.backend'
 
 [project]
 name = 'types-lxml'
@@ -58,10 +58,13 @@ includes = [
 ]
 excludes = [
     '**/*.bak',
+    '*.patch',
+    '*.py',
+    '**/.mypy_cache',
+    '**/.pytest_cache',
 ]
 source-includes = [
-    'LICENSE',
-    'README.md',
+    'requirements.txt',
     'test-rt/',
     'test-stub/',
     'tox.ini',
