@@ -23,17 +23,17 @@ class Resolver(metaclass=ABCMeta):
     def resolve(
         self, system_url: str, public_id: str, context: _ResolverContext
     ) -> _InputDocument | None: ...
-    def resolve_empty(self, context: _ResolverContext) -> _InputDocument | None: ...
+    def resolve_empty(self, context: _ResolverContext) -> _InputDocument: ...
     def resolve_string(
         self,
         string: _AnyStr,
         context: _ResolverContext,
         *,
         base_url: _AnyStr | None = None,
-    ) -> _InputDocument | None: ...
+    ) -> _InputDocument: ...
     def resolve_filename(
         self, filename: _AnyStr, context: _ResolverContext
-    ) -> _InputDocument | None: ...
+    ) -> _InputDocument: ...
     def resolve_file(
         self,
         f: SupportsRead[Any],
@@ -41,7 +41,7 @@ class Resolver(metaclass=ABCMeta):
         *,
         base_url: _AnyStr | None,
         close: bool,
-    ) -> _InputDocument | None: ...
+    ) -> _InputDocument: ...
 
 @final
 class _ResolverRegistry:
