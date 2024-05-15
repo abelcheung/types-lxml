@@ -1,5 +1,5 @@
-from typing import Any, Callable, Generic, Mapping, overload
 from functools import partial
+from typing import Any, Callable, Generic, Mapping, overload
 
 from ._types import _ElementFactory, _ET_co, _NSMapArg, _TagName
 from .etree import CDATA, _Element
