@@ -304,26 +304,3 @@
     el.xpath(path=s)  # ER: Too few arguments.*  \[call-arg]$
     el.xpath(s, namespaces=badns)  # ER: Argument "namespaces" .+; expected ".+"  \[arg-type]$
     el.xpath(s, extensions=badext)  # ER: Argument "extensions" .+; expected ".+"  \[arg-type]$
-
-- case: other_factories
-  main: |
-    from lxml import etree as e
-    s: str
-    comm = e.Comment()
-    reveal_type(comm)  # NR: .+ "[\w\.]+\._Comment"$
-    e.Comment(s)
-    e.Comment(1)  # ER: Argument 1 .+; expected ".+"  \[arg-type]$
-    e.Comment(s, s)  # ER: Too many arguments .+  \[call-arg]$
-
-    ent = e.Entity(s)
-    reveal_type(ent)  # NR: .+ "[\w\.]+\._Entity"$
-    e.Entity()  # ER: Missing positional argument .+  \[call-arg]$
-    e.Entity(1)  # ER: Argument 1 .+; expected ".+"  \[arg-type]$
-    e.Entity(s, s)  # ER: Too many arguments .+  \[call-arg]$
-
-    pi = e.ProcessingInstruction(s)
-    reveal_type(pi)  # NR: .+ "[\w\.]+\._ProcessingInstruction"$
-    e.ProcessingInstruction()  # ER: Missing positional argument .+  \[call-arg]$
-    e.ProcessingInstruction(1)  # ER: Argument 1 .+; expected ".+"  \[arg-type]$
-    e.ProcessingInstruction(s, 1)  # ER: Argument 2 .+; expected ".+"  \[arg-type]$
-    e.ProcessingInstruction(s, s, 1)  # ER: Too many arguments .+  \[call-arg]$

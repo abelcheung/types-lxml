@@ -15,8 +15,11 @@ from lxml.etree import (
     ProcessingInstruction,
     QName,
     _Attrib as _Attrib,
+    _Comment as _Comment,
     _Element,
     _ElementTree,
+    _Entity as _Entity,
+    _ProcessingInstruction as _ProcessingInstruction,
 )
 from lxml.html import Element as h_Element
 
@@ -362,3 +365,61 @@ class TestProperties:
                 elem.tail = cast(Any, data)
 
         del elem
+
+
+class TestContentOnlyElement:
+    # fmt: off
+    @_testutils.signature_tester(Comment, (
+        ("text", Parameter.POSITIONAL_OR_KEYWORD, None),
+    ))  # fmt: on
+    def test_construct_comment(self) -> None:
+        comm = Comment()
+        reveal_type(comm)
+        del comm
+
+        for text in (None, "foo", b"foo"):
+            comm = Comment(text)
+            reveal_type(comm)
+            del comm
+
+        for data in (1, ["foo"]):
+            with pytest.raises(TypeError, match="must be bytes or unicode"):
+                _ = Comment(cast(Any, data))
+
+    # fmt: off
+    @_testutils.signature_tester(Entity, (
+        ("name", Parameter.POSITIONAL_OR_KEYWORD, Parameter.empty),
+    ))  # fmt: on
+    def test_construct_entity(self) -> None:
+        for name in ("foo", b"foo"):
+            ent = Entity(name)
+            reveal_type(ent)
+            del ent
+
+        for data in (None, 1, ["foo"]):
+            with pytest.raises(TypeError, match="must be bytes or unicode"):
+                _ = Entity(cast(Any, data))
+
+    # fmt: off
+    @_testutils.signature_tester(ProcessingInstruction, (
+        ("target", Parameter.POSITIONAL_OR_KEYWORD, Parameter.empty),
+        ("text"  , Parameter.POSITIONAL_OR_KEYWORD, None),
+    ))  # fmt: on
+    def test_construct_pi(self) -> None:
+        for target in ("foo", b"foo"):
+            pi = ProcessingInstruction(target)
+            reveal_type(pi)
+            del pi
+
+        for data in (None, 1, ["foo"]):
+            with pytest.raises(TypeError, match="must be bytes or unicode"):
+                _ = ProcessingInstruction(cast(Any, data))
+
+        for text in ("bar", b"bar"):
+            pi = ProcessingInstruction("foo", text)
+            reveal_type(pi)
+            del pi
+
+        for data in (1, ["bar"]):
+            with pytest.raises(TypeError, match="must be bytes or unicode"):
+                _ = ProcessingInstruction("foo", cast(Any, data))
