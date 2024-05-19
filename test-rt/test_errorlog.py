@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import logging
-from inspect import Parameter, Signature, signature
+from inspect import Parameter
 from typing import Any, cast
 
 import _testutils
@@ -123,6 +123,11 @@ class TestListLogMethods:
         with pytest.raises(TypeError, match=r"argument .+ is not iterable"):
             _ = list_log.filter_levels(cast(Any, None))
 
+    @_testutils.empty_signature_tester(
+        _ListErrorLog.filter_from_errors,
+        _ListErrorLog.filter_from_fatals,
+        _ListErrorLog.filter_from_warnings,
+    )
     @_testutils.signature_tester(_ListErrorLog.filter_from_level, (
         None,
         ("level", Parameter.POSITIONAL_OR_KEYWORD, Parameter.empty),
@@ -135,13 +140,8 @@ class TestListLogMethods:
         reveal_type(new_log)
         del new_log
 
-        assert signature(list_log.filter_from_errors) == Signature()
         reveal_type(list_log.filter_from_errors())
-
-        assert signature(list_log.filter_from_fatals) == Signature()
         reveal_type(list_log.filter_from_fatals())
-
-        assert signature(list_log.filter_from_warnings) == Signature()
         reveal_type(list_log.filter_from_warnings())
 
     # TODO implement filter_types test when enums are completed in stub
@@ -165,10 +165,9 @@ class TestListLogMethods:
     # BEWARE: vanilla _ListErrorLog has no clear() method,
     # thus can't be inspected
 
+    @_testutils.empty_signature_tester(_ListErrorLog.copy)
     def test_copy(self, list_log: _ListErrorLog) -> None:
-        assert signature(list_log.copy) == Signature()
-        err_copy = list_log.copy()
-        reveal_type(err_copy)
+        reveal_type(list_log.copy())
 
 
 class TestEmptyLog:
@@ -188,12 +187,13 @@ class TestEmptyLog:
 
 
 class TestModuleFunc:
+    @_testutils.empty_signature_tester(clear_error_log)
     @_testutils.signature_tester(
         use_global_python_log,
         (("log", Parameter.POSITIONAL_OR_KEYWORD, Parameter.empty),),
     )
     def test_sig(self) -> None:
-        assert signature(clear_error_log) == Signature()
+        pass
 
     def test_global_log_usage(self) -> None:
         with pytest.raises(
