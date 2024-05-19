@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from copy import deepcopy
 from inspect import Parameter
+from pathlib import Path
 from random import randrange
 from typing import Any, cast
 
@@ -12,6 +13,7 @@ from lxml.etree import (
     LXML_VERSION,
     Comment,
     Entity,
+    HTMLParser,
     ProcessingInstruction,
     QName,
     _Attrib as _Attrib,
@@ -20,6 +22,7 @@ from lxml.etree import (
     _ElementTree,
     _Entity as _Entity,
     _ProcessingInstruction as _ProcessingInstruction,
+    parse,
 )
 from lxml.html import Element as h_Element
 
@@ -371,7 +374,8 @@ class TestContentOnlyElement:
     # fmt: off
     @_testutils.signature_tester(Comment, (
         ("text", Parameter.POSITIONAL_OR_KEYWORD, None),
-    ))  # fmt: on
+    ))
+    # fmt: on
     def test_construct_comment(self) -> None:
         comm = Comment()
         reveal_type(comm)
@@ -389,7 +393,8 @@ class TestContentOnlyElement:
     # fmt: off
     @_testutils.signature_tester(Entity, (
         ("name", Parameter.POSITIONAL_OR_KEYWORD, Parameter.empty),
-    ))  # fmt: on
+    ))
+    # fmt: on
     def test_construct_entity(self) -> None:
         for name in ("foo", b"foo"):
             ent = Entity(name)
@@ -404,7 +409,8 @@ class TestContentOnlyElement:
     @_testutils.signature_tester(ProcessingInstruction, (
         ("target", Parameter.POSITIONAL_OR_KEYWORD, Parameter.empty),
         ("text"  , Parameter.POSITIONAL_OR_KEYWORD, None),
-    ))  # fmt: on
+    ))
+    # fmt: on
     def test_construct_pi(self) -> None:
         for target in ("foo", b"foo"):
             pi = ProcessingInstruction(target)
@@ -423,3 +429,72 @@ class TestContentOnlyElement:
         for data in (1, ["bar"]):
             with pytest.raises(TypeError, match="must be bytes or unicode"):
                 _ = ProcessingInstruction("foo", cast(Any, data))
+
+
+class TestAttribAccessMethods:
+    @_testutils.empty_signature_tester(
+        _Element.keys,
+        _Element.values,
+        _Element.items,
+    )
+    def test_method_keyval(self, h1_filepath: Path) -> None:
+        parser = HTMLParser()
+        doc = parse(h1_filepath, parser=parser)
+        for elem in doc.iter():
+            if type(elem) != _Element:
+                continue
+            reveal_type(elem.keys())
+            reveal_type(elem.values())
+            reveal_type(elem.items())
+
+    # fmt: off
+    @_testutils.signature_tester(_Element.get, (
+        None,
+        ("key"    , Parameter.POSITIONAL_OR_KEYWORD, Parameter.empty),
+        ("default", Parameter.POSITIONAL_OR_KEYWORD, None           ),
+    ))
+    # fmt: on
+    def test_method_get(self, x1_filepath: Path) -> None:
+        tree = parse(x1_filepath)
+        root = tree.getroot()
+
+        reveal_type(root.get("width"))
+        reveal_type(root.get("somejunk"))
+        reveal_type(root.get(b"width"))
+        # Not meaningful to use QName here, but still
+        qname = QName(None, "width")
+        reveal_type(root.get(qname))
+
+        for arg in (1, object(), ["width"]):
+            with pytest.raises(TypeError, match="must be bytes or unicode"):
+                _ = root.get(cast(Any, arg))
+
+        reveal_type(root.get("width", 0))
+        reveal_type(root.get("somejunk", (0, "foo")))
+
+    # fmt: off
+    @_testutils.signature_tester(_Element.set, (
+        None,
+        ("key"  , Parameter.POSITIONAL_OR_KEYWORD, Parameter.empty),
+        ("value", Parameter.POSITIONAL_OR_KEYWORD, Parameter.empty),
+    ))
+    # fmt: on
+    def test_method_set(self, xml_tree: _ElementTree) -> None:
+        root = deepcopy(xml_tree.getroot())
+
+        result = root.set("foo", "bar")
+        reveal_type(result)
+
+        qname = QName("foo")
+        for arg in ("foo", b"foo", qname):
+            root.set(arg, "bar")
+        for arg in (None, 1, object(), ["foo"]):
+            with pytest.raises(TypeError, match="must be bytes or unicode"):
+                root.set(cast(Any, arg), "bar")
+
+        qname = QName("bar")
+        for arg in ("bar", b"bar", qname):
+            root.set("foo", arg)
+        for arg in (None, 1, object(), ["bar"]):
+            with pytest.raises(TypeError, match="must be bytes or unicode"):
+                root.set("foo", cast(Any, arg))
