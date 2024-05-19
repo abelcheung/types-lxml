@@ -112,10 +112,8 @@ class TestBasicBehavior:
     @_testutils.signature_tester(_Element.index, (
         None,
         ("child", Parameter.POSITIONAL_OR_KEYWORD, Parameter.empty),
-        ("start", Parameter.POSITIONAL_OR_KEYWORD,
-            None if LXML_VERSION >= (5, 0) else Parameter.empty),
-        ("stop" , Parameter.POSITIONAL_OR_KEYWORD,
-            None if LXML_VERSION >= (5, 0) else Parameter.empty),
+        ("start", Parameter.POSITIONAL_OR_KEYWORD, None           ),
+        ("stop" , Parameter.POSITIONAL_OR_KEYWORD, None           ),
     ))
     # fmt: on
     def test_method_index(self, xml_tree: _ElementTree) -> None:
@@ -281,8 +279,7 @@ class TestBasicBehavior:
     # fmt: off
     @_testutils.signature_tester(_Element.clear, (
         None,
-        ("keep_tail", Parameter.POSITIONAL_OR_KEYWORD,
-            False if LXML_VERSION >= (5, 0) else Parameter.empty),
+        ("keep_tail", Parameter.POSITIONAL_OR_KEYWORD, False),
     ))
     # fmt: on
     def test_method_clear(self, xml_tree: _ElementTree) -> None:

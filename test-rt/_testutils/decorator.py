@@ -1,10 +1,21 @@
 import functools
-from inspect import Signature, _ParameterKind, signature
+from inspect import Parameter, Signature, _ParameterKind, signature, isclass
 from typing import Any, Callable, ParamSpec, Sequence
 
 import pytest
+from .common import is_lxml_4x
 
 _P = ParamSpec("_P")
+
+
+# Very crude and probably won't work on many corner cases,
+# but enough for here so far
+def is_cython_class_method(func: Callable[..., Any]) -> bool:
+    glob = getattr(func, 'func_globals', None)
+    if not glob:
+        return False
+    parent = func.__qualname__.rsplit('.', 1)[0]
+    return isclass(glob[parent])
 
 
 def signature_tester(
@@ -17,16 +28,24 @@ def signature_tester(
             sig = signature(func_to_check)
             param = list(sig.parameters.values())
             assert len(param) == len(param_data)
+
+            # For lxml < 5, args in class methods never contain
+            # default values (.__defaults__ property is empty).
+            # This is probably due to older cython
+            # compiler which doesn't support that yet
+            no_default = False
+            if is_lxml_4x and is_cython_class_method(func_to_check):
+                no_default = True
+
             for i in range(len(param_data)):
-                if param_data[i] is None:
+                if (p := param_data[i]) is None:
                     continue
-                # fmt: off
-                assert (
-                    param[i].name,
-                    param[i].kind,
-                    param[i].default
-                ) == param_data[i]
-                # fmt: on
+                assert param[i].name == p[0]
+                assert param[i].kind == p[1]
+                if no_default:
+                    assert param[i].default == Parameter.empty
+                else:
+                    assert param[i].default == p[2]
             f(*args, **kw)
 
         return wrapped

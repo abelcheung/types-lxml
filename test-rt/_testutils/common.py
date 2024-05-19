@@ -3,6 +3,10 @@ from importlib import import_module
 from types import ModuleType
 from typing import NamedTuple
 
+from lxml.etree import LXML_VERSION
+
+is_lxml_4x = LXML_VERSION < (5, 0)
+
 
 class FilePos(NamedTuple):
     file: str
