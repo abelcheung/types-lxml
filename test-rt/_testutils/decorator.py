@@ -27,6 +27,10 @@ def signature_tester(
         def wrapped(*args: _P.args, **kw: _P.kwargs) -> None:
             sig = signature(func_to_check)
             param = list(sig.parameters.values())
+
+            if param[0].name == 'self':
+                _ = param.pop(0)
+
             assert len(param) == len(param_data)
 
             # For lxml < 5, args in class methods never contain

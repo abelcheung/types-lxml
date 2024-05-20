@@ -110,7 +110,6 @@ class TestBasicBehavior:
 
     # fmt: off
     @_testutils.signature_tester(_Element.index, (
-        None,
         ("child", Parameter.POSITIONAL_OR_KEYWORD, Parameter.empty),
         ("start", Parameter.POSITIONAL_OR_KEYWORD, None           ),
         ("stop" , Parameter.POSITIONAL_OR_KEYWORD, None           ),
@@ -149,7 +148,6 @@ class TestBasicBehavior:
 
     # fmt: off
     @_testutils.signature_tester(_Element.append, (
-        None,
         ("element", Parameter.POSITIONAL_OR_KEYWORD, Parameter.empty),
     ))
     # fmt: on
@@ -172,7 +170,6 @@ class TestBasicBehavior:
 
     # fmt: off
     @_testutils.signature_tester(_Element.insert, (
-        None,
         ("index"  , Parameter.POSITIONAL_OR_KEYWORD, Parameter.empty),
         ("element", Parameter.POSITIONAL_OR_KEYWORD, Parameter.empty),
     ))
@@ -203,7 +200,6 @@ class TestBasicBehavior:
 
     # fmt: off
     @_testutils.signature_tester(_Element.remove, (
-        None,
         ("element", Parameter.POSITIONAL_OR_KEYWORD, Parameter.empty),
     ))
     # fmt: on
@@ -224,7 +220,6 @@ class TestBasicBehavior:
 
     # fmt: off
     @_testutils.signature_tester(_Element.replace, (
-        None,
         ("old_element", Parameter.POSITIONAL_OR_KEYWORD, Parameter.empty),
         ("new_element", Parameter.POSITIONAL_OR_KEYWORD, Parameter.empty),
     ))
@@ -251,7 +246,6 @@ class TestBasicBehavior:
 
     # fmt: off
     @_testutils.signature_tester(_Element.extend, (
-        None,
         ("elements", Parameter.POSITIONAL_OR_KEYWORD, Parameter.empty),
     ))
     # fmt: on
@@ -278,7 +272,6 @@ class TestBasicBehavior:
 
     # fmt: off
     @_testutils.signature_tester(_Element.clear, (
-        None,
         ("keep_tail", Parameter.POSITIONAL_OR_KEYWORD, False),
     ))
     # fmt: on
@@ -446,7 +439,6 @@ class TestAttribAccessMethods:
 
     # fmt: off
     @_testutils.signature_tester(_Element.get, (
-        None,
         ("key"    , Parameter.POSITIONAL_OR_KEYWORD, Parameter.empty),
         ("default", Parameter.POSITIONAL_OR_KEYWORD, None           ),
     ))
@@ -471,7 +463,6 @@ class TestAttribAccessMethods:
 
     # fmt: off
     @_testutils.signature_tester(_Element.set, (
-        None,
         ("key"  , Parameter.POSITIONAL_OR_KEYWORD, Parameter.empty),
         ("value", Parameter.POSITIONAL_OR_KEYWORD, Parameter.empty),
     ))

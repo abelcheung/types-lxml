@@ -87,7 +87,6 @@ class TestListLog:
 class TestListLogMethods:
     # fmt: off
     @_testutils.signature_tester(_ListErrorLog.filter_domains, (
-        None,
         ("domains", Parameter.POSITIONAL_OR_KEYWORD, Parameter.empty),
     ))  # fmt: on
     def test_filter_domains(self, list_log: _ListErrorLog) -> None:
@@ -103,7 +102,6 @@ class TestListLogMethods:
             _ = list_log.filter_domains(cast(Any, None))
 
     @_testutils.signature_tester(_ListErrorLog.filter_levels, (
-        None,
         ("levels", Parameter.POSITIONAL_OR_KEYWORD, Parameter.empty),
     ))
     def test_filter_levels(self, list_log: _ListErrorLog) -> None:
@@ -129,7 +127,6 @@ class TestListLogMethods:
         _ListErrorLog.filter_from_warnings,
     )
     @_testutils.signature_tester(_ListErrorLog.filter_from_level, (
-        None,
         ("level", Parameter.POSITIONAL_OR_KEYWORD, Parameter.empty),
     ))
     def test_filter_from_level(self, list_log: _ListErrorLog) -> None:
@@ -149,7 +146,6 @@ class TestListLogMethods:
     # new_log = list_log.filter_types(ErrorTypes.???)
 
     @_testutils.signature_tester(_ListErrorLog.receive, (
-        None,
         ("entry", Parameter.POSITIONAL_OR_KEYWORD, Parameter.empty),
     ))
     def test_receive(self, list_log: _ListErrorLog) -> None:
@@ -188,10 +184,11 @@ class TestEmptyLog:
 
 class TestModuleFunc:
     @_testutils.empty_signature_tester(clear_error_log)
-    @_testutils.signature_tester(
-        use_global_python_log,
-        (("log", Parameter.POSITIONAL_OR_KEYWORD, Parameter.empty),),
-    )
+    # fmt: off
+    @_testutils.signature_tester(use_global_python_log, (
+        ("log", Parameter.POSITIONAL_OR_KEYWORD, Parameter.empty),
+    ))
+    # fmt: on
     def test_sig(self) -> None:
         pass
 

@@ -48,7 +48,6 @@ class TestXmlAttrib:
 
     # fmt: off
     @_testutils.signature_tester(_Attrib.get, (
-        None,
         ("key"    , Parameter.POSITIONAL_OR_KEYWORD, Parameter.empty),
         ("default", Parameter.POSITIONAL_OR_KEYWORD, None           ),
     ))
@@ -73,7 +72,6 @@ class TestXmlAttrib:
 
     # fmt: off
     @_testutils.signature_tester(_Attrib.update, (
-        None,
         ("sequence_or_dict", Parameter.POSITIONAL_OR_KEYWORD, Parameter.empty),
     ))
     # fmt: on
@@ -111,7 +109,6 @@ class TestXmlAttrib:
 
     # fmt: off
     @_testutils.signature_tester(_Attrib.pop, (
-        None,
         ("key"    , Parameter.POSITIONAL_OR_KEYWORD, Parameter.empty),
         ("default", Parameter.VAR_POSITIONAL       , Parameter.empty),
     ))
@@ -135,7 +132,6 @@ class TestXmlAttrib:
 
     # fmt: off
     @_testutils.signature_tester(_Attrib.has_key, (
-        None,
         ("key", Parameter.POSITIONAL_OR_KEYWORD, Parameter.empty),
     ))
     # fmt: on

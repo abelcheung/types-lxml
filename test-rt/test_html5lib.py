@@ -24,7 +24,6 @@ class TestParserConstruct:
 
     # fmt: off
     @_testutils.signature_tester(HTMLParser.__init__, (
-        None,
         ("strict", Parameter.POSITIONAL_OR_KEYWORD, False          ),
         ("kwargs", Parameter.VAR_KEYWORD          , Parameter.empty),
     ))  # fmt: on
