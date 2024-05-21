@@ -1,5 +1,4 @@
 import sys
-from _typeshed import _T
 from typing import (
     Any,
     Callable,
@@ -9,6 +8,7 @@ from typing import (
     Literal,
     MutableMapping,
     MutableSet,
+    TypeVar,
     overload,
 )
 
@@ -24,6 +24,8 @@ else:
 
 from .._types import SupportsLaxedItems, _AnyStr
 from ._element import HtmlElement
+
+_T = TypeVar("_T")
 
 _FormValues: TypeAlias = list[tuple[str, str]]
 _AnyInputElement: TypeAlias = InputElement | SelectElement | TextareaElement

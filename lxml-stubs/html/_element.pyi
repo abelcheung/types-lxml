@@ -1,5 +1,4 @@
 import sys
-from _typeshed import _T
 from typing import (
     Callable,
     Collection,
@@ -8,6 +7,7 @@ from typing import (
     Literal,
     MutableSet,
     Sequence,
+    TypeVar,
     overload,
 )
 
@@ -28,6 +28,8 @@ from .._types import (
 )
 from ..cssselect import _CSSTransArg
 from ._form import FormElement, LabelElement
+
+_T = TypeVar("_T")
 
 _HANDLE_FAILURES = Literal["ignore", "discard"]
 

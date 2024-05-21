@@ -1,5 +1,5 @@
 import sys
-from _typeshed import SupportsRead, SupportsWrite, _KT_co, _VT_co
+from _typeshed import SupportsRead, SupportsWrite
 from os import PathLike
 from typing import (
     Any,
@@ -19,6 +19,9 @@ else:
     from typing_extensions import TypeAlias
 
 from .etree import HTMLParser, QName, XMLParser, _Element, _ElementTree
+
+_KT_co = TypeVar("_KT_co", covariant=True)
+_VT_co = TypeVar("_VT_co", covariant=True)
 
 # Dup but deviate from recent _typeshed
 Unused: TypeAlias = Any

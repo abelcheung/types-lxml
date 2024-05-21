@@ -1,5 +1,4 @@
 import sys
-from _typeshed import _KT, _T, _VT
 from typing import (
     Any,
     Callable,
@@ -20,6 +19,9 @@ from .._types import SupportsLaxedItems
 from ._classlookup import ElementBase, ElementClassLookup, FallbackElementClassLookup
 from ._module_misc import LxmlError
 
+_T = TypeVar("_T")
+_KT = TypeVar("_KT")
+_VT = TypeVar("_VT")
 _P = ParamSpec("_P")
 _Public_ET = TypeVar("_Public_ET", bound=ElementBase)
 

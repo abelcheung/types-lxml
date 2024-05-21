@@ -2,12 +2,13 @@
 # Parsing and other module level funcs
 #
 
-from _typeshed import _T
 from typing import Iterable, Literal, TypeVar, overload
 
 from .. import etree
 from .._types import _AnyStr, _DefEtreeParsers, _FileReadSource
 from ._element import ObjectifiedDataElement, ObjectifiedElement
+
+_T = TypeVar("_T")
 
 #
 # Dumping tree and class lookup
@@ -46,8 +47,7 @@ class ObjectifyElementClassLookup(etree.ElementClassLookup):
 
 def set_default_parser(
     # Not joking, it uses isinstance check
-    new_parser: etree.XMLParser[ObjectifiedElement]
-    | None = None,
+    new_parser: etree.XMLParser[ObjectifiedElement] | None = None,
 ) -> None:
     """Replace the default parser used by objectify's `Element()`
     and `fromstring()` functions.

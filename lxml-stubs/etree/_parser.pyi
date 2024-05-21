@@ -1,6 +1,5 @@
 import sys
-from _typeshed import _T
-from typing import Any, Collection, Generic, Iterable, Iterator, Literal
+from typing import Any, Collection, Generic, Iterable, Iterator, Literal, TypeVar
 
 if sys.version_info >= (3, 11):
     from typing import LiteralString, Self
@@ -27,6 +26,8 @@ from ._module_misc import LxmlError, LxmlSyntaxError
 from ._saxparser import ParserTarget
 from ._xmlerror import _ListErrorLog
 from ._xmlschema import XMLSchema
+
+_T = TypeVar("_T")
 
 class ParseError(LxmlSyntaxError):
     lineno: int  # pyright: ignore[reportIncompatibleVariableOverride]
@@ -89,6 +90,7 @@ class _FeedParser(Generic[_ET_co]):
         ```
         """
         ...
+
     @deprecated("Removed since 5.0; renamed to set_element_class_lookup()")
     def setElementClassLookup(
         self, lookup: ElementClassLookup | None = None

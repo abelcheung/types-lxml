@@ -1,8 +1,9 @@
-from _typeshed import _T
-from typing import Callable, Iterable
+from typing import Callable, Iterable, TypeVar
 
 from .._types import _AnyStr
 from ..etree import _Element
+
+_T = TypeVar("_T")
 
 # annotation attribute can be anything, which is stringified
 # later on; but the type would better be consistent though

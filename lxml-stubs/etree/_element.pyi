@@ -1,5 +1,4 @@
 import sys
-from _typeshed import _T
 from typing import (
     Any,
     Callable,
@@ -10,6 +9,7 @@ from typing import (
     Literal,
     Mapping,
     Sequence,
+    TypeVar,
     overload,
 )
 
@@ -27,6 +27,8 @@ from .. import _types as _t
 from ..cssselect import _CSSTransArg
 from ._module_misc import CDATA, DocInfo, QName
 from ._xslt import XSLTAccessControl, XSLTExtension, _Stylesheet_Param, _XSLTResultTree
+
+_T = TypeVar("_T")
 
 # The base of _Element is *almost* an amalgam of MutableSequence[_Element]
 # plus mixin methods for _Attrib.

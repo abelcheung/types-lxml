@@ -1,6 +1,6 @@
 import sys
-from _typeshed import SupportsRead, _T_co
-from typing import Collection, Iterable, Iterator, Literal, overload
+from _typeshed import SupportsRead
+from typing import Collection, Iterable, Iterator, Literal, TypeVar, overload
 
 if sys.version_info >= (3, 10):
     from typing import TypeAlias
@@ -26,6 +26,8 @@ from ._docloader import _ResolverRegistry
 from ._element import _Element
 from ._xmlerror import _ListErrorLog
 from ._xmlschema import XMLSchema
+
+_T_co = TypeVar("_T_co", covariant=True)
 
 # See https://lxml.de/parsing.html#event-types
 # Undocumented: 'comment' and 'pi' are actually supported!

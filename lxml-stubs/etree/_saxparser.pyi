@@ -1,10 +1,11 @@
-from _typeshed import _T_co
 from abc import abstractmethod
-from typing import Callable, Mapping, Protocol
+from typing import Callable, Mapping, Protocol, TypeVar
 
 from .._types import _DefEtreeParsers, _ElementFactory
 from ._element import _Attrib, _Comment, _Element, _ProcessingInstruction
 from ._parser import XMLSyntaxError
+
+_T_co = TypeVar("_T_co", covariant=True)
 
 class XMLSyntaxAssertionError(XMLSyntaxError, AssertionError): ...
 
