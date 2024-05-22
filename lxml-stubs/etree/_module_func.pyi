@@ -209,7 +209,6 @@ def register_namespace(prefix: _AnyStr, uri: _AnyStr) -> None:
 def dump(elem: _Element, *, pretty_print: bool = True, with_tail: bool = True) -> None:
     """Writes an element tree or element structure to sys.stdout.
     This function should be used for debugging only."""
-
 @final
 class _MemDebug:
     """Debugging support for the memory allocation in libxml2"""

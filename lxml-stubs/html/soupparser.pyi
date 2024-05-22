@@ -1,6 +1,6 @@
-from _typeshed import SupportsRead
 from typing import Any, Sequence, overload
 
+from _typeshed import SupportsRead
 from bs4 import BeautifulSoup, PageElement, SoupStrainer
 from bs4.builder import TreeBuilder
 
