@@ -1,5 +1,4 @@
 import sys
-from _typeshed import SupportsRead, SupportsWrite
 from os import PathLike
 from typing import (
     Any,
@@ -12,6 +11,8 @@ from typing import (
     Protocol,
     TypeVar,
 )
+
+from _typeshed import SupportsRead, SupportsWrite
 
 if sys.version_info >= (3, 10):
     from typing import TypeAlias

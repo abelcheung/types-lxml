@@ -1,6 +1,7 @@
 import sys
-from _typeshed import SupportsRead
 from typing import Collection, Iterable, Iterator, Literal, TypeVar, overload
+
+from _typeshed import SupportsRead
 
 if sys.version_info >= (3, 10):
     from typing import TypeAlias

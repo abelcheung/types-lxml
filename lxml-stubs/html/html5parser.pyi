@@ -3,10 +3,10 @@
 # See https://github.com/html5lib/html5lib-python/issues/102
 #
 
-from _typeshed import SupportsRead
 from typing import Literal, overload
 
 import html5lib as _html5lib
+from _typeshed import SupportsRead
 
 from .._types import _AnyStr
 from ..etree import _Element, _ElementTree

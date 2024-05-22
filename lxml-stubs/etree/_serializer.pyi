@@ -1,4 +1,3 @@
-from _typeshed import SupportsWrite
 from types import TracebackType
 from typing import (
     Any,
@@ -9,6 +8,8 @@ from typing import (
     final,
     overload,
 )
+
+from _typeshed import SupportsWrite
 
 from .._types import (
     SupportsLaxedItems,
