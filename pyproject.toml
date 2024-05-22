@@ -89,3 +89,21 @@ packages = 'lxml-stubs'
 strict = true
 show_error_context = true
 pretty = true
+
+[tool.ruff]
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["I"]
+task-tags = [
+    "BUG",
+    "FIXME",
+    "HACK",
+    "TODO",
+    "XXX",
+]
+
+[tool.ruff.lint.isort]
+# doesn't work
+# known-first-party = ["typing_extensions", "_typeshed"]
+combine-as-imports = true

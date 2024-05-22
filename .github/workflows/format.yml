@@ -2,11 +2,11 @@ name: Formatting
 
 on:
   schedule:
-    - cron: "20 6 * * 3"
+    - cron: '43 6 23 * *'
   workflow_dispatch:
 
 jobs:
-  black:
+  formatting:
     runs-on: ubuntu-22.04
     permissions:
       contents: write
@@ -14,27 +14,25 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Linting and import sort
+        uses: chartboost/ruff-action@v1
+        with:
+          args: 'check --fix'
+          src: 'lxml-stubs'
+
+      - name: Code formatting
+        uses: chartboost/ruff-action@v1
+        with:
+          args: 'format'
+          src: 'lxml-stubs'
+
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
           cache: 'pip'
 
-      - name: Install python packages
-        run: |
-          pip install --progress-bar=off .[test]
-          pip uninstall -q -y types-lxml
-
-      - name: Black action
-        id: black_step
-        uses: rickstaa/action-black@v1
-        with:
-          black_args: '.'
-
-      - name: Isort action
-        id: isort_step
-        uses: isort/isort-action@v1
-        with:
-          configuration: ''
+      - name: Install tox
+        run: pip install --progress-bar=off tox
 
       - name: Type checker validation on source
         run: >
@@ -42,21 +40,16 @@ jobs:
           --parallel-no-spinner -v
           -e mypy,pyright
 
-      - name: Create pull request
-        if: >
-          steps.black_step.outputs.is_formatted == 'true' ||
-          contains(steps.isort_step.outputs.isort-result, 'Fixing ')
-        uses: peter-evans/create-pull-request@v6
+      - uses: peter-evans/create-pull-request@v6
         with:
-          branch: create-pull-request/black-isort
+          branch: create-pull-request/formatting
           delete-branch: true
-          title: 'Black/isort formatting changes'
-          commit-message: 'chore: automated black/isort formatting'
+          title: 'Automatic formatting changes'
+          commit-message: 'style: automated formatting'
           labels: bot
           author: 'github-action[bot] <41898282+github-actions[bot]@users.noreply.github.com>'
           body: >
             Automated formatting by
-            [action-black](https://github.com/rickstaa/action-black),
-            [isort-action](https://github.com/isort/isort-action) and
+            [ruff-action](https://github.com/ChartBoost/ruff-action) and
             [create-pull-request](https://github.com/peter-evans/create-pull-request)
 
