@@ -93,13 +93,12 @@ def bad_loader_3(href: str, mode: str, _) -> _Element:
 
 
 class TestElementInclude:
-    # fmt: off
     @_testutils.signature_tester(EI.include, (
         ('elem'     , _ParameterKind.POSITIONAL_OR_KEYWORD, Parameter.empty),
         ('loader'   , _ParameterKind.POSITIONAL_OR_KEYWORD, None           ),
         ('base_url' , _ParameterKind.POSITIONAL_OR_KEYWORD, None           ),
         ('max_depth', _ParameterKind.POSITIONAL_OR_KEYWORD, 6              ),
-    ))  # fmt: on
+    ))  # fmt: skip
     def test_func_sig(self) -> None:
         pass
 

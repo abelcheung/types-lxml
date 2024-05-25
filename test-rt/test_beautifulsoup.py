@@ -18,13 +18,12 @@ reveal_type = getattr(_testutils, "reveal_type_wrapper")
 
 
 class TestFromstring:
-    # fmt: off
     @_testutils.signature_tester(_soup.fromstring, (
         ("data"         , Parameter.POSITIONAL_OR_KEYWORD, Parameter.empty),
         ("beautifulsoup", Parameter.POSITIONAL_OR_KEYWORD, None           ),
         ("makeelement"  , Parameter.POSITIONAL_OR_KEYWORD, None           ),
         ("bsargs"       , Parameter.VAR_KEYWORD          , Parameter.empty),
-    )) # fmt: on
+    ))  # fmt: skip
     def test_func_sig(self) -> None:
         pass
 
@@ -104,13 +103,12 @@ class TestFromstring:
 
 
 class TestParse:
-    # fmt: off
     @_testutils.signature_tester(_soup.parse, (
         ("file"         , Parameter.POSITIONAL_OR_KEYWORD, Parameter.empty),
         ("beautifulsoup", Parameter.POSITIONAL_OR_KEYWORD, None           ),
         ("makeelement"  , Parameter.POSITIONAL_OR_KEYWORD, None           ),
         ("bsargs"       , Parameter.VAR_KEYWORD          , Parameter.empty),
-    ))  # fmt: on
+    ))  # fmt: skip
     def test_func_sig(self) -> None:
         pass
 
@@ -209,14 +207,13 @@ class TestParse:
 
 
 class TestConvertTree:
-    # fmt: on
     @_testutils.signature_tester(
         _soup.convert_tree,
         (
             ("beautiful_soup_tree", Parameter.POSITIONAL_OR_KEYWORD, Parameter.empty),
             ("makeelement", Parameter.POSITIONAL_OR_KEYWORD, None),
         ),
-    )  # fmt: off
+    )  # fmt: skip
     def test_func_sig(self) -> None:
         pass
 

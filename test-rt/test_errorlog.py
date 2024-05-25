@@ -85,10 +85,9 @@ class TestListLog:
 
 
 class TestListLogMethods:
-    # fmt: off
     @_testutils.signature_tester(_ListErrorLog.filter_domains, (
         ("domains", Parameter.POSITIONAL_OR_KEYWORD, Parameter.empty),
-    ))  # fmt: on
+    ))  # fmt: skip
     def test_filter_domains(self, list_log: _ListErrorLog) -> None:
         filtered = list_log.filter_domains([ErrorDomains.XINCLUDE, ErrorDomains.DTD])
         reveal_type(filtered)
@@ -184,11 +183,9 @@ class TestEmptyLog:
 
 class TestModuleFunc:
     @_testutils.empty_signature_tester(clear_error_log)
-    # fmt: off
     @_testutils.signature_tester(use_global_python_log, (
         ("log", Parameter.POSITIONAL_OR_KEYWORD, Parameter.empty),
-    ))
-    # fmt: on
+    ))  # fmt: skip
     def test_sig(self) -> None:
         pass
 

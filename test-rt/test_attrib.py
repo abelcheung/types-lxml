@@ -46,12 +46,10 @@ class TestXmlAttrib:
         reveal_type(attrib.clear())
         assert len(attrib) == 0
 
-    # fmt: off
     @_testutils.signature_tester(_Attrib.get, (
         ("key"    , Parameter.POSITIONAL_OR_KEYWORD, Parameter.empty),
         ("default", Parameter.POSITIONAL_OR_KEYWORD, None           ),
-    ))
-    # fmt: on
+    ))  # fmt: skip
     def test_method_get(self, xml_tree: _ElementTree) -> None:
         root = deepcopy(xml_tree.getroot())
         attrib = root.attrib
@@ -70,11 +68,9 @@ class TestXmlAttrib:
         reveal_type(attrib.get("dummy", 0))
         reveal_type(attrib.get("dummy", (1, "dummy")))
 
-    # fmt: off
     @_testutils.signature_tester(_Attrib.update, (
         ("sequence_or_dict", Parameter.POSITIONAL_OR_KEYWORD, Parameter.empty),
-    ))
-    # fmt: on
+    ))  # fmt: skip
     def test_method_update(self, xml_tree: _ElementTree) -> None:
         root = deepcopy(xml_tree.getroot())
         attrib = root.attrib
@@ -107,12 +103,10 @@ class TestXmlAttrib:
             with pytest.raises(ValueError, match="too many values to unpack"):
                 attrib.update(cast(Any, data))
 
-    # fmt: off
     @_testutils.signature_tester(_Attrib.pop, (
         ("key"    , Parameter.POSITIONAL_OR_KEYWORD, Parameter.empty),
         ("default", Parameter.VAR_POSITIONAL       , Parameter.empty),
-    ))
-    # fmt: on
+    ))  # fmt: skip
     def test_method_pop(self, xml_tree: _ElementTree) -> None:
         root = deepcopy(xml_tree.getroot())
         attrib = deepcopy(root.attrib)
@@ -130,11 +124,9 @@ class TestXmlAttrib:
             reveal_type(result)
             del result, root
 
-    # fmt: off
     @_testutils.signature_tester(_Attrib.has_key, (
         ("key", Parameter.POSITIONAL_OR_KEYWORD, Parameter.empty),
-    ))
-    # fmt: on
+    ))  # fmt: skip
     def test_method_haskey(self, xml_tree: _ElementTree) -> None:
         root = deepcopy(xml_tree.getroot())
         attrib = root.attrib

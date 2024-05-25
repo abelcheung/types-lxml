@@ -36,9 +36,7 @@ class TestBasicBehavior:
         reveal_type(len(elem))
         length = len(elem)
         reveal_type(elem[randrange(length)])
-        # fmt: off
-        reveal_type(elem[: 2])  # ast: why the space???
-        # fmt: on
+        reveal_type(elem[: 2])  # fmt: skip  # ast: why the space???
 
         itr = iter(elem)
         reveal_type(itr)
@@ -108,13 +106,11 @@ class TestBasicBehavior:
 
         del subelem, comment, comment2, entity, pi, div, elem
 
-    # fmt: off
     @_testutils.signature_tester(_Element.index, (
         ("child", Parameter.POSITIONAL_OR_KEYWORD, Parameter.empty),
         ("start", Parameter.POSITIONAL_OR_KEYWORD, None           ),
         ("stop" , Parameter.POSITIONAL_OR_KEYWORD, None           ),
-    ))
-    # fmt: on
+    ))  # fmt: skip
     def test_method_index(self, xml_tree: _ElementTree) -> None:
         elem = deepcopy(xml_tree.getroot())
         subelem = elem[3]
@@ -146,11 +142,9 @@ class TestBasicBehavior:
 
         del elem, subelem
 
-    # fmt: off
     @_testutils.signature_tester(_Element.append, (
         ("element", Parameter.POSITIONAL_OR_KEYWORD, Parameter.empty),
-    ))
-    # fmt: on
+    ))  # fmt: skip
     def test_method_append(self, xml_tree: _ElementTree) -> None:
         elem = deepcopy(xml_tree.getroot())
         subelem = deepcopy(elem[-1])
@@ -168,12 +162,10 @@ class TestBasicBehavior:
 
         del elem, subelem
 
-    # fmt: off
     @_testutils.signature_tester(_Element.insert, (
         ("index"  , Parameter.POSITIONAL_OR_KEYWORD, Parameter.empty),
         ("element", Parameter.POSITIONAL_OR_KEYWORD, Parameter.empty),
-    ))
-    # fmt: on
+    ))  # fmt: skip
     def test_method_insert(self, xml_tree: _ElementTree) -> None:
         elem = deepcopy(xml_tree.getroot())
         comment = Comment("comment")
@@ -198,11 +190,9 @@ class TestBasicBehavior:
 
         del elem, comment
 
-    # fmt: off
     @_testutils.signature_tester(_Element.remove, (
         ("element", Parameter.POSITIONAL_OR_KEYWORD, Parameter.empty),
-    ))
-    # fmt: on
+    ))  # fmt: skip
     def test_method_remove(self, xml_tree: _ElementTree) -> None:
         elem = deepcopy(xml_tree.getroot())
         result = elem.remove(elem[-1])
@@ -218,12 +208,10 @@ class TestBasicBehavior:
 
         del elem
 
-    # fmt: off
     @_testutils.signature_tester(_Element.replace, (
         ("old_element", Parameter.POSITIONAL_OR_KEYWORD, Parameter.empty),
         ("new_element", Parameter.POSITIONAL_OR_KEYWORD, Parameter.empty),
-    ))
-    # fmt: on
+    ))  # fmt: skip
     def test_method_replace(self, xml_tree: _ElementTree) -> None:
         elem = deepcopy(xml_tree.getroot())
         subelem = elem[-1]
@@ -244,11 +232,9 @@ class TestBasicBehavior:
 
         del new_elem, subelem, elem
 
-    # fmt: off
     @_testutils.signature_tester(_Element.extend, (
         ("elements", Parameter.POSITIONAL_OR_KEYWORD, Parameter.empty),
-    ))
-    # fmt: on
+    ))  # fmt: skip
     def test_method_extend(self, xml_tree: _ElementTree) -> None:
         elem = deepcopy(xml_tree.getroot())
         new_elem1 = Comment("foo")
@@ -270,11 +256,9 @@ class TestBasicBehavior:
             with pytest.raises(TypeError, match=r"Cannot convert \w+ to .+\._Element"):
                 elem.extend(cast(Any, obj))
 
-    # fmt: off
     @_testutils.signature_tester(_Element.clear, (
         ("keep_tail", Parameter.POSITIONAL_OR_KEYWORD, False),
-    ))
-    # fmt: on
+    ))  # fmt: skip
     def test_method_clear(self, xml_tree: _ElementTree) -> None:
         elem = deepcopy(xml_tree.getroot())
         elem.clear()
@@ -361,11 +345,9 @@ class TestProperties:
 
 
 class TestContentOnlyElement:
-    # fmt: off
     @_testutils.signature_tester(Comment, (
         ("text", Parameter.POSITIONAL_OR_KEYWORD, None),
-    ))
-    # fmt: on
+    ))  # fmt: skip
     def test_construct_comment(self) -> None:
         comm = Comment()
         reveal_type(comm)
@@ -380,11 +362,9 @@ class TestContentOnlyElement:
             with pytest.raises(TypeError, match="must be bytes or unicode"):
                 _ = Comment(cast(Any, data))
 
-    # fmt: off
     @_testutils.signature_tester(Entity, (
         ("name", Parameter.POSITIONAL_OR_KEYWORD, Parameter.empty),
-    ))
-    # fmt: on
+    ))  # fmt: skip
     def test_construct_entity(self) -> None:
         for name in ("foo", b"foo"):
             ent = Entity(name)
@@ -395,12 +375,10 @@ class TestContentOnlyElement:
             with pytest.raises(TypeError, match="must be bytes or unicode"):
                 _ = Entity(cast(Any, data))
 
-    # fmt: off
     @_testutils.signature_tester(ProcessingInstruction, (
         ("target", Parameter.POSITIONAL_OR_KEYWORD, Parameter.empty),
-        ("text"  , Parameter.POSITIONAL_OR_KEYWORD, None),
-    ))
-    # fmt: on
+        ("text"  , Parameter.POSITIONAL_OR_KEYWORD, None           ),
+    ))  # fmt: skip
     def test_construct_pi(self) -> None:
         for target in ("foo", b"foo"):
             pi = ProcessingInstruction(target)
@@ -437,12 +415,10 @@ class TestAttribAccessMethods:
             reveal_type(elem.values())
             reveal_type(elem.items())
 
-    # fmt: off
     @_testutils.signature_tester(_Element.get, (
         ("key"    , Parameter.POSITIONAL_OR_KEYWORD, Parameter.empty),
         ("default", Parameter.POSITIONAL_OR_KEYWORD, None           ),
-    ))
-    # fmt: on
+    ))  # fmt: skip
     def test_method_get(self, x1_filepath: Path) -> None:
         tree = parse(x1_filepath)
         root = tree.getroot()
@@ -461,12 +437,10 @@ class TestAttribAccessMethods:
         reveal_type(root.get("width", 0))
         reveal_type(root.get("somejunk", (0, "foo")))
 
-    # fmt: off
     @_testutils.signature_tester(_Element.set, (
         ("key"  , Parameter.POSITIONAL_OR_KEYWORD, Parameter.empty),
         ("value", Parameter.POSITIONAL_OR_KEYWORD, Parameter.empty),
-    ))
-    # fmt: on
+    ))  # fmt: skip
     def test_method_set(self, xml_tree: _ElementTree) -> None:
         root = deepcopy(xml_tree.getroot())
 
