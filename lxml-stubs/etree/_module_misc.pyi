@@ -17,6 +17,7 @@ from ._element import _Element
 from ._xmlerror import _BaseErrorLog, _ListErrorLog
 
 DEBUG: int
+ICONV_COMPILED_VERSION: tuple[int, int]
 LIBXML_VERSION: tuple[int, int, int]
 LIBXML_COMPILED_VERSION: tuple[int, int, int]
 LXML_VERSION: tuple[int, int, int, int]
