@@ -6,12 +6,16 @@ on:
       - '20*'
 
 jobs:
+  build:
+    uses: ./.github/workflows/build_inc.yml
+
   all_tests:
-    uses: ./.github/workflows/test_inc.yml
     permissions:
       actions: write
+    needs: build
+    uses: ./.github/workflows/test_inc.yml
     with:
-      gitref: ${{ github.ref }}
+      artifact: dist
 
   release:
     needs: all_tests

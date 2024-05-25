@@ -13,9 +13,13 @@ on:
       - 'LICENSE'
 
 jobs:
+  build:
+    uses: ./.github/workflows/build_inc.yml
+
   all_tests:
     permissions:
       actions: write
+    needs: build
     uses: ./.github/workflows/test_inc.yml
     with:
-      gitref: ${{ github.ref }}
+      artifact: dist

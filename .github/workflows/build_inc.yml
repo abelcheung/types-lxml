@@ -1,0 +1,48 @@
+# For inclusion in another workflow only
+
+name: Reusable build workflow
+
+on:
+  workflow_call:
+    inputs:
+      gitref:
+        required: false
+        type: string
+        default: ${{ github.ref }}
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        pyver:
+          - "3.10"
+        os:
+          - "ubuntu-22.04"
+    runs-on: ${{ matrix.os }}
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        ref: ${{ inputs.gitref }}
+        fetch-depth: 0  # detect tagged ver in repo
+
+    - uses: actions/setup-python@v5
+      with:
+        python-version: ${{ matrix.pyver }}
+        cache: 'pip'
+
+    - name: Install tox
+      run: pip install --progress-bar=off tox
+
+    - name: Type checker validation on source
+      run: tox run-parallel --parallel-no-spinner -v -e mypy,pyright
+
+    - name: Build sdist and wheel
+      run: tox run -v -e build
+
+    - name: Upload artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: dist
+        path: dist/*
+        if-no-files-found: error
+

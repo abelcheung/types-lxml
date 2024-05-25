@@ -1,50 +1,19 @@
 # For inclusion in another workflow only
 
-name: Reusable build/test workflow
+name: Reusable test workflow
 
 on:
   workflow_call:
     inputs:
       gitref:
-        required: true
+        required: false
+        type: string
+      artifact:
+        required: false
         type: string
 
 jobs:
-  build:
-    strategy:
-      matrix:
-        pyver: ["3.10"]
-        os: ["ubuntu-22.04"]
-    runs-on: ${{ matrix.os }}
-    steps:
-    - uses: actions/checkout@v4
-      with:
-        ref: ${{ inputs.gitref }}
-        fetch-depth: 0
-
-    - uses: actions/setup-python@v5
-      with:
-        python-version: ${{ matrix.pyver }}
-        cache: 'pip'
-
-    - name: Install tox
-      run: pip install -v tox
-
-    - name: Type checker validation on source
-      run: tox run-parallel --parallel-no-spinner -v -e mypy,pyright
-
-    - name: Build sdist and wheel
-      run: tox run -v -e build
-
-    - name: Upload artifact
-      uses: actions/upload-artifact@v4
-      with:
-        name: dist
-        path: dist/*
-        if-no-files-found: error
-
   test-stub:
-    needs: build
     strategy:
       fail-fast: false
       matrix:
@@ -59,29 +28,38 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
     - uses: actions/checkout@v4
+      if: ${{ inputs.gitref }}
+      with:
+        ref: ${{ inputs.gitref }}
+        fetch-depth: 0
+
+    - uses: actions/download-artifact@v4
+      id: dl-artifact
+      if: ${{ inputs.artifact }}
+      with:
+        name: ${{ inputs.artifact }}
+        path: dist
+
+    - name: Extract tarball
+      if: ${{ success() && steps.dl-artifact.conclusion == 'success' }}
+      shell: bash
+      run: >
+        tar -zxf dist/*.tar.gz --strip-components=1
 
     - uses: actions/setup-python@v5
       with:
         python-version: ${{ matrix.pyver }}
         cache: 'pip'
 
-    - name: Download artifact
-      uses: actions/download-artifact@v4
-      with:
-        name: dist
-
     - name: Install prerequisites
       run: >
-        pip install -v
-        "tox > 4"
-        "tox-gh-actions == 3.1.*"
+        pip install --progress-bar=off -v
+        "tox-gh-actions == 3.2.0"
 
     - name: Test stubs
-      shell: bash
       run: >
         tox run -v
         --skip-env='.*-rt-.*'
-        --installpkg *.tar.gz
         --result-json test-stub-py${{ matrix.pyver }}.json
 
     - name: Upload log artifact
@@ -92,7 +70,6 @@ jobs:
         if-no-files-found: error
 
   test-rt:
-    needs: build
     strategy:
       fail-fast: false
       matrix:
@@ -107,29 +84,38 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
     - uses: actions/checkout@v4
+      if: ${{ inputs.gitref }}
+      with:
+        ref: ${{ inputs.gitref }}
+        fetch-depth: 0
+
+    - uses: actions/download-artifact@v4
+      id: dl-artifact
+      if: ${{ inputs.artifact }}
+      with:
+        name: ${{ inputs.artifact }}
+        path: dist
+
+    - name: Extract tarball
+      if: ${{ success() && steps.dl-artifact.conclusion == 'success' }}
+      shell: bash
+      run: >
+        tar -zxf dist/*.tar.gz --strip-components=1
 
     - uses: actions/setup-python@v5
       with:
         python-version: ${{ matrix.pyver }}
         cache: 'pip'
 
-    - name: Download artifact
-      uses: actions/download-artifact@v4
-      with:
-        name: dist
-
     - name: Install prerequisites
       run: >
-        pip install -v
-        "tox > 4"
-        "tox-gh-actions == 3.1.*"
+        pip install --progress-bar=off -v
+        "tox-gh-actions == 3.2.0"
 
     - name: Test runtime
-      shell: bash
       run: >
         tox run -v
         --skip-env='.*-stub$'
-        --installpkg *.tar.gz
         --result-json test-rt-${{ matrix.os }}-py${{ matrix.pyver }}.json
 
     - name: Upload log artifact
