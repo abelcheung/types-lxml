@@ -91,10 +91,10 @@
     _ = ElementDefaultClassLookup()
     _ = ElementDefaultClassLookup(HtmlElement, HtmlComment)
     lookup: ElementDefaultClassLookup
-    reveal_type(lookup.element_class)  # NR: .+ "Type\[[\w\.]+\._Element]"$
-    reveal_type(lookup.comment_class)  # NR: .+ "Type\[[\w\.]+\._Comment]"$
-    reveal_type(lookup.pi_class)  # NR: .+ "Type\[[\w\.]+\._ProcessingInstruction]"$
-    reveal_type(lookup.entity_class)  # NR: .+ "Type\[[\w\.]+\._Entity]"$
+    reveal_type(lookup.element_class)  # NR: .+ "[tT]ype\[[\w\.]+\._Element]"$
+    reveal_type(lookup.comment_class)  # NR: .+ "[tT]ype\[[\w\.]+\._Comment]"$
+    reveal_type(lookup.pi_class)  # NR: .+ "[tT]ype\[[\w\.]+\._ProcessingInstruction]"$
+    reveal_type(lookup.entity_class)  # NR: .+ "[tT]ype\[[\w\.]+\._Entity]"$
 
 - case: elementdefault_lookup_badargs
   main: |
