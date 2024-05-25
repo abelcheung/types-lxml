@@ -79,7 +79,7 @@ jobs:
           - "3.12"
         os:
           - ubuntu-22.04
-          # - windows-2022  # tox refuse to quit
+          - windows-2022
           - macos-13
     runs-on: ${{ matrix.os }}
     steps:
