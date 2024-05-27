@@ -2,9 +2,10 @@
 # Element factories
 #
 
-from typing import Any, Callable, Literal, TypeVar, overload
+from typing import Any, Literal, Protocol, TypeVar, overload
 
 from .._types import SupportsLaxedItems, _AnyStr, _ElementFactory, _NSMapArg, _TagName
+from ..etree import _Element
 from . import _element as _e
 
 _DataElem_T = TypeVar("_DataElem_T", bound=_e.ObjectifiedDataElement)
@@ -247,6 +248,30 @@ def DataElement(
         XSI data type is not involved in type determination.
     """
 
+class _OEMakerCallProtocol(Protocol):
+    """Callback Protocol for Objectified ElementMaker
+
+    Annotation
+    ----------
+    This is the call signature of `lxml.objectify.ElementMaker`
+    with `tag` argument removed.
+    Thus arguments are effectively the same as, say `E.html()`,
+    with all keyword arguments as tag attributes, and positional
+    arguments as child element or tag content.
+    """
+    def __call__(
+        self,
+        *_children: _Element
+        | _AnyStr
+        | bool
+        | int
+        | float
+        | dict[str, Any]
+        | _OEMakerCallProtocol
+        | None,
+        **_attrib: _AnyStr,
+    ) -> _e.ObjectifiedElement: ...
+
 class ElementMaker:
     """Used for constructing trees
 
@@ -285,16 +310,35 @@ class ElementMaker:
         annotate: bool = True,
         makeelement: _ElementFactory[_e.ObjectifiedElement] | None = None,
     ) -> None: ...
+    # Note:
+    # - Attribute values supplied as children dict will be stringified,
+    #   but those as keyword argument _must_ be string itself as they
+    #   are not converted
+    # - One single child of value 'None' is special, but that doesn't
+    #   affect typing
+    # - Default children accepts all builtin data types understood
+    #   by ObjectifiedElement (bool, float, string etc). In addition,
+    #   The PyType registry can register additional support of other
+    #   object types. Yet it is decided to not accept anything here,
+    #   as even object of wrong type can be used in runtime which
+    #   is forcefully stringified into garbage data.
     def __call__(
         self,
-        tag: str,
-        *args: Any,  # TODO _ObjectifyElementMakerCaller.__call__
-        **kwargs: Any,
+        tag: str,  # bytes or namespaced QName object unsupported
+        *_children: _Element  # See _OEMakerCallProtocol above
+        | _AnyStr
+        | bool
+        | int
+        | float
+        | dict[str, Any]
+        | _OEMakerCallProtocol
+        | None,
+        **_attrib: _AnyStr,
     ) -> _e.ObjectifiedElement: ...
-    # TODO ElementMaker arguments
     # __getattr__ here is special. ElementMaker supports using any
     # attribute name as tag, which is sort of like a functools.partial
     # object to ElementMaker.__call__() with tag argument prefilled.
-    def __getattr__(self, tag: str) -> Callable[..., _e.ObjectifiedElement]: ...
+    # So E('html', ...) is equivalent to E.html(...)
+    def __getattr__(self, tag: str) -> _OEMakerCallProtocol: ...
 
 E: ElementMaker
