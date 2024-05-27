@@ -1,6 +1,6 @@
 from typing import Any, Callable, Generic, Mapping, Protocol, overload
 
-from ._types import _ElementFactory, _ET_co, _NSMapArg, _TagName
+from ._types import _AnyStr, _ElementFactory, _ET_co, _NSMapArg, _TagName
 from .etree import CDATA, _Element
 
 # Mapping should have been something like
@@ -50,7 +50,7 @@ class ElementMaker(Generic[_ET_co]):
         cls,
         typemap: _TypeMapArg | None = None,
         namespace: str | None = None,
-        nsmap: _NSMapArg | None = None,
+        nsmap: _NSMapArg | None = None,  # FIXME NS tuple allowed
         *,
         makeelement: _ElementFactory[_ET_co],
     ) -> ElementMaker[_ET_co]: ...
@@ -80,6 +80,7 @@ class ElementMaker(Generic[_ET_co]):
         | Callable[[], _Element | str | CDATA | dict[str, Any]],
         **_attrib: str,
     ) -> _ET_co: ...
+
     # __getattr__ here is special. ElementMaker supports using any
     # attribute name as tag, returning a functools.partial
     # object to ElementMaker.__call__() with tag argument prefilled.
@@ -89,5 +90,20 @@ class ElementMaker(Generic[_ET_co]):
     # The confined call signature is more important for
     # users. So opt for adding partial properties to the protocol.
     def __getattr__(self, name: str) -> _EMakerCallProtocol[_ET_co]: ...
+
+    # Private read-only attributes, could be useful for understanding
+    # how the ElementMaker is constructed
+    # Note that the corresponding input arguments during ElementMaker
+    # instantiation are much more relaxed, as typing.Mapping argument
+    # invariance has posed some challenge to typing. We can afford
+    # some more restriction as return value or attribute.
+    @property
+    def _makeelement(self) -> _ElementFactory[_ET_co]: ...
+    @property
+    def _namespace(self) -> str | None: ...
+    @property
+    def _nsmap(self) -> dict[str | None, _AnyStr] | None: ...
+    @property
+    def _typemap(self) -> dict[type[Any], Callable[[_ET_co, Any], None]]: ...
 
 E: ElementMaker
