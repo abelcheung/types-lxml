@@ -17,9 +17,15 @@ jobs:
     uses: ./.github/workflows/build_inc.yml
 
   all_tests:
+    needs: build
     permissions:
       actions: write
-    needs: build
+    strategy:
+      matrix:
+        flavor:
+          - "normal"
+          - "alt"
     uses: ./.github/workflows/test_inc.yml
     with:
-      artifact: dist
+      flavor: ${{ matrix.flavor }}
+

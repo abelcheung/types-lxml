@@ -1,15 +1,16 @@
 # For inclusion in another workflow only
 
+# For input argument, choose either a git reference,
+# or an artifact flavor of "normal" or "alt" so
+# its tarball can be extracted to default directory
+
 name: Reusable test workflow
 
 on:
   workflow_call:
     inputs:
-      gitref:
-        required: false
-        type: string
-      artifact:
-        required: false
+      flavor:
+        required: true
         type: string
 
 jobs:
@@ -27,21 +28,12 @@ jobs:
           - "ubuntu-22.04"
     runs-on: ${{ matrix.os }}
     steps:
-    - uses: actions/checkout@v4
-      if: ${{ inputs.gitref }}
-      with:
-        ref: ${{ inputs.gitref }}
-        fetch-depth: 0
-
     - uses: actions/download-artifact@v4
-      id: dl-artifact
-      if: ${{ inputs.artifact }}
       with:
-        name: ${{ inputs.artifact }}
+        name: dist-${{ inputs.flavor }}
         path: dist
 
     - name: Extract tarball
-      if: ${{ success() && steps.dl-artifact.conclusion == 'success' }}
       shell: bash
       run: >
         tar -zxf dist/*.tar.gz --strip-components=1
@@ -60,13 +52,12 @@ jobs:
       run: >
         tox run -v
         --skip-env='.*-rt-.*'
-        --result-json test-stub-py${{ matrix.pyver }}.json
+        --result-json test-${{ inputs.flavor }}-stub-py${{ matrix.pyver }}.json
 
-    - name: Upload log artifact
-      uses: actions/upload-artifact@v4
+    - uses: actions/upload-artifact@v4
       with:
-        name: log-stub-py${{ matrix.pyver }}
-        path: test-stub-*.json
+        name: log-${{ inputs.flavor }}-stub-py${{ matrix.pyver }}
+        path: test-${{ inputs.flavor }}-stub-*.json
         if-no-files-found: error
 
   test-rt:
@@ -83,21 +74,12 @@ jobs:
           - macos-13
     runs-on: ${{ matrix.os }}
     steps:
-    - uses: actions/checkout@v4
-      if: ${{ inputs.gitref }}
-      with:
-        ref: ${{ inputs.gitref }}
-        fetch-depth: 0
-
     - uses: actions/download-artifact@v4
-      id: dl-artifact
-      if: ${{ inputs.artifact }}
       with:
-        name: ${{ inputs.artifact }}
+        name: dist-${{ inputs.flavor }}
         path: dist
 
     - name: Extract tarball
-      if: ${{ success() && steps.dl-artifact.conclusion == 'success' }}
       shell: bash
       run: >
         tar -zxf dist/*.tar.gz --strip-components=1
@@ -116,13 +98,12 @@ jobs:
       run: >
         tox run -v
         --skip-env='.*-stub$'
-        --result-json test-rt-${{ matrix.os }}-py${{ matrix.pyver }}.json
+        --result-json test-${{ inputs.flavor }}-rt-${{ matrix.os }}-py${{ matrix.pyver }}.json
 
-    - name: Upload log artifact
-      uses: actions/upload-artifact@v4
+    - uses: actions/upload-artifact@v4
       with:
-        name: log-rt-${{ matrix.os }}-py${{ matrix.pyver }}
-        path: test-rt-*.json
+        name: log-${{ inputs.flavor }}-rt-${{ matrix.os }}-py${{ matrix.pyver }}
+        path: test-${{ inputs.flavor }}-rt-*.json
         if-no-files-found: error
 
   log-aggregation:
@@ -133,21 +114,19 @@ jobs:
       actions: write
     steps:
 
-    - name: Download logs
-      uses: actions/download-artifact@v4
+    - uses: actions/download-artifact@v4
       with:
         path: all-logs
-        pattern: log-*
+        pattern: log-${{ inputs.flavor }}-*
         merge-multiple: true
 
-    - name: Upload logs
-      uses: actions/upload-artifact@v4
+    - uses: actions/upload-artifact@v4
       with:
-        name: all-logs
+        name: alllogs-${{ inputs.flavor }}
         path: all-logs
         if-no-files-found: error
 
-    - name: Remove individual logs
-      uses: geekyeggo/delete-artifact@v5
+    - uses: geekyeggo/delete-artifact@v5
       with:
-        name: log-*
+        name: log-${{ inputs.flavor }}-*
+
