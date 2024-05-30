@@ -280,21 +280,19 @@ class TestCharsetArg:
         reveal_type(tree)
         del tree
 
-    # TODO Should this belong to application logic and not the domain
-    # of type annotation?
     def test_conflict(self, h2_str: str) -> None:
         with pytest.raises(TypeError, match="unexpected keyword argument"):
-            _ = h5.document_fromstring(h2_str, guess_charset=True)
+            _ = h5.document_fromstring(h2_str, guess_charset=True)  # type: ignore
 
         with pytest.raises(TypeError, match="unexpected keyword argument"):
-            _ = h5.fragments_fromstring(h2_str, guess_charset=True)
+            _ = h5.fragments_fromstring(h2_str, guess_charset=False)  # type: ignore
 
         with pytest.raises(TypeError, match="unexpected keyword argument"):
-            _ = h5.fragment_fromstring(h2_str, guess_charset=True)
+            _ = h5.fragment_fromstring(h2_str, guess_charset=False)  # type: ignore
 
         with pytest.raises(TypeError, match="unexpected keyword argument"):
-            _ = h5.fromstring(h2_str, guess_charset=True)
+            _ = h5.fromstring(h2_str, False)  # type: ignore
 
         s_io = StringIO(h2_str)
         with pytest.raises(TypeError, match="unexpected keyword argument"):
-            _ = h5.parse(s_io, guess_charset=True)
+            _ = h5.parse(s_io, True)  # type: ignore

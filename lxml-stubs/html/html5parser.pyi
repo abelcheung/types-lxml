@@ -30,46 +30,95 @@ html_parser: HTMLParser
 #   The core probing logic of this user-contributed submodule has never
 #   changed since last modification at 2010. Probably yet another
 #   member of code wasteland.
-# - Exception raised for the combination html=<str> and guess_charset=True,
-#   but not reflected here. (TODO or?)
+# - Exception raised when html=<str> and guess_charset=True
+#   are used together. This is due to flawed argument passing
+#   into html5lib. We cover it up with @overload's
 # - Although other types of parser _might_ be usable (after implementing
 #   parse() method, that is), such usage completely defeats the purpose of
 #   creating this submodule. It is intended for subclassing or
 #   init argument tweaking instead.
 
+@overload
 def document_fromstring(
-    html: _AnyStr, guess_charset: bool | None = None, parser: HTMLParser | None = None
+    html: bytes,
+    guess_charset: bool | None = None,
+    parser: HTMLParser | None = None,
 ) -> _Element: ...
 @overload
-def fragments_fromstring(  # type: ignore
-    html: _AnyStr,
+def document_fromstring(
+    html: str,
+    guess_charset: None = None,
+    parser: HTMLParser | None = None,
+) -> _Element: ...
+
+# 4 overloads for fragments_fromstring:
+# 2 for html (bytes/str)
+# 2 for no_leading_text (true/false)
+@overload  # html=bytes, no_leading_text=true
+def fragments_fromstring(  # type: ignore[overload-overlap]
+    html: bytes,
     no_leading_text: Literal[True],
     guess_charset: bool | None = None,
     parser: HTMLParser | None = None,
 ) -> list[_Element]: ...
-
-# The first item in the list may be a string
-@overload
+@overload  # html=str, no_leading_text=true
+def fragments_fromstring(  # type: ignore[overload-overlap]
+    html: str,
+    no_leading_text: Literal[True],
+    guess_charset: None = None,
+    parser: HTMLParser | None = None,
+) -> list[_Element]: ...
+@overload  # html=bytes, no_leading_text=all cases
 def fragments_fromstring(
-    html: _AnyStr,
+    html: bytes,
     no_leading_text: bool = False,
     guess_charset: bool | None = None,
     parser: HTMLParser | None = None,
 ) -> list[str | _Element]: ...
+@overload  # html=str, no_leading_text=all cases
+def fragments_fromstring(
+    html: str,
+    no_leading_text: bool = False,
+    guess_charset: None = None,
+    parser: HTMLParser | None = None,
+) -> list[str | _Element]: ...
+@overload
 def fragment_fromstring(
-    html: _AnyStr,
+    html: str,
+    create_parent: bool | _AnyStr = False,
+    guess_charset: None = None,
+    parser: HTMLParser | None = None,
+) -> _Element: ...
+@overload
+def fragment_fromstring(
+    html: bytes,
     create_parent: bool | _AnyStr = False,
     guess_charset: bool | None = None,
     parser: HTMLParser | None = None,
 ) -> _Element: ...
+@overload
 def fromstring(
-    html: _AnyStr,
+    html: str,
+    guess_charset: None = None,
+    parser: HTMLParser | None = None,
+) -> _Element: ...
+@overload
+def fromstring(
+    html: bytes,
     guess_charset: bool | None = None,
     parser: HTMLParser | None = None,
 ) -> _Element: ...
+
+# html5lib doesn't support pathlib
+@overload
 def parse(
-    # html5lib doesn't support pathlib
-    filename_url_or_file: _AnyStr | SupportsRead[bytes] | SupportsRead[str],
+    filename_url_or_file: str | SupportsRead[str],
+    guess_charset: None = None,
+    parser: HTMLParser | None = None,
+) -> _ElementTree: ...
+@overload
+def parse(
+    filename_url_or_file: bytes | SupportsRead[bytes],
     guess_charset: bool | None = None,
     parser: HTMLParser | None = None,
 ) -> _ElementTree: ...
