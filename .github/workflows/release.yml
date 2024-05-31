@@ -8,47 +8,67 @@ on:
 jobs:
   build:
     uses: ./.github/workflows/build_inc.yml
+    with:
+      gitref: ${{ github.ref }}
 
   all_tests:
+    needs: build
     permissions:
       actions: write
-    needs: build
+    strategy:
+      matrix:
+        flavor:
+          - "normal"
+          - "alt"
     uses: ./.github/workflows/test_inc.yml
     with:
-      artifact: dist
+      flavor: ${{ matrix.flavor }}
 
-  release:
+  pypi-rel:
     needs: all_tests
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     environment: pypi
     permissions:
       id-token: write
-      contents: write
+    strategy:
+      matrix:
+        flavor:
+          - "normal"
+          - "alt"
     steps:
 
-    - name: Download artifact
-      uses: actions/download-artifact@v4
+    - uses: actions/download-artifact@v4
       with:
-        name: dist
+        name: dist-${{ matrix.flavor }}
         path: dist
 
-    - name: Publish draft GitHub release
-      uses: ncipollo/release-action@v1
+    - name: Determine PyPI URL
+      uses: haya14busa/action-cond@v1
+      id: pypi-url
+      with:
+        cond: ${{ vars.OFFICIAL_PYPI || false }}
+        if_true: "https://upload.pypi.org/legacy/"
+        if_false: "https://test.pypi.org/legacy/"
+
+    - uses: pypa/gh-action-pypi-publish@release/v1
+      with:
+        repository-url: ${{ steps.pypi-url.outputs.value }}
+
+  gh-rel:
+    needs: all_tests
+    runs-on: ubuntu-22.04
+    permissions:
+      contents: write
+    steps:
+    - uses: actions/download-artifact@v4
+      with:
+        pattern: dist-*
+        path: dist
+        merge-multiple: true
+
+    - uses: ncipollo/release-action@v1
       with:
         artifacts: "dist/*.whl,dist/*.tar.gz"
         artifactErrorsFailBuild: true
         draft: true
 
-    - name: Publish to Test PyPI
-      if: >
-        contains(github.ref_name, 'rc') ||
-        contains(github.ref_name, 'pre')
-      uses: pypa/gh-action-pypi-publish@release/v1
-      with:
-        repository-url: https://test.pypi.org/legacy/
-
-    - name: Publish to PyPI
-      if: >
-        ! contains(github.ref_name, 'rc') &&
-        ! contains(github.ref_name, 'pre')
-      uses: pypa/gh-action-pypi-publish@release/v1

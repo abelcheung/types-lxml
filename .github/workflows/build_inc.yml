@@ -32,8 +32,18 @@ jobs:
     - name: Install tox
       run: pip install --progress-bar=off tox
 
+    - name: Check version hardcode necessity
+      uses: haya14busa/action-cond@v1
+      id: run-tox
+      with:
+        cond: ${{ startsWith(inputs.gitref, 'refs/tags/') && matrix.flavor != 'normal' }}
+        if_true: "env PDM_BUILD_SCM_VERSION=$GITHUB_REF_NAME tox"
+        if_false: "tox"
+
     - name: Build flavor ${{ matrix.flavor }}
-      run: tox run -v -e build-${{ matrix.flavor }}
+      run: >
+        ${{ steps.run-tox.outputs.value }}
+        run -v -e build-${{ matrix.flavor }}
 
     - uses: actions/upload-artifact@v4
       with:
