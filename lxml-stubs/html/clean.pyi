@@ -19,10 +19,10 @@ from ..etree import _ElementTree
 from . import HtmlElement
 from ._funcs import _HtmlDoc_T
 
-if sys.version_info < (3, 13):
-    from typing_extensions import deprecated
-else:
+if sys.version_info >= (3, 13):
     from warnings import deprecated
+else:
+    from typing_extensions import deprecated
 
 # Similar to _funcs._HtmlDoc_T, but also supports ET; only used in Cleaner
 _DT = TypeVar("_DT", str, bytes, HtmlElement, _ElementTree[HtmlElement])

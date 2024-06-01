@@ -9,7 +9,7 @@ from types import ModuleType
 from typing import Any, Callable, Collection, Generic, Protocol, final, overload
 
 if sys.version_info >= (3, 13):
-    from typing import deprecated
+    from warnings import deprecated
 else:
     from typing_extensions import deprecated
 
