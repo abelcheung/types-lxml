@@ -11,6 +11,7 @@
 # values, it is better to look up API doc or source directly
 #
 
+import sys
 from typing import Collection, Iterable, Literal, Pattern, TypeVar, overload
 
 from .._types import _ElementOrTree
@@ -18,11 +19,18 @@ from ..etree import _ElementTree
 from . import HtmlElement
 from ._funcs import _HtmlDoc_T
 
+if sys.version_info < (3, 13):
+    from typing_extensions import deprecated
+else:
+    from warnings import deprecated
+
 # Similar to _funcs._HtmlDoc_T, but also supports ET; only used in Cleaner
 _DT = TypeVar("_DT", str, bytes, HtmlElement, _ElementTree[HtmlElement])
 
+@deprecated("Removed from lxml 5.2.0; use lxml_html_clean project instead")
 class Cleaner:
     @overload  # if allow_tags present, remove_unknown_tags must be False
+    @deprecated("Removed from lxml 5.2.0; use lxml_html_clean project instead")
     def __init__(
         self,
         *,
@@ -50,6 +58,7 @@ class Cleaner:
         whitelist_tags: Collection[str] | None = {"iframe", "embed"},
     ) -> None: ...
     @overload  # ... otherwise allow_tags arg must not exist
+    @deprecated("Removed from lxml 5.2.0; use lxml_html_clean project instead")
     def __init__(
         self,
         *,
@@ -75,16 +84,23 @@ class Cleaner:
         host_whitelist: Collection[str] = (),
         whitelist_tags: Collection[str] = {"iframe", "embed"},
     ) -> None: ...
+    @deprecated("Removed from lxml 5.2.0; use lxml_html_clean project instead")
     def __call__(self, doc: _ElementOrTree[HtmlElement]) -> None: ...
+    @deprecated("Removed from lxml 5.2.0; use lxml_html_clean project instead")
     def allow_follow(self, anchor: HtmlElement) -> bool: ...
+    @deprecated("Removed from lxml 5.2.0; use lxml_html_clean project instead")
     def allow_element(self, el: HtmlElement) -> bool: ...
+    @deprecated("Removed from lxml 5.2.0; use lxml_html_clean project instead")
     def allow_embedded_url(self, el: HtmlElement, url: str) -> bool: ...
+    @deprecated("Removed from lxml 5.2.0; use lxml_html_clean project instead")
     def kill_conditional_comments(self, doc: _ElementOrTree[HtmlElement]) -> None: ...
+    @deprecated("Removed from lxml 5.2.0; use lxml_html_clean project instead")
     def clean_html(self, html: _DT) -> _DT: ...
 
-clean: Cleaner
-clean_html = clean.clean_html
+clean: Cleaner  # pyright: ignore[reportDeprecated]
+clean_html = clean.clean_html  # pyright: ignore[reportDeprecated]
 
+@deprecated("Removed from lxml 5.2.0; use lxml_html_clean project instead")
 def autolink(
     el: HtmlElement,
     link_regexes: Iterable[Pattern[str]] = ...,  # keep ellipsis
@@ -92,6 +108,7 @@ def autolink(
     avoid_hosts: Iterable[Pattern[str]] = ...,  # keep ellipsis
     avoid_classes: Collection[str] = ["nolink"],
 ) -> None: ...
+@deprecated("Removed from lxml 5.2.0; use lxml_html_clean project instead")
 def autolink_html(
     html: _HtmlDoc_T,
     link_regexes: Iterable[Pattern[str]] = ...,  # keep ellipsis
@@ -99,6 +116,7 @@ def autolink_html(
     avoid_hosts: Iterable[Pattern[str]] = ...,  # keep ellipsis
     avoid_classes: Collection[str] = ["nolink"],
 ) -> _HtmlDoc_T: ...
+@deprecated("Removed from lxml 5.2.0; use lxml_html_clean project instead")
 def word_break(
     el: HtmlElement,
     max_width: int = 40,
@@ -106,6 +124,7 @@ def word_break(
     avoid_classes: Collection[str] = ["nobreak"],
     break_character: str = chr(0x200B),
 ) -> None: ...
+@deprecated("Removed from lxml 5.2.0; use lxml_html_clean project instead")
 def word_break_html(
     html: _HtmlDoc_T,
     max_width: int = 40,
