@@ -1,15 +1,11 @@
 # For inclusion in another workflow only
 
-# For input argument, choose either a git reference,
-# or an artifact flavor of "normal" or "alt" so
-# its tarball can be extracted to default directory
-
 name: Reusable test workflow
 
 on:
   workflow_call:
     inputs:
-      flavor:
+      flavor:  # "normal" or "alt"
         required: true
         type: string
 

@@ -4,8 +4,9 @@
 
 ## Important note
 
-- `types-lxml 2024.03.27` release requires [cssselect package](https://pypi.org/project/cssselect/) to work, since `lxml.cssselect` submodule utilises inline annotation from `cssselect 1.2.0`.
-- Next release (`2024.04.14`) requires `mypy 1.9`; `2024.03.27` is the last release supporting `mypy 1.5`.
+- Next release after `2024.04.14` contains multiple build; please check out [Installation section](#installation) on choosing the desired build (hint: many people don't need to bother with this)
+- `2024.04.14` release requires `mypy 1.9`; `2024.03.27` is the last release supporting `mypy 1.5`.
+- `2024.03.27` release requires [cssselect package](https://pypi.org/project/cssselect/) to work, since `lxml.cssselect` submodule utilises inline annotation from `cssselect 1.2.0`.
 
 ## Introduction
 
@@ -68,17 +69,30 @@ The normal choice for most people is to fetch package from PyPI via `pip`:
 
     pip install -U types-lxml
 
-There are a few other alternatives though.
-
-### From downloaded wheel file
-
-Head over to [latest release in GitHub](https://github.com/abelcheung/types-lxml/releases/latest) and download wheel file (with extension `.whl`), which can be installed in the same way as PyPI package:
+In the unlikely case PyPI is down, one can directly download wheel from [latest release in GitHub](https://github.com/abelcheung/types-lxml/releases/latest), and then perform installation as local file:
 
     pip install -U types-lxml*.whl
 
-### Bleeding edge from GitHub
+Or directly run bleeding edge version from GitHub repository:
 
     pip install -U git+https://github.com/abelcheung/types-lxml.git
+
+### Choosing the build
+
+Since the version after `2024.04.14` release, there will be two versions of `types-lxml`. First one is the default one; if there's no problem using it, there's no need to switch.
+
+The second version, `types-lxml-multi-subclass`, is intended for specific need, namely creation of multiple lxml element subclasses. For example:
+
+```mermaid
+  graph TD;
+      etree.ElementBase-->MyBaseElement;
+      MyBaseElement-->MySubElement1;
+      MyBaseElement-->MySubElement2;
+```
+
+If a parsed or constructed element tree consists of single type of element nodes, it is safe to assume the children or parent of a node are of the same type too. But this assumption does not hold for multiple subclasses. Using diagram above as example, we can only deduce the children and parent type is `MyBaseElement` (or any of its subclasses). The 2 paradigms can't coexist within a single type annotation package. See [bug #51](https://github.com/abelcheung/types-lxml/issues/51) that illustrated why multiple build is necessary.
+
+Remember that anybody can only choose one of the 2 builds. It is impossible to install both, as `pip` just [arbitrarily overwrite conflicting files with one another](https://github.com/pypa/pip/issues/4625). If in doubt, removing existing package first, then install the one you needed.
 
 
 ## History
