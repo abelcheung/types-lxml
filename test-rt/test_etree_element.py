@@ -4,6 +4,7 @@ from copy import deepcopy
 from inspect import Parameter
 from pathlib import Path
 from random import randrange
+from types import MappingProxyType
 from typing import Any, cast
 
 import _testutils
@@ -22,6 +23,7 @@ from lxml.etree import (
     _ElementTree,
     _Entity as _Entity,
     _ProcessingInstruction as _ProcessingInstruction,
+    iselement,
     parse,
 )
 from lxml.html import Element as h_Element
@@ -460,3 +462,258 @@ class TestAttribAccessMethods:
         for arg in (None, 1, object(), ["bar"]):
             with pytest.raises(TypeError, match="must be bytes or unicode"):
                 root.set("foo", cast(Any, arg))
+
+
+# The find*() methods of _Element are all derivations of
+# iterfind(). So they almost have same arguments, and even
+# the other test contents look very similar.
+class TestFindMethods:
+    @_testutils.signature_tester(_Element.iterfind, (
+        ("path"      , Parameter.POSITIONAL_OR_KEYWORD, Parameter.empty),
+        ("namespaces", Parameter.POSITIONAL_OR_KEYWORD, None           ),
+    ))  # fmt: skip
+    def test_method_iterfind(self, x1_filepath: Path) -> None:
+        tree = parse(x1_filepath)
+        root = tree.getroot()
+        tag = "desc"
+
+        iterator = root.iterfind(tag)
+        reveal_type(iterator)
+        del iterator
+
+        iterator = root.iterfind(path="junk")
+        reveal_type(iterator)
+        del iterator
+
+        iterator = root.iterfind("defs/{http://example.org/myapp}piechart")
+        reveal_type(iterator)
+        del iterator
+
+        qn = QName(None, tag)
+        reveal_type(root.iterfind(qn))
+
+        with pytest.raises(TypeError, match="a string pattern on a bytes-like object"):
+            _ = root.iterfind(cast(Any, tag.encode()))
+
+        for data in (None, 1):
+            with pytest.raises(TypeError, match="object is unsliceable"):
+                _ = root.iterfind(cast(Any, data))
+
+        with pytest.raises(TypeError, match="unhashable type:"):
+            _ = root.iterfind(cast(Any, [tag]))
+
+        with pytest.raises(TypeError, match="expected string or bytes-like object"):
+            _ = root.iterfind(cast(Any, (tag,)))
+
+        # Check QName and namespace support
+        # Note that invalid entries in namespace dict (those
+        # with invalid key or value types) wouldn't be fatal;
+        # they only silently fail to select useful elements.
+        # Therefore no key/val type check is performed. Same
+        # for all find*() methods below.
+
+        iterator = root.iterfind("defs")
+        url = "http://example.org/myapp"
+        nsdict = {"m": url}
+        defs = next(iterator)
+        del iterator
+
+        qn = QName(url, "piechart")
+        result = tuple(elem for elem in defs.iterfind(f"{{{url}}}piechart"))
+        assert result == tuple(elem for elem in defs.iterfind(qn, None))
+        assert result == tuple(
+            elem for elem in defs.iterfind("m:piechart", namespaces=nsdict)
+        )
+        assert result == tuple(
+            elem for elem in defs.iterfind("m:piechart", MappingProxyType(nsdict))
+        )
+
+        for arg in (1, object()):
+            with pytest.raises(TypeError, match="is not iterable"):
+                _ = defs.iterfind("m:piechart", cast(Any, arg))
+        with pytest.raises(TypeError, match="requires string as left operand"):
+            _ = defs.iterfind("m:piechart", cast(Any, "foo"))
+        with pytest.raises(AttributeError, match="has no attribute 'items'"):
+            _ = defs.iterfind("m:piechart", cast(Any, [("m", url)]))
+
+    @_testutils.signature_tester(_Element.find, (
+        ("path"      , Parameter.POSITIONAL_OR_KEYWORD, Parameter.empty),
+        ("namespaces", Parameter.POSITIONAL_OR_KEYWORD, None           ),
+    ))  # fmt: skip
+    def test_method_find(self, x1_filepath: Path) -> None:
+        tree = parse(x1_filepath)
+        root = tree.getroot()
+        tag = "desc"
+        reveal_type(root.find(tag))
+        reveal_type(root.find(path="junk"))
+        assert iselement(root.find("defs/{http://example.org/myapp}piechart"))
+
+        qn = QName(None, tag)
+        reveal_type(root.find(qn))
+
+        with pytest.raises(TypeError, match="a string pattern on a bytes-like object"):
+            _ = root.find(cast(Any, tag.encode()))
+
+        for data in (None, 1):
+            with pytest.raises(TypeError, match="object is unsliceable"):
+                _ = root.find(cast(Any, data))
+
+        with pytest.raises(TypeError, match="unhashable type:"):
+            _ = root.find(cast(Any, [tag]))
+
+        with pytest.raises(TypeError, match="expected string or bytes-like object"):
+            _ = root.find(cast(Any, (tag,)))
+
+        # Check QName and NS support; see iterfind() comment above
+
+        defs = root.find("defs")
+        assert defs is not None
+        url = "http://example.org/myapp"
+        nsdict = {"m": url}
+
+        result = defs.find(f"{{{url}}}piechart")
+        qn = QName(url, "piechart")
+        assert result == defs.find(qn, None)
+        assert result == defs.find("m:piechart", namespaces=nsdict)
+        assert result == defs.find("m:piechart", MappingProxyType(nsdict))
+
+        for arg in (1, object()):
+            with pytest.raises(TypeError, match="is not iterable"):
+                _ = defs.find("m:piechart", cast(Any, arg))
+        with pytest.raises(TypeError, match="requires string as left operand"):
+            _ = defs.find("m:piechart", cast(Any, "foo"))
+        with pytest.raises(AttributeError, match="has no attribute 'items'"):
+            _ = defs.find("m:piechart", cast(Any, [("m", url)]))
+
+    @_testutils.signature_tester(_Element.findall, (
+        ("path"      , Parameter.POSITIONAL_OR_KEYWORD, Parameter.empty),
+        ("namespaces", Parameter.POSITIONAL_OR_KEYWORD, None           ),
+    ))  # fmt: skip
+    def test_method_findall(self, x1_filepath: Path) -> None:
+        tree = parse(x1_filepath)
+        root = tree.getroot()
+        reveal_type(root.findall(path="junk"))
+
+        result = root.findall("defs/{http://example.org/myapp}piechart")
+        reveal_type(result)
+        for elem in result:
+            reveal_type(elem)
+        del result
+
+        tag = "desc"
+        result = root.findall(tag)
+        qn = QName(None, tag)
+        assert result == root.findall(qn)
+        del result
+
+        with pytest.raises(TypeError, match="a string pattern on a bytes-like object"):
+            _ = root.findall(cast(Any, tag.encode()))
+
+        for data in (None, 1):
+            with pytest.raises(TypeError, match="object is unsliceable"):
+                _ = root.findall(cast(Any, data))
+
+        with pytest.raises(TypeError, match="unhashable type:"):
+            _ = root.findall(cast(Any, [tag]))
+
+        with pytest.raises(TypeError, match="expected string or bytes-like object"):
+            _ = root.findall(cast(Any, (tag,)))
+
+        # Check QName and NS support; see iterfind() comment above
+
+        result = root.findall("defs")
+        assert len(result) == 1
+        url = "http://example.org/myapp"
+        nsdict = {"m": url}
+        defs = result[0]
+
+        result = defs.findall(f"{{{url}}}piechart")
+        qn = QName(url, "piechart")
+        assert result == defs.findall(qn, None)
+        assert result == defs.findall("m:piechart", namespaces=nsdict)
+        assert result == defs.findall("m:piechart", MappingProxyType(nsdict))
+
+        for arg in (1, object()):
+            with pytest.raises(TypeError, match="is not iterable"):
+                _ = defs.findall("m:piechart", cast(Any, arg))
+        with pytest.raises(TypeError, match="requires string as left operand"):
+            _ = defs.findall("m:piechart", cast(Any, "foo"))
+        with pytest.raises(AttributeError, match="has no attribute 'items'"):
+            _ = defs.findall("m:piechart", cast(Any, [("m", url)]))
+
+    @_testutils.signature_tester(_Element.findtext, (
+        ("path"      , Parameter.POSITIONAL_OR_KEYWORD, Parameter.empty),
+        ("default"   , Parameter.POSITIONAL_OR_KEYWORD, None           ),
+        ("namespaces", Parameter.POSITIONAL_OR_KEYWORD, None           ),
+    ))  # fmt: skip
+    def test_method_findtext(self, x1_filepath: Path) -> None:
+        tree = parse(x1_filepath)
+        root = tree.getroot()
+
+        result = root.findtext(path="junk")
+        reveal_type(result)
+        assert result == None
+        del result
+
+        result = root.findtext("junk", 1)
+        reveal_type(result)
+        assert result == 1
+        del result
+
+        result = root.findtext("junk", object())
+        reveal_type(result)
+        del result
+
+        result = root.findtext("junk", "foo")
+        reveal_type(result)
+        del result
+
+        result = root.findtext("junk", ("foo", 1))
+        reveal_type(result)
+        del result
+
+        tag = "desc"
+        result = root.findtext(tag)
+        reveal_type(result)
+        assert result and result.startswith("This chart")
+        qn = QName(None, tag)
+        assert result == root.findtext(qn)
+        del result
+
+        with pytest.raises(TypeError, match="a string pattern on a bytes-like object"):
+            _ = root.findtext(cast(Any, tag.encode()))
+
+        for data in (None, 1):
+            with pytest.raises(TypeError, match="object is unsliceable"):
+                _ = root.findtext(cast(Any, data))
+
+        with pytest.raises(TypeError, match="unhashable type:"):
+            _ = root.findtext(cast(Any, [tag]))
+
+        with pytest.raises(TypeError, match="expected string or bytes-like object"):
+            _ = root.findtext(cast(Any, (tag,)))
+
+        # Check QName and NS support; see iterfind() comment above
+
+        url = "http://example.org/myfoo"
+        nsdict = {"m": url}
+
+        result = root.findtext(f"desc/{{{url}}}title")
+        assert result and result.endswith('report')
+        resultnode = root.find(f"desc/{{{url}}}title")
+        assert iselement(resultnode)
+        parent = resultnode.getparent()
+        assert iselement(parent)
+
+        qn = QName(url, "title")
+        assert result == parent.findtext(qn, namespaces=None)
+        assert result == parent.findtext("m:title", namespaces=nsdict)
+        assert result == parent.findtext("m:title", namespaces=MappingProxyType(nsdict))
+
+        for arg in (1, object()):
+            with pytest.raises(TypeError, match="is not iterable"):
+                _ = parent.findtext("m:title", namespaces=cast(Any, arg))
+        with pytest.raises(TypeError, match="requires string as left operand"):
+            _ = parent.findtext("m:title", namespaces=cast(Any, "foo"))
+        with pytest.raises(AttributeError, match="has no attribute 'items'"):
+            _ = parent.findtext("m:title", namespaces=cast(Any, [("m", url)]))
