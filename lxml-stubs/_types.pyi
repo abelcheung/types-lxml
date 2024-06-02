@@ -46,7 +46,6 @@ _TagName: TypeAlias = _TextArg
 _AttrName: TypeAlias = _TextArg
 _AttrVal: TypeAlias = _TextArg
 
-# See https://github.com/python/typing/pull/273
 # Due to Mapping having invariant key types, Mapping[A | B, ...]
 # would fail to validate against either Mapping[A, ...] or Mapping[B, ...]
 # Try to settle for simpler solution, assuming python3 users would not
@@ -57,6 +56,16 @@ _NSMapArg = (
     Mapping[str | None, _AnyStr]
 )  # fmt: skip
 _NonDefaultNSMapArg = Mapping[str, _AnyStr]
+
+# Namespace mapping type specifically for Elementpath methods
+#
+# Actually, elementpath methods do not sanitize nsmap
+# at all. It is possible to use invalid nsmap like
+# {"foo": 0} and find*() method family happily accept it,
+# just that they would silently fail to output any element
+# afterwards. In order to be useful, both dict key and val
+# must be str.
+_StrictNSMap = Mapping[str, str]
 
 # https://lxml.de/extensions.html#xpath-extension-functions
 # The returned result of extension function itself is not exactly Any,

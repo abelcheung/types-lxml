@@ -536,6 +536,20 @@ class TestFindMethods:
         with pytest.raises(AttributeError, match="has no attribute 'items'"):
             _ = defs.iterfind("m:piechart", cast(Any, [("m", url)]))
 
+        # NS dict with wrong val type won't raise exception, they just fail
+        # to produce result silently
+        # FIXME Something not quite right, raises SyntaxError if
+        # following 2 identical sections are merged
+        for badns in ({"m": 1}, {"m": url.encode()}):
+            iterator = defs.iterfind("m:piechart", namespaces=cast(Any, badns))
+            assert 0 == len(tuple(elem for elem in iterator))
+            del iterator
+
+        for badns in ({b"m": url}, {1: url}):
+            iterator = defs.iterfind("m.piechart", namespaces=cast(Any, badns))
+            assert 0 == len(tuple(elem for elem in iterator))
+            del iterator
+
     @_testutils.signature_tester(_Element.find, (
         ("path"      , Parameter.POSITIONAL_OR_KEYWORD, Parameter.empty),
         ("namespaces", Parameter.POSITIONAL_OR_KEYWORD, None           ),
@@ -699,7 +713,7 @@ class TestFindMethods:
         nsdict = {"m": url}
 
         result = root.findtext(f"desc/{{{url}}}title")
-        assert result and result.endswith('report')
+        assert result and result.endswith("report")
         resultnode = root.find(f"desc/{{{url}}}title")
         assert iselement(resultnode)
         parent = resultnode.getparent()
