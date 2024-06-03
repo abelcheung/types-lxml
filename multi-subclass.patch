@@ -6,19 +6,19 @@
  5 files changed, 66 insertions(+), 63 deletions(-)
 
 diff --git a/lxml-stubs/etree/_element.pyi b/lxml-stubs/etree/_element.pyi
-index 7e2658c..86a8760 100644
+index 8200999..a424eaa 100644
 --- a/lxml-stubs/etree/_element.pyi
 +++ b/lxml-stubs/etree/_element.pyi
 @@ -14,9 +14,9 @@ from typing import (
  )
-
+ 
  if sys.version_info >= (3, 11):
 -    from typing import Never, Self
 +    from typing import Never
  else:
 -    from typing_extensions import Never, Self
 +    from typing_extensions import Never
-
+ 
  if sys.version_info >= (3, 13):
      from warnings import deprecated
 @@ -73,34 +73,34 @@ class _Element:
@@ -146,7 +146,7 @@ index 7e2658c..86a8760 100644
 -    makeelement: _t._ElementFactory[Self]
 +    makeelement: _t._ElementFactory
      def find(
-         self, path: _t._ElemPathArg, namespaces: _t._NSMapArg | None = None
+         self, path: _t._ElemPathArg, namespaces: _t._StrictNSMap | None = None
 -    ) -> Self | None: ...
 +    ) -> _Element | None: ...
      # Original method has no star. If somebody only supplies
@@ -155,11 +155,11 @@ index 7e2658c..86a8760 100644
 @@ -194,10 +194,10 @@ class _Element:
      ) -> str | _T: ...
      def findall(
-         self, path: _t._ElemPathArg, namespaces: _t._NSMapArg | None = None
+         self, path: _t._ElemPathArg, namespaces: _t._StrictNSMap | None = None
 -    ) -> list[Self]: ...
 +    ) -> list[_Element]: ...
      def iterfind(
-         self, path: _t._ElemPathArg, namespaces: _t._NSMapArg | None = None
+         self, path: _t._ElemPathArg, namespaces: _t._StrictNSMap | None = None
 -    ) -> Iterator[Self]: ...
 +    ) -> Iterator[_Element]: ...
      def xpath(
@@ -181,7 +181,7 @@ index 7e2658c..86a8760 100644
          self, tag: _t._TagSelector | None = None, *tags: _t._TagSelector
 -    ) -> Iterator[Self]: ...
 +    ) -> Iterator[_Element]: ...
-
+ 
  # ET class notation is specialized, indicating the type of element
  # it is holding (e.g. XML element, HTML element or Objectified
 diff --git a/lxml-stubs/etree/_factory_func.pyi b/lxml-stubs/etree/_factory_func.pyi
@@ -194,7 +194,7 @@ index 290bc57..d02992f 100644
  from ..objectify import ObjectifiedElement, StringElement
 -from ._element import _Comment, _ElementTree, _Entity, _ProcessingInstruction
 +from ._element import _Comment, _Element, _ElementTree, _Entity, _ProcessingInstruction
-
+ 
  def Comment(text: _AnyStr | None = None) -> _Comment: ...
  def ProcessingInstruction(
 @@ -41,7 +41,7 @@ Element: _ElementFactory
@@ -223,7 +223,7 @@ index 290bc57..d02992f 100644
  def ElementTree(element: _ET) -> _ElementTree[_ET]: ...
  @overload  # from file source, custom parser
 diff --git a/lxml-stubs/html/_element.pyi b/lxml-stubs/html/_element.pyi
-index dd4c9b1..d5ab1d3 100644
+index 60f9c0f..2112c57 100644
 --- a/lxml-stubs/html/_element.pyi
 +++ b/lxml-stubs/html/_element.pyi
 @@ -128,26 +128,29 @@ class HtmlElement(etree.ElementBase):
@@ -276,14 +276,14 @@ index dd4c9b1..d5ab1d3 100644
 -    makeelement: _ElementFactory[HtmlElement]
 +    makeelement: _ElementFactory[HtmlElement]  # pyright: ignore[reportIncompatibleVariableOverride]
      def find(
-         self, path: _ElemPathArg, namespaces: _NSMapArg | None = None
+         self, path: _ElemPathArg, namespaces: _StrictNSMap | None = None
      ) -> HtmlElement | None: ...
 -    def findall(
 +    def findall(  # type: ignore[override]
-         self, path: _ElemPathArg, namespaces: _NSMapArg | None = None
+         self, path: _ElemPathArg, namespaces: _StrictNSMap | None = None
      ) -> list[HtmlElement]: ...
      def iterfind(
-         self, path: _ElemPathArg, namespaces: _NSMapArg | None = None
+         self, path: _ElemPathArg, namespaces: _StrictNSMap | None = None
      ) -> Iterator[HtmlElement]: ...
 -    def cssselect(
 +    def cssselect(  # type: ignore[override]
@@ -331,7 +331,7 @@ index 5d8b75b..4ba7dbc 100644
 +++ b/pyproject.toml
 @@ -5,7 +5,7 @@ requires = ['pdm-backend ~= 2.3']
  build-backend = 'pdm.backend'
-
+ 
  [project]
 -name = 'types-lxml'
 +name = 'types-lxml-multi-subclass'
