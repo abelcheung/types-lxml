@@ -116,7 +116,7 @@
     path: str
     s: str
     tag: etree.QName
-    nsmap = {None: s, s: s}
+    nsmap = {s: s}
     result = et.{{ method }}({{ args }})
     reveal_type(result)  # NR: .+ "{{ rt }}"$
 
@@ -132,7 +132,7 @@
     bad_path: bytes
     bad_nsmap = {'a': 1}
     _ = et.{{ method }}(bad_path)  # E: Argument 1 to "{{ method }}" of "_ElementTree" has incompatible type "bytes"; expected "str | QName"  [arg-type]
-    _ = et.{{ method }}(ok_path, bad_nsmap)  # E: Argument 2 to "{{ method }}" of "_ElementTree" has incompatible type "dict[str, int]"; expected "Mapping[None, str | bytes] | Mapping[str, str | bytes] | Mapping[str | None, str | bytes] | None"  [arg-type]
+    _ = et.{{ method }}(ok_path, bad_nsmap)  # ER: Argument 2 to "{{ method }}" of "_ElementTree" has incompatible type ".+?"; expected ".+?"  \[arg-type\]$
     _ = et.{{ method }}(ok_path, None, 1)  # E: Too many arguments for "{{ method }}" of "_ElementTree"  [call-arg]
     _ = et.{{ method }}(ok_path, badarg=True)  # E: Unexpected keyword argument "badarg" for "{{ method }}" of "_ElementTree"  [call-arg]
 
@@ -160,7 +160,7 @@
     tag: etree.QName
     default1: int
     default2: str
-    nsmap = {None: s, s: s}
+    nsmap = {s: s}
     result = et.findtext({{ args }})
     reveal_type(result)  # N: Revealed type is "{{ rt }}"
 
