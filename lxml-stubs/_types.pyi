@@ -57,6 +57,10 @@ _NSMapArg = (
 )  # fmt: skip
 _NonDefaultNSMapArg = Mapping[str, _AnyStr]
 
+# Some namespace map arguments also accept tuple form
+# such as in dict()
+_NSTuples: TypeAlias = Iterable[tuple[_AnyStr | None, _AnyStr]]
+
 # Namespace mapping type specifically for Elementpath methods
 #
 # Actually, elementpath methods do not sanitize nsmap

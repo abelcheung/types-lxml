@@ -1,6 +1,6 @@
 from typing import Any, Callable, Generic, Mapping, Protocol, overload
 
-from ._types import _AnyStr, _ElementFactory, _ET_co, _NSMapArg, _TagName
+from ._types import _AnyStr, _ElementFactory, _ET_co, _NSMapArg, _NSTuples, _TagName
 from .etree import CDATA, _Element
 
 # Mapping should have been something like
@@ -50,7 +50,7 @@ class ElementMaker(Generic[_ET_co]):
         cls,
         typemap: _TypeMapArg | None = None,
         namespace: str | None = None,
-        nsmap: _NSMapArg | None = None,  # FIXME NS tuple allowed
+        nsmap: _NSMapArg | _NSTuples | None = None,  # dict()
         *,
         makeelement: _ElementFactory[_ET_co],
     ) -> ElementMaker[_ET_co]: ...
@@ -59,7 +59,7 @@ class ElementMaker(Generic[_ET_co]):
         cls,
         typemap: _TypeMapArg | None,
         namespace: str | None,
-        nsmap: _NSMapArg | None,
+        nsmap: _NSMapArg | _NSTuples | None,
         makeelement: _ElementFactory[_ET_co],
     ) -> ElementMaker[_ET_co]: ...
     @overload  # makeelement is default or absent
@@ -67,7 +67,7 @@ class ElementMaker(Generic[_ET_co]):
         cls,
         typemap: _TypeMapArg | None = None,
         namespace: str | None = None,
-        nsmap: _NSMapArg | None = None,
+        nsmap: _NSMapArg | _NSTuples | None = None,
         makeelement: None = None,
     ) -> ElementMaker: ...
     def __call__(
