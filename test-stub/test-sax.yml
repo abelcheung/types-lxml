@@ -57,7 +57,7 @@
     et: _ElementTree[_Element]
     el: _Element
     p = ElementTreeProducer({{ args }})
-    reveal_type(p)  # N: Revealed type is "lxml.sax.ElementTreeProducer"
+    reveal_type(p)  # NR: .+ "[\w\.]+\.ElementTreeProducer\[[\w\.]+\._Element\]"
 
 - case: producer_constructor_badargs
   expect_fail: true
