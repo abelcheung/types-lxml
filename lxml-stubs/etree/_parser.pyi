@@ -1,5 +1,14 @@
 import sys
-from typing import Any, Collection, Generic, Iterable, Iterator, Literal, TypeVar
+from typing import (
+    Any,
+    Collection,
+    Generic,
+    Iterable,
+    Iterator,
+    Literal,
+    TypeVar,
+    overload,
+)
 
 if sys.version_info >= (3, 11):
     from typing import LiteralString, Self
@@ -193,6 +202,7 @@ def set_default_parser(parser: _DefEtreeParsers[Any] | None) -> None: ...
 def get_default_parser() -> _DefEtreeParsers[Any]: ...
 
 class HTMLParser(_ParserTargetMixin[Any], _FeedParser[_ET_co]):
+    @overload
     def __init__(
         self,
         *,
@@ -200,7 +210,6 @@ class HTMLParser(_ParserTargetMixin[Any], _FeedParser[_ET_co]):
         remove_blank_text: bool = False,
         remove_comments: bool = False,
         remove_pis: bool = False,
-        strip_cdata: bool = True,
         no_network: bool = True,
         target: ParserTarget[Any] | None = None,
         schema: XMLSchema | None = None,
@@ -210,8 +219,17 @@ class HTMLParser(_ParserTargetMixin[Any], _FeedParser[_ET_co]):
         collect_ids: bool = True,
         huge_tree: bool = False,
     ) -> None: ...
+    @overload
+    @deprecated("strip_cdata argument was always useless, and dropped after 5.2.2")
+    def __init__(
+        self,
+        *,
+        strip_cdata: bool,
+        **__kw: Any,
+    ) -> None: ...
 
 class HTMLPullParser(_PullParserMixin, HTMLParser[_ET_co]):
+    @overload
     def __init__(
         self,
         events: Iterable[_SaxEventNames] | None = None,
@@ -223,7 +241,6 @@ class HTMLPullParser(_PullParserMixin, HTMLParser[_ET_co]):
         remove_blank_text: bool = False,
         remove_comments: bool = False,
         remove_pis: bool = False,
-        strip_cdata: bool = True,
         no_network: bool = True,
         target: ParserTarget[Any] | None = None,
         schema: XMLSchema | None = None,
@@ -232,4 +249,12 @@ class HTMLPullParser(_PullParserMixin, HTMLParser[_ET_co]):
         default_doctype: bool = True,
         collect_ids: bool = True,
         huge_tree: bool = False,
+    ) -> None: ...
+    @overload
+    @deprecated("strip_cdata argument was always useless, and dropped after 5.2.2")
+    def __init__(
+        self,
+        *,
+        strip_cdata: bool,
+        **__kw: Any,
     ) -> None: ...
