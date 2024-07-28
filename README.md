@@ -5,6 +5,7 @@
 ## Important note
 
 - Next release after `2024.04.14` contains multiple build; please check out [Installation section](#installation) on choosing the desired build (hint: many people don't need to bother with this)
+- This future release requires `mypy 1.11` as `mypy` makes yet another backward incompatible change.
 - `2024.04.14` release requires `mypy 1.9`; `2024.03.27` is the last release supporting `mypy 1.5`.
 - `2024.03.27` release requires [cssselect package](https://pypi.org/project/cssselect/) to work, since `lxml.cssselect` submodule utilises inline annotation from `cssselect 1.2.0`.
 
