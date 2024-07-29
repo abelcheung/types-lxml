@@ -1,9 +1,9 @@
  lxml-stubs/etree/_element.pyi      | 76 +++++++++++++++++++-------------------
- lxml-stubs/etree/_factory_func.pyi |  8 ++--
+ lxml-stubs/etree/_factory_func.pyi |  6 +--
  lxml-stubs/html/_element.pyi       | 35 ++++++++++--------
  lxml-stubs/objectify/_element.pyi  |  8 ++--
  pyproject.toml                     |  2 +-
- 5 files changed, 66 insertions(+), 63 deletions(-)
+ 5 files changed, 65 insertions(+), 62 deletions(-)
 
 diff --git a/lxml-stubs/etree/_element.pyi b/lxml-stubs/etree/_element.pyi
 index 8200999..a424eaa 100644
@@ -185,7 +185,7 @@ index 8200999..a424eaa 100644
  # ET class notation is specialized, indicating the type of element
  # it is holding (e.g. XML element, HTML element or Objectified
 diff --git a/lxml-stubs/etree/_factory_func.pyi b/lxml-stubs/etree/_factory_func.pyi
-index 290bc57..d02992f 100644
+index d30d366..d02992f 100644
 --- a/lxml-stubs/etree/_factory_func.pyi
 +++ b/lxml-stubs/etree/_factory_func.pyi
 @@ -13,7 +13,7 @@ from .._types import (
@@ -197,15 +197,6 @@ index 290bc57..d02992f 100644
  
  def Comment(text: _AnyStr | None = None) -> _Comment: ...
  def ProcessingInstruction(
-@@ -41,7 +41,7 @@ Element: _ElementFactory
- # type annotation attribute is modified.
- # OE users need to use E-factory for more flexibility.
- @overload
--def SubElement(  # type: ignore[overload-overlap]
-+def SubElement(
-     _parent: ObjectifiedElement,
-     _tag: _TagName,
-     /,
 @@ -60,13 +60,13 @@ def SubElement(
  ) -> HtmlElement: ...
  @overload
@@ -326,7 +317,7 @@ index 2b8a301..bab6e67 100644
          expr: str,
          *,
 diff --git a/pyproject.toml b/pyproject.toml
-index 5d8b75b..4ba7dbc 100644
+index 8c2eb12..e33fe57 100644
 --- a/pyproject.toml
 +++ b/pyproject.toml
 @@ -5,7 +5,7 @@ requires = ['pdm-backend ~= 2.3']
