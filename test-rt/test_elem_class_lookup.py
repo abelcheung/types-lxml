@@ -14,7 +14,9 @@ from lxml.etree import (
 )
 from lxml.objectify import ObjectifiedElement, ObjectifyElementClassLookup
 
-reveal_type = getattr(_testutils, "reveal_type_wrapper")
+INJECT_REVEAL_TYPE = True
+if INJECT_REVEAL_TYPE:
+    reveal_type = getattr(_testutils, "reveal_type_wrapper")
 
 
 def test_manual_objectify_parser(x2_filepath: Path) -> None:

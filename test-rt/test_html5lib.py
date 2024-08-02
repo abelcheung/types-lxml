@@ -15,7 +15,9 @@ from lxml.etree import (
 )
 from lxml.html.html5parser import HTMLParser
 
-reveal_type = getattr(_testutils, "reveal_type_wrapper")
+INJECT_REVEAL_TYPE = True
+if INJECT_REVEAL_TYPE:
+    reveal_type = getattr(_testutils, "reveal_type_wrapper")
 
 
 class TestParserConstruct:
@@ -100,11 +102,11 @@ class TestFromstringFamily:
             reveal_type(elem)
         del elems
 
-        elems = h5.fragments_fromstring(src_b, no_leading_text=True)
-        reveal_type(elems)
-        for elem in elems:
+        elems2 = h5.fragments_fromstring(src_b, no_leading_text=True)
+        reveal_type(elems2)
+        for elem in elems2:
             reveal_type(elem)
-        del elems
+        del elems2
 
     @_testutils.signature_tester(h5.fragment_fromstring, (
         ("html"         , Parameter.POSITIONAL_OR_KEYWORD, Parameter.empty),
@@ -213,17 +215,17 @@ class TestParserArg:
 
         elems = h5.fragments_fromstring(h2_str, parser=parser)
         reveal_type(elems)
-        for elem in elems:
-            reveal_type(elem)
+        for elem2 in elems:
+            reveal_type(elem2)
         del elems
 
-        elem = h5.fragment_fromstring(h2_str, parser=parser, create_parent=True)
-        reveal_type(elem)
-        del elem
+        elem3 = h5.fragment_fromstring(h2_str, parser=parser, create_parent=True)
+        reveal_type(elem3)
+        del elem3
 
-        elem = h5.fromstring(h2_str, parser=parser)
-        reveal_type(elem)
-        del elem
+        elem4 = h5.fromstring(h2_str, parser=parser)
+        reveal_type(elem4)
+        del elem4
 
         s_io = StringIO(h2_str)
         tree = h5.parse(s_io, parser=parser)
@@ -261,8 +263,8 @@ class TestCharsetArg:
 
         elems = h5.fragments_fromstring(h2_bytes, guess_charset=True)
         reveal_type(elems)
-        for elem in elems:
-            reveal_type(elem)
+        for elem2 in elems:
+            reveal_type(elem2)
         del elems
 
         elem = h5.fragment_fromstring(

@@ -20,8 +20,11 @@ from lxml.etree import (
     use_global_python_log,
 )
 
-reveal_type = getattr(_testutils, "reveal_type_wrapper")
+INJECT_REVEAL_TYPE = True
+if INJECT_REVEAL_TYPE:
+    reveal_type = getattr(_testutils, "reveal_type_wrapper")
 
+TYPECHECKER_RETURNNONE_OK = True
 
 ### NOTES
 #
@@ -148,12 +151,11 @@ class TestListLogMethods:
         ("entry", Parameter.POSITIONAL_OR_KEYWORD, Parameter.empty),
     ))
     def test_receive(self, list_log: _ListErrorLog) -> None:
-        if _method_no_kwarg():
-            ret = list_log.receive(list_log[0])
-        else:
-            ret = list_log.receive(entry=list_log[0])
-        reveal_type(ret)
-        del ret
+        if TYPECHECKER_RETURNNONE_OK:
+            if _method_no_kwarg():
+                assert list_log.receive(list_log[0]) is None
+            else:
+                assert list_log.receive(entry=list_log[0]) is None
         with pytest.raises(TypeError, match=r"expected .+\._LogEntry, got int"):
             list_log.receive(cast(Any, 1))
 

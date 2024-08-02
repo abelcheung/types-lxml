@@ -16,7 +16,7 @@ _pyright_re = re.compile('^Type of "(?P<var>.+?)" is "(?P<type>.+?)"$')
 
 
 @functools.cache
-def get_pyright_result(filepath: str | Path):
+def get_pyright_result(filepath: str | Path) -> MappingProxyType[FilePos, VarType]:
     if not isinstance(filepath, Path):
         filepath = Path(filepath)
     return MappingProxyType(

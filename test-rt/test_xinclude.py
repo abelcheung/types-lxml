@@ -18,7 +18,11 @@ from lxml.etree import (
     parse,
 )
 
-reveal_type = getattr(_testutils, "reveal_type_wrapper")
+INJECT_REVEAL_TYPE = True
+if INJECT_REVEAL_TYPE:
+    reveal_type = getattr(_testutils, "reveal_type_wrapper")
+
+TYPECHECKER_RETURNNONE_OK = True
 
 
 # XInclude only works on ElementTree as method,
@@ -30,16 +34,16 @@ reveal_type = getattr(_testutils, "reveal_type_wrapper")
 class TestXInclude:
     def test_init_and_prop(self) -> None:
         with pytest.raises(TypeError, match="takes exactly 0 positional arguments"):
-            xinc = XInclude(None)  # pyright: ignore
+            xinc = XInclude(None)  # type: ignore
         xinc = XInclude()
         reveal_type(xinc.error_log)
 
     def test_xinclude_as_method(self, xinc_sample_data: str) -> None:
         elem = fromstring(xinc_sample_data)
         tree = elem.getroottree()
-        result = tree.xinclude()
         reveal_type(tree)
-        reveal_type(result)
+        if TYPECHECKER_RETURNNONE_OK:
+            assert tree.xinclude() is None
 
     def test_xinclude_as_func(self, xinc_sample_data: str) -> None:
         xinc = XInclude()
@@ -51,13 +55,14 @@ class TestXInclude:
             xinc(cast(Any, iodata))
 
         elem = fromstring(xinc_sample_data)
+        reveal_type(elem)
+
         tree = elem.getroottree()
         with pytest.raises(TypeError, match="Argument 'node' has incorrect type"):
             xinc(cast(Any, tree))
 
-        result = xinc(elem)
-        reveal_type(elem)
-        reveal_type(result)
+        if TYPECHECKER_RETURNNONE_OK:
+            assert xinc(elem) is None
 
 
 @overload
@@ -88,7 +93,7 @@ def bad_loader_2(href: str) -> str:
     return href
 
 
-def bad_loader_3(href: str, mode: str, _) -> _Element:
+def bad_loader_3(href: str, mode: str, _: Any) -> _Element:
     return parse(href).getroot()
 
 
@@ -104,9 +109,9 @@ class TestElementInclude:
 
     def test_input_type(self, xinc_sample_data: str) -> None:
         elem = fromstring(xinc_sample_data)
-        result = EI.include(elem)
-        reveal_type(result)
-        del elem, result
+        if TYPECHECKER_RETURNNONE_OK:
+            assert EI.include(elem) is None
+        del elem
 
         sio = StringIO(xinc_sample_data)
         tree = parse(sio)

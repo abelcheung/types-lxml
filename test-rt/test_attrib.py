@@ -2,15 +2,18 @@ from __future__ import annotations
 
 from copy import deepcopy
 from inspect import Parameter
-from typing import Any, cast
 from types import MappingProxyType
+from typing import Any, cast
 
 import _testutils
 import pytest
 from lxml.etree import QName, _Attrib, _ElementTree
 
-reveal_type = getattr(_testutils, "reveal_type_wrapper")
+INJECT_REVEAL_TYPE = True
+if INJECT_REVEAL_TYPE:
+    reveal_type = getattr(_testutils, "reveal_type_wrapper")
 
+TYPECHECKER_RETURNNONE_OK = True
 
 class TestXmlAttrib:
     def test_basic_behavior(self, xml_tree: _ElementTree) -> None:
@@ -20,30 +23,31 @@ class TestXmlAttrib:
         reveal_type(bool(attrib))
         reveal_type("foo" in attrib)
 
-        for k in attrib:
-            reveal_type(k)
-            reveal_type(attrib[k])
+        for k1 in attrib:
+            reveal_type(k1)
+            reveal_type(attrib[k1])
 
         qn = QName(None, "foo")
-        for k in ("foo", b"foo", qn):
-            attrib[k] = "bar"
-            del attrib[k]
-        for k in (None, 1, object(), ["foo"]):
+        for k2 in ("foo", b"foo", qn):
+            attrib[k2] = "bar"
+            del attrib[k2]
+        for k3 in (None, 1, object(), ["foo"]):
             with pytest.raises(TypeError, match="Argument must be bytes or unicode"):
-                attrib[cast(Any, k)] = "bar"
+                attrib[cast(Any, k3)] = "bar"
 
         qn = QName(None, "bar")
-        for v in ("bar", b"bar", qn):
-            attrib["foo"] = v
-        for v in (None, 1, object(), ["bar"]):
+        for v1 in ("bar", b"bar", qn):
+            attrib["foo"] = v1
+        for v2 in (None, 1, object(), ["bar"]):
             with pytest.raises(TypeError, match="Argument must be bytes or unicode"):
-                attrib["foo"] = cast(Any, v)
+                attrib["foo"] = cast(Any, v2)
 
     @_testutils.empty_signature_tester(_Attrib.clear)
     def test_method_clear(self, xml_tree: _ElementTree) -> None:
         root = deepcopy(xml_tree.getroot())
         attrib = root.attrib
-        reveal_type(attrib.clear())
+        if TYPECHECKER_RETURNNONE_OK:
+            assert attrib.clear() is None
         assert len(attrib) == 0
 
     @_testutils.signature_tester(_Attrib.get, (
@@ -58,11 +62,11 @@ class TestXmlAttrib:
         result = attrib.get(key)
         reveal_type(result)
         qname = QName(None, key)
-        for arg in (key, key.encode(), qname):
-            assert attrib.get(arg) == result
-        for arg in (None, 1, object(), [key]):
+        for arg1 in (key, key.encode(), qname):
+            assert attrib.get(arg1) == result
+        for arg2 in (None, 1, object(), [key]):
             with pytest.raises(TypeError, match="Argument must be bytes or unicode"):
-                _ = attrib.get(cast(Any, arg))
+                _ = attrib.get(cast(Any, arg2))
 
         reveal_type(attrib.get("dummy"))
         reveal_type(attrib.get("dummy", 0))
@@ -74,8 +78,8 @@ class TestXmlAttrib:
     def test_method_update(self, xml_tree: _ElementTree) -> None:
         root = deepcopy(xml_tree.getroot())
         attrib = root.attrib
-        result = attrib.update({"foo": "bar"})
-        reveal_type(result)
+        if TYPECHECKER_RETURNNONE_OK:
+            assert attrib.update({"foo": "bar"}) is None
 
         attrib.update({
             "foo": b"bar",
@@ -95,13 +99,13 @@ class TestXmlAttrib:
         attrib.update(attrib_copy)
         assert len(attrib) > 0
 
-        for data in (None, 1):
+        for data1 in (None, 1):
             with pytest.raises(TypeError, match="object is not iterable"):
-                attrib.update(cast(Any, data))
+                attrib.update(cast(Any, data1))
 
-        for data in ({"foo", "bar"}, MappingProxyType({"foo": "bar"})):
+        for data2 in ({"foo", "bar"}, MappingProxyType({"foo": "bar"})):
             with pytest.raises(ValueError, match="too many values to unpack"):
-                attrib.update(cast(Any, data))
+                attrib.update(cast(Any, data2))
 
     @_testutils.signature_tester(_Attrib.pop, (
         ("key"    , Parameter.POSITIONAL_OR_KEYWORD, Parameter.empty),
@@ -132,12 +136,12 @@ class TestXmlAttrib:
         attrib = root.attrib
         result = attrib.has_key("orderid")
         reveal_type(result)
-        for k in (b"orderid", QName(None, "orderid")):
-            assert attrib.has_key(k) == result
+        for k1 in (b"orderid", QName(None, "orderid")):
+            assert attrib.has_key(k1) == result
 
-        for k in (None, 1, object(), ["orderid"]):
+        for k2 in (None, 1, object(), ["orderid"]):
             with pytest.raises(TypeError, match="Argument must be bytes or unicode"):
-                _ = attrib.has_key(cast(Any, k))
+                _ = attrib.has_key(cast(Any, k2))
 
     @_testutils.empty_signature_tester(
         _Attrib.keys,

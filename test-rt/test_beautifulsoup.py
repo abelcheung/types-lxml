@@ -14,7 +14,9 @@ from bs4 import BeautifulSoup
 from lxml.etree import _Element as _Element, _ElementTree as _ElementTree
 from lxml.html import HtmlElement as HtmlElement, soupparser as _soup
 
-reveal_type = getattr(_testutils, "reveal_type_wrapper")
+INJECT_REVEAL_TYPE = True
+if INJECT_REVEAL_TYPE:
+    reveal_type = getattr(_testutils, "reveal_type_wrapper")
 
 
 class TestFromstring:
@@ -74,13 +76,13 @@ class TestFromstring:
             _ = _soup.fromstring(cast(Any, h2_filepath))
 
     def test_makeelement(self, h2_str: str) -> None:
-        result = _soup.fromstring(h2_str, makeelement=_html.xhtml_parser.makeelement)
-        reveal_type(result)
-        del result
+        result1 = _soup.fromstring(h2_str, makeelement=_html.xhtml_parser.makeelement)
+        reveal_type(result1)
+        del result1
 
-        result = _soup.fromstring(h2_str, None, etree.Element)
-        reveal_type(result)
-        del result
+        result2 = _soup.fromstring(h2_str, None, etree.Element)
+        reveal_type(result2)
+        del result2
 
         with pytest.raises(TypeError, match="object is not callable"):
             _ = _soup.fromstring(h2_str, makeelement=cast(Any, 1))
@@ -100,7 +102,7 @@ class TestFromstring:
         del result
 
         with pytest.raises(TypeError, match="unexpected keyword argument 'badarg'"):
-            _ = _soup.fromstring(h2_bytes, badarg=None)  # pyright: ignore
+            _ = _soup.fromstring(h2_bytes, badarg=None)  # type: ignore
 
 
 class TestParse:
@@ -173,15 +175,15 @@ class TestParse:
         del result
 
     def test_makeelement(self, h2_filepath: Path) -> None:
-        result = _soup.parse(
+        result1 = _soup.parse(
             str(h2_filepath), makeelement=_html.xhtml_parser.makeelement
         )
-        reveal_type(result.getroot())
-        del result
+        reveal_type(result1.getroot())
+        del result1
 
-        result = _soup.parse(str(h2_filepath), None, etree.Element)
-        reveal_type(result.getroot())
-        del result
+        result2 = _soup.parse(str(h2_filepath), None, etree.Element)
+        reveal_type(result2.getroot())
+        del result2
 
         with pytest.raises(TypeError, match="object is not callable"):
             _ = _soup.parse(str(h2_filepath), makeelement=cast(Any, 1))
@@ -202,7 +204,7 @@ class TestParse:
         del result
 
         with pytest.raises(TypeError, match="unexpected keyword argument 'badarg'"):
-            _ = _soup.parse(fh, badarg=None)  # pyright: ignore
+            _ = _soup.parse(fh, badarg=None)  # type: ignore
 
         fh.close()
 
@@ -231,15 +233,15 @@ class TestConvertTree:
         tree = _html.parse(h2_filepath)
         s_io = StringIO(h2_filepath.read_text())
 
-        for src in (tree, h2_filepath):
+        for src1 in (tree, h2_filepath):
             with pytest.raises(TypeError, match="object is not iterable"):
-                _ = _soup.convert_tree(cast(Any, src))
+                _ = _soup.convert_tree(cast(Any, src1))
 
-        for src in (tree.getroot(), s_io):
+        for src2 in (tree.getroot(), s_io):
             with pytest.raises(
                 AttributeError, match="object has no attribute 'contents'"
             ):
-                _ = _soup.convert_tree(cast(Any, src))
+                _ = _soup.convert_tree(cast(Any, src2))
 
         s_io.close()
         del tree
@@ -247,13 +249,13 @@ class TestConvertTree:
     def test_makeelement(self, h2_str: str) -> None:
         soup = BeautifulSoup(h2_str, features="html.parser")
 
-        result = _soup.convert_tree(soup, makeelement=_html.xhtml_parser.makeelement)
-        reveal_type(result)
-        del result
+        result1 = _soup.convert_tree(soup, makeelement=_html.xhtml_parser.makeelement)
+        reveal_type(result1)
+        del result1
 
-        result = _soup.convert_tree(soup, makeelement=etree.Element)
-        reveal_type(result)
-        del result
+        result2 = _soup.convert_tree(soup, makeelement=etree.Element)
+        reveal_type(result2)
+        del result2
 
         with pytest.raises(TypeError, match="object is not callable"):
             _ = _soup.convert_tree(soup, makeelement=cast(Any, 1))

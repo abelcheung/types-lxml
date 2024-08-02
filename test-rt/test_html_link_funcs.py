@@ -16,7 +16,10 @@ from lxml.html import (
     rewrite_links,
 )
 
-reveal_type = getattr(_testutils, "reveal_type_wrapper")
+INJECT_REVEAL_TYPE = True
+if INJECT_REVEAL_TYPE:
+    reveal_type = getattr(_testutils, "reveal_type_wrapper")
+
 _BASE_HREF = "http://dummy"
 
 
@@ -228,7 +231,7 @@ class TestBadArgs:
         with pytest.raises(
             TypeError, match="Argument must be bytes or unicode, got 'int'"
         ):
-            _ = rewrite_links(h1_str, lambda _: 1)  # pyright: ignore
+            _ = rewrite_links(h1_str, lambda _: 1)  # type: ignore
 
         def repl_func(orig: bytes) -> bytes:
             return orig.replace(b"http", b"ftp")
@@ -284,12 +287,12 @@ class TestOutputType:
             del result
         with pytest.raises(TypeError, match="Cannot mix str and non-str"):
             _ = make_links_absolute(h1_str, cast(Any, _BASE_HREF.encode("ascii")))
-        result = make_links_absolute(h1_str, _BASE_HREF)
-        reveal_type(result)
-        del result
+        result1 = make_links_absolute(h1_str, _BASE_HREF)
+        reveal_type(result1)
+        del result1
         root = html_tree.getroot()
-        result = make_links_absolute(root, _BASE_HREF)
-        reveal_type(result)
+        result2 = make_links_absolute(root, _BASE_HREF)
+        reveal_type(result2)
 
     def test_resolve_base_href(
         self,
@@ -301,12 +304,12 @@ class TestOutputType:
             result = resolve_base_href(h1_bytes)
             reveal_type(result)
             del result
-        result = resolve_base_href(h1_str)
-        reveal_type(result)
-        del result
+        result1 = resolve_base_href(h1_str)
+        reveal_type(result1)
+        del result1
         root = html_tree.getroot()
-        result = resolve_base_href(root)
-        reveal_type(result)
+        result2 = resolve_base_href(root)
+        reveal_type(result2)
 
     def test_rewrite_links(
         self,
@@ -320,9 +323,9 @@ class TestOutputType:
             del result
         with pytest.raises(TypeError, match="can only concatenate str"):
             _ = rewrite_links(h1_str, lambda _: cast(Any, _BASE_HREF.encode("ASCII")))
-        result = rewrite_links(h1_str, lambda _: _BASE_HREF)
-        reveal_type(result)
-        del result
+        result2 = rewrite_links(h1_str, lambda _: _BASE_HREF)
+        reveal_type(result2)
+        del result2
         root = html_tree.getroot()
-        result = rewrite_links(root, lambda _: None)
-        reveal_type(result)
+        result3 = rewrite_links(root, lambda _: None)
+        reveal_type(result3)

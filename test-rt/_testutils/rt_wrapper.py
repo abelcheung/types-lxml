@@ -26,9 +26,9 @@ class RevealTypeExtractor(ast.NodeVisitor):
 
 
 def _get_var_name(frame: inspect.FrameInfo) -> str:
-    code, idx = frame.code_context, frame.index
-    assert code is not None and idx is not None
-    code = code[idx].strip()
+    ctxt, idx = frame.code_context, frame.index
+    assert ctxt is not None and idx is not None
+    code = ctxt[idx].strip()
 
     walker = RevealTypeExtractor()
     walker.visit(ast.parse(code, mode="eval"))
