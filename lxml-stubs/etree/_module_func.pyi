@@ -1,15 +1,11 @@
 import sys
 from typing import Any, Iterable, Literal, final, overload
 
-if sys.version_info >= (3, 10):
-    from typing import TypeGuard
-else:
-    from typing_extensions import TypeGuard
-
 if sys.version_info >= (3, 13):
+    from typing import TypeIs
     from warnings import deprecated
 else:
-    from typing_extensions import deprecated
+    from typing_extensions import TypeIs, deprecated
 
 from .._types import (
     _ET,
@@ -153,7 +149,7 @@ def tounicode(
     with_tail: bool = True,
     doctype: str | None = None,
 ) -> None: ...
-def iselement(element: object) -> TypeGuard[_Element]: ...
+def iselement(element: object) -> TypeIs[_Element]: ...
 
 # HACK PyCapsule needs annotation of ctypes.pythonapi, which has no
 # annotation support currently. Use generic object for now.
