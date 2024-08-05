@@ -85,9 +85,13 @@ extra_standard_library = [
 
 [tool.pyright]
 include = ['lxml-stubs']
-reportPrivateUsage = false
-reportUnnecessaryIsInstance = false
 typeCheckingMode = 'strict'
+reportPrivateUsage = false
+reportUnnecessaryTypeIgnoreComment = 'error'
+# Follows typeshed practice, separate mypy and pyright
+# type-ignores
+# See https://github.com/python/mypy/issues/12358
+enableTypeIgnoreComments = false
 
 [tool.mypy]
 packages = 'lxml-stubs'

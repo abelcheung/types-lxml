@@ -33,7 +33,8 @@ def _get_var_name(frame: inspect.FrameInfo) -> str:
     walker = RevealTypeExtractor()
     walker.visit(ast.parse(code, mode="eval"))
     try:
-        return ast.get_source_segment(code, walker.target)  # type: ignore
+        result = ast.get_source_segment(code, walker.target)  # type: ignore[arg-type]  # pyright: ignore[reportArgumentType]
+        return result  # type: ignore[return-value]  # pyright: ignore[reportReturnType]
     except:
         raise TypeCheckError("Failed to get variable name " f'from expression "{code}"')
 

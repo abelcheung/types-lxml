@@ -118,7 +118,7 @@ class TestXmlAttrib:
         reveal_type(result)
         assert result == 0
         with pytest.raises(TypeError, match="expected at most 2 arguments"):
-            _ = attrib.pop("dummy", 0, 0)  # type: ignore
+            _ = attrib.pop("dummy", 0, 0)  # type: ignore[call-overload]  # pyright: ignore[reportCallIssue,reportUnknownVariableType]
         del result, root
 
         for arg in ("orderid", b"orderid", QName(None, "orderid")):

@@ -93,7 +93,7 @@ class TestBasicBehavior:
         # Actually permitted, just that elements are
         # added in random order. This is undesirable so
         # not supported in stub.
-        elem[4:] = {div, comment2}  # type: ignore
+        elem[4:] = {div, comment2}  # type: ignore[call-overload]  # pyright: ignore[reportCallIssue,reportArgumentType]
         assert len(elem) == 6
 
         for obj in (object(), 0, "", (subelem,), {subelem}):
@@ -107,7 +107,7 @@ class TestBasicBehavior:
         # test broken behavior: elem[slice] = single_elem
         # It returns successfully, just that elements are
         # silently discarded without adding new ones
-        elem[:] = comment  # type: ignore
+        elem[:] = comment  # type: ignore[call-overload]  # pyright: ignore[reportCallIssue,reportArgumentType]
         assert len(elem) == 0
 
         del subelem, comment, comment2, entity, pi, div, elem
@@ -252,7 +252,7 @@ class TestBasicBehavior:
         elem.extend((new_elem1, new_elem2))
 
         # test broken behavior (but no exception though)
-        elem.extend(elem[0])  # type: ignore
+        elem.extend(elem[0])  # type: ignore[arg-type]  # pyright: ignore[reportArgumentType]
 
         for obj in (None, 0):
             with pytest.raises(TypeError, match="is not iterable"):
@@ -290,13 +290,13 @@ class TestProperties:
             reveal_type(subelem.sourceline)
 
         with pytest.raises(AttributeError, match="objects is not writable"):
-            elem.attrib = elem.attrib  # type: ignore
+            elem.attrib = cast(Any, elem.attrib)  # type: ignore[misc]  # pyright: ignore[reportAttributeAccessIssue]
 
         with pytest.raises(AttributeError, match="objects is not writable"):
-            elem.prefix = elem.prefix  # type: ignore
+            elem.prefix = cast(Any, elem.prefix)  # type: ignore[misc]  # pyright: ignore[reportAttributeAccessIssue]
 
         with pytest.raises(AttributeError, match="objects is not writable"):
-            elem.nsmap = elem.nsmap  # type: ignore
+            elem.nsmap = cast(Any, elem.nsmap)  # type: ignore[misc]  # pyright: ignore[reportAttributeAccessIssue]
 
         # Not performing test for .sourceline ! We pretend it is not
         # changeable in stub, but actually it is read-write

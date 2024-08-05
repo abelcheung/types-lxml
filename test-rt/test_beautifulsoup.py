@@ -102,7 +102,7 @@ class TestFromstring:
         del result
 
         with pytest.raises(TypeError, match="unexpected keyword argument 'badarg'"):
-            _ = _soup.fromstring(h2_bytes, badarg=None)  # type: ignore
+            _ = _soup.fromstring(h2_bytes, badarg=None)  # type: ignore[call-overload]  # pyright: ignore[reportCallIssue,reportUnknownVariableType]
 
 
 class TestParse:
@@ -204,7 +204,7 @@ class TestParse:
         del result
 
         with pytest.raises(TypeError, match="unexpected keyword argument 'badarg'"):
-            _ = _soup.parse(fh, badarg=None)  # type: ignore
+            _ = _soup.parse(fh, badarg=None)  # type: ignore[call-overload]  # pyright: ignore[reportCallIssue,reportUnknownVariableType]
 
         fh.close()
 

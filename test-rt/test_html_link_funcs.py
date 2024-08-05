@@ -231,7 +231,7 @@ class TestBadArgs:
         with pytest.raises(
             TypeError, match="Argument must be bytes or unicode, got 'int'"
         ):
-            _ = rewrite_links(h1_str, lambda _: 1)  # type: ignore
+            _ = rewrite_links(h1_str, cast(Any, lambda _: 1))  # pyright: ignore[reportUnknownLambdaType]
 
         def repl_func(orig: bytes) -> bytes:
             return orig.replace(b"http", b"ftp")

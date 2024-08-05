@@ -34,7 +34,7 @@ TYPECHECKER_RETURNNONE_OK = True
 class TestXInclude:
     def test_init_and_prop(self) -> None:
         with pytest.raises(TypeError, match="takes exactly 0 positional arguments"):
-            xinc = XInclude(None)  # type: ignore
+            xinc = XInclude(None)  # type: ignore[call-arg]  # pyright: ignore[reportCallIssue]
         xinc = XInclude()
         reveal_type(xinc.error_log)
 

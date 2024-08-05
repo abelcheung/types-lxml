@@ -284,17 +284,17 @@ class TestCharsetArg:
 
     def test_conflict(self, h2_str: str) -> None:
         with pytest.raises(TypeError, match="unexpected keyword argument"):
-            _ = h5.document_fromstring(h2_str, guess_charset=True)  # type: ignore
+            _ = h5.document_fromstring(h2_str, guess_charset=cast(Any, True))
 
         with pytest.raises(TypeError, match="unexpected keyword argument"):
-            _ = h5.fragments_fromstring(h2_str, guess_charset=False)  # type: ignore
+            _ = h5.fragments_fromstring(h2_str, guess_charset=cast(Any, False))
 
         with pytest.raises(TypeError, match="unexpected keyword argument"):
-            _ = h5.fragment_fromstring(h2_str, guess_charset=False)  # type: ignore
+            _ = h5.fragment_fromstring(h2_str, guess_charset=cast(Any, False))
 
         with pytest.raises(TypeError, match="unexpected keyword argument"):
-            _ = h5.fromstring(h2_str, False)  # type: ignore
+            _ = h5.fromstring(h2_str, cast(Any, False))
 
         s_io = StringIO(h2_str)
         with pytest.raises(TypeError, match="unexpected keyword argument"):
-            _ = h5.parse(s_io, True)  # type: ignore
+            _ = h5.parse(s_io, cast(Any, True))

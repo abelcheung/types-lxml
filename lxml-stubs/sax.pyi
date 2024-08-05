@@ -46,7 +46,7 @@ class ElementTreeContentHandler(Generic[_ET], ContentHandler):
         name: str,
         attributes: SupportsLaxedItems[str, str] | None = None,
     ) -> None: ...
-    ignorableWhitespace = characters  # type: ignore[assignment]
+    ignorableWhitespace = characters  # type: ignore[assignment]  # pyright: ignore[reportAssignmentType]
 
 class ElementTreeProducer(Generic[_ET]):
     _element: _ET
