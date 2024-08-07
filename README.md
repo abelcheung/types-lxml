@@ -4,14 +4,11 @@
 
 ## Important note
 
-- Next release after `2024.04.14` contains multiple build; please check out [Installation section](#installation) on choosing the desired build (hint: many people don't need to bother with this)
-- This future release requires `mypy 1.11` as `mypy` makes yet another backward incompatible change.
-- `2024.04.14` release requires `mypy 1.9`; `2024.03.27` is the last release supporting `mypy 1.5`.
-- `2024.03.27` release requires [cssselect package](https://pypi.org/project/cssselect/) to work, since `lxml.cssselect` submodule utilises inline annotation from `cssselect 1.2.0`.
+- Since `2024.08.07`, each release will contain multiple builds; besides normal version, there is an alternative build suitable for multiple XML element suclassing. Please check out [relevant Installation section](#choosing-the-build) for detail (hint: many people don't need to bother with this). Also note that this release requires `mypy 1.11`.
 
 ## Introduction
 
-This repository contains [external type annotations](https://peps.python.org/pep-0561/) for [`lxml`](http://lxml.de/). It can be used by type-checking tools (currently supporting [`mypy`](https://pypi.org/project/mypy/) and [`pyright`](https://github.com/Microsoft/pyright)) to check code that uses `lxml`, or used within IDEs like [VSCode](https://code.visualstudio.com/) or [PyCharm](https://www.jetbrains.com/pycharm/) to facilitate development.
+This repository contains [external type annotations](https://peps.python.org/pep-0561/) for [`lxml`](http://lxml.de/). It can be used by type-checking tools (currently supporting [`mypy`](https://pypi.org/project/mypy/) and [`pyright`](https://github.com/Microsoft/pyright)) to check code that uses `lxml`, or used within IDEs like [VSCode](https://code.visualstudio.com/) to facilitate development.
 
 ## Goal ① : Completion
 
@@ -80,7 +77,7 @@ Or directly run bleeding edge version from GitHub repository:
 
 ### Choosing the build
 
-Since the version after `2024.04.14` release, there will be two versions of `types-lxml`. First one is the default one; if there's no problem using it, there's no need to switch.
+Since `2024.08.07` release, there will be two versions of `types-lxml`. First one is the default one; if there's no problem using it, there's no need to switch.
 
 The second version, `types-lxml-multi-subclass`, is intended for specific need, namely creation of multiple lxml element subclasses. For example:
 
