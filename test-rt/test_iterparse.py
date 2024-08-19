@@ -77,6 +77,7 @@ class TestIterparse:
             else:
                 reveal_type(item[1])
 
+    @pytest.mark.filterwarnings("ignore:.* 'strip_cdata' option .*:DeprecationWarning")
     def test_html_mode(self, x1_filepath: Path) -> None:
         walker = iterparse(
             source=x1_filepath,
