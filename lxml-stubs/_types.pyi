@@ -57,19 +57,23 @@ _NSMapArg = (
 )  # fmt: skip
 _NonDefaultNSMapArg = Mapping[str, _AnyStr]
 
+# Namespace mapping type specifically for Elementpath methods
+#
+# Elementpath methods do not sanitize nsmap at all.
+# It is possible to use invalid nsmap like {"foo": 0}
+# and find*() method family happily accept it, just that
+# they would silently fail to output any element afterwards.
+# Bytes and strs are treated as different NS entries.
+# In order to be useful, dict val must be str.
+_StrictNSMap = (
+    Mapping[      None, str] |
+    Mapping[str       , str] |
+    Mapping[str | None, str]
+)  # fmt: skip
+
 # Some namespace map arguments also accept tuple form
 # such as in dict()
 _NSTuples: TypeAlias = Iterable[tuple[_AnyStr | None, _AnyStr]]
-
-# Namespace mapping type specifically for Elementpath methods
-#
-# Actually, elementpath methods do not sanitize nsmap
-# at all. It is possible to use invalid nsmap like
-# {"foo": 0} and find*() method family happily accept it,
-# just that they would silently fail to output any element
-# afterwards. In order to be useful, both dict key and val
-# must be str.
-_StrictNSMap = Mapping[str, str]
 
 # https://lxml.de/extensions.html#xpath-extension-functions
 # The returned result of extension function itself is not exactly Any,
