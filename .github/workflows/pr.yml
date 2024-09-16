@@ -31,16 +31,16 @@ jobs:
 
     - name: Mypy review
       id: mypy
-      uses: tsuyoshicho/action-mypy@v4
+      uses: tsuyoshicho/action-mypy@v5
       with:
         reporter: github-pr-review
         level: warning
         target: lxml-stubs
         fail_on_error: true
-        ignore_note: true
         setup_command: pip install mypy==1.11.*
         setup_method: install
         install_types: false
+        output_json: true
 
     - name: Pyright review
       id: pyright
