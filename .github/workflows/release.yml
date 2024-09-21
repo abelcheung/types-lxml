@@ -59,6 +59,8 @@ jobs:
     runs-on: ubuntu-22.04
     permissions:
       contents: write
+      id-token: write
+      attestations: write
     steps:
     - uses: actions/download-artifact@v4
       with:
@@ -66,6 +68,13 @@ jobs:
         path: dist
         merge-multiple: true
 
+    - uses: actions/attest-build-provenance@v1
+      with:
+        subject-path: |
+          dist/*.whl
+          dist/*.tar.gz
+
+    # only need contents: write
     - uses: ncipollo/release-action@v1
       with:
         artifacts: "dist/*.whl,dist/*.tar.gz"
