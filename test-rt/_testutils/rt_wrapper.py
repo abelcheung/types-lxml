@@ -4,10 +4,10 @@ import logging
 import typing as _t
 from pathlib import Path
 
-from typeguard import TypeCheckError, TypeCheckMemo, check_type_internal
+from typeguard import TypeCheckMemo, check_type_internal
 
-from .common import FilePos
-from .pyright_adapter import NameCollector, get_pyright_result
+from . import pyright_adapter as adapter
+from .common import FilePos, TypeCheckerError
 
 _T = _t.TypeVar("_T")
 
@@ -25,18 +25,15 @@ class RevealTypeExtractor(ast.NodeVisitor):
         return self.generic_visit(node)
 
 
-def _get_var_name(frame: inspect.FrameInfo) -> str:
+def _get_var_name(frame: inspect.FrameInfo) -> str | None:
     ctxt, idx = frame.code_context, frame.index
     assert ctxt is not None and idx is not None
     code = ctxt[idx].strip()
 
     walker = RevealTypeExtractor()
     walker.visit(ast.parse(code, mode="eval"))
-    try:
-        result = ast.get_source_segment(code, walker.target)  # type: ignore[arg-type]  # pyright: ignore[reportArgumentType]
-        return result  # type: ignore[return-value]  # pyright: ignore[reportReturnType]
-    except:
-        raise TypeCheckError("Failed to get variable name " f'from expression "{code}"')
+    assert walker.target is not None
+    return ast.get_source_segment(code, walker.target)
 
 
 def reveal_type_wrapper(var: _T) -> _T:
@@ -73,49 +70,54 @@ def reveal_type_wrapper(var: _T) -> _T:
 
     Raises
     ------
-    TypeCheckError
+    TypeCheckerError
         If static type checker failed to get inferred type
-        for variable, or the type doesn't match runtime result
+        for variable
+    typeguard.TypeCheckError
+        If type checker result doesn't match runtime result
     """
     caller = inspect.stack()[1]
     pos = FilePos(Path(caller.filename).name, caller.lineno)
-    pyr_result = get_pyright_result(caller.filename)
-    if pos not in pyr_result:
-        raise TypeCheckError(
-            "Pyright does not provide inferred type on "
-            f'"{pos.file}" line {pos.lineno}'
-        )
-    result = pyr_result[pos]
+    typechecker_result = adapter.get_result(caller.filename)
+    try:
+        result = typechecker_result[pos]
+    except KeyError as e:
+        raise TypeCheckerError('No inferred type', pos.file, pos.lineno) from e
 
-    var_name = _get_var_name(caller)
-    if result.var != var_name:
-        raise TypeCheckError(
-            "Pyright result should contain " f'"{var_name}", but got "{result.var}"'
-        )
-
-    ref = _t.ForwardRef(result.type)
+    if result.var:  # mypy output doesn't have this extra protection
+        var_name = _get_var_name(caller)
+        if result.var != var_name:
+            raise TypeCheckerError(
+                f'Variable name should be "{result.var}", but got "{var_name}"',
+                pos.file, pos.lineno
+            )
 
     # Since this is a wrapper of typeguard.check_type(),
     # get globals and locals from my caller, not mine
     globalns = caller.frame.f_globals
     localns = caller.frame.f_locals
 
-    type_ast = ast.parse(result.type, mode="eval")
-    walker = NameCollector(globalns, localns)
+    ref_arg = result.type.__forward_arg__
+    type_ast = ast.parse(ref_arg, mode="eval")
+    walker = adapter.NameCollector(globalns, localns)
     walker.visit(type_ast)
-    localns |= walker.names
-    memo = TypeCheckMemo(globalns, localns)
+    memo = TypeCheckMemo(globalns, localns | walker.collected)
     try:
-        check_type_internal(var, ref, memo)
-    except TypeError as exc:
-        if "is not subscriptable" not in exc.args[0]:
+        check_type_internal(var, result.type, memo)
+    except TypeError as e:
+        if "is not subscriptable" not in e.args[0]:
             raise
         if not isinstance(type_ast.body, ast.Subscript):
-            raise TypeCheckError("Inconsistency between type and parsed AST tree")
+            raise TypeCheckerError(
+                f'{ref_arg} should be parsed as Subscript, '
+                f'but got {type(type_ast.body).__name__}',
+                pos.file,
+                pos.lineno
+            ) from e
         # Have to concede by verifying unsubscripted type
         # Specialized classes is a stub-only thing here, and
         # all classes in lxml do not support __class_getitem__
-        bare_type = ast.get_source_segment(result.type, type_ast.body.value)
+        bare_type = ast.get_source_segment(ref_arg, type_ast.body.value)
         assert bare_type is not None
         check_type_internal(var, _t.ForwardRef(bare_type), memo)
 
