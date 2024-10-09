@@ -5,7 +5,7 @@ from pathlib import Path, PurePosixPath
 
 import pytest
 import typeguard
-from _testutils import pyright_adapter
+from _testutils import mypy_adapter, pyright_adapter
 from lxml import etree as _e, html as _h
 
 typeguard.config.forward_ref_policy = typeguard.ForwardRefPolicy.ERROR
@@ -13,6 +13,7 @@ typeguard.config.forward_ref_policy = typeguard.ForwardRefPolicy.ERROR
 
 def pytest_collection_finish(session: pytest.Session) -> None:
     files = {i.path for i in session.items}
+    mypy_adapter.run_typechecker_on(files)
     pyright_adapter.run_typechecker_on(files)
 
 

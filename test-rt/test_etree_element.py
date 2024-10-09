@@ -36,6 +36,7 @@ TYPECHECKER_ASSIGNMENT_OK = True
 TYPECHECKER_RETURNNONE_OK = True
 
 class TestBasicBehavior:
+    @pytest.mark.xfail(reason="mypy doesn't handle reversed()")
     def test_sequence_read(self, xml_tree: _ElementTree) -> None:
         elem = deepcopy(xml_tree.getroot())
 
@@ -52,6 +53,10 @@ class TestBasicBehavior:
         del itr, item
 
         rev = reversed(elem)
+        # FIXME Mypy fails here. It ignores annotation and
+        # simple-mindly thinks reversed(T) always produce
+        # reversed object, which is not the case for lxml.
+        # Pyright works fine, honoring annotation definition.
         reveal_type(rev)
         item = next(rev)
         reveal_type(item)

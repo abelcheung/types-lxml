@@ -32,10 +32,11 @@ def test_manual_objectify_parser(x2_filepath: Path) -> None:
     reveal_type(tree.getroot())
 
 
-def test_my_default_element(x2_filepath: Path) -> None:
-    class MyElement(ElementBase):
-        pass
+class MyElement(ElementBase):
+    pass
 
+
+def test_my_default_element(x2_filepath: Path) -> None:
     lookup = ElementDefaultClassLookup(element=MyElement)
     parser = XMLParser()
     if TYPE_CHECKING:

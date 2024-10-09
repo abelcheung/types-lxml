@@ -7,23 +7,14 @@ import subprocess
 import typing as _t
 from importlib import import_module
 from pathlib import Path
-from types import MappingProxyType, ModuleType
+from types import ModuleType
 
 from .common import FilePos, VarType
 
-# {('file.py', 10): ('var_name', 'str'), ...}
-_results: dict[FilePos, VarType] = {}
+# {('file.py', 10): ('var_name', '_Element'), ...}
+typechecker_result: dict[FilePos, VarType] = {}
 _pyright_re = re.compile('^Type of "(?P<var>.+?)" is "(?P<type>.+?)"$')
-
-
-@functools.cache
-def get_result(filepath: str | Path) -> MappingProxyType[FilePos, VarType]:
-    if not isinstance(filepath, Path):
-        filepath = Path(filepath)
-    return MappingProxyType(
-        {k: v for k, v in _results.items() if k.file == filepath.name}
-    )
-
+id = 'pyright'
 
 def run_typechecker_on(paths: _t.Iterable[Path]) -> None:
     if (prog_path := shutil.which("pyright")) is None:
@@ -43,7 +34,7 @@ def run_typechecker_on(paths: _t.Iterable[Path]) -> None:
         if (m := _pyright_re.match(diag["message"])) is None:
             continue
         pos = FilePos(filename, lineno)
-        _results[pos] = VarType(m["var"], _t.ForwardRef(m["type"]))
+        typechecker_result[pos] = VarType(m["var"], _t.ForwardRef(m["type"]))
 
 
 class _BasicResolver:
@@ -76,11 +67,14 @@ _basic_resolver = _BasicResolver()
 
 class NameCollector(ast.NodeVisitor):
     collected: dict[str, _t.Any] = {}
+    # Mypy type expression may need to be rewritten,
+    # pyright doesn't
+    modified: bool = False
 
     def __init__(
         self,
         globalns: dict[str, _t.Any],
-        localns: _t.Mapping[str, _t.Any],
+        localns: dict[str, _t.Any],
     ) -> None:
         super().__init__()
         self.globalns = globalns
@@ -91,7 +85,7 @@ class NameCollector(ast.NodeVisitor):
     def visit_Name(self, node: ast.Name) -> _t.Any:
         name = node.id
         try:
-            eval(name, self.globalns, self.localns)
+            eval(name, self.globalns, self.localns | self.collected)
         except NameError:
             self.collected[name] = _basic_resolver.find(name)
         return self.generic_visit(node)
