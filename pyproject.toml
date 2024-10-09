@@ -112,3 +112,7 @@ task-tags = [
 # doesn't work
 # known-first-party = ["typing_extensions", "_typeshed"]
 combine-as-imports = true
+
+[tool.pytest.ini_options]
+minversion = "7.0"
+addopts = "--tb=short"
