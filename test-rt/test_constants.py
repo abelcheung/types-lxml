@@ -5,7 +5,9 @@ import lxml.html as _h
 import lxml.isoschematron as _sch
 import lxml.objectify as _o
 
-reveal_type = getattr(_testutils, "reveal_type_wrapper")
+INJECT_REVEAL_TYPE = True
+if INJECT_REVEAL_TYPE:
+    reveal_type = getattr(_testutils, "reveal_type_wrapper")
 
 
 class TestEtreeConstants:

@@ -8,7 +8,9 @@ import pytest
 from lxml.etree import _Element as _Element, _ElementTree, iterparse, iterwalk
 from lxml.html import HtmlElement
 
-reveal_type = getattr(_testutils, "reveal_type_wrapper")
+INJECT_REVEAL_TYPE = True
+if INJECT_REVEAL_TYPE:
+    reveal_type = getattr(_testutils, "reveal_type_wrapper")
 
 
 class TestIterwalk:

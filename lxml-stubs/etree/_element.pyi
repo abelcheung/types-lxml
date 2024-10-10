@@ -444,17 +444,17 @@ class __ContentOnlyElement(_Element):
     # .text and .tag are overridden in each concrete class below
     #
     @property
-    def attrib(self) -> Mapping[_t.Unused, _t.Unused]: ...  # type: ignore[override]
+    def attrib(self) -> Mapping[_t.Unused, _t.Unused]: ...  # type: ignore[override]  # pyright: ignore[reportIncompatibleMethodOverride]
     def get(self, key: _t.Unused, default: _t.Unused = None) -> None: ...  # type: ignore[override]
-    def set(self, key: Never, value: Never) -> Never: ...  # type: ignore[override]
-    def append(self, element: Never) -> Never: ...  # type: ignore[override]
-    def insert(self, index: Never, value: Never) -> Never: ...  # type: ignore[override]
-    def __setitem__(self, __k: Never, __v: Never) -> Never: ...  # type: ignore[override]
+    def set(self, key: Never, value: Never) -> Never: ...  # type: ignore[override]  # pyright: ignore[reportIncompatibleMethodOverride]
+    def append(self, element: Never) -> Never: ...  # type: ignore[override]  # pyright: ignore[reportIncompatibleMethodOverride]
+    def insert(self, index: Never, value: Never) -> Never: ...  # type: ignore[override]  # pyright: ignore[reportIncompatibleMethodOverride]
+    def __setitem__(self, __k: Never, __v: Never) -> Never: ...  # type: ignore[override]  # pyright: ignore[reportIncompatibleMethodOverride]
     # The intention is to forbid elem.__getitem__, allowing slice
     # doesn't make any sense
-    def __getitem__(self, __k: Never) -> Never: ...  # type: ignore[override]
+    def __getitem__(self, __k: Never) -> Never: ...  # type: ignore[override]  # pyright: ignore[reportIncompatibleMethodOverride]
     # Methods above are explicitly defined in source, while those below aren't
-    def __delitem__(self, __k: Never) -> Never: ...  # type: ignore[override]
+    def __delitem__(self, __k: Never) -> Never: ...  # type: ignore[override]  # pyright: ignore[reportIncompatibleMethodOverride]
     def __iter__(self) -> Never: ...
 
     # TODO (low priority) There are many, many more methods that
@@ -468,7 +468,7 @@ class __ContentOnlyElement(_Element):
 
 class _Comment(__ContentOnlyElement):
     @property  # type: ignore[misc]
-    def tag(self) -> Callable[..., _Comment]: ...  # type: ignore[override]
+    def tag(self) -> Callable[..., _Comment]: ...  # type: ignore[override]  # pyright: ignore[reportIncompatibleMethodOverride]
     @property  # type: ignore[override]
     def text(self) -> str: ...
     @text.setter
@@ -479,7 +479,7 @@ class _Comment(__ContentOnlyElement):
 # signature of .get() for _PI and _Element are the same
 class _ProcessingInstruction(__ContentOnlyElement):
     @property  # type: ignore[misc]
-    def tag(self) -> Callable[..., _ProcessingInstruction]: ...  # type: ignore[override]
+    def tag(self) -> Callable[..., _ProcessingInstruction]: ...  # type: ignore[override]  # pyright: ignore[reportIncompatibleMethodOverride]
     @property  # type: ignore[override]
     def text(self) -> str: ...
     @text.setter
@@ -495,9 +495,9 @@ class _ProcessingInstruction(__ContentOnlyElement):
 
 class _Entity(__ContentOnlyElement):
     @property  # type: ignore[misc]
-    def tag(self) -> Callable[..., _Entity]: ...  # type: ignore[override]
+    def tag(self) -> Callable[..., _Entity]: ...  # type: ignore[override]  # pyright: ignore[reportIncompatibleMethodOverride]
     @property  # type: ignore[misc]
-    def text(self) -> str: ...  # type: ignore[override]
+    def text(self) -> str: ...  # type: ignore[override]  # pyright: ignore[reportIncompatibleMethodOverride]
     @property
     def name(self) -> str: ...
     @name.setter
