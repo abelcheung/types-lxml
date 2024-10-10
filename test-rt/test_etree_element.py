@@ -32,11 +32,12 @@ INJECT_REVEAL_TYPE = True
 if INJECT_REVEAL_TYPE:
     reveal_type = getattr(_testutils, "reveal_type_wrapper")
 
-TYPECHECKER_ASSIGNMENT_OK = True
-TYPECHECKER_RETURNNONE_OK = True
+# See rttest-mypy.ini for explanation
+TC_CAN_ASSIGN_DIFFERENT_TYPE = True
+TC_CAN_RETURN_NONE = True
+TC_HONORS_REVERSED = True
 
 class TestBasicBehavior:
-    @pytest.mark.xfail(reason="mypy doesn't handle reversed()")
     def test_sequence_read(self, xml_tree: _ElementTree) -> None:
         elem = deepcopy(xml_tree.getroot())
 
@@ -52,11 +53,10 @@ class TestBasicBehavior:
         assert elem.index(item) == 0
         del itr, item
 
-        rev = reversed(elem)
-        # FIXME Mypy fails here. It ignores annotation and
-        # simple-mindly thinks reversed(T) always produce
-        # reversed object, which is not the case for lxml.
-        # Pyright works fine, honoring annotation definition.
+        if TC_HONORS_REVERSED:
+            rev = reversed(elem)
+        else:
+            rev = elem.__reversed__()
         reveal_type(rev)
         item = next(rev)
         reveal_type(item)
@@ -161,7 +161,7 @@ class TestBasicBehavior:
         subelem = deepcopy(elem[-1])
         length = len(elem)
 
-        if TYPECHECKER_RETURNNONE_OK:
+        if TC_CAN_RETURN_NONE:
             assert elem.append(subelem) is None
         assert len(elem) == length + 1
 
@@ -181,7 +181,7 @@ class TestBasicBehavior:
         elem = deepcopy(xml_tree.getroot())
         comment = Comment("comment")
         pos = randrange(len(elem))
-        if TYPECHECKER_RETURNNONE_OK:
+        if TC_CAN_RETURN_NONE:
             assert elem.insert(pos, comment) is None
         assert elem.index(comment) == pos
 
@@ -206,7 +206,7 @@ class TestBasicBehavior:
     ))  # fmt: skip
     def test_method_remove(self, xml_tree: _ElementTree) -> None:
         elem = deepcopy(xml_tree.getroot())
-        if TYPECHECKER_RETURNNONE_OK:
+        if TC_CAN_RETURN_NONE:
             assert elem.remove(elem[-1]) is None
 
         # Can construct a new node and fail removing it, but that is
@@ -228,7 +228,7 @@ class TestBasicBehavior:
         subelem = elem[-1]
         new_elem = deepcopy(subelem)
         new_elem.tag = "foo"
-        if TYPECHECKER_RETURNNONE_OK:
+        if TC_CAN_RETURN_NONE:
             assert elem.replace(subelem, new_elem) is None
 
         for obj in (0, None, "", object(), (elem[-1],)):
@@ -250,7 +250,7 @@ class TestBasicBehavior:
         elem = deepcopy(xml_tree.getroot())
         new_elem1 = Comment("foo")
         new_elem2 = Entity("foo")
-        if TYPECHECKER_RETURNNONE_OK:
+        if TC_CAN_RETURN_NONE:
             assert elem.extend([new_elem1]) is None
 
         elem.extend([new_elem1, new_elem2])
@@ -324,14 +324,14 @@ class TestProperties:
 
         elem.base = "http://dummy.site/"
         elem.base = None
-        if TYPECHECKER_ASSIGNMENT_OK:
+        if TC_CAN_ASSIGN_DIFFERENT_TYPE:
             elem.base = b"http://dummy.site/"
         for data1 in (1, cdata, qname):
             with pytest.raises(TypeError, match="must be string or unicode"):
                 elem.base = cast(Any, data1)
 
         elem.tag = "foo"
-        if TYPECHECKER_ASSIGNMENT_OK:
+        if TC_CAN_ASSIGN_DIFFERENT_TYPE:
             elem.tag = b"foo"
             elem.tag = qname
         for data2 in (None, 1, cdata):
@@ -340,7 +340,7 @@ class TestProperties:
 
         elem.text = "sometext"
         elem.text = None
-        if TYPECHECKER_ASSIGNMENT_OK:
+        if TC_CAN_ASSIGN_DIFFERENT_TYPE:
             elem.text = b"sometext"
             elem.text = cdata
             elem.text = qname
@@ -349,7 +349,7 @@ class TestProperties:
 
         elem.tail = "sometail"
         elem.tail = None
-        if TYPECHECKER_ASSIGNMENT_OK:
+        if TC_CAN_ASSIGN_DIFFERENT_TYPE:
             elem.tail = b"sometail"
             elem.tail = cdata
         for data in (1, qname):
@@ -459,7 +459,7 @@ class TestAttribAccessMethods:
     def test_method_set(self, xml_tree: _ElementTree) -> None:
         root = deepcopy(xml_tree.getroot())
 
-        if TYPECHECKER_RETURNNONE_OK:
+        if TC_CAN_RETURN_NONE:
             assert root.set("foo", "bar") is None
 
         qname = QName("foo")

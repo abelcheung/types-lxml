@@ -13,7 +13,8 @@ INJECT_REVEAL_TYPE = True
 if INJECT_REVEAL_TYPE:
     reveal_type = getattr(_testutils, "reveal_type_wrapper")
 
-TYPECHECKER_RETURNNONE_OK = True
+# See rttest-mypy.ini for explanation
+TC_CAN_RETURN_NONE = True
 
 class TestXmlAttrib:
     def test_basic_behavior(self, xml_tree: _ElementTree) -> None:
@@ -46,7 +47,7 @@ class TestXmlAttrib:
     def test_method_clear(self, xml_tree: _ElementTree) -> None:
         root = deepcopy(xml_tree.getroot())
         attrib = root.attrib
-        if TYPECHECKER_RETURNNONE_OK:
+        if TC_CAN_RETURN_NONE:
             assert attrib.clear() is None
         assert len(attrib) == 0
 
@@ -78,7 +79,7 @@ class TestXmlAttrib:
     def test_method_update(self, xml_tree: _ElementTree) -> None:
         root = deepcopy(xml_tree.getroot())
         attrib = root.attrib
-        if TYPECHECKER_RETURNNONE_OK:
+        if TC_CAN_RETURN_NONE:
             assert attrib.update({"foo": "bar"}) is None
 
         attrib.update({

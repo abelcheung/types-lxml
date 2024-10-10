@@ -24,7 +24,8 @@ INJECT_REVEAL_TYPE = True
 if INJECT_REVEAL_TYPE:
     reveal_type = getattr(_testutils, "reveal_type_wrapper")
 
-TYPECHECKER_RETURNNONE_OK = True
+# See rttest-mypy.ini for explanation
+TC_CAN_RETURN_NONE = True
 
 ### NOTES
 #
@@ -151,7 +152,7 @@ class TestListLogMethods:
         ("entry", Parameter.POSITIONAL_OR_KEYWORD, Parameter.empty),
     ))
     def test_receive(self, list_log: _ListErrorLog) -> None:
-        if TYPECHECKER_RETURNNONE_OK:
+        if TC_CAN_RETURN_NONE:
             if _method_no_kwarg():
                 assert list_log.receive(list_log[0]) is None
             else:
