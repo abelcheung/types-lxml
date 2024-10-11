@@ -1,4 +1,9 @@
-from typing import ForwardRef, NamedTuple
+import abc
+import ast
+import importlib
+import pathlib
+import re
+from typing import Any, ClassVar, ForwardRef, Iterable, NamedTuple
 
 from lxml.etree import LXML_VERSION
 
@@ -23,3 +28,33 @@ class TypeCheckerError(Exception):
 
     def __str__(self) -> str:
         return f'"{self._filename}" line {self._lineno}: {self.args[0]}'
+
+
+class NameCollectorBase(ast.NodeVisitor):
+    def __init__(
+        self,
+        globalns: dict[str, Any],
+        localns: dict[str, Any],
+    ) -> None:
+        super().__init__()
+        self._globalns = globalns
+        self._localns = localns
+        self.modified: bool = False
+        self.collected: dict[str, Any] = {
+            'builtins': importlib.import_module('builtins'),
+            'typing': importlib.import_module('typing'),
+        }
+
+
+class TypeCheckerAdapterBase:
+    id: ClassVar[str]
+    # {('file.py', 10): ('var_name', '_Element'), ...}
+    typechecker_result: ClassVar[dict[FilePos, VarType]]
+    _type_mesg_re: ClassVar[re.Pattern[str]]
+
+    @classmethod
+    @abc.abstractmethod
+    def run_typechecker_on(cls, paths: Iterable[pathlib.Path]) -> None: ...
+    @classmethod
+    @abc.abstractmethod
+    def create_collector(cls, globalns: dict[str, Any], localns: dict[str, Any]) -> NameCollectorBase: ...

@@ -13,8 +13,8 @@ typeguard.config.forward_ref_policy = typeguard.ForwardRefPolicy.ERROR
 
 def pytest_collection_finish(session: pytest.Session) -> None:
     files = {i.path for i in session.items}
-    mypy_adapter.run_typechecker_on(files)
-    pyright_adapter.run_typechecker_on(files)
+    for adapter in (pyright_adapter.adapter, mypy_adapter.adapter):
+        adapter.run_typechecker_on(files)
 
 
 @pytest.fixture
