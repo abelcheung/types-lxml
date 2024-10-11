@@ -17,9 +17,12 @@ class _NameCollector(NameCollectorBase):
         try:
             eval(name, self._globalns, self._localns | self.collected)
         except NameError:
-            if not hasattr(self.collected['typing'], name):
+            for m in ('typing', 'typing_extensions'):
+                if hasattr(self.collected[m], name):
+                    self.collected[name] = getattr(self.collected[m], name)
+                    break
+            else:
                 raise
-            self.collected[name] = getattr(self.collected['typing'], name)
 
 
 class _TypeCheckerAdapter(TypeCheckerAdapterBase):

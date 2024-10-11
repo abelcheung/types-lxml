@@ -41,8 +41,8 @@ class NameCollectorBase(ast.NodeVisitor):
         self._localns = localns
         self.modified: bool = False
         self.collected: dict[str, Any] = {
-            'builtins': importlib.import_module('builtins'),
-            'typing': importlib.import_module('typing'),
+            m: importlib.import_module(m)
+            for m in ('builtins', 'typing', 'typing_extensions')
         }
 
 
