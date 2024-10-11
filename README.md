@@ -1,10 +1,11 @@
 [![PyPI version](https://img.shields.io/pypi/v/types-lxml.svg)](https://pypi.org/project/types-lxml/)
-![Supported Python](https://img.shields.io/pypi/pyversions/types-lxml.svg)
+![Supported Python](https://img.shields.io/python/required-version-toml?tomlFilePath=https%3A%2F%2Fraw.githubusercontent.com%2Fabelcheung%2Ftypes-lxml%2Fmain%2Fpyproject.toml
+)
 ![Wheel](https://img.shields.io/pypi/wheel/types-lxml.svg)
 
 ## Important note
 
-- Since `2024.08.07`, each release will contain multiple builds; besides normal version, there is an alternative build suitable for multiple XML element suclassing. Please check out [relevant Installation section](#choosing-the-build) for detail (hint: many people don't need to bother with this). Also note that this release requires `mypy 1.11`.
+- Since `2024.08.07`, each release will contain multiple builds; besides normal version, there is an alternative build suitable for multiple XML element subclassing. Please check out [relevant Installation section](#choosing-the-build) for detail (hint: many people don't need to bother with this). Also note that this release requires `mypy 1.11`.
 
 ## Introduction
 
@@ -45,11 +46,8 @@ In the future, there is plan to bring even more type checker support.
 ## Goal ③: Review and test suite
 
 - [x] All prior `lxml-stubs` contributions are reviewed thoroughly, bringing coherency of annotation across the whole package
-- [x] Much more extensive test cases
-  - [x] Mypy test suite already vastly expanded
-  - [x] Perform runtime check, and compare against static type checker result; this guarantees annotations are indeed working in real code, not just in some cooked up test suite
-    - [x] Proof of concept for incorporating `pyright` result under progress, currently just comparing `reveal_type()` results
-    - [ ] Migrate static `mypy` tests to runtime `pyright` tests in future (under progress)
+- [x] Perform runtime check, and compare against static type checker result; this guarantees annotations are indeed working in real world, not just within some cooked up test suite
+- [x] Existing static test suite already vastly expanded, and is under progress of migrating to runtime test
 - [x] Modernize package building infrastructure
 
 ## Goal ④ : Support for IDEs
