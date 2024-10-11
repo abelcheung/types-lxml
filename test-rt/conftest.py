@@ -5,7 +5,7 @@ from pathlib import Path, PurePosixPath
 
 import pytest
 import typeguard
-from _testutils import run_pyright_on
+from _testutils import mypy_adapter, pyright_adapter
 from lxml import etree as _e, html as _h
 
 typeguard.config.forward_ref_policy = typeguard.ForwardRefPolicy.ERROR
@@ -13,13 +13,14 @@ typeguard.config.forward_ref_policy = typeguard.ForwardRefPolicy.ERROR
 
 def pytest_collection_finish(session: pytest.Session) -> None:
     files = {i.path for i in session.items}
-    run_pyright_on(files)
+    for adapter in (pyright_adapter.adapter, mypy_adapter.adapter):
+        adapter.run_typechecker_on(files)
 
 
 @pytest.fixture
 def h1_filepath() -> Path:
     # hand edited to chop off many inline script blocks
-    return Path(__file__).parent / "data" / "sample.html"
+    return Path(__file__).resolve().parent / "data" / "sample.html"
 
 
 @pytest.fixture
@@ -34,7 +35,7 @@ def h1_bytes(h1_filepath: Path) -> bytes:
 
 @pytest.fixture
 def h2_filepath() -> Path:
-    return Path(__file__).parent / "data" / "mdn-sample.html"
+    return Path(__file__).resolve().parent / "data" / "mdn-sample.html"
 
 
 @pytest.fixture
@@ -54,12 +55,12 @@ def h2_bytes(h2_filepath: Path) -> bytes:
 
 @pytest.fixture
 def x1_filepath() -> Path:
-    return Path(__file__).parent / "data" / "w3c-example.svg"
+    return Path(__file__).resolve().parent / "data" / "w3c-example.svg"
 
 
 @pytest.fixture
 def x2_filepath() -> Path:
-    return Path(__file__).parent / "data" / "shiporder.xml"
+    return Path(__file__).resolve().parent / "data" / "shiporder.xml"
 
 
 @pytest.fixture
@@ -78,11 +79,9 @@ def xml_tree(x2_filepath: Path) -> _e._ElementTree:
 
 @pytest.fixture
 def xinc_sample_data(x2_filepath: Path) -> str:
-    purepath = PurePosixPath(x2_filepath.relative_to(Path(__file__).parent.parent))
+    inc_href = PurePosixPath(x2_filepath.resolve().relative_to(Path.cwd()))
     return """<doc xmlns:xi="http://www.w3.org/2001/XInclude">
-        <foo/><xi:include href="{}" /></doc>""".format(
-        purepath
-    )
+        <foo/><xi:include href="{}" /></doc>""".format(inc_href)
 
 
 @pytest.fixture

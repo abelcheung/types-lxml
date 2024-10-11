@@ -6,7 +6,7 @@
  5 files changed, 65 insertions(+), 62 deletions(-)
 
 diff --git a/lxml-stubs/etree/_element.pyi b/lxml-stubs/etree/_element.pyi
-index 8200999..a424eaa 100644
+index 852fcd6..c2c01d4 100644
 --- a/lxml-stubs/etree/_element.pyi
 +++ b/lxml-stubs/etree/_element.pyi
 @@ -14,9 +14,9 @@ from typing import (
@@ -214,7 +214,7 @@ index d30d366..d02992f 100644
  def ElementTree(element: _ET) -> _ElementTree[_ET]: ...
  @overload  # from file source, custom parser
 diff --git a/lxml-stubs/html/_element.pyi b/lxml-stubs/html/_element.pyi
-index 60f9c0f..2112c57 100644
+index 691e67b..8430fe8 100644
 --- a/lxml-stubs/html/_element.pyi
 +++ b/lxml-stubs/html/_element.pyi
 @@ -128,26 +128,29 @@ class HtmlElement(etree.ElementBase):
@@ -241,10 +241,10 @@ index 60f9c0f..2112c57 100644
 -    def remove(self, element: HtmlElement) -> None: ...
 -    def index(
 -        self, child: HtmlElement, start: int | None = None, end: int | None = None
-+    def append(self, element: HtmlElement) -> None: ...  # type: ignore[override]
-+    def extend(self, elements: Sequence[HtmlElement]) -> None: ...  # type: ignore[override]
-+    def insert(self, index: int, element: HtmlElement) -> None: ...  # type: ignore[override]
-+    def remove(self, element: HtmlElement) -> None: ...  # type: ignore[override]
++    def append(self, element: HtmlElement) -> None: ...  # type: ignore[override]  # pyright: ignore[reportIncompatibleMethodOverride]
++    def extend(self, elements: Sequence[HtmlElement]) -> None: ...  # type: ignore[override]  # pyright: ignore[reportIncompatibleMethodOverride]
++    def insert(self, index: int, element: HtmlElement) -> None: ...  # type: ignore[override]  # pyright: ignore[reportIncompatibleMethodOverride]
++    def remove(self, element: HtmlElement) -> None: ...  # type: ignore[override]  # pyright: ignore[reportIncompatibleMethodOverride]
 +    def index(  # pyright: ignore[reportIncompatibleMethodOverride]
 +        self,
 +        child: HtmlElement,  # type: ignore[override]
@@ -254,9 +254,9 @@ index 60f9c0f..2112c57 100644
 -    def addnext(self, element: HtmlElement) -> None: ...
 -    def addprevious(self, element: HtmlElement) -> None: ...
 -    def replace(self, old_element: HtmlElement, new_element: HtmlElement) -> None: ...
-+    def addnext(self, element: HtmlElement) -> None: ...  # type: ignore[override]
-+    def addprevious(self, element: HtmlElement) -> None: ...  # type: ignore[override]
-+    def replace(self, old_element: HtmlElement, new_element: HtmlElement) -> None: ...  # type: ignore[override]
++    def addnext(self, element: HtmlElement) -> None: ...  # type: ignore[override]  # pyright: ignore[reportIncompatibleMethodOverride]
++    def addprevious(self, element: HtmlElement) -> None: ...  # type: ignore[override]  # pyright: ignore[reportIncompatibleMethodOverride]
++    def replace(self, old_element: HtmlElement, new_element: HtmlElement) -> None: ...  # type: ignore[override]  # pyright: ignore[reportIncompatibleMethodOverride]
      def getparent(self) -> HtmlElement | None: ...
      def getnext(self) -> HtmlElement | None: ...
      def getprevious(self) -> HtmlElement | None: ...
@@ -270,19 +270,19 @@ index 60f9c0f..2112c57 100644
          self, path: _ElemPathArg, namespaces: _StrictNSMap | None = None
      ) -> HtmlElement | None: ...
 -    def findall(
-+    def findall(  # type: ignore[override]
++    def findall(  # type: ignore[override]  # pyright: ignore[reportIncompatibleMethodOverride]
          self, path: _ElemPathArg, namespaces: _StrictNSMap | None = None
      ) -> list[HtmlElement]: ...
      def iterfind(
          self, path: _ElemPathArg, namespaces: _StrictNSMap | None = None
      ) -> Iterator[HtmlElement]: ...
 -    def cssselect(
-+    def cssselect(  # type: ignore[override]
++    def cssselect(  # type: ignore[override]  # pyright: ignore[reportIncompatibleMethodOverride]
          self,
          expr: str,
          *,
 diff --git a/lxml-stubs/objectify/_element.pyi b/lxml-stubs/objectify/_element.pyi
-index 2b8a301..bab6e67 100644
+index 2b8a301..7fc46e5 100644
 --- a/lxml-stubs/objectify/_element.pyi
 +++ b/lxml-stubs/objectify/_element.pyi
 @@ -48,7 +48,7 @@ class ObjectifiedElement(ElementBase):
@@ -290,7 +290,7 @@ index 2b8a301..bab6e67 100644
      def countchildren(self) -> int: ...
      def descendantpaths(self, prefix: str | list[str] | None = None) -> list[str]: ...
 -    def getchildren(self) -> list[ObjectifiedElement]: ...
-+    def getchildren(self) -> list[ObjectifiedElement]: ...  # type: ignore[override]
++    def getchildren(self) -> list[ObjectifiedElement]: ...  # type: ignore[override]  # pyright: ignore[reportIncompatibleMethodOverride]
      def __iter__(self) -> Iterator[ObjectifiedElement]: ...
      def __reversed__(self) -> Iterator[ObjectifiedElement]: ...
      def __getattr__(self, __name: str) -> ObjectifiedElement: ...
@@ -312,12 +312,12 @@ index 2b8a301..bab6e67 100644
      # CSS selector is not a normal use case for objectified
      # element (and unnecessary), but still usable nontheless
 -    def cssselect(
-+    def cssselect(  # type: ignore[override]
++    def cssselect(  # type: ignore[override]  # pyright: ignore[reportIncompatibleMethodOverride]
          self,
          expr: str,
          *,
 diff --git a/pyproject.toml b/pyproject.toml
-index 8c2eb12..e33fe57 100644
+index 262bafe..3428ff3 100644
 --- a/pyproject.toml
 +++ b/pyproject.toml
 @@ -5,7 +5,7 @@ requires = ['pdm-backend ~= 2.3']

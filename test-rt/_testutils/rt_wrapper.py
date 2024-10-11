@@ -1,13 +1,13 @@
 import ast
 import inspect
 import logging
+import pathlib
 import typing as _t
-from pathlib import Path
 
 from typeguard import TypeCheckError, TypeCheckMemo, check_type_internal
 
-from .common import FilePos
-from .pyright_adapter import NameCollector, get_pyright_result
+from . import mypy_adapter, pyright_adapter
+from .common import FilePos, TypeCheckerError, VarType
 
 _T = _t.TypeVar("_T")
 
@@ -25,98 +25,118 @@ class RevealTypeExtractor(ast.NodeVisitor):
         return self.generic_visit(node)
 
 
-def _get_var_name(frame: inspect.FrameInfo) -> str:
-    code, idx = frame.code_context, frame.index
-    assert code is not None and idx is not None
-    code = code[idx].strip()
+def _get_var_name(frame: inspect.FrameInfo) -> str | None:
+    ctxt, idx = frame.code_context, frame.index
+    assert ctxt is not None and idx is not None
+    code = ctxt[idx].strip()
 
     walker = RevealTypeExtractor()
     walker.visit(ast.parse(code, mode="eval"))
-    try:
-        return ast.get_source_segment(code, walker.target)  # type: ignore
-    except:
-        raise TypeCheckError("Failed to get variable name " f'from expression "{code}"')
+    assert walker.target is not None
+    return ast.get_source_segment(code, walker.target)
 
 
 def reveal_type_wrapper(var: _T) -> _T:
     """Replacement of `reveal_type()` that matches static
-    type checker result with typeguard runtime result
+    and runtime result
 
-    This function is intended to be called as `reveal_type()`,
-    replacing official `reveal_type()` from either Python 3.11
-    or `typing_extensions` module.
-
-    Such maneuver is designed to circumvent `pyright`'s ability
-    to resolve `reveal_type()`'s origin. Otherwise, if pyright
-    determines `reveal_type()` does not come from `typing` or
-    `typing_extensions` module, it would not print any
-    inferred variable types.
+    This function is intended as a drop-in replacement of
+    `reveal_type()`, replacing official one from Python 3.11
+    or `typing_extensions` module. Under the hook, it uses
+    `typeguard` to get runtime variable type, and compare it
+    with static type checker results for coherence.
 
     Usage
     -----
-    This function needs special usage in order to fool `pyright`.
-    Use it like this:
+    This function needs special boiler plate to fool command
+    line type checkers. Add following fragment to any python
+    source using `reveal_type()` function:
 
     ```python
-        import your_test_mod
-        reveal_type = getattr(your_test_mod, 'reveal_type_wrapper')
+        INJECT_REVEAL_TYPE = True
+        if INJECT_REVEAL_TYPE:
+            reveal_type = getattr(_testutils, "reveal_type_wrapper")
     ```
 
-    `Mypy` is much more dumb and happily print output upon
-    encountering `reveal_type` without checking its origin,
-    thus workaround is not needed, but using this wrapper
-    doesn't hurt.
+    Mypy needs extra configuration; add
+    `INJECT_REVEAL_TYPE` to `always_false` setting.
+    No configuration needed for pyright.
+    Such maneuver is designed to circumvent type checkers'
+    ability to resolve `reveal_type()`'s origin. Otherwise,
+    when type checkers managed to detect `reveal_type()` is
+    somehow overriden, they refuse to print any output.
 
-    Its basic behavior is identical to official `reveal_type()` --
-    it returns input argument unchanged.
+    Its calling behavior is identical to official
+    `reveal_type()`: returns input argument unchanged.
 
     Raises
     ------
-    TypeCheckError
+    `TypeCheckerError`
         If static type checker failed to get inferred type
-        for variable, or the type doesn't match runtime result
+        for variable
+    `typeguard.TypeCheckError`
+        If type checker result doesn't match runtime result
     """
     caller = inspect.stack()[1]
-    pos = FilePos(Path(caller.filename).name, caller.lineno)
-    pyr_result = get_pyright_result(caller.filename)
-    if pos not in pyr_result:
-        raise TypeCheckError(
-            "Pyright does not provide inferred type on "
-            f'"{pos.file}" line {pos.lineno}'
-        )
-    result = pyr_result[pos]
-
     var_name = _get_var_name(caller)
-    if result.var != var_name:
-        raise TypeCheckError(
-            "Pyright result should contain " f'"{var_name}", but got "{result.var}"'
-        )
+    pos = FilePos(pathlib.Path(caller.filename).name, caller.lineno)
 
-    ref = _t.ForwardRef(result.type)
-
-    # Since this is a wrapper of typeguard.check_type(),
+    # Since this routine is a wrapper of typeguard.check_type(),
     # get globals and locals from my caller, not mine
     globalns = caller.frame.f_globals
     localns = caller.frame.f_locals
 
-    type_ast = ast.parse(result.type, mode="eval")
-    walker = NameCollector(globalns, localns)
-    walker.visit(type_ast)
-    localns |= walker.names
-    memo = TypeCheckMemo(globalns, localns)
-    try:
-        check_type_internal(var, ref, memo)
-    except TypeError as exc:
-        if "is not subscriptable" not in exc.args[0]:
-            raise
-        if not isinstance(type_ast.body, ast.Subscript):
-            raise TypeCheckError("Inconsistency between type and parsed AST tree")
-        # Have to concede by verifying unsubscripted type
-        # Specialized classes is a stub-only thing here, and
-        # all classes in lxml do not support __class_getitem__
-        bare_type = ast.get_source_segment(result.type, type_ast.body.value)
-        assert bare_type is not None
-        check_type_internal(var, _t.ForwardRef(bare_type), memo)
+    for adapter in (pyright_adapter.adapter, mypy_adapter.adapter):
+        try:
+            tc_result = adapter.typechecker_result[pos]
+        except KeyError as e:
+            raise TypeCheckerError(f'No inferred type from {adapter.id}', pos.file, pos.lineno) from e
 
-    del caller
+        if tc_result.var:  # Only pyright has this extra protection
+            if tc_result.var != var_name:
+                raise TypeCheckerError(
+                    f'Variable name should be "{tc_result.var}", but got "{var_name}"',
+                    pos.file, pos.lineno
+                )
+        else:
+            adapter.typechecker_result[pos] = VarType(var_name, tc_result.type)
+
+        ref = tc_result.type
+        ref_ast = ast.parse(ref.__forward_arg__, mode="eval")
+        walker = adapter.create_collector(globalns, localns)
+        if isinstance(walker, ast.NodeTransformer):
+            new_ast = walker.visit(ref_ast)
+            if walker.modified:
+                ref_ast = ast.fix_missing_locations(new_ast)
+                ref = _t.ForwardRef(ast.unparse(ref_ast))
+        else:
+            walker.visit(ref_ast)
+        memo = TypeCheckMemo(globalns, localns | walker.collected)
+        try:
+            check_type_internal(var, ref, memo)
+        except TypeCheckError as e:
+            e.args = (
+                f'({adapter.id}) ' + e.args[0],
+            ) + e.args[1:]
+            raise
+        except TypeError as e:
+            if "is not subscriptable" not in e.args[0]:
+                raise
+            assert isinstance(ref_ast.body, ast.Subscript)
+            # When type reference is a specialized class, we
+            # have to concede by verifying unsubscripted type,
+            # as specialized class is a stub-only thing here.
+            # Lxml runtime does not support __class_getitem__
+            #
+            # FIXME: Only the simplest, unnested subscript supported.
+            # Need some work for more complex ones.
+            bare_type = ast.unparse(ref_ast.body.value)
+            try:
+                check_type_internal(var, _t.ForwardRef(bare_type), memo)
+            except TypeCheckError as e:
+                e.args = (
+                    f'({adapter.id}) ' + e.args[0],
+                ) + e.args[1:]
+                raise
+
     return var

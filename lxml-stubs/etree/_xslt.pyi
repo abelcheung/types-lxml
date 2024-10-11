@@ -178,7 +178,7 @@ class XSLT:
 
 class _XSLTProcessingInstruction(PIBase):
     def parseXSL(self, parser: _DefEtreeParsers | None = None) -> _ElementTree: ...
-    def set(self, key: Literal["href"], value: str) -> None: ...  # type: ignore[override]
+    def set(self, key: Literal["href"], value: str) -> None: ...  # type: ignore[override]  # pyright: ignore[reportIncompatibleMethodOverride]
 
 # Nodes are usually some opaque or read-only wrapper of _Element.
 # They provide access of varying attributes depending on node type,

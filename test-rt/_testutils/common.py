@@ -1,7 +1,9 @@
-import typing as _t
-from importlib import import_module
-from types import ModuleType
-from typing import NamedTuple
+import abc
+import ast
+import importlib
+import pathlib
+import re
+from typing import Any, ClassVar, ForwardRef, Iterable, NamedTuple
 
 from lxml.etree import LXML_VERSION
 
@@ -14,34 +16,45 @@ class FilePos(NamedTuple):
 
 
 class VarType(NamedTuple):
-    var: str
-    type: str
+    var: str | None
+    type: ForwardRef
 
 
-class NameResolver:
-    # Covers most types and aliases with bare name
-    _DEF_MODS = {
-        m: import_module(m)
-        for m in (
-            "re",
-            "collections",
-            "collections.abc",
-            "types",
-            "typing",
-            "typing_extensions",
-        )
-    }
-    _registry: _t.ClassVar[dict[str, _t.Any]] = {}
+class TypeCheckerError(Exception):
+    def __init__(self, message: str, filename: str, lineno: int) -> None:
+        super().__init__(message)
+        self._filename = filename
+        self._lineno = lineno
+
+    def __str__(self) -> str:
+        return f'"{self._filename}" line {self._lineno}: {self.args[0]}'
+
+
+class NameCollectorBase(ast.NodeVisitor):
+    def __init__(
+        self,
+        globalns: dict[str, Any],
+        localns: dict[str, Any],
+    ) -> None:
+        super().__init__()
+        self._globalns = globalns
+        self._localns = localns
+        self.modified: bool = False
+        self.collected: dict[str, Any] = {
+            m: importlib.import_module(m)
+            for m in ('builtins', 'typing', 'typing_extensions')
+        }
+
+
+class TypeCheckerAdapterBase:
+    id: ClassVar[str]
+    # {('file.py', 10): ('var_name', '_Element'), ...}
+    typechecker_result: ClassVar[dict[FilePos, VarType]]
+    _type_mesg_re: ClassVar[re.Pattern[str]]
 
     @classmethod
-    def find(cls, name: str) -> _t.Any:
-        if name not in cls._registry:
-            for mod in cls._DEF_MODS.values():
-                if hasattr(mod, name):
-                    maybe_mod = getattr(mod, name)
-                    if not isinstance(maybe_mod, ModuleType):
-                        cls._registry[name] = maybe_mod
-                        break
-            else:
-                raise TypeError(f'Cannot resolve "{name}"')
-        return cls._registry[name]
+    @abc.abstractmethod
+    def run_typechecker_on(cls, paths: Iterable[pathlib.Path]) -> None: ...
+    @classmethod
+    @abc.abstractmethod
+    def create_collector(cls, globalns: dict[str, Any], localns: dict[str, Any]) -> NameCollectorBase: ...

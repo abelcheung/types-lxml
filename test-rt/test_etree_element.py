@@ -28,8 +28,14 @@ from lxml.etree import (
 )
 from lxml.html import Element as h_Element
 
-reveal_type = getattr(_testutils, "reveal_type_wrapper")
+INJECT_REVEAL_TYPE = True
+if INJECT_REVEAL_TYPE:
+    reveal_type = getattr(_testutils, "reveal_type_wrapper")
 
+# See rttest-mypy.ini for explanation
+TC_CAN_ASSIGN_DIFFERENT_TYPE = True
+TC_CAN_RETURN_NONE = True
+TC_HONORS_REVERSED = True
 
 class TestBasicBehavior:
     def test_sequence_read(self, xml_tree: _ElementTree) -> None:
@@ -47,7 +53,10 @@ class TestBasicBehavior:
         assert elem.index(item) == 0
         del itr, item
 
-        rev = reversed(elem)
+        if TC_HONORS_REVERSED:
+            rev = reversed(elem)
+        else:
+            rev = elem.__reversed__()
         reveal_type(rev)
         item = next(rev)
         reveal_type(item)
@@ -89,7 +98,7 @@ class TestBasicBehavior:
         # Actually permitted, just that elements are
         # added in random order. This is undesirable so
         # not supported in stub.
-        elem[4:] = {div, comment2}  # pyright: ignore
+        elem[4:] = {div, comment2}  # type: ignore[call-overload]  # pyright: ignore[reportCallIssue,reportArgumentType]
         assert len(elem) == 6
 
         for obj in (object(), 0, "", (subelem,), {subelem}):
@@ -103,7 +112,7 @@ class TestBasicBehavior:
         # test broken behavior: elem[slice] = single_elem
         # It returns successfully, just that elements are
         # silently discarded without adding new ones
-        elem[:] = comment  # pyright: ignore
+        elem[:] = comment  # type: ignore[call-overload]  # pyright: ignore[reportCallIssue,reportArgumentType]
         assert len(elem) == 0
 
         del subelem, comment, comment2, entity, pi, div, elem
@@ -152,8 +161,8 @@ class TestBasicBehavior:
         subelem = deepcopy(elem[-1])
         length = len(elem)
 
-        result = elem.append(subelem)
-        reveal_type(result)
+        if TC_CAN_RETURN_NONE:
+            assert elem.append(subelem) is None
         assert len(elem) == length + 1
 
         for obj in (0, None, "", object(), (elem[-1],)):
@@ -172,8 +181,8 @@ class TestBasicBehavior:
         elem = deepcopy(xml_tree.getroot())
         comment = Comment("comment")
         pos = randrange(len(elem))
-        result = elem.insert(pos, comment)
-        reveal_type(result)
+        if TC_CAN_RETURN_NONE:
+            assert elem.insert(pos, comment) is None
         assert elem.index(comment) == pos
 
         for obj in (0, None, "", object(), (elem[-1],)):
@@ -197,8 +206,8 @@ class TestBasicBehavior:
     ))  # fmt: skip
     def test_method_remove(self, xml_tree: _ElementTree) -> None:
         elem = deepcopy(xml_tree.getroot())
-        result = elem.remove(elem[-1])
-        reveal_type(result)
+        if TC_CAN_RETURN_NONE:
+            assert elem.remove(elem[-1]) is None
 
         # Can construct a new node and fail removing it, but that is
         # pure runtime behavior and doesn't violate method annotation
@@ -206,7 +215,7 @@ class TestBasicBehavior:
             with pytest.raises(
                 TypeError, match="Argument 'element' has incorrect type"
             ):
-                _ = elem.remove(cast(Any, obj))
+                elem.remove(cast(Any, obj))
 
         del elem
 
@@ -219,8 +228,8 @@ class TestBasicBehavior:
         subelem = elem[-1]
         new_elem = deepcopy(subelem)
         new_elem.tag = "foo"
-        result = elem.replace(subelem, new_elem)
-        reveal_type(result)
+        if TC_CAN_RETURN_NONE:
+            assert elem.replace(subelem, new_elem) is None
 
         for obj in (0, None, "", object(), (elem[-1],)):
             with pytest.raises(
@@ -241,22 +250,22 @@ class TestBasicBehavior:
         elem = deepcopy(xml_tree.getroot())
         new_elem1 = Comment("foo")
         new_elem2 = Entity("foo")
-        result = elem.extend([new_elem1])
-        reveal_type(result)
+        if TC_CAN_RETURN_NONE:
+            assert elem.extend([new_elem1]) is None
 
         elem.extend([new_elem1, new_elem2])
         elem.extend((new_elem1, new_elem2))
 
         # test broken behavior (but no exception though)
-        elem.extend(elem[0])  # pyright: ignore
+        elem.extend(elem[0])  # type: ignore[arg-type]  # pyright: ignore[reportArgumentType]
 
         for obj in (None, 0):
             with pytest.raises(TypeError, match="is not iterable"):
                 elem.extend(cast(Any, obj))
 
-        for obj in ("abc", (0,)):
+        for obj2 in ("abc", (0,)):
             with pytest.raises(TypeError, match=r"Cannot convert \w+ to .+\._Element"):
-                elem.extend(cast(Any, obj))
+                elem.extend(cast(Any, obj2))
 
     @_testutils.signature_tester(_Element.clear, (
         ("keep_tail", Parameter.POSITIONAL_OR_KEYWORD, False),
@@ -286,13 +295,13 @@ class TestProperties:
             reveal_type(subelem.sourceline)
 
         with pytest.raises(AttributeError, match="objects is not writable"):
-            elem.attrib = elem.attrib  # pyright: ignore
+            elem.attrib = cast(Any, elem.attrib)  # type: ignore[misc]  # pyright: ignore[reportAttributeAccessIssue]
 
         with pytest.raises(AttributeError, match="objects is not writable"):
-            elem.prefix = elem.prefix  # pyright: ignore
+            elem.prefix = cast(Any, elem.prefix)  # type: ignore[misc]  # pyright: ignore[reportAttributeAccessIssue]
 
         with pytest.raises(AttributeError, match="objects is not writable"):
-            elem.nsmap = elem.nsmap  # pyright: ignore
+            elem.nsmap = cast(Any, elem.nsmap)  # type: ignore[misc]  # pyright: ignore[reportAttributeAccessIssue]
 
         # Not performing test for .sourceline ! We pretend it is not
         # changeable in stub, but actually it is read-write
@@ -313,32 +322,36 @@ class TestProperties:
         cdata = CDATA("foo")
         qname = QName("dummyns", "dummytext")
 
-        elem.base = b"http://dummy.site/"
         elem.base = "http://dummy.site/"
         elem.base = None
-        for data in (1, cdata, qname):
+        if TC_CAN_ASSIGN_DIFFERENT_TYPE:
+            elem.base = b"http://dummy.site/"
+        for data1 in (1, cdata, qname):
             with pytest.raises(TypeError, match="must be string or unicode"):
-                elem.base = cast(Any, data)
+                elem.base = cast(Any, data1)
 
-        elem.tag = b"foo"
         elem.tag = "foo"
-        elem.tag = qname
-        for data in (None, 1, cdata):
+        if TC_CAN_ASSIGN_DIFFERENT_TYPE:
+            elem.tag = b"foo"
+            elem.tag = qname
+        for data2 in (None, 1, cdata):
             with pytest.raises(TypeError, match="must be bytes or unicode"):
-                elem.tag = cast(Any, data)
+                elem.tag = cast(Any, data2)
 
-        elem.text = b"sometext"
         elem.text = "sometext"
         elem.text = None
-        elem.text = cdata
-        elem.text = qname
+        if TC_CAN_ASSIGN_DIFFERENT_TYPE:
+            elem.text = b"sometext"
+            elem.text = cdata
+            elem.text = qname
         with pytest.raises(TypeError, match="must be bytes or unicode"):
             elem.text = cast(Any, 1)
 
-        elem.tail = b"sometail"
         elem.tail = "sometail"
         elem.tail = None
-        elem.tail = cdata
+        if TC_CAN_ASSIGN_DIFFERENT_TYPE:
+            elem.tail = b"sometail"
+            elem.tail = cdata
         for data in (1, qname):
             with pytest.raises(TypeError, match="must be bytes or unicode"):
                 elem.tail = cast(Any, data)
@@ -446,22 +459,22 @@ class TestAttribAccessMethods:
     def test_method_set(self, xml_tree: _ElementTree) -> None:
         root = deepcopy(xml_tree.getroot())
 
-        result = root.set("foo", "bar")
-        reveal_type(result)
+        if TC_CAN_RETURN_NONE:
+            assert root.set("foo", "bar") is None
 
         qname = QName("foo")
-        for arg in ("foo", b"foo", qname):
-            root.set(arg, "bar")
-        for arg in (None, 1, object(), ["foo"]):
+        for arg1 in ("foo", b"foo", qname):
+            root.set(arg1, "bar")
+        for arg2 in (None, 1, object(), ["foo"]):
             with pytest.raises(TypeError, match="must be bytes or unicode"):
-                root.set(cast(Any, arg), "bar")
+                root.set(cast(Any, arg2), "bar")
 
         qname = QName("bar")
-        for arg in ("bar", b"bar", qname):
-            root.set("foo", arg)
-        for arg in (None, 1, object(), ["bar"]):
+        for arg3 in ("bar", b"bar", qname):
+            root.set("foo", arg3)
+        for arg4 in (None, 1, object(), ["bar"]):
             with pytest.raises(TypeError, match="must be bytes or unicode"):
-                root.set("foo", cast(Any, arg))
+                root.set("foo", cast(Any, arg4))
 
 
 # The find*() methods of _Element are all derivations of
@@ -540,13 +553,13 @@ class TestFindMethods:
         # to produce result silently
         # FIXME Something not quite right, raises SyntaxError if
         # following 2 identical sections are merged
-        for badns in ({"m": 1}, {"m": url.encode()}):
-            iterator = defs.iterfind("m:piechart", namespaces=cast(Any, badns))
+        for badns1 in ({"m": 1}, {"m": url.encode()}):
+            iterator = defs.iterfind("m:piechart", namespaces=cast(Any, badns1))
             assert 0 == len(tuple(elem for elem in iterator))
             del iterator
 
-        for badns in ({b"m": url}, {1: url}):
-            iterator = defs.iterfind("m.piechart", namespaces=cast(Any, badns))
+        for badns2 in ({b"m": url}, {1: url}):
+            iterator = defs.iterfind("m.piechart", namespaces=cast(Any, badns2))
             assert 0 == len(tuple(elem for elem in iterator))
             del iterator
 
@@ -669,22 +682,22 @@ class TestFindMethods:
         assert result == None
         del result
 
-        result = root.findtext("junk", 1)
-        reveal_type(result)
-        assert result == 1
-        del result
+        result2 = root.findtext("junk", 1)
+        reveal_type(result2)
+        assert result2 == 1
+        del result2
 
-        result = root.findtext("junk", object())
-        reveal_type(result)
-        del result
+        result3 = root.findtext("junk", object())
+        reveal_type(result3)
+        del result3
 
         result = root.findtext("junk", "foo")
         reveal_type(result)
         del result
 
-        result = root.findtext("junk", ("foo", 1))
-        reveal_type(result)
-        del result
+        result4 = root.findtext("junk", ("foo", 1))
+        reveal_type(result4)
+        del result4
 
         tag = "desc"
         result = root.findtext(tag)
