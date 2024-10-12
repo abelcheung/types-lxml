@@ -18,13 +18,13 @@ jobs:
         uses: chartboost/ruff-action@v1
         with:
           args: 'check --fix'
-          src: 'lxml-stubs'
+          src: '.'
 
       - name: Code formatting
         uses: chartboost/ruff-action@v1
         with:
           args: 'format'
-          src: 'lxml-stubs'
+          src: '.'
 
       - uses: actions/setup-python@v5
         with:
