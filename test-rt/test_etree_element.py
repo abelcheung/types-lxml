@@ -745,3 +745,51 @@ class TestFindMethods:
             _ = parent.findtext("m:title", namespaces=cast(Any, "foo"))
         with pytest.raises(AttributeError, match="has no attribute 'items'"):
             _ = parent.findtext("m:title", namespaces=cast(Any, [("m", url)]))
+
+
+class TestAddMethods:
+    @_testutils.signature_tester(
+        _Element.addnext,
+        (("element", Parameter.POSITIONAL_OR_KEYWORD, Parameter.empty),),
+    )
+    def test_method_addnext(self, x2_filepath: Path) -> None:
+        tree = parse(x2_filepath)
+        root = deepcopy(tree.getroot())
+        comm = Comment("foo")
+
+        if TC_CAN_RETURN_NONE:
+            assert root[0].addnext(comm) is None
+        else:
+            root[0].addnext(comm)
+
+        for arg in ("junk", 1, object(), ("a", 0), [comm, comm]):
+            with pytest.raises(
+                TypeError, match=r"Argument 'element' has incorrect type"
+            ):
+                root[0].addnext(cast(Any, arg))
+
+        h_elem = h_Element("bar")
+        root[1].addnext(h_elem)
+
+    @_testutils.signature_tester(
+        _Element.addprevious,
+        (("element", Parameter.POSITIONAL_OR_KEYWORD, Parameter.empty),),
+    )
+    def test_method_addprevious(self, x2_filepath: Path) -> None:
+        tree = parse(x2_filepath)
+        root = deepcopy(tree.getroot())
+        comm = Comment("foo")
+
+        if TC_CAN_RETURN_NONE:
+            assert root[0].addprevious(comm) is None
+        else:
+            root[0].addprevious(comm)
+
+        for arg in ("junk", 1, object(), ("a", 0), [comm, comm]):
+            with pytest.raises(
+                TypeError, match=r"Argument 'element' has incorrect type"
+            ):
+                root[0].addprevious(cast(Any, arg))
+
+        h_elem = h_Element("bar")
+        root[1].addprevious(h_elem)

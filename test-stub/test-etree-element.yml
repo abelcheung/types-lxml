@@ -15,17 +15,6 @@
         qn: e.QName
   main: ""
 
-- case: method_addnext_addprevious
-  parametrized:
-    - method: addnext
-    - method: addprevious
-  main: |
-    from lxml import etree
-    elem: etree._Element
-    elem.{{ method }}(elem)
-    elem.{{ method }}(1)  # E: Argument 1 to "{{ method }}" of "_Element" has incompatible type "int"; expected "_Element"  [arg-type]
-    elem.{{ method }}(elem, 1)  # E: Too many arguments for "{{ method }}" of "_Element"  [call-arg]
-
 - case: iter_family_goodargs
   files: *INC
   main: |
