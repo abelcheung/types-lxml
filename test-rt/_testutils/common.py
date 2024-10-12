@@ -42,7 +42,7 @@ class NameCollectorBase(ast.NodeVisitor):
         self.modified: bool = False
         self.collected: dict[str, Any] = {
             m: importlib.import_module(m)
-            for m in ('builtins', 'typing', 'typing_extensions')
+            for m in ("builtins", "typing", "typing_extensions")
         }
 
 
@@ -57,4 +57,6 @@ class TypeCheckerAdapterBase:
     def run_typechecker_on(cls, paths: Iterable[pathlib.Path]) -> None: ...
     @classmethod
     @abc.abstractmethod
-    def create_collector(cls, globalns: dict[str, Any], localns: dict[str, Any]) -> NameCollectorBase: ...
+    def create_collector(
+        cls, globalns: dict[str, Any], localns: dict[str, Any]
+    ) -> NameCollectorBase: ...

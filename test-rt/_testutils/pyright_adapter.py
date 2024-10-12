@@ -17,7 +17,7 @@ class _NameCollector(NameCollectorBase):
         try:
             eval(name, self._globalns, self._localns | self.collected)
         except NameError:
-            for m in ('typing', 'typing_extensions'):
+            for m in ("typing", "typing_extensions"):
                 if hasattr(self.collected[m], name):
                     self.collected[name] = getattr(self.collected[m], name)
                     break
@@ -26,7 +26,7 @@ class _NameCollector(NameCollectorBase):
 
 
 class _TypeCheckerAdapter(TypeCheckerAdapterBase):
-    id = 'pyright'
+    id = "pyright"
     typechecker_result = {}
     _type_mesg_re = re.compile('^Type of "(?P<var>.+?)" is "(?P<type>.+?)"$')
 
@@ -52,7 +52,9 @@ class _TypeCheckerAdapter(TypeCheckerAdapterBase):
             cls.typechecker_result[pos] = VarType(m["var"], _t.ForwardRef(m["type"]))
 
     @classmethod
-    def create_collector(cls, globalns: dict[str, _t.Any], localns: dict[str, _t.Any]) -> _NameCollector:
+    def create_collector(
+        cls, globalns: dict[str, _t.Any], localns: dict[str, _t.Any]
+    ) -> _NameCollector:
         return _NameCollector(globalns, localns)
 
 

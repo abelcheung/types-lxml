@@ -16,6 +16,7 @@ if INJECT_REVEAL_TYPE:
 # See rttest-mypy.ini for explanation
 TC_CAN_RETURN_NONE = True
 
+
 class TestXmlAttrib:
     def test_basic_behavior(self, xml_tree: _ElementTree) -> None:
         root = deepcopy(xml_tree.getroot())

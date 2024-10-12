@@ -1,8 +1,9 @@
 import functools
-from inspect import Parameter, Signature, _ParameterKind, signature, isclass
+from inspect import Parameter, Signature, _ParameterKind, isclass, signature
 from typing import Any, Callable, ParamSpec, Sequence
 
 import pytest
+
 from .common import is_lxml_4x
 
 _P = ParamSpec("_P")
@@ -11,10 +12,10 @@ _P = ParamSpec("_P")
 # Very crude and probably won't work on many corner cases,
 # but enough for here so far
 def is_cython_class_method(func: Callable[..., Any]) -> bool:
-    glob = getattr(func, 'func_globals', None)
+    glob = getattr(func, "func_globals", None)
     if not glob:
         return False
-    parent = func.__qualname__.rsplit('.', 1)[0]
+    parent = func.__qualname__.rsplit(".", 1)[0]
     return isclass(glob[parent])
 
 
@@ -28,7 +29,7 @@ def signature_tester(
             sig = signature(func_to_check)
             param = list(sig.parameters.values())
 
-            if param[0].name == 'self':
+            if param[0].name == "self":
                 _ = param.pop(0)
 
             assert len(param) == len(param_data)

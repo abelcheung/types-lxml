@@ -137,7 +137,6 @@ class TestFromstringFamily:
     def test_fs_sig(self) -> None:
         pass
 
-
     def test_fs_src(self, h2_str: str, h2_bytes: bytes) -> None:
         elem = h5.fromstring(h2_str)
         reveal_type(elem)
@@ -172,7 +171,6 @@ class TestFromstringFamily:
     ))  # fmt: skip
     def test_parse_sig(self) -> None:
         pass
-
 
     def test_parse_src(self, h2_filepath: Path) -> None:
         with open(h2_filepath, "rb") as fh:

@@ -69,13 +69,13 @@ class TestXInclude:
 @overload
 def good_loader(
     href: str, mode: Literal["xml"], encoding: str | None = None
-) -> _Element:
-    ...
+) -> _Element: ...
 
 
 @overload
-def good_loader(href: str, mode: Literal["text"], encoding: str | None = None) -> str:
-    ...
+def good_loader(
+    href: str, mode: Literal["text"], encoding: str | None = None
+) -> str: ...
 
 
 def good_loader(href: str, mode: str, encoding: str | None = None) -> Any:

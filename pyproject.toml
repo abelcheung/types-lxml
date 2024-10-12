@@ -102,6 +102,9 @@ pretty = true
 [tool.ruff]
 target-version = "py312"
 
+[tool.ruff.format]
+preview = true
+
 [tool.ruff.lint]
 select = ["I"]
 task-tags = [

@@ -37,6 +37,7 @@ TC_CAN_ASSIGN_DIFFERENT_TYPE = True
 TC_CAN_RETURN_NONE = True
 TC_HONORS_REVERSED = True
 
+
 class TestBasicBehavior:
     def test_sequence_read(self, xml_tree: _ElementTree) -> None:
         elem = deepcopy(xml_tree.getroot())

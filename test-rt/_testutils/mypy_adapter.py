@@ -30,8 +30,8 @@ class _NameCollector(NameCollectorBase, ast.NodeTransformer):
         prefix = ast.unparse(node.value)
         name = node.attr
 
-        setattr(node.value, 'is_parent', True)
-        if not hasattr(node, 'is_parent'):  # Outmost attribute node
+        setattr(node.value, "is_parent", True)
+        if not hasattr(node, "is_parent"):  # Outmost attribute node
             try:
                 _ = importlib.import_module(prefix)
             except ModuleNotFoundError:
@@ -75,15 +75,15 @@ class _NameCollector(NameCollectorBase, ast.NodeTransformer):
             self.collected[name] = mod
             return node
 
-        if hasattr(self.collected['typing'], name):
-            self.collected[name] = getattr(self.collected['typing'], name)
+        if hasattr(self.collected["typing"], name):
+            self.collected[name] = getattr(self.collected["typing"], name)
             return node
 
         raise NameError(f'Cannot resolve "{name}"')
 
 
 class _TypeCheckerAdapter(TypeCheckerAdapterBase):
-    id = 'mypy'
+    id = "mypy"
     typechecker_result = {}
     _type_mesg_re = re.compile(r'^Revealed type is "(?P<type>.+?)"$')
 
@@ -102,28 +102,33 @@ class _TypeCheckerAdapter(TypeCheckerAdapterBase):
         # So-called mypy json output is merely a line-by-line
         # transformation of plain text output into json object
         for line in stdout.splitlines():
-            if not line.startswith('{'):
+            if not line.startswith("{"):
                 continue
             # If it fails parsing data, json must be containing
             # multiline error hint, just let it KABOOM
             diag: _MypyDiagObj = json.loads(line)
-            pos = FilePos(diag['file'], diag['line'])
-            if diag['severity'] != 'note':
-                raise TypeCheckerError(f"Mypy {diag['severity']} :'{diag['message']}'",
-                    diag['file'], diag['line'])
-            if (m := cls._type_mesg_re.match(diag['message'])) is None:
+            pos = FilePos(diag["file"], diag["line"])
+            if diag["severity"] != "note":
+                raise TypeCheckerError(
+                    "Mypy {}: {}".format(diag["severity"], diag["message"]),
+                    diag["file"],
+                    diag["line"],
+                )
+            if (m := cls._type_mesg_re.match(diag["message"])) is None:
                 continue
             # Mypy can insert extra character into expression so that it
             # becomes invalid and unparseable. 0.9x days there
             # was '*', and now '?' (and '=' for typeddict too).
             # Try stripping those character and pray we get something
             # usable for evaluation
-            expression = m['type'].translate({ord(c): None for c in '*?='})
+            expression = m["type"].translate({ord(c): None for c in "*?="})
             # Unlike pyright, mypy output doesn't contain variable name
             cls.typechecker_result[pos] = VarType(None, _t.ForwardRef(expression))
 
     @classmethod
-    def create_collector(cls, globalns: dict[str, _t.Any], localns: dict[str, _t.Any]) -> _NameCollector:
+    def create_collector(
+        cls, globalns: dict[str, _t.Any], localns: dict[str, _t.Any]
+    ) -> _NameCollector:
         return _NameCollector(globalns, localns)
 
 

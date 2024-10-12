@@ -104,9 +104,10 @@ class TestListLogMethods:
         with pytest.raises(TypeError, match=r"argument .+ is not iterable"):
             _ = list_log.filter_domains(cast(Any, None))
 
-    @_testutils.signature_tester(_ListErrorLog.filter_levels, (
-        ("levels", Parameter.POSITIONAL_OR_KEYWORD, Parameter.empty),
-    ))
+    @_testutils.signature_tester(
+        _ListErrorLog.filter_levels,
+        (("levels", Parameter.POSITIONAL_OR_KEYWORD, Parameter.empty),),
+    )
     def test_filter_levels(self, list_log: _ListErrorLog) -> None:
         new_log = list_log.filter_levels(ErrorLevels.ERROR)
         reveal_type(new_log)
@@ -129,9 +130,10 @@ class TestListLogMethods:
         _ListErrorLog.filter_from_fatals,
         _ListErrorLog.filter_from_warnings,
     )
-    @_testutils.signature_tester(_ListErrorLog.filter_from_level, (
-        ("level", Parameter.POSITIONAL_OR_KEYWORD, Parameter.empty),
-    ))
+    @_testutils.signature_tester(
+        _ListErrorLog.filter_from_level,
+        (("level", Parameter.POSITIONAL_OR_KEYWORD, Parameter.empty),),
+    )
     def test_filter_from_level(self, list_log: _ListErrorLog) -> None:
         if _method_no_kwarg():
             new_log = list_log.filter_from_level(ErrorLevels.NONE)
@@ -148,9 +150,10 @@ class TestListLogMethods:
     # def test_filter_types(self, list_log: _ListErrorLog) -> None:
     # new_log = list_log.filter_types(ErrorTypes.???)
 
-    @_testutils.signature_tester(_ListErrorLog.receive, (
-        ("entry", Parameter.POSITIONAL_OR_KEYWORD, Parameter.empty),
-    ))
+    @_testutils.signature_tester(
+        _ListErrorLog.receive,
+        (("entry", Parameter.POSITIONAL_OR_KEYWORD, Parameter.empty),),
+    )
     def test_receive(self, list_log: _ListErrorLog) -> None:
         if TC_CAN_RETURN_NONE:
             if _method_no_kwarg():

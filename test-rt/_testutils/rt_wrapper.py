@@ -90,13 +90,16 @@ def reveal_type_wrapper(var: _T) -> _T:
         try:
             tc_result = adapter.typechecker_result[pos]
         except KeyError as e:
-            raise TypeCheckerError(f'No inferred type from {adapter.id}', pos.file, pos.lineno) from e
+            raise TypeCheckerError(
+                f"No inferred type from {adapter.id}", pos.file, pos.lineno
+            ) from e
 
         if tc_result.var:  # Only pyright has this extra protection
             if tc_result.var != var_name:
                 raise TypeCheckerError(
                     f'Variable name should be "{tc_result.var}", but got "{var_name}"',
-                    pos.file, pos.lineno
+                    pos.file,
+                    pos.lineno,
                 )
         else:
             adapter.typechecker_result[pos] = VarType(var_name, tc_result.type)
@@ -115,9 +118,7 @@ def reveal_type_wrapper(var: _T) -> _T:
         try:
             check_type_internal(var, ref, memo)
         except TypeCheckError as e:
-            e.args = (
-                f'({adapter.id}) ' + e.args[0],
-            ) + e.args[1:]
+            e.args = (f"({adapter.id}) " + e.args[0],) + e.args[1:]
             raise
         except TypeError as e:
             if "is not subscriptable" not in e.args[0]:
@@ -134,9 +135,7 @@ def reveal_type_wrapper(var: _T) -> _T:
             try:
                 check_type_internal(var, _t.ForwardRef(bare_type), memo)
             except TypeCheckError as e:
-                e.args = (
-                    f'({adapter.id}) ' + e.args[0],
-                ) + e.args[1:]
+                e.args = (f"({adapter.id}) " + e.args[0],) + e.args[1:]
                 raise
 
     return var

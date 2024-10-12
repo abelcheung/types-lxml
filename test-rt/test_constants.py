@@ -20,7 +20,7 @@ class TestEtreeConstants:
         reveal_type(_e.__version__)
 
         # >= 5.2.2, and on some archs only
-        if hasattr(_e, 'ICONV_COMPILED_VERSION'):
+        if hasattr(_e, "ICONV_COMPILED_VERSION"):
             reveal_type(_e.ICONV_COMPILED_VERSION)
 
     def test_other_const(self) -> None:
