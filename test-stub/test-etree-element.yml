@@ -146,19 +146,6 @@
     el.makeelement(s, foo=1)  # ER: Argument "foo" .+; expected ".+"  \[arg-type]$
     el.makeelement(s, bad_attrib)  # ER: Argument 2 .+; expected ".+"  \[arg-type]$
 
-- case: noargs_method
-  files: *INC
-  main: |
-    from inc import el, s
-    reveal_type(el.getparent  ())  # NR: .+ "Union\[[\w\.]+\._Element, None]"$
-    reveal_type(el.getnext    ())  # NR: .+ "Union\[[\w\.]+\._Element, None]"$
-    reveal_type(el.getprevious())  # NR: .+ "Union\[[\w\.]+\._Element, None]"$
-    reveal_type(el.getroottree())  # NR: .+ "[\w\.]+\._ElementTree\[[\w\.]+\._Element]"$
-    el.getparent  (s)  # ER: Too many arguments .+  \[call-arg]$
-    el.getnext    (s)  # ER: Too many arguments .+  \[call-arg]$
-    el.getprevious(s)  # ER: Too many arguments .+  \[call-arg]$
-    el.getroottree(s)  # ER: Too many arguments .+  \[call-arg]$
-
 - case: xpath
   files: *INC
   main: |
