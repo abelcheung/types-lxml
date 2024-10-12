@@ -29,11 +29,15 @@ class TestFromstring:
     def test_func_sig(self) -> None:
         pass
 
+    # Even though input content could be invalid, it is still correct
+    # with respect to typing (str)
+    @pytest.mark.filterwarnings("ignore:.* input looks more like a filename .*:bs4.MarkupResemblesLocatorWarning")
+    def test_dubious_input(self, h2_filepath: Path) -> None:
+        result = _soup.fromstring(str(h2_filepath))
+        reveal_type(result)
+
     @pytest.mark.filterwarnings("ignore:.* 'strip_cdata' option .*:DeprecationWarning")
     def test_input_type(self, h2_filepath: Path, h2_fileuri: str) -> None:
-        result = _soup.fromstring(str(h2_filepath))
-        del result
-
         s = h2_filepath.read_text()
         result = _soup.fromstring(s)
         reveal_type(result)
