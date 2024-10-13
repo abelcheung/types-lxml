@@ -20,7 +20,6 @@
   main: |
     from typing import Dict, Optional, Union
     from inc import el, s, b, qn
-    # XXX see overzealous_inferred_type test case for info
     # crazy_nsmap = {None: s, s: b}
     crazy_nsmap: Dict[str | None, str | bytes]
     nsmap = {None: s, s: s}

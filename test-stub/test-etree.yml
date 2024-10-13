@@ -166,8 +166,6 @@
     s: str
     b: bytes
     d.{{ prop }} = s
-    # XXX see mypy_3004_docinfo test case
-    # d.{{ prop }} = b
     d.{{ prop }} = None
 
 - case: smartstring_properties_type
