@@ -34,18 +34,18 @@ class TestFromstring:
     @pytest.mark.filterwarnings(
         "ignore:.* input looks more like a filename .*:bs4.MarkupResemblesLocatorWarning"
     )
-    def test_dubious_input(self, h2_filepath: Path) -> None:
-        result = _soup.fromstring(str(h2_filepath))
+    def test_dubious_input(self, html2_filepath: Path) -> None:
+        result = _soup.fromstring(str(html2_filepath))
         reveal_type(result)
 
     @pytest.mark.filterwarnings("ignore:.* 'strip_cdata' option .*:DeprecationWarning")
-    def test_input_type(self, h2_filepath: Path, h2_fileuri: str) -> None:
-        s = h2_filepath.read_text()
+    def test_input_type(self, html2_filepath: Path, html2_fileuri: str) -> None:
+        s = html2_filepath.read_text()
         result = _soup.fromstring(s)
         reveal_type(result)
         del result
 
-        b = h2_filepath.read_bytes()
+        b = html2_filepath.read_bytes()
         result = _soup.fromstring(b)
         reveal_type(result)
         del result
@@ -60,17 +60,17 @@ class TestFromstring:
         reveal_type(result)
         del result
 
-        with open(h2_filepath, "r") as f:
+        with open(html2_filepath, "r") as f:
             result = _soup.fromstring(f)
         reveal_type(result)
         del result
 
-        with open(h2_filepath, "rb") as f:
+        with open(html2_filepath, "rb") as f:
             result = _soup.fromstring(f)
         reveal_type(result)
         del result
 
-        with urlopen(h2_fileuri) as f:
+        with urlopen(html2_fileuri) as f:
             result = _soup.fromstring(f)
         reveal_type(result)
         del result
@@ -79,36 +79,36 @@ class TestFromstring:
             _ = _soup.fromstring(cast(Any, None))
 
         with pytest.raises(TypeError, match=r"object of type '\w+' has no len\(\)"):
-            _ = _soup.fromstring(cast(Any, h2_filepath))
+            _ = _soup.fromstring(cast(Any, html2_filepath))
 
-    def test_makeelement(self, h2_str: str) -> None:
-        result1 = _soup.fromstring(h2_str, makeelement=_html.xhtml_parser.makeelement)
+    def test_makeelement(self, html2_str: str) -> None:
+        result1 = _soup.fromstring(html2_str, makeelement=_html.xhtml_parser.makeelement)
         reveal_type(result1)
         del result1
 
-        result2 = _soup.fromstring(h2_str, None, etree.Element)
+        result2 = _soup.fromstring(html2_str, None, etree.Element)
         reveal_type(result2)
         del result2
 
         with pytest.raises(TypeError, match="object is not callable"):
-            _ = _soup.fromstring(h2_str, makeelement=cast(Any, 1))
+            _ = _soup.fromstring(html2_str, makeelement=cast(Any, 1))
 
         with pytest.raises(TypeError, match="unexpected keyword argument 'attrib"):
-            _ = _soup.fromstring(h2_str, makeelement=cast(Any, etree.CommentBase))
+            _ = _soup.fromstring(html2_str, makeelement=cast(Any, etree.CommentBase))
 
     # Just test capability to pass extra keywords to beautifulsoup
     # no intention to cover all keyword arguments supported by bs
-    def test_bs_args(self, h2_bytes: bytes) -> None:
-        result = _soup.fromstring(h2_bytes, exclude_encodings=["ascii"])
+    def test_bs_args(self, html2_bytes: bytes) -> None:
+        result = _soup.fromstring(html2_bytes, exclude_encodings=["ascii"])
         reveal_type(result)
         del result
 
-        result = _soup.fromstring(h2_bytes, from_encoding="ascii")
+        result = _soup.fromstring(html2_bytes, from_encoding="ascii")
         reveal_type(result)
         del result
 
         with pytest.raises(TypeError, match="unexpected keyword argument 'badarg'"):
-            _ = _soup.fromstring(h2_bytes, badarg=None)  # type: ignore[call-overload]  # pyright: ignore[reportCallIssue,reportUnknownVariableType]
+            _ = _soup.fromstring(html2_bytes, badarg=None)  # type: ignore[call-overload]  # pyright: ignore[reportCallIssue,reportUnknownVariableType]
 
 
 class TestParse:
@@ -123,19 +123,19 @@ class TestParse:
 
     def test_input_type(
         self,
-        h2_filepath: Path,
-        h2_fileuri: str,
+        html2_filepath: Path,
+        html2_fileuri: str,
     ) -> None:
         # expects filename/io, not html data
-        s = h2_filepath.read_text()
+        s = html2_filepath.read_text()
         with pytest.raises(OSError):
             _ = _soup.parse(s)
 
-        b = h2_filepath.read_bytes()
+        b = html2_filepath.read_bytes()
         with pytest.raises(OSError):
             _ = _soup.parse(b)
 
-        result = _soup.parse(str(h2_filepath))
+        result = _soup.parse(str(html2_filepath))
         reveal_type(result)
         root = result.getroot()
         reveal_type(root)
@@ -151,17 +151,17 @@ class TestParse:
         reveal_type(result)
         del result
 
-        with open(h2_filepath, "r") as f:
+        with open(html2_filepath, "r") as f:
             result = _soup.parse(f)
         reveal_type(result)
         del result
 
-        with open(h2_filepath, "rb") as f:
+        with open(html2_filepath, "rb") as f:
             result = _soup.parse(f)
         reveal_type(result)
         del result
 
-        with urlopen(h2_fileuri) as f:
+        with urlopen(html2_fileuri) as f:
             result = _soup.parse(f)
         reveal_type(result)
         del result
@@ -176,31 +176,31 @@ class TestParse:
         # MarkupResemblesLocatorWarning: The input looks more like a
         # filename than markup. You may want to open this file and
         # pass the filehandle into Beautiful Soup.
-        result = _soup.parse(cast(Any, h2_filepath))
+        result = _soup.parse(cast(Any, html2_filepath))
         reveal_type(result)
         del result
 
-    def test_makeelement(self, h2_filepath: Path) -> None:
+    def test_makeelement(self, html2_filepath: Path) -> None:
         result1 = _soup.parse(
-            str(h2_filepath), makeelement=_html.xhtml_parser.makeelement
+            str(html2_filepath), makeelement=_html.xhtml_parser.makeelement
         )
         reveal_type(result1.getroot())
         del result1
 
-        result2 = _soup.parse(str(h2_filepath), None, etree.Element)
+        result2 = _soup.parse(str(html2_filepath), None, etree.Element)
         reveal_type(result2.getroot())
         del result2
 
         with pytest.raises(TypeError, match="object is not callable"):
-            _ = _soup.parse(str(h2_filepath), makeelement=cast(Any, 1))
+            _ = _soup.parse(str(html2_filepath), makeelement=cast(Any, 1))
 
         with pytest.raises(TypeError, match="unexpected keyword argument 'attrib"):
-            _ = _soup.parse(str(h2_filepath), makeelement=cast(Any, etree.CommentBase))
+            _ = _soup.parse(str(html2_filepath), makeelement=cast(Any, etree.CommentBase))
 
     # Just test capability to pass extra keywords to beautifulsoup
     # no intention to cover all keyword arguments supported by bs
-    def test_bs_args(self, h2_fileuri: str) -> None:
-        fh = urlopen(h2_fileuri)
+    def test_bs_args(self, html2_fileuri: str) -> None:
+        fh = urlopen(html2_fileuri)
         result = _soup.parse(fh, exclude_encodings=["ascii"])
         reveal_type(result)
         del result
@@ -227,19 +227,19 @@ class TestConvertTree:
         pass
 
     @pytest.mark.filterwarnings("ignore:.* 'strip_cdata' option .*:DeprecationWarning")
-    def test_input_type(self, h2_filepath: Path) -> None:
+    def test_input_type(self, html2_filepath: Path) -> None:
         for feat in ("lxml-html", "html.parser"):
-            soup = BeautifulSoup(h2_filepath.read_text(), features=feat)
+            soup = BeautifulSoup(html2_filepath.read_text(), features=feat)
             result = _soup.convert_tree(soup)
             reveal_type(result)
             for item in result:
                 reveal_type(item)
             del soup, result
 
-        tree = _html.parse(h2_filepath)
-        s_io = StringIO(h2_filepath.read_text())
+        tree = _html.parse(html2_filepath)
+        s_io = StringIO(html2_filepath.read_text())
 
-        for src1 in (tree, h2_filepath):
+        for src1 in (tree, html2_filepath):
             with pytest.raises(TypeError, match="object is not iterable"):
                 _ = _soup.convert_tree(cast(Any, src1))
 
@@ -252,8 +252,8 @@ class TestConvertTree:
         s_io.close()
         del tree
 
-    def test_makeelement(self, h2_str: str) -> None:
-        soup = BeautifulSoup(h2_str, features="html.parser")
+    def test_makeelement(self, html2_str: str) -> None:
+        soup = BeautifulSoup(html2_str, features="html.parser")
 
         result1 = _soup.convert_tree(soup, makeelement=_html.xhtml_parser.makeelement)
         reveal_type(result1)

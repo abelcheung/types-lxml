@@ -7,7 +7,7 @@ from typing import Any, cast
 
 import _testutils
 import pytest
-from lxml.etree import QName, _Attrib, _ElementTree
+from lxml.etree import QName, _Attrib, _Element
 
 INJECT_REVEAL_TYPE = True
 if INJECT_REVEAL_TYPE:
@@ -18,8 +18,8 @@ TC_CAN_RETURN_NONE = True
 
 
 class TestXmlAttrib:
-    def test_basic_behavior(self, xml_tree: _ElementTree) -> None:
-        root = deepcopy(xml_tree.getroot())
+    def test_basic_behavior(self, xml2_root: _Element) -> None:
+        root = deepcopy(xml2_root)
         attrib = root.attrib
         reveal_type(len(attrib))
         reveal_type(bool(attrib))
@@ -45,8 +45,8 @@ class TestXmlAttrib:
                 attrib["foo"] = cast(Any, v2)
 
     @_testutils.empty_signature_tester(_Attrib.clear)
-    def test_method_clear(self, xml_tree: _ElementTree) -> None:
-        root = deepcopy(xml_tree.getroot())
+    def test_method_clear(self, xml2_root: _Element) -> None:
+        root = deepcopy(xml2_root)
         attrib = root.attrib
         if TC_CAN_RETURN_NONE:
             assert attrib.clear() is None
@@ -56,8 +56,8 @@ class TestXmlAttrib:
         ("key"    , Parameter.POSITIONAL_OR_KEYWORD, Parameter.empty),
         ("default", Parameter.POSITIONAL_OR_KEYWORD, None           ),
     ))  # fmt: skip
-    def test_method_get(self, xml_tree: _ElementTree) -> None:
-        root = deepcopy(xml_tree.getroot())
+    def test_method_get(self, xml2_root: _Element) -> None:
+        root = deepcopy(xml2_root)
         attrib = root.attrib
 
         key = "orderid"
@@ -77,8 +77,8 @@ class TestXmlAttrib:
     @_testutils.signature_tester(_Attrib.update, (
         ("sequence_or_dict", Parameter.POSITIONAL_OR_KEYWORD, Parameter.empty),
     ))  # fmt: skip
-    def test_method_update(self, xml_tree: _ElementTree) -> None:
-        root = deepcopy(xml_tree.getroot())
+    def test_method_update(self, xml2_root: _Element) -> None:
+        root = deepcopy(xml2_root)
         attrib = root.attrib
         if TC_CAN_RETURN_NONE:
             assert attrib.update({"foo": "bar"}) is None
@@ -113,8 +113,8 @@ class TestXmlAttrib:
         ("key"    , Parameter.POSITIONAL_OR_KEYWORD, Parameter.empty),
         ("default", Parameter.VAR_POSITIONAL       , Parameter.empty),
     ))  # fmt: skip
-    def test_method_pop(self, xml_tree: _ElementTree) -> None:
-        root = deepcopy(xml_tree.getroot())
+    def test_method_pop(self, xml2_root: _Element) -> None:
+        root = deepcopy(xml2_root)
         attrib = deepcopy(root.attrib)
         result = attrib.pop("dummy", 0)
         reveal_type(result)
@@ -124,7 +124,7 @@ class TestXmlAttrib:
         del result, root
 
         for arg in ("orderid", b"orderid", QName(None, "orderid")):
-            root = deepcopy(xml_tree.getroot())
+            root = deepcopy(xml2_root)
             attrib = root.attrib
             result = attrib.pop(arg)
             reveal_type(result)
@@ -133,8 +133,8 @@ class TestXmlAttrib:
     @_testutils.signature_tester(_Attrib.has_key, (
         ("key", Parameter.POSITIONAL_OR_KEYWORD, Parameter.empty),
     ))  # fmt: skip
-    def test_method_haskey(self, xml_tree: _ElementTree) -> None:
-        root = deepcopy(xml_tree.getroot())
+    def test_method_haskey(self, xml2_root: _Element) -> None:
+        root = deepcopy(xml2_root)
         attrib = root.attrib
         result = attrib.has_key("orderid")
         reveal_type(result)
@@ -153,8 +153,8 @@ class TestXmlAttrib:
         _Attrib.itervalues,
         _Attrib.iteritems,
     )
-    def test_method_keyval(self, xml_tree: _ElementTree) -> None:
-        root = deepcopy(xml_tree.getroot())
+    def test_method_keyval(self, xml2_root: _Element) -> None:
+        root = deepcopy(xml2_root)
         attrib = root.attrib
 
         ks = attrib.keys()

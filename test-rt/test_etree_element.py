@@ -14,7 +14,7 @@ from lxml.etree import (
     _Attrib as _Attrib,
     _Comment as _Comment,
     _Element,
-    _ElementTree,
+    _ElementTree as _ElementTree,
     _Entity as _Entity,
     _ProcessingInstruction as _ProcessingInstruction,
 )
@@ -31,8 +31,8 @@ TC_HONORS_REVERSED = True
 
 
 class TestBasicBehavior:
-    def test_sequence_read(self, xml_tree: _ElementTree) -> None:
-        elem = deepcopy(xml_tree.getroot())
+    def test_sequence_read(self, xml2_root: _Element) -> None:
+        elem = deepcopy(xml2_root)
 
         reveal_type(len(elem))
         length = len(elem)
@@ -69,8 +69,8 @@ class TestBasicBehavior:
 
         del elem, subelem
 
-    def test_sequence_modify(self, xml_tree: _ElementTree) -> None:
-        elem = deepcopy(xml_tree.getroot())
+    def test_sequence_modify(self, xml2_root: _Element) -> None:
+        elem = deepcopy(xml2_root)
 
         subelem = elem[3]
         del elem[0]
@@ -115,8 +115,8 @@ class TestBasicBehavior:
         ("start", Parameter.POSITIONAL_OR_KEYWORD, None           ),
         ("stop" , Parameter.POSITIONAL_OR_KEYWORD, None           ),
     ))  # fmt: skip
-    def test_method_index(self, xml_tree: _ElementTree) -> None:
-        elem = deepcopy(xml_tree.getroot())
+    def test_method_index(self, xml2_root: _Element) -> None:
+        elem = deepcopy(xml2_root)
         subelem = elem[3]
 
         pos = elem.index(subelem)
@@ -149,8 +149,8 @@ class TestBasicBehavior:
     @_testutils.signature_tester(_Element.append, (
         ("element", Parameter.POSITIONAL_OR_KEYWORD, Parameter.empty),
     ))  # fmt: skip
-    def test_method_append(self, xml_tree: _ElementTree) -> None:
-        elem = deepcopy(xml_tree.getroot())
+    def test_method_append(self, xml2_root: _Element) -> None:
+        elem = deepcopy(xml2_root)
         subelem = deepcopy(elem[-1])
         length = len(elem)
 
@@ -170,8 +170,8 @@ class TestBasicBehavior:
         ("index"  , Parameter.POSITIONAL_OR_KEYWORD, Parameter.empty),
         ("element", Parameter.POSITIONAL_OR_KEYWORD, Parameter.empty),
     ))  # fmt: skip
-    def test_method_insert(self, xml_tree: _ElementTree) -> None:
-        elem = deepcopy(xml_tree.getroot())
+    def test_method_insert(self, xml2_root: _Element) -> None:
+        elem = deepcopy(xml2_root)
         comment = etree.Comment("comment")
         pos = randrange(len(elem))
         if TC_CAN_RETURN_NONE:
@@ -197,8 +197,8 @@ class TestBasicBehavior:
     @_testutils.signature_tester(_Element.remove, (
         ("element", Parameter.POSITIONAL_OR_KEYWORD, Parameter.empty),
     ))  # fmt: skip
-    def test_method_remove(self, xml_tree: _ElementTree) -> None:
-        elem = deepcopy(xml_tree.getroot())
+    def test_method_remove(self, xml2_root: _Element) -> None:
+        elem = deepcopy(xml2_root)
         if TC_CAN_RETURN_NONE:
             assert elem.remove(elem[-1]) is None
 
@@ -216,8 +216,8 @@ class TestBasicBehavior:
         ("old_element", Parameter.POSITIONAL_OR_KEYWORD, Parameter.empty),
         ("new_element", Parameter.POSITIONAL_OR_KEYWORD, Parameter.empty),
     ))  # fmt: skip
-    def test_method_replace(self, xml_tree: _ElementTree) -> None:
-        elem = deepcopy(xml_tree.getroot())
+    def test_method_replace(self, xml2_root: _Element) -> None:
+        elem = deepcopy(xml2_root)
         subelem = elem[-1]
         new_elem = deepcopy(subelem)
         new_elem.tag = "foo"
@@ -239,8 +239,8 @@ class TestBasicBehavior:
     @_testutils.signature_tester(_Element.extend, (
         ("elements", Parameter.POSITIONAL_OR_KEYWORD, Parameter.empty),
     ))  # fmt: skip
-    def test_method_extend(self, xml_tree: _ElementTree) -> None:
-        elem = deepcopy(xml_tree.getroot())
+    def test_method_extend(self, xml2_root: _Element) -> None:
+        elem = deepcopy(xml2_root)
         new_elem1 = etree.Comment("foo")
         new_elem2 = etree.Entity("foo")
         if TC_CAN_RETURN_NONE:
@@ -263,21 +263,21 @@ class TestBasicBehavior:
     @_testutils.signature_tester(_Element.clear, (
         ("keep_tail", Parameter.POSITIONAL_OR_KEYWORD, False),
     ))  # fmt: skip
-    def test_method_clear(self, xml_tree: _ElementTree) -> None:
-        elem = deepcopy(xml_tree.getroot())
+    def test_method_clear(self, xml2_root: _Element) -> None:
+        elem = deepcopy(xml2_root)
         elem.clear()
         assert len(elem) == 0
         del elem
 
-        elem = deepcopy(xml_tree.getroot())
+        elem = deepcopy(xml2_root)
         elem.tail = "junk"
         elem.clear(keep_tail=True)
         assert len(elem) == 0
 
 
 class TestProperties:
-    def test_ro_properties(self, xml_tree: _ElementTree) -> None:
-        elem = deepcopy(xml_tree.getroot())
+    def test_ro_properties(self, xml2_root: _Element) -> None:
+        elem = deepcopy(xml2_root)
 
         for subelem in elem:
             if type(subelem) != _Element:
@@ -301,8 +301,8 @@ class TestProperties:
 
         del elem
 
-    def test_rw_properties(self, xml_tree: _ElementTree) -> None:
-        elem = deepcopy(xml_tree.getroot())
+    def test_rw_properties(self, xml2_root: _Element) -> None:
+        elem = deepcopy(xml2_root)
 
         for subelem in elem:
             if type(subelem) != _Element:
@@ -413,9 +413,9 @@ class TestAttribAccessMethods:
         _Element.values,
         _Element.items,
     )
-    def test_method_keyval(self, h1_filepath: Path) -> None:
+    def test_method_keyval(self, bightml_filepath: Path) -> None:
         parser = etree.HTMLParser()
-        doc = etree.parse(h1_filepath, parser=parser)
+        doc = etree.parse(bightml_filepath, parser=parser)
         for elem in doc.iter():
             if type(elem) != _Element:
                 continue
@@ -427,9 +427,8 @@ class TestAttribAccessMethods:
         ("key"    , Parameter.POSITIONAL_OR_KEYWORD, Parameter.empty),
         ("default", Parameter.POSITIONAL_OR_KEYWORD, None           ),
     ))  # fmt: skip
-    def test_method_get(self, x1_filepath: Path) -> None:
-        tree = etree.parse(x1_filepath)
-        root = tree.getroot()
+    def test_method_get(self, svg_root: _Element) -> None:
+        root = svg_root
 
         reveal_type(root.get("width"))
         reveal_type(root.get("somejunk"))
@@ -449,8 +448,8 @@ class TestAttribAccessMethods:
         ("key"  , Parameter.POSITIONAL_OR_KEYWORD, Parameter.empty),
         ("value", Parameter.POSITIONAL_OR_KEYWORD, Parameter.empty),
     ))  # fmt: skip
-    def test_method_set(self, xml_tree: _ElementTree) -> None:
-        root = deepcopy(xml_tree.getroot())
+    def test_method_set(self, xml2_root: _Element) -> None:
+        root = deepcopy(xml2_root)
 
         if TC_CAN_RETURN_NONE:
             assert root.set("foo", "bar") is None
@@ -478,9 +477,8 @@ class TestFindMethods:
         ("path"      , Parameter.POSITIONAL_OR_KEYWORD, Parameter.empty),
         ("namespaces", Parameter.POSITIONAL_OR_KEYWORD, None           ),
     ))  # fmt: skip
-    def test_method_iterfind(self, x1_filepath: Path) -> None:
-        tree = etree.parse(x1_filepath)
-        root = tree.getroot()
+    def test_method_iterfind(self, svg_root: _Element) -> None:
+        root = svg_root
         tag = "desc"
 
         iterator = root.iterfind(tag)
@@ -560,9 +558,8 @@ class TestFindMethods:
         ("path"      , Parameter.POSITIONAL_OR_KEYWORD, Parameter.empty),
         ("namespaces", Parameter.POSITIONAL_OR_KEYWORD, None           ),
     ))  # fmt: skip
-    def test_method_find(self, x1_filepath: Path) -> None:
-        tree = etree.parse(x1_filepath)
-        root = tree.getroot()
+    def test_method_find(self, svg_root: _Element) -> None:
+        root = svg_root
         tag = "desc"
         reveal_type(root.find(tag))
         reveal_type(root.find(path="junk"))
@@ -609,9 +606,8 @@ class TestFindMethods:
         ("path"      , Parameter.POSITIONAL_OR_KEYWORD, Parameter.empty),
         ("namespaces", Parameter.POSITIONAL_OR_KEYWORD, None           ),
     ))  # fmt: skip
-    def test_method_findall(self, x1_filepath: Path) -> None:
-        tree = etree.parse(x1_filepath)
-        root = tree.getroot()
+    def test_method_findall(self, svg_root: _Element) -> None:
+        root = svg_root
         reveal_type(root.findall(path="junk"))
 
         result = root.findall("defs/{http://example.org/myapp}piechart")
@@ -666,9 +662,8 @@ class TestFindMethods:
         ("default"   , Parameter.POSITIONAL_OR_KEYWORD, None           ),
         ("namespaces", Parameter.POSITIONAL_OR_KEYWORD, None           ),
     ))  # fmt: skip
-    def test_method_findtext(self, x1_filepath: Path) -> None:
-        tree = etree.parse(x1_filepath)
-        root = tree.getroot()
+    def test_method_findtext(self, svg_root: _Element) -> None:
+        root = svg_root
 
         result = root.findtext(path="junk")
         reveal_type(result)
@@ -744,9 +739,8 @@ class TestAddMethods:
         _Element.addnext,
         (("element", Parameter.POSITIONAL_OR_KEYWORD, Parameter.empty),),
     )
-    def test_method_addnext(self, x2_filepath: Path) -> None:
-        tree = etree.parse(x2_filepath)
-        root = deepcopy(tree.getroot())
+    def test_method_addnext(self, xml2_root: _Element) -> None:
+        root = deepcopy(xml2_root)
         comm = etree.Comment("foo")
 
         if TC_CAN_RETURN_NONE:
@@ -767,9 +761,8 @@ class TestAddMethods:
         _Element.addprevious,
         (("element", Parameter.POSITIONAL_OR_KEYWORD, Parameter.empty),),
     )
-    def test_method_addprevious(self, x2_filepath: Path) -> None:
-        tree = etree.parse(x2_filepath)
-        root = deepcopy(tree.getroot())
+    def test_method_addprevious(self, xml2_root: _Element) -> None:
+        root = deepcopy(xml2_root)
         comm = etree.Comment("foo")
 
         if TC_CAN_RETURN_NONE:
@@ -797,9 +790,8 @@ class TestGetMethods:
     def test_func_sig(self) -> None:
         pass
 
-    def test_getparent_method(self, x2_filepath: Path) -> None:
-        tree = etree.parse(x2_filepath)
-        root = tree.getroot()
+    def test_getparent_method(self, xml2_root: _Element) -> None:
+        root = xml2_root
 
         nada = root.getparent()
         reveal_type(nada)
@@ -809,9 +801,8 @@ class TestGetMethods:
         reveal_type(elem)
         assert elem is root
 
-    def test_getprevious_method(self, x2_filepath: Path) -> None:
-        tree = etree.parse(x2_filepath)
-        root = tree.getroot()
+    def test_getprevious_method(self, xml2_root: _Element) -> None:
+        root = xml2_root
 
         nada = root[0].getprevious()
         reveal_type(nada)
@@ -820,9 +811,8 @@ class TestGetMethods:
         elem = root[-1].getprevious()
         reveal_type(elem)
 
-    def test_getnext_method(self, x2_filepath: Path) -> None:
-        tree = etree.parse(x2_filepath)
-        root = tree.getroot()
+    def test_getnext_method(self, xml2_root: _Element) -> None:
+        root = xml2_root
 
         elem = root[0].getnext()
         reveal_type(elem)
@@ -831,9 +821,8 @@ class TestGetMethods:
         reveal_type(nada)
         assert nada is None
 
-    def test_getroottree_method(self, x2_filepath: Path) -> None:
-        tree = etree.parse(x2_filepath)
-        root = tree.getroot()
+    def test_getroottree_method(self, xml2_root: _Element) -> None:
+        root = xml2_root
 
         tree2 = root.getroottree()
         reveal_type(tree2)
@@ -844,9 +833,8 @@ class TestIterMethods:
         ("tag" , Parameter.POSITIONAL_OR_KEYWORD, None           ),
         ("tags", Parameter.VAR_POSITIONAL       , Parameter.empty),
     ))  # fmt: skip
-    def test_iter_method(self, x2_filepath: Path) -> None:
-        tree = etree.parse(x2_filepath)
-        root = tree.getroot()
+    def test_iter_method(self, xml2_root: _Element) -> None:
+        root = xml2_root
 
         # HACK Mypy requires result variable pre-defined
         # through typing, and the same type be used throughout
@@ -899,9 +887,8 @@ class TestIterMethods:
         ("tag" , Parameter.POSITIONAL_OR_KEYWORD, None           ),
         ("tags", Parameter.VAR_POSITIONAL       , Parameter.empty),
     ))  # fmt: skip
-    def test_iterancestors_method(self, x1_filepath: Path) -> None:
-        tree = etree.parse(x1_filepath)
-        root = tree.getroot()
+    def test_iterancestors_method(self, svg_root: _Element) -> None:
+        root = svg_root
         child = root[0]
         grandchild = child[0]
 
@@ -953,9 +940,8 @@ class TestIterMethods:
         ("tag" , Parameter.POSITIONAL_OR_KEYWORD, None           ),
         ("tags", Parameter.VAR_POSITIONAL       , Parameter.empty),
     ))  # fmt: skip
-    def test_iterdescendants_method(self, x2_filepath: Path) -> None:
-        tree = etree.parse(x2_filepath)
-        root = tree.getroot()
+    def test_iterdescendants_method(self, xml2_root: _Element) -> None:
+        root = xml2_root
 
         itr = root.iterdescendants()
         reveal_type(itr)
@@ -1005,9 +991,8 @@ class TestIterMethods:
         ("tags"     , Parameter.VAR_POSITIONAL       , Parameter.empty),
         ("preceding", Parameter.KEYWORD_ONLY         , False          ),
     ))  # fmt: skip
-    def test_itersiblings_method(self, x1_filepath: Path) -> None:
-        tree = etree.parse(x1_filepath)
-        root = tree.getroot()
+    def test_itersiblings_method(self, svg_root: _Element) -> None:
+        root = svg_root
 
         child = root[1]
         result: list[_Element] = []
@@ -1077,9 +1062,8 @@ class TestIterMethods:
         ("tags"    , Parameter.VAR_POSITIONAL       , Parameter.empty),
         ("reversed", Parameter.KEYWORD_ONLY         , False          ),
     ))  # fmt: skip
-    def test_iterchildren_method(self, x2_filepath: Path) -> None:
-        tree = etree.parse(x2_filepath)
-        root = tree.getroot()
+    def test_iterchildren_method(self, xml2_root: _Element) -> None:
+        root = xml2_root
 
         itr = root.iterchildren()
         reveal_type(itr)
@@ -1139,9 +1123,8 @@ class TestIterMethods:
         ("tags"     , Parameter.VAR_POSITIONAL       , Parameter.empty),
         ("with_tail", Parameter.KEYWORD_ONLY         , True           ),
     ))  # fmt: skip
-    def test_itertext_method(self, x2_filepath: Path) -> None:
-        tree = etree.parse(x2_filepath)
-        root = tree.getroot()
+    def test_itertext_method(self, xml2_root: _Element) -> None:
+        root = xml2_root
 
         itr = root.itertext()
         result: list[str] = []

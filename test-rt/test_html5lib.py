@@ -68,12 +68,12 @@ class TestFromstringFamily:
     def test_d_fs_sig(self) -> None:
         pass
 
-    def test_d_fs_src(self, h2_str: str, h2_bytes: bytes) -> None:
-        elem = h5.document_fromstring(h2_str)
+    def test_d_fs_src(self, html2_str: str, html2_bytes: bytes) -> None:
+        elem = h5.document_fromstring(html2_str)
         reveal_type(elem)
         del elem
 
-        elem = h5.document_fromstring(h2_bytes)
+        elem = h5.document_fromstring(html2_bytes)
         reveal_type(elem)
         del elem
 
@@ -137,12 +137,12 @@ class TestFromstringFamily:
     def test_fs_sig(self) -> None:
         pass
 
-    def test_fs_src(self, h2_str: str, h2_bytes: bytes) -> None:
-        elem = h5.fromstring(h2_str)
+    def test_fs_src(self, html2_str: str, html2_bytes: bytes) -> None:
+        elem = h5.fromstring(html2_str)
         reveal_type(elem)
         del elem
 
-        elem = h5.fromstring(h2_bytes)
+        elem = h5.fromstring(html2_bytes)
         reveal_type(elem)
         del elem
 
@@ -155,9 +155,9 @@ class TestFromstringFamily:
             ("fromstring",),
         ],
     )
-    def test_invalid_src(self, h2_str: str, h2_filepath: Path, funcname: str) -> None:
-        sio = StringIO(h2_str)
-        fh = open(h2_filepath, "rb")
+    def test_invalid_src(self, html2_str: str, html2_filepath: Path, funcname: str) -> None:
+        sio = StringIO(html2_str)
+        fh = open(html2_filepath, "rb")
         for src in (None, sio, fh):
             with pytest.raises(TypeError, match="string required"):
                 func = getattr(h5, funcname)
@@ -172,27 +172,27 @@ class TestFromstringFamily:
     def test_parse_sig(self) -> None:
         pass
 
-    def test_parse_src(self, h2_filepath: Path) -> None:
-        with open(h2_filepath, "rb") as fh:
+    def test_parse_src(self, html2_filepath: Path) -> None:
+        with open(html2_filepath, "rb") as fh:
             tree = h5.parse(fh)
         reveal_type(tree)
         reveal_type(tree.getroot())
         del tree
 
-        b_io = BytesIO(h2_filepath.read_bytes())
+        b_io = BytesIO(html2_filepath.read_bytes())
         tree = h5.parse(b_io)
         reveal_type(tree)
         del tree
 
-        s_io = StringIO(h2_filepath.read_text())
+        s_io = StringIO(html2_filepath.read_text())
         tree = h5.parse(s_io)
         reveal_type(tree)
         del tree
 
         with pytest.raises(TypeError, match="bytes-like object is required"):
-            _ = h5.parse(cast(Any, h2_filepath))
+            _ = h5.parse(cast(Any, html2_filepath))
 
-        tree = h5.parse(str(h2_filepath))
+        tree = h5.parse(str(html2_filepath))
         reveal_type(tree)
         del tree
 
@@ -204,95 +204,95 @@ class MyParser(h5.HTMLParser):
 class TestParserArg:
     # Not just any html5lib parser, requires those
     # using etree_lxml as treebuilder
-    def test_subclass(self, h2_str: str) -> None:
+    def test_subclass(self, html2_str: str) -> None:
         parser = MyParser()
 
-        elem = h5.document_fromstring(h2_str, parser=parser)
+        elem = h5.document_fromstring(html2_str, parser=parser)
         reveal_type(elem)
         del elem
 
-        elems = h5.fragments_fromstring(h2_str, parser=parser)
+        elems = h5.fragments_fromstring(html2_str, parser=parser)
         reveal_type(elems)
         for elem2 in elems:
             reveal_type(elem2)
         del elems
 
-        elem3 = h5.fragment_fromstring(h2_str, parser=parser, create_parent=True)
+        elem3 = h5.fragment_fromstring(html2_str, parser=parser, create_parent=True)
         reveal_type(elem3)
         del elem3
 
-        elem4 = h5.fromstring(h2_str, parser=parser)
+        elem4 = h5.fromstring(html2_str, parser=parser)
         reveal_type(elem4)
         del elem4
 
-        s_io = StringIO(h2_str)
+        s_io = StringIO(html2_str)
         tree = h5.parse(s_io, parser=parser)
         reveal_type(tree)
         del tree
 
-    def test_incompatible(self, h2_str: str) -> None:
+    def test_incompatible(self, html2_str: str) -> None:
         parser = WrongParser()
 
         with pytest.raises(AttributeError, match="has no attribute 'parse'"):
-            _ = h5.document_fromstring(h2_str, parser=cast(Any, parser))
+            _ = h5.document_fromstring(html2_str, parser=cast(Any, parser))
 
         with pytest.raises(AttributeError, match="has no attribute 'parseFragment'"):
-            _ = h5.fragments_fromstring(h2_str, parser=cast(Any, parser))
+            _ = h5.fragments_fromstring(html2_str, parser=cast(Any, parser))
 
         with pytest.raises(AttributeError, match="has no attribute 'parseFragment'"):
             _ = h5.fragment_fromstring(
-                h2_str, parser=cast(Any, parser), create_parent=True
+                html2_str, parser=cast(Any, parser), create_parent=True
             )
 
         with pytest.raises(AttributeError, match="has no attribute 'parse'"):
-            _ = h5.fromstring(h2_str, parser=cast(Any, parser))
+            _ = h5.fromstring(html2_str, parser=cast(Any, parser))
 
-        s_io = StringIO(h2_str)
+        s_io = StringIO(html2_str)
         with pytest.raises(AttributeError, match="has no attribute 'parse'"):
             _ = h5.parse(s_io, parser=cast(Any, parser))
 
 
 # guess_charset is a truthy/falsy value, thus no arg type test
 class TestCharsetArg:
-    def test_bool(self, h2_bytes: bytes) -> None:
-        elem = h5.document_fromstring(h2_bytes, True)
+    def test_bool(self, html2_bytes: bytes) -> None:
+        elem = h5.document_fromstring(html2_bytes, True)
         reveal_type(elem)
         del elem
 
-        elems = h5.fragments_fromstring(h2_bytes, guess_charset=True)
+        elems = h5.fragments_fromstring(html2_bytes, guess_charset=True)
         reveal_type(elems)
         for elem2 in elems:
             reveal_type(elem2)
         del elems
 
         elem = h5.fragment_fromstring(
-            h2_bytes, create_parent=b"article", guess_charset=False
+            html2_bytes, create_parent=b"article", guess_charset=False
         )
         reveal_type(elem)
         del elem
 
-        elem = h5.fromstring(h2_bytes, guess_charset=False)
+        elem = h5.fromstring(html2_bytes, guess_charset=False)
         reveal_type(elem)
         del elem
 
-        b_io = BytesIO(h2_bytes)
+        b_io = BytesIO(html2_bytes)
         tree = h5.parse(b_io, guess_charset=False)
         reveal_type(tree)
         del tree
 
-    def test_conflict(self, h2_str: str) -> None:
+    def test_conflict(self, html2_str: str) -> None:
         with pytest.raises(TypeError, match="unexpected keyword argument"):
-            _ = h5.document_fromstring(h2_str, guess_charset=cast(Any, True))
+            _ = h5.document_fromstring(html2_str, guess_charset=cast(Any, True))
 
         with pytest.raises(TypeError, match="unexpected keyword argument"):
-            _ = h5.fragments_fromstring(h2_str, guess_charset=cast(Any, False))
+            _ = h5.fragments_fromstring(html2_str, guess_charset=cast(Any, False))
 
         with pytest.raises(TypeError, match="unexpected keyword argument"):
-            _ = h5.fragment_fromstring(h2_str, guess_charset=cast(Any, False))
+            _ = h5.fragment_fromstring(html2_str, guess_charset=cast(Any, False))
 
         with pytest.raises(TypeError, match="unexpected keyword argument"):
-            _ = h5.fromstring(h2_str, cast(Any, False))
+            _ = h5.fromstring(html2_str, cast(Any, False))
 
-        s_io = StringIO(h2_str)
+        s_io = StringIO(html2_str)
         with pytest.raises(TypeError, match="unexpected keyword argument"):
             _ = h5.parse(s_io, cast(Any, True))
