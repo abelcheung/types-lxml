@@ -59,11 +59,11 @@ includes = [
     'lxml-stubs/',
 ]
 excludes = [
+    '**/__pycache__',
+    '**/.*',
     '**/*.bak',
-    '*.patch',
-    '*.py',
-    '**/.mypy_cache',
-    '**/.pytest_cache',
+    '**/*.patch',
+    '/*.py',
 ]
 source-includes = [
     'requirements.txt',
