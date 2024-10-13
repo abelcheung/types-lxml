@@ -30,6 +30,15 @@ class TypeCheckerError(Exception):
         return f'"{self._filename}" line {self._lineno}: {self.args[0]}'
 
 
+class FuncSignatureError(Exception):
+    def __init__(self, message: str, funcname: str) -> None:
+        super().__init__(message)
+        self._func = funcname
+
+    def __str__(self) -> str:
+        return "{}(): {}".format(self._func, self.args[0])
+
+
 class NameCollectorBase(ast.NodeVisitor):
     def __init__(
         self,

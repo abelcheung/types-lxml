@@ -2,9 +2,7 @@ import functools
 from inspect import Parameter, Signature, _ParameterKind, isclass, signature
 from typing import Any, Callable, ParamSpec, Sequence
 
-import pytest
-
-from .common import is_lxml_4x
+from .common import FuncSignatureError, is_lxml_4x
 
 _P = ParamSpec("_P")
 
@@ -21,18 +19,29 @@ def is_cython_class_method(func: Callable[..., Any]) -> bool:
 
 def signature_tester(
     func_to_check: Callable[..., Any],
-    param_data: Sequence[tuple[str, _ParameterKind, Any] | None],
+    expect_param: Sequence[tuple[str, _ParameterKind, Any] | None],
 ) -> Callable[[Callable[_P, None]], Callable[_P, None]]:
     def decorator(f: Callable[_P, None]) -> Callable[_P, None]:
         @functools.wraps(f)
         def wrapped(*args: _P.args, **kw: _P.kwargs) -> None:
             sig = signature(func_to_check)
             param = list(sig.parameters.values())
+            funcname = func_to_check.__qualname__
 
+            has_self = False
             if param[0].name == "self":
+                has_self = True
                 _ = param.pop(0)
 
-            assert len(param) == len(param_data)
+            if len(param) != len(expect_param):
+                raise FuncSignatureError(
+                    "Parameter count{}don't match, expected {} but got {}".format(
+                        " (excluding Self) " if has_self else " ",
+                        len(expect_param),
+                        len(param),
+                    ),
+                    funcname,
+                )
 
             # For lxml < 5, args in class methods never contain
             # default values (.__defaults__ property is empty).
@@ -42,15 +51,35 @@ def signature_tester(
             if is_lxml_4x and is_cython_class_method(func_to_check):
                 no_default = True
 
-            for i in range(len(param_data)):
-                if (p := param_data[i]) is None:
+            for i in range(len(expect_param)):
+                if (p := expect_param[i]) is None:
                     continue
-                assert param[i].name == p[0]
-                assert param[i].kind == p[1]
-                if no_default:
-                    assert param[i].default == Parameter.empty
-                else:
-                    assert param[i].default == p[2]
+                if param[i].name != p[0]:
+                    raise FuncSignatureError(
+                        "Name of parameter {} don't match, expected {} but got {}".format(
+                            i + 1, p[0], param[i].name
+                        ),
+                        funcname,
+                    )
+                if param[i].kind != p[1]:
+                    raise FuncSignatureError(
+                        "Type of '{}' parameter don't match, expected {} but got {}".format(
+                            p[0], p[1].name, param[i].kind.name
+                        ),
+                        funcname,
+                    )
+                def_val = Parameter.empty if no_default else p[2]
+                if param[i].default != def_val:
+                    raise FuncSignatureError(
+                        "Default value of '{}' parameter don't match, expected {} but got {}".format(
+                            p[0],
+                            "no default" if def_val is Parameter.empty else def_val,
+                            "no default"
+                            if param[i].default is Parameter.empty
+                            else param[i].default,
+                        ),
+                        funcname,
+                    )
             f(*args, **kw)
 
         return wrapped
@@ -72,7 +101,10 @@ def empty_signature_tester(
                 if param[0].name == "self":
                     _ = param.pop(0)
                 if param:
-                    pytest.fail(f"Signature of {func.__qualname__} is non-empty")
+                    raise FuncSignatureError(
+                        "Signature expected to be empty but actually is not",
+                        func.__qualname__,
+                    )
             f(*args, **kw)
 
         return wrapped
