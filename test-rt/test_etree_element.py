@@ -9,22 +9,14 @@ from typing import Any, cast
 
 import _testutils
 import pytest
+from lxml import etree
 from lxml.etree import (
-    CDATA,
-    LXML_VERSION,
-    Comment,
-    Entity,
-    HTMLParser,
-    ProcessingInstruction,
-    QName,
     _Attrib as _Attrib,
     _Comment as _Comment,
     _Element,
     _ElementTree,
     _Entity as _Entity,
     _ProcessingInstruction as _ProcessingInstruction,
-    iselement,
-    parse,
 )
 from lxml.html import Element as h_Element
 
@@ -86,10 +78,10 @@ class TestBasicBehavior:
         del elem[0:2]
         assert elem.index(subelem) == 0
 
-        comment = Comment("comment")
-        comment2 = Comment("foo")
-        entity = Entity("foo")
-        pi = ProcessingInstruction("target", "text")
+        comment = etree.Comment("comment")
+        comment2 = etree.Comment("foo")
+        entity = etree.Entity("foo")
+        pi = etree.ProcessingInstruction("target", "text")
         div = h_Element("div")
 
         elem[1] = comment
@@ -138,14 +130,14 @@ class TestBasicBehavior:
                 _ = elem.index(cast(Any, obj))
 
         for obj in ("1", (0,), object()):
-            if LXML_VERSION >= (5, 1):
+            if etree.LXML_VERSION >= (5, 1):
                 match_re = "Argument 'start' has incorrect type"
             else:
                 match_re = "cannot be interpreted as an integer"
             with pytest.raises(TypeError, match=match_re):
                 _ = elem.index(subelem, cast(Any, obj))
 
-            if LXML_VERSION >= (5, 1):
+            if etree.LXML_VERSION >= (5, 1):
                 match_re = "Argument 'stop' has incorrect type"
             else:
                 match_re = "cannot be interpreted as an integer"
@@ -180,7 +172,7 @@ class TestBasicBehavior:
     ))  # fmt: skip
     def test_method_insert(self, xml_tree: _ElementTree) -> None:
         elem = deepcopy(xml_tree.getroot())
-        comment = Comment("comment")
+        comment = etree.Comment("comment")
         pos = randrange(len(elem))
         if TC_CAN_RETURN_NONE:
             assert elem.insert(pos, comment) is None
@@ -193,7 +185,7 @@ class TestBasicBehavior:
                 elem.insert(pos, cast(Any, obj))
 
         for obj in (None, "1", (0,), object()):
-            if LXML_VERSION >= (5, 1):
+            if etree.LXML_VERSION >= (5, 1):
                 match_re = "Argument 'index' has incorrect type"
             else:
                 match_re = "cannot be interpreted as an integer"
@@ -249,8 +241,8 @@ class TestBasicBehavior:
     ))  # fmt: skip
     def test_method_extend(self, xml_tree: _ElementTree) -> None:
         elem = deepcopy(xml_tree.getroot())
-        new_elem1 = Comment("foo")
-        new_elem2 = Entity("foo")
+        new_elem1 = etree.Comment("foo")
+        new_elem2 = etree.Entity("foo")
         if TC_CAN_RETURN_NONE:
             assert elem.extend([new_elem1]) is None
 
@@ -320,8 +312,8 @@ class TestProperties:
             reveal_type(subelem.text)
             reveal_type(subelem.tail)
 
-        cdata = CDATA("foo")
-        qname = QName("dummyns", "dummytext")
+        cdata = etree.CDATA("foo")
+        qname = etree.QName("dummyns", "dummytext")
 
         elem.base = "http://dummy.site/"
         elem.base = None
@@ -361,58 +353,58 @@ class TestProperties:
 
 
 class TestContentOnlyElement:
-    @_testutils.signature_tester(Comment, (
+    @_testutils.signature_tester(etree.Comment, (
         ("text", Parameter.POSITIONAL_OR_KEYWORD, None),
     ))  # fmt: skip
     def test_construct_comment(self) -> None:
-        comm = Comment()
+        comm = etree.Comment()
         reveal_type(comm)
         del comm
 
         for text in (None, "foo", b"foo"):
-            comm = Comment(text)
+            comm = etree.Comment(text)
             reveal_type(comm)
             del comm
 
         for data in (1, ["foo"]):
             with pytest.raises(TypeError, match="must be bytes or unicode"):
-                _ = Comment(cast(Any, data))
+                _ = etree.Comment(cast(Any, data))
 
-    @_testutils.signature_tester(Entity, (
+    @_testutils.signature_tester(etree.Entity, (
         ("name", Parameter.POSITIONAL_OR_KEYWORD, Parameter.empty),
     ))  # fmt: skip
     def test_construct_entity(self) -> None:
         for name in ("foo", b"foo"):
-            ent = Entity(name)
+            ent = etree.Entity(name)
             reveal_type(ent)
             del ent
 
         for data in (None, 1, ["foo"]):
             with pytest.raises(TypeError, match="must be bytes or unicode"):
-                _ = Entity(cast(Any, data))
+                _ = etree.Entity(cast(Any, data))
 
-    @_testutils.signature_tester(ProcessingInstruction, (
+    @_testutils.signature_tester(etree.ProcessingInstruction, (
         ("target", Parameter.POSITIONAL_OR_KEYWORD, Parameter.empty),
         ("text"  , Parameter.POSITIONAL_OR_KEYWORD, None           ),
     ))  # fmt: skip
     def test_construct_pi(self) -> None:
         for target in ("foo", b"foo"):
-            pi = ProcessingInstruction(target)
+            pi = etree.ProcessingInstruction(target)
             reveal_type(pi)
             del pi
 
         for data in (None, 1, ["foo"]):
             with pytest.raises(TypeError, match="must be bytes or unicode"):
-                _ = ProcessingInstruction(cast(Any, data))
+                _ = etree.ProcessingInstruction(cast(Any, data))
 
         for text in ("bar", b"bar"):
-            pi = ProcessingInstruction("foo", text)
+            pi = etree.ProcessingInstruction("foo", text)
             reveal_type(pi)
             del pi
 
         for data in (1, ["bar"]):
             with pytest.raises(TypeError, match="must be bytes or unicode"):
-                _ = ProcessingInstruction("foo", cast(Any, data))
+                _ = etree.ProcessingInstruction("foo", cast(Any, data))
 
 
 class TestAttribAccessMethods:
@@ -422,8 +414,8 @@ class TestAttribAccessMethods:
         _Element.items,
     )
     def test_method_keyval(self, h1_filepath: Path) -> None:
-        parser = HTMLParser()
-        doc = parse(h1_filepath, parser=parser)
+        parser = etree.HTMLParser()
+        doc = etree.parse(h1_filepath, parser=parser)
         for elem in doc.iter():
             if type(elem) != _Element:
                 continue
@@ -436,14 +428,14 @@ class TestAttribAccessMethods:
         ("default", Parameter.POSITIONAL_OR_KEYWORD, None           ),
     ))  # fmt: skip
     def test_method_get(self, x1_filepath: Path) -> None:
-        tree = parse(x1_filepath)
+        tree = etree.parse(x1_filepath)
         root = tree.getroot()
 
         reveal_type(root.get("width"))
         reveal_type(root.get("somejunk"))
         reveal_type(root.get(b"width"))
-        # Not meaningful to use QName here, but still
-        qname = QName(None, "width")
+        # Not meaningful to use etree.QName here, but still
+        qname = etree.QName(None, "width")
         reveal_type(root.get(qname))
 
         for arg in (1, object(), ["width"]):
@@ -463,14 +455,14 @@ class TestAttribAccessMethods:
         if TC_CAN_RETURN_NONE:
             assert root.set("foo", "bar") is None
 
-        qname = QName("foo")
+        qname = etree.QName("foo")
         for arg1 in ("foo", b"foo", qname):
             root.set(arg1, "bar")
         for arg2 in (None, 1, object(), ["foo"]):
             with pytest.raises(TypeError, match="must be bytes or unicode"):
                 root.set(cast(Any, arg2), "bar")
 
-        qname = QName("bar")
+        qname = etree.QName("bar")
         for arg3 in ("bar", b"bar", qname):
             root.set("foo", arg3)
         for arg4 in (None, 1, object(), ["bar"]):
@@ -487,7 +479,7 @@ class TestFindMethods:
         ("namespaces", Parameter.POSITIONAL_OR_KEYWORD, None           ),
     ))  # fmt: skip
     def test_method_iterfind(self, x1_filepath: Path) -> None:
-        tree = parse(x1_filepath)
+        tree = etree.parse(x1_filepath)
         root = tree.getroot()
         tag = "desc"
 
@@ -503,7 +495,7 @@ class TestFindMethods:
         reveal_type(iterator)
         del iterator
 
-        qn = QName(None, tag)
+        qn = etree.QName(None, tag)
         reveal_type(root.iterfind(qn))
 
         with pytest.raises(TypeError, match="a string pattern on a bytes-like object"):
@@ -519,7 +511,7 @@ class TestFindMethods:
         with pytest.raises(TypeError, match="expected string or bytes-like object"):
             _ = root.iterfind(cast(Any, (tag,)))
 
-        # Check QName and namespace support
+        # Check etree.QName and namespace support
         # Note that invalid entries in namespace dict (those
         # with invalid key or value types) wouldn't be fatal;
         # they only silently fail to select useful elements.
@@ -532,7 +524,7 @@ class TestFindMethods:
         defs = next(iterator)
         del iterator
 
-        qn = QName(url, "piechart")
+        qn = etree.QName(url, "piechart")
         result = tuple(elem for elem in defs.iterfind(f"{{{url}}}piechart"))
         assert result == tuple(elem for elem in defs.iterfind(qn, None))
         assert result == tuple(
@@ -569,14 +561,14 @@ class TestFindMethods:
         ("namespaces", Parameter.POSITIONAL_OR_KEYWORD, None           ),
     ))  # fmt: skip
     def test_method_find(self, x1_filepath: Path) -> None:
-        tree = parse(x1_filepath)
+        tree = etree.parse(x1_filepath)
         root = tree.getroot()
         tag = "desc"
         reveal_type(root.find(tag))
         reveal_type(root.find(path="junk"))
-        assert iselement(root.find("defs/{http://example.org/myapp}piechart"))
+        assert etree.iselement(root.find("defs/{http://example.org/myapp}piechart"))
 
-        qn = QName(None, tag)
+        qn = etree.QName(None, tag)
         reveal_type(root.find(qn))
 
         with pytest.raises(TypeError, match="a string pattern on a bytes-like object"):
@@ -592,7 +584,7 @@ class TestFindMethods:
         with pytest.raises(TypeError, match="expected string or bytes-like object"):
             _ = root.find(cast(Any, (tag,)))
 
-        # Check QName and NS support; see iterfind() comment above
+        # Check etree.QName and NS support; see iterfind() comment above
 
         defs = root.find("defs")
         assert defs is not None
@@ -600,7 +592,7 @@ class TestFindMethods:
         nsdict = {"m": url}
 
         result = defs.find(f"{{{url}}}piechart")
-        qn = QName(url, "piechart")
+        qn = etree.QName(url, "piechart")
         assert result == defs.find(qn, None)
         assert result == defs.find("m:piechart", namespaces=nsdict)
         assert result == defs.find("m:piechart", MappingProxyType(nsdict))
@@ -618,7 +610,7 @@ class TestFindMethods:
         ("namespaces", Parameter.POSITIONAL_OR_KEYWORD, None           ),
     ))  # fmt: skip
     def test_method_findall(self, x1_filepath: Path) -> None:
-        tree = parse(x1_filepath)
+        tree = etree.parse(x1_filepath)
         root = tree.getroot()
         reveal_type(root.findall(path="junk"))
 
@@ -630,7 +622,7 @@ class TestFindMethods:
 
         tag = "desc"
         result = root.findall(tag)
-        qn = QName(None, tag)
+        qn = etree.QName(None, tag)
         assert result == root.findall(qn)
         del result
 
@@ -647,7 +639,7 @@ class TestFindMethods:
         with pytest.raises(TypeError, match="expected string or bytes-like object"):
             _ = root.findall(cast(Any, (tag,)))
 
-        # Check QName and NS support; see iterfind() comment above
+        # Check etree.QName and NS support; see iterfind() comment above
 
         result = root.findall("defs")
         assert len(result) == 1
@@ -656,7 +648,7 @@ class TestFindMethods:
         defs = result[0]
 
         result = defs.findall(f"{{{url}}}piechart")
-        qn = QName(url, "piechart")
+        qn = etree.QName(url, "piechart")
         assert result == defs.findall(qn, None)
         assert result == defs.findall("m:piechart", namespaces=nsdict)
         assert result == defs.findall("m:piechart", MappingProxyType(nsdict))
@@ -675,7 +667,7 @@ class TestFindMethods:
         ("namespaces", Parameter.POSITIONAL_OR_KEYWORD, None           ),
     ))  # fmt: skip
     def test_method_findtext(self, x1_filepath: Path) -> None:
-        tree = parse(x1_filepath)
+        tree = etree.parse(x1_filepath)
         root = tree.getroot()
 
         result = root.findtext(path="junk")
@@ -704,7 +696,7 @@ class TestFindMethods:
         result = root.findtext(tag)
         reveal_type(result)
         assert result and result.startswith("This chart")
-        qn = QName(None, tag)
+        qn = etree.QName(None, tag)
         assert result == root.findtext(qn)
         del result
 
@@ -721,7 +713,7 @@ class TestFindMethods:
         with pytest.raises(TypeError, match="expected string or bytes-like object"):
             _ = root.findtext(cast(Any, (tag,)))
 
-        # Check QName and NS support; see iterfind() comment above
+        # Check etree.QName and NS support; see iterfind() comment above
 
         url = "http://example.org/myfoo"
         nsdict = {"m": url}
@@ -729,11 +721,11 @@ class TestFindMethods:
         result = root.findtext(f"desc/{{{url}}}title")
         assert result and result.endswith("report")
         resultnode = root.find(f"desc/{{{url}}}title")
-        assert iselement(resultnode)
+        assert etree.iselement(resultnode)
         parent = resultnode.getparent()
-        assert iselement(parent)
+        assert etree.iselement(parent)
 
-        qn = QName(url, "title")
+        qn = etree.QName(url, "title")
         assert result == parent.findtext(qn, namespaces=None)
         assert result == parent.findtext("m:title", namespaces=nsdict)
         assert result == parent.findtext("m:title", namespaces=MappingProxyType(nsdict))
@@ -753,9 +745,9 @@ class TestAddMethods:
         (("element", Parameter.POSITIONAL_OR_KEYWORD, Parameter.empty),),
     )
     def test_method_addnext(self, x2_filepath: Path) -> None:
-        tree = parse(x2_filepath)
+        tree = etree.parse(x2_filepath)
         root = deepcopy(tree.getroot())
-        comm = Comment("foo")
+        comm = etree.Comment("foo")
 
         if TC_CAN_RETURN_NONE:
             assert root[0].addnext(comm) is None
@@ -776,9 +768,9 @@ class TestAddMethods:
         (("element", Parameter.POSITIONAL_OR_KEYWORD, Parameter.empty),),
     )
     def test_method_addprevious(self, x2_filepath: Path) -> None:
-        tree = parse(x2_filepath)
+        tree = etree.parse(x2_filepath)
         root = deepcopy(tree.getroot())
-        comm = Comment("foo")
+        comm = etree.Comment("foo")
 
         if TC_CAN_RETURN_NONE:
             assert root[0].addprevious(comm) is None
@@ -806,7 +798,7 @@ class TestGetMethods:
         pass
 
     def test_getparent_method(self, x2_filepath: Path) -> None:
-        tree = parse(x2_filepath)
+        tree = etree.parse(x2_filepath)
         root = tree.getroot()
 
         nada = root.getparent()
@@ -818,7 +810,7 @@ class TestGetMethods:
         assert elem is root
 
     def test_getprevious_method(self, x2_filepath: Path) -> None:
-        tree = parse(x2_filepath)
+        tree = etree.parse(x2_filepath)
         root = tree.getroot()
 
         nada = root[0].getprevious()
@@ -829,7 +821,7 @@ class TestGetMethods:
         reveal_type(elem)
 
     def test_getnext_method(self, x2_filepath: Path) -> None:
-        tree = parse(x2_filepath)
+        tree = etree.parse(x2_filepath)
         root = tree.getroot()
 
         elem = root[0].getnext()
@@ -840,8 +832,373 @@ class TestGetMethods:
         assert nada is None
 
     def test_getroottree_method(self, x2_filepath: Path) -> None:
-        tree = parse(x2_filepath)
+        tree = etree.parse(x2_filepath)
         root = tree.getroot()
 
         tree2 = root.getroottree()
         reveal_type(tree2)
+
+
+class TestIterMethods:
+    @_testutils.signature_tester(_Element.iter, (
+        ("tag" , Parameter.POSITIONAL_OR_KEYWORD, None           ),
+        ("tags", Parameter.VAR_POSITIONAL       , Parameter.empty),
+    ))  # fmt: skip
+    def test_iter_method(self, x2_filepath: Path) -> None:
+        tree = etree.parse(x2_filepath)
+        root = tree.getroot()
+
+        # HACK Mypy requires result variable pre-defined
+        # through typing, and the same type be used throughout
+        # whole function. Otherwise variables can't be reused,
+        # even deleting and recreating won't make it.
+        itr = root.iter()
+        reveal_type(itr)
+        result: list[_Element] = []
+        for e in itr:
+            reveal_type(e)
+            result.append(e)
+        del itr
+
+        itr = root.iter(tag=None)
+        reveal_type(itr)
+        assert result == [e for e in itr]
+        del itr, result
+
+        itr = root.iter("title")
+        reveal_type(itr)
+        result = [e for e in itr]
+        assert len(result) == 2
+        del itr
+
+        itr = root.iter(b"title")
+        reveal_type(itr)
+        assert result == [e for e in itr]
+        del itr, result
+
+        itr = root.iter(etree.QName("price", None))
+        reveal_type(itr)
+        assert len([e for e in itr]) == 2
+        del itr
+
+        itr = root.iter("quantity", etree.Comment)
+        reveal_type(itr)
+        result = [e for e in itr]
+        assert len(result) == 3
+        del itr
+
+        itr = root.iter(tag={"quantity", etree.Comment})
+        assert result == [e for e in itr]
+        del itr, result
+
+        for arg in (1, object(), etree.iselement, ["foo", 1]):
+            with pytest.raises(TypeError, match=r"object is not iterable"):
+                _ = root.iter(cast(Any, arg))
+
+    @_testutils.signature_tester(_Element.iterancestors, (
+        ("tag" , Parameter.POSITIONAL_OR_KEYWORD, None           ),
+        ("tags", Parameter.VAR_POSITIONAL       , Parameter.empty),
+    ))  # fmt: skip
+    def test_iterancestors_method(self, x1_filepath: Path) -> None:
+        tree = etree.parse(x1_filepath)
+        root = tree.getroot()
+        child = root[0]
+        grandchild = child[0]
+
+        itr = grandchild.iterancestors()
+        reveal_type(itr)
+        result: list[_Element] = []
+        for e in itr:
+            reveal_type(e)
+            result.append(e)
+        assert len(result) == 2
+        del itr
+
+        itr = grandchild.iterancestors(tag=None)
+        reveal_type(itr)
+        assert result == [e for e in itr]
+        del itr
+
+        itr = child.iterancestors()
+        reveal_type(itr)
+        assert result[1:] == [e for e in itr]
+        del itr
+
+        itr = grandchild.iterancestors(tag=child.tag)
+        reveal_type(itr)
+        assert result[:1] == [e for e in itr]
+        del itr
+
+        itr = grandchild.iterancestors(child.tag.encode(), root.tag)
+        reveal_type(itr)
+        assert result == [e for e in itr]
+        del itr, result
+
+        itr = root.iter(etree.Comment)
+        comm = next(itr)
+        del itr
+        itr = comm.iterancestors(tag=[etree.QName(grandchild.tag), child.tag])
+        reveal_type(itr)
+        result = [e for e in itr]
+        assert len(result) == 2
+        del itr, result
+
+        for arg in (1, object(), etree.iselement, ["foo", 1]):
+            with pytest.raises(TypeError, match=r"object is not iterable"):
+                _ = child.iterancestors(cast(Any, arg))
+
+    # iterdescendants() is iter() sans root node, so the
+    # test is identical
+    @_testutils.signature_tester(_Element.iterdescendants, (
+        ("tag" , Parameter.POSITIONAL_OR_KEYWORD, None           ),
+        ("tags", Parameter.VAR_POSITIONAL       , Parameter.empty),
+    ))  # fmt: skip
+    def test_iterdescendants_method(self, x2_filepath: Path) -> None:
+        tree = etree.parse(x2_filepath)
+        root = tree.getroot()
+
+        itr = root.iterdescendants()
+        reveal_type(itr)
+        result: list[_Element] = []
+        for e in itr:
+            reveal_type(e)
+            result.append(e)
+        del itr
+
+        itr = root.iterdescendants(tag=None)
+        reveal_type(itr)
+        assert result == [e for e in itr]
+        del itr, result
+
+        itr = root.iterdescendants("title")
+        reveal_type(itr)
+        result = [e for e in itr]
+        assert len(result) == 2
+        del itr
+
+        itr = root.iterdescendants(b"title")
+        reveal_type(itr)
+        assert result == [e for e in itr]
+        del itr, result
+
+        itr = root.iterdescendants(etree.QName("price", None))
+        reveal_type(itr)
+        assert len([e for e in itr]) == 2
+        del itr
+
+        itr = root.iterdescendants("quantity", etree.Comment)
+        reveal_type(itr)
+        result = [e for e in itr]
+        assert len(result) == 3
+        del itr
+
+        itr = root.iterdescendants(tag={"quantity", etree.Comment})
+        assert result == [e for e in itr]
+        del itr, result
+
+        for arg in (1, object(), etree.iselement, ["foo", 1]):
+            with pytest.raises(TypeError, match=r"object is not iterable"):
+                _ = root.iterdescendants(cast(Any, arg))
+
+    @_testutils.signature_tester(_Element.itersiblings, (
+        ("tag"      , Parameter.POSITIONAL_OR_KEYWORD, None           ),
+        ("tags"     , Parameter.VAR_POSITIONAL       , Parameter.empty),
+        ("preceding", Parameter.KEYWORD_ONLY         , False          ),
+    ))  # fmt: skip
+    def test_itersiblings_method(self, x1_filepath: Path) -> None:
+        tree = etree.parse(x1_filepath)
+        root = tree.getroot()
+
+        child = root[1]
+        result: list[_Element] = []
+        itr = child.itersiblings()
+        reveal_type(itr)
+        for e in itr:
+            reveal_type(e)
+            result.append(e)
+        del itr
+
+        itr = child.itersiblings(tag=None)
+        reveal_type(itr)
+        assert result == [e for e in itr]
+        del itr
+
+        # Preceding param is a truthy/falsy value,
+        # impossible to validate its accepted type.
+        itr = child.itersiblings(preceding=True)
+        reveal_type(itr)
+        assert len([e for e in itr]) == 1
+        del itr
+
+        itr = child.itersiblings("metadata")
+        reveal_type(itr)
+        assert result[2:3] == [e for e in itr]
+        del itr
+
+        itr = child.itersiblings(b"metadata")
+        reveal_type(itr)
+        assert result[2:3] == [e for e in itr]
+        del itr
+
+        qn = etree.QName("desc")
+        itr = child.itersiblings(qn)
+        reveal_type(itr)
+        assert result[1:2] == [e for e in itr]
+        del itr
+
+        itr = child.itersiblings(etree.Comment)
+        reveal_type(itr)
+        assert result[:1] == [e for e in itr]
+        del itr
+
+        itr = child.itersiblings("style", etree.Comment)
+        reveal_type(itr)
+        assert [e for e in itr] == [
+            e for e in result if e.tag in {"style", etree.Comment}
+        ]
+        del itr
+
+        itr = child.itersiblings(tag={etree.Comment, "g"})
+        reveal_type(itr)
+        assert [e for e in itr] == [e for e in result if e.tag in {etree.Comment, "g"}]
+        del itr, result
+
+        itr = child.itersiblings("metadata", "g", preceding=True)
+        reveal_type(itr)
+        assert len([e for e in itr]) == 0
+        del itr
+
+        for arg in (1, object(), etree.iselement, ["foo", 1]):
+            with pytest.raises(TypeError, match=r"object is not iterable"):
+                _ = child.itersiblings(cast(Any, arg))
+
+    @_testutils.signature_tester(_Element.iterchildren, (
+        ("tag"     , Parameter.POSITIONAL_OR_KEYWORD, None           ),
+        ("tags"    , Parameter.VAR_POSITIONAL       , Parameter.empty),
+        ("reversed", Parameter.KEYWORD_ONLY         , False          ),
+    ))  # fmt: skip
+    def test_iterchildren_method(self, x2_filepath: Path) -> None:
+        tree = etree.parse(x2_filepath)
+        root = tree.getroot()
+
+        itr = root.iterchildren()
+        reveal_type(itr)
+        result = [e for e in itr]
+        del itr
+
+        itr = root.iterchildren(tag=None)
+        reveal_type(itr)
+        assert result == [e for e in itr]
+        del itr
+
+        # Reversed param is a truthy/falsy value,
+        # impossible to validate its accepted type.
+        itr = root.iterchildren(reversed=True)
+        reveal_type(itr)
+        assert list(reversed(result)) == [e for e in itr]
+        del itr
+
+        itr = root.iterchildren(root[2].tag)
+        reveal_type(itr)
+        assert result[2:3] == [e for e in itr]
+        del itr
+
+        itr = root.iterchildren(root[2].tag.encode())
+        reveal_type(itr)
+        assert result[2:3] == [e for e in itr]
+        del itr
+
+        qn = etree.QName(root[-1].tag)
+        itr = root.iterchildren(qn)
+        reveal_type(itr)
+        assert result[-2:] == [e for e in itr]
+        del itr
+
+        itr = root.iterchildren(etree.Comment)
+        reveal_type(itr)
+        assert result[1] == next(itr)
+        del itr
+
+        itr = root.iterchildren(qn, etree.Comment)
+        reveal_type(itr)
+        assert len([e for e in itr]) == 3
+        del itr
+
+        itr = root.iterchildren(tag={root[0].tag, etree.Comment}, reversed=True)
+        reveal_type(itr)
+        assert next(itr) == result[1]
+        assert next(itr) == result[0]
+        del itr, result
+
+        for arg in (1, object(), etree.iselement, ["foo", 1]):
+            with pytest.raises(TypeError, match=r"object is not iterable"):
+                _ = root.iterchildren(cast(Any, arg))
+
+    @_testutils.signature_tester(_Element.itertext, (
+        ("tag"      , Parameter.POSITIONAL_OR_KEYWORD, None           ),
+        ("tags"     , Parameter.VAR_POSITIONAL       , Parameter.empty),
+        ("with_tail", Parameter.KEYWORD_ONLY         , True           ),
+    ))  # fmt: skip
+    def test_itertext_method(self, x2_filepath: Path) -> None:
+        tree = etree.parse(x2_filepath)
+        root = tree.getroot()
+
+        itr = root.itertext()
+        result: list[str] = []
+        reveal_type(itr)
+        for s in itr:
+            reveal_type(s)
+            result.append(s)
+        del itr
+
+        itr = root.itertext(tag=None)
+        reveal_type(itr)
+        assert result == [s for s in itr]
+        del itr
+
+        # with_tail param is a truthy/falsy value,
+        # impossible to validate its accepted type.
+        itr = root.itertext(with_tail=False)
+        reveal_type(itr)
+        assert len(result) != len([s for s in itr])
+        del itr, result
+
+        itr = root.itertext("title")
+        reveal_type(itr)
+        result = [s for s in itr]
+        del itr
+
+        itr = root.itertext(b"title")
+        reveal_type(itr)
+        assert result == [s for s in itr]
+        del itr, result
+
+        qn = etree.QName("address")
+        itr = root.itertext(qn)
+        reveal_type(itr)
+        reveal_type(next(itr))
+        del itr
+
+        itr = root.itertext(etree.Comment)
+        reveal_type(itr)
+        reveal_type(next(itr))
+        del itr
+
+        itr = root.itertext(qn, etree.Comment)
+        reveal_type(itr)
+        result = [s for s in itr]
+        del itr
+
+        itr = root.itertext(tag={qn, etree.Comment})
+        reveal_type(itr)
+        assert result == [s for s in itr]
+        del itr, result
+
+        itr = root.itertext(tag={"quantity", "price"}, with_tail=False)
+        reveal_type(itr)
+        reveal_type(next(itr))
+        del itr
+
+        for arg in (1, object(), etree.iselement, ["foo", 1]):
+            with pytest.raises(TypeError, match=r"object is not iterable"):
+                _ = root.itertext(cast(Any, arg))
