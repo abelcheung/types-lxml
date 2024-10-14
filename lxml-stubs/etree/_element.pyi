@@ -126,21 +126,21 @@ class _Element:
     @overload
     def itersiblings(
         self,
-        *,
         tag: _t._TagSelector | Collection[_t._TagSelector] | None = None,
+        *,
         preceding: bool = False,
     ) -> Iterator[Self]: ...
     @overload
     def iterancestors(self, *tags: _t._TagSelector) -> Iterator[Self]: ...
     @overload
     def iterancestors(
-        self, *, tag: _t._TagSelector | Collection[_t._TagSelector] | None = None
+        self, tag: _t._TagSelector | Collection[_t._TagSelector] | None = None
     ) -> Iterator[Self]: ...
     @overload
     def iterdescendants(self, *tags: _t._TagSelector) -> Iterator[Self]: ...
     @overload
     def iterdescendants(
-        self, *, tag: _t._TagSelector | Collection[_t._TagSelector] | None = None
+        self, tag: _t._TagSelector | Collection[_t._TagSelector] | None = None
     ) -> Iterator[Self]: ...
     @overload
     def iterchildren(
@@ -149,15 +149,15 @@ class _Element:
     @overload
     def iterchildren(
         self,
-        *,
         tag: _t._TagSelector | Collection[_t._TagSelector] | None = None,
+        *,
         reversed: bool = False,
     ) -> Iterator[Self]: ...
     @overload
     def iter(self, *tags: _t._TagSelector) -> Iterator[Self]: ...
     @overload
     def iter(
-        self, *, tag: _t._TagSelector | Collection[_t._TagSelector] | None = None
+        self, tag: _t._TagSelector | Collection[_t._TagSelector] | None = None
     ) -> Iterator[Self]: ...
     @overload
     def itertext(
@@ -166,8 +166,8 @@ class _Element:
     @overload
     def itertext(
         self,
-        *,
         tag: _t._TagSelector | Collection[_t._TagSelector] | None = None,
+        *,
         with_tail: bool = True,
     ) -> Iterator[str]: ...
     makeelement: _t._ElementFactory[Self]

@@ -159,21 +159,21 @@ class HtmlElement(etree.ElementBase):
     @overload
     def itersiblings(
         self,
-        *,
         tag: _TagSelector | Collection[_TagSelector] | None = None,
+        *,
         preceding: bool = False,
     ) -> Iterator[HtmlElement]: ...
     @overload
     def iterancestors(self, *tags: _TagSelector) -> Iterator[HtmlElement]: ...
     @overload
     def iterancestors(
-        self, *, tag: _TagSelector | Collection[_TagSelector] | None = None
+        self, tag: _TagSelector | Collection[_TagSelector] | None = None
     ) -> Iterator[HtmlElement]: ...
     @overload
     def iterdescendants(self, *tags: _TagSelector) -> Iterator[HtmlElement]: ...
     @overload
     def iterdescendants(
-        self, *, tag: _TagSelector | Collection[_TagSelector] | None = None
+        self, tag: _TagSelector | Collection[_TagSelector] | None = None
     ) -> Iterator[HtmlElement]: ...
     @overload
     def iterchildren(
@@ -182,15 +182,15 @@ class HtmlElement(etree.ElementBase):
     @overload
     def iterchildren(
         self,
-        *,
         tag: _TagSelector | Collection[_TagSelector] | None = None,
+        *,
         reversed: bool = False,
     ) -> Iterator[HtmlElement]: ...
     @overload
     def iter(self, *tags: _TagSelector) -> Iterator[HtmlElement]: ...
     @overload
     def iter(
-        self, *, tag: _TagSelector | Collection[_TagSelector] | None = None
+        self, tag: _TagSelector | Collection[_TagSelector] | None = None
     ) -> Iterator[HtmlElement]: ...
     @overload
     def itertext(
@@ -199,8 +199,8 @@ class HtmlElement(etree.ElementBase):
     @overload
     def itertext(
         self,
-        *,
         tag: _TagSelector | Collection[_TagSelector] | None = None,
+        *,
         with_tail: bool = True,
     ) -> Iterator[str]: ...
     makeelement: _ElementFactory[HtmlElement]

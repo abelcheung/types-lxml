@@ -6,7 +6,7 @@
  5 files changed, 65 insertions(+), 62 deletions(-)
 
 diff --git a/lxml-stubs/etree/_element.pyi b/lxml-stubs/etree/_element.pyi
-index 852fcd6..c2c01d4 100644
+index a093bea..445c801 100644
 --- a/lxml-stubs/etree/_element.pyi
 +++ b/lxml-stubs/etree/_element.pyi
 @@ -14,9 +14,9 @@ from typing import (
@@ -85,7 +85,7 @@ index 852fcd6..c2c01d4 100644
 +    def getparent(self) -> _Element | None: ...
 +    def getnext(self) -> _Element | None: ...
 +    def getprevious(self) -> _Element | None: ...
-+    def getroottree(self) -> _ElementTree: ...
++    def getroottree(self) -> _ElementTree[_Element]: ...
      @overload
      def itersiblings(
          self, *tags: _t._TagSelector, preceding: bool = False
@@ -94,8 +94,8 @@ index 852fcd6..c2c01d4 100644
      @overload
      def itersiblings(
          self,
-         *,
          tag: _t._TagSelector | Collection[_t._TagSelector] | None = None,
+         *,
          preceding: bool = False,
 -    ) -> Iterator[Self]: ...
 +    ) -> Iterator[_Element]: ...
@@ -104,7 +104,7 @@ index 852fcd6..c2c01d4 100644
 +    def iterancestors(self, *tags: _t._TagSelector) -> Iterator[_Element]: ...
      @overload
      def iterancestors(
-         self, *, tag: _t._TagSelector | Collection[_t._TagSelector] | None = None
+         self, tag: _t._TagSelector | Collection[_t._TagSelector] | None = None
 -    ) -> Iterator[Self]: ...
 +    ) -> Iterator[_Element]: ...
      @overload
@@ -112,7 +112,7 @@ index 852fcd6..c2c01d4 100644
 +    def iterdescendants(self, *tags: _t._TagSelector) -> Iterator[_Element]: ...
      @overload
      def iterdescendants(
-         self, *, tag: _t._TagSelector | Collection[_t._TagSelector] | None = None
+         self, tag: _t._TagSelector | Collection[_t._TagSelector] | None = None
 -    ) -> Iterator[Self]: ...
 +    ) -> Iterator[_Element]: ...
      @overload
@@ -123,8 +123,8 @@ index 852fcd6..c2c01d4 100644
      @overload
      def iterchildren(
          self,
-         *,
          tag: _t._TagSelector | Collection[_t._TagSelector] | None = None,
+         *,
          reversed: bool = False,
 -    ) -> Iterator[Self]: ...
 +    ) -> Iterator[_Element]: ...
@@ -133,18 +133,18 @@ index 852fcd6..c2c01d4 100644
 +    def iter(self, *tags: _t._TagSelector) -> Iterator[_Element]: ...
      @overload
      def iter(
-         self, *, tag: _t._TagSelector | Collection[_t._TagSelector] | None = None
+         self, tag: _t._TagSelector | Collection[_t._TagSelector] | None = None
 -    ) -> Iterator[Self]: ...
 +    ) -> Iterator[_Element]: ...
      @overload
      def itertext(
          self, *tags: _t._TagSelector, with_tail: bool = True
 @@ -170,10 +170,10 @@ class _Element:
-         tag: _t._TagSelector | Collection[_t._TagSelector] | None = None,
+         *,
          with_tail: bool = True,
      ) -> Iterator[str]: ...
 -    makeelement: _t._ElementFactory[Self]
-+    makeelement: _t._ElementFactory
++    makeelement: _t._ElementFactory[_Element]
      def find(
          self, path: _t._ElemPathArg, namespaces: _t._StrictNSMap | None = None
 -    ) -> Self | None: ...
@@ -214,7 +214,7 @@ index d30d366..d02992f 100644
  def ElementTree(element: _ET) -> _ElementTree[_ET]: ...
  @overload  # from file source, custom parser
 diff --git a/lxml-stubs/html/_element.pyi b/lxml-stubs/html/_element.pyi
-index 691e67b..8430fe8 100644
+index f314a2a..9c84a76 100644
 --- a/lxml-stubs/html/_element.pyi
 +++ b/lxml-stubs/html/_element.pyi
 @@ -128,26 +128,29 @@ class HtmlElement(etree.ElementBase):
@@ -261,7 +261,7 @@ index 691e67b..8430fe8 100644
      def getnext(self) -> HtmlElement | None: ...
      def getprevious(self) -> HtmlElement | None: ...
 @@ -203,17 +206,17 @@ class HtmlElement(etree.ElementBase):
-         tag: _TagSelector | Collection[_TagSelector] | None = None,
+         *,
          with_tail: bool = True,
      ) -> Iterator[str]: ...
 -    makeelement: _ElementFactory[HtmlElement]
@@ -317,7 +317,7 @@ index 2b8a301..7fc46e5 100644
          expr: str,
          *,
 diff --git a/pyproject.toml b/pyproject.toml
-index 262bafe..3428ff3 100644
+index 3794c4c..3538d1d 100644
 --- a/pyproject.toml
 +++ b/pyproject.toml
 @@ -5,7 +5,7 @@ requires = ['pdm-backend ~= 2.3']

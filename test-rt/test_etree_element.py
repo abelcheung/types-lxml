@@ -848,7 +848,7 @@ class TestIterMethods:
             result.append(e)
         del itr
 
-        itr = root.iter(tag=None)
+        itr = root.iter(None)
         reveal_type(itr)
         assert result == [e for e in itr]
         del itr, result
@@ -859,7 +859,7 @@ class TestIterMethods:
         assert len(result) == 2
         del itr
 
-        itr = root.iter(b"title")
+        itr = root.iter(tag=b"title")
         reveal_type(itr)
         assert result == [e for e in itr]
         del itr, result
@@ -875,7 +875,7 @@ class TestIterMethods:
         assert len(result) == 3
         del itr
 
-        itr = root.iter(tag={"quantity", etree.Comment})
+        itr = root.iter({"quantity", etree.Comment})
         assert result == [e for e in itr]
         del itr, result
 
@@ -901,7 +901,7 @@ class TestIterMethods:
         assert len(result) == 2
         del itr
 
-        itr = grandchild.iterancestors(tag=None)
+        itr = grandchild.iterancestors(None)
         reveal_type(itr)
         assert result == [e for e in itr]
         del itr
@@ -924,7 +924,7 @@ class TestIterMethods:
         itr = root.iter(etree.Comment)
         comm = next(itr)
         del itr
-        itr = comm.iterancestors(tag=[etree.QName(grandchild.tag), child.tag])
+        itr = comm.iterancestors([etree.QName(grandchild.tag), child.tag])
         reveal_type(itr)
         result = [e for e in itr]
         assert len(result) == 2
@@ -951,7 +951,7 @@ class TestIterMethods:
             result.append(e)
         del itr
 
-        itr = root.iterdescendants(tag=None)
+        itr = root.iterdescendants(None)
         reveal_type(itr)
         assert result == [e for e in itr]
         del itr, result
@@ -962,7 +962,7 @@ class TestIterMethods:
         assert len(result) == 2
         del itr
 
-        itr = root.iterdescendants(b"title")
+        itr = root.iterdescendants(tag=b"title")
         reveal_type(itr)
         assert result == [e for e in itr]
         del itr, result
@@ -978,7 +978,7 @@ class TestIterMethods:
         assert len(result) == 3
         del itr
 
-        itr = root.iterdescendants(tag={"quantity", etree.Comment})
+        itr = root.iterdescendants({"quantity", etree.Comment})
         assert result == [e for e in itr]
         del itr, result
 
@@ -1003,7 +1003,7 @@ class TestIterMethods:
             result.append(e)
         del itr
 
-        itr = child.itersiblings(tag=None)
+        itr = child.itersiblings(None)
         reveal_type(itr)
         assert result == [e for e in itr]
         del itr
@@ -1020,7 +1020,7 @@ class TestIterMethods:
         assert result[2:3] == [e for e in itr]
         del itr
 
-        itr = child.itersiblings(b"metadata")
+        itr = child.itersiblings(tag=b"metadata")
         reveal_type(itr)
         assert result[2:3] == [e for e in itr]
         del itr
@@ -1043,7 +1043,7 @@ class TestIterMethods:
         ]
         del itr
 
-        itr = child.itersiblings(tag={etree.Comment, "g"})
+        itr = child.itersiblings({etree.Comment, "g"})
         reveal_type(itr)
         assert [e for e in itr] == [e for e in result if e.tag in {etree.Comment, "g"}]
         del itr, result
@@ -1070,7 +1070,7 @@ class TestIterMethods:
         result = [e for e in itr]
         del itr
 
-        itr = root.iterchildren(tag=None)
+        itr = root.iterchildren(None)
         reveal_type(itr)
         assert result == [e for e in itr]
         del itr
@@ -1087,7 +1087,7 @@ class TestIterMethods:
         assert result[2:3] == [e for e in itr]
         del itr
 
-        itr = root.iterchildren(root[2].tag.encode())
+        itr = root.iterchildren(tag=root[2].tag.encode())
         reveal_type(itr)
         assert result[2:3] == [e for e in itr]
         del itr
@@ -1108,7 +1108,7 @@ class TestIterMethods:
         assert len([e for e in itr]) == 3
         del itr
 
-        itr = root.iterchildren(tag={root[0].tag, etree.Comment}, reversed=True)
+        itr = root.iterchildren({root[0].tag, etree.Comment}, reversed=True)
         reveal_type(itr)
         assert next(itr) == result[1]
         assert next(itr) == result[0]
@@ -1134,7 +1134,7 @@ class TestIterMethods:
             result.append(s)
         del itr
 
-        itr = root.itertext(tag=None)
+        itr = root.itertext(None)
         reveal_type(itr)
         assert result == [s for s in itr]
         del itr
@@ -1151,7 +1151,7 @@ class TestIterMethods:
         result = [s for s in itr]
         del itr
 
-        itr = root.itertext(b"title")
+        itr = root.itertext(tag=b"title")
         reveal_type(itr)
         assert result == [s for s in itr]
         del itr, result
@@ -1172,7 +1172,7 @@ class TestIterMethods:
         result = [s for s in itr]
         del itr
 
-        itr = root.itertext(tag={qn, etree.Comment})
+        itr = root.itertext({qn, etree.Comment})
         reveal_type(itr)
         assert result == [s for s in itr]
         del itr, result
