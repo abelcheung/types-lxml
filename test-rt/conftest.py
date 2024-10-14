@@ -75,6 +75,13 @@ def bightml_root(bightml_tree: _e._ElementTree[_h.HtmlElement]) -> _h.HtmlElemen
 
 
 @pytest.fixture
+def html2_tree(html2_filepath: Path) -> _e._ElementTree[_h.HtmlElement]:
+    with open(html2_filepath, "r", encoding="utf-8") as f:
+        tree = _h.parse(f)
+    return tree
+
+
+@pytest.fixture
 def svg_tree(svg_filepath: Path) -> _e._ElementTree:
     with open(svg_filepath, "r", encoding="utf-8") as f:
         tree = _e.parse(f)
