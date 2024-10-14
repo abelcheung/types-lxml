@@ -33,11 +33,11 @@ class TestInputType:
     # data to be pickleable, and IO buffer can't be pickled.
     def test_bad_input_without_copy(
         self,
-        bightml_filepath: Path,
-        bightml_tree: _ElementTree[HtmlElement],
+        html2_filepath: Path,
+        html2_tree: _ElementTree[HtmlElement],
     ) -> None:
-        buffer = open(bightml_filepath, "rb")
-        for bad_input in (bightml_filepath, buffer, bightml_tree):
+        buffer = open(html2_filepath, "rb")
+        for bad_input in (html2_filepath, buffer, html2_tree):
             with pytest.raises(
                 AttributeError, match="object has no attribute 'find_rel_links'"
             ):
@@ -54,10 +54,10 @@ class TestInputType:
 
     def test_bad_input_with_copy(
         self,
-        bightml_filepath: Path,
-        bightml_tree: _ElementTree[HtmlElement],
+        html2_filepath: Path,
+        html2_tree: _ElementTree[HtmlElement],
     ) -> None:
-        for bad_input in (bightml_filepath, bightml_tree):
+        for bad_input in (html2_filepath, html2_tree):
             with pytest.raises(
                 AttributeError, match="object has no attribute 'make_links_absolute'"
             ):
@@ -73,42 +73,42 @@ class TestInputType:
 
     def test_find_rel_links(
         self,
-        bightml_filepath: Path,
-        bightml_str: str,
-        bightml_bytes: bytes,
+        html2_filepath: Path,
+        html2_str: str,
+        html2_bytes: bytes,
         bightml_root: HtmlElement,
     ) -> None:
         if _has_bytes_support():
-            links = find_rel_links(bightml_bytes, "nofollow noopener noreferrer")
+            links = find_rel_links(html2_bytes, "nofollow noopener noreferrer")
             reveal_type(links)
             del links
-        links = find_rel_links(str(bightml_filepath), "nofollow noopener noreferrer")
+        links = find_rel_links(str(html2_filepath), "nofollow noopener noreferrer")
         reveal_type(links)
         del links
+        links = find_rel_links(html2_str, "nofollow noopener noreferrer")
+        reveal_type(links)
+        del links
+
         links = find_rel_links(bightml_root, "nofollow noopener noreferrer")
         reveal_type(links)
-        del links
-        links = find_rel_links(bightml_str, "nofollow noopener noreferrer")
-        reveal_type(links)
-
         for link in links:
             reveal_type(link)
 
     def test_find_class(
         self,
-        bightml_filepath: Path,
-        bightml_str: str,
-        bightml_bytes: bytes,
+        html2_filepath: Path,
+        html2_str: str,
+        html2_bytes: bytes,
         bightml_root: HtmlElement,
     ) -> None:
         if _has_bytes_support():
-            elems = find_class(bightml_bytes, "single")
+            elems = find_class(html2_bytes, "single")
             reveal_type(elems)
             del elems
-        elems = find_class(str(bightml_filepath), "single")
+        elems = find_class(str(html2_filepath), "single")
         reveal_type(elems)
         del elems
-        elems = find_class(bightml_str, "single")
+        elems = find_class(html2_str, "single")
         reveal_type(elems)
         del elems
         elems = find_class(bightml_root, "single")
@@ -118,19 +118,19 @@ class TestInputType:
 
     def test_iterlinks(
         self,
-        bightml_filepath: Path,
-        bightml_str: str,
-        bightml_bytes: bytes,
+        html2_filepath: Path,
+        html2_str: str,
+        html2_bytes: bytes,
         bightml_root: HtmlElement,
     ) -> None:
         if _has_bytes_support():
-            results = iterlinks(bightml_bytes)
+            results = iterlinks(html2_bytes)
             reveal_type(results)
             del results
-        results = iterlinks(str(bightml_filepath))
+        results = iterlinks(str(html2_filepath))
         reveal_type(results)
         del results
-        results = iterlinks(bightml_str)
+        results = iterlinks(html2_str)
         reveal_type(results)
         del results
         results = iterlinks(bightml_root)
@@ -151,12 +151,12 @@ class TestInputType:
     ],
 )
 def test_missing_pos_arg(
-    bightml_str: str,
+    html2_str: str,
     func: Callable[..., Any],
     args: Sequence[Any],
 ) -> None:
     with pytest.raises(TypeError, match="missing 1 required positional argument"):
-        _ = func(bightml_str, *args)
+        _ = func(html2_str, *args)
 
 
 @pytest.mark.parametrize(
@@ -168,14 +168,14 @@ def test_missing_pos_arg(
     ],
 )
 def test_too_many_pos_arg(
-    bightml_str: str,
+    html2_str: str,
     func: Callable[..., Any],
     args: Sequence[Any],
 ) -> None:
     length = len(args)
     match = f"takes {length} positional arguments? but {length + 1} were given"
     with pytest.raises(TypeError, match=match):
-        _ = func(bightml_str, *args)
+        _ = func(html2_str, *args)
 
 
 # Keyword arguments are not tested here, see TestKeywordArgs below for detail
@@ -205,7 +205,7 @@ class TestBadArgs:
         result = find_class(bightml_str, cast(Any, 1))
         assert len(result) == 0
 
-    def test_make_links_absolute(self, bightml_str: str) -> None:
+    def test_make_links_absolute(self, html2_str: str) -> None:
         # Arguments below are not tested
         # base_url: behavior depends on document .base_url property
         # resolve_base_href: use bool for easier understanding, but
@@ -213,7 +213,7 @@ class TestBadArgs:
         with pytest.raises(
             ValueError, match="unexpected value for handle_failures: 'junk'"
         ):
-            _ = make_links_absolute(bightml_str, "", True, cast(Any, "junk"))
+            _ = make_links_absolute(html2_str, "", True, cast(Any, "junk"))
 
     def test_resolve_base_href(self, bightml_str: str) -> None:
         with pytest.raises(
@@ -221,23 +221,23 @@ class TestBadArgs:
         ):
             _ = resolve_base_href(bightml_str, cast(Any, "junk"))
 
-    def test_rewrite_links(self, bightml_str: str) -> None:
+    def test_rewrite_links(self, html2_str: str) -> None:
         with pytest.raises(TypeError, match="'NoneType' object is not callable"):
-            _ = rewrite_links(bightml_str, cast(Any, None))
+            _ = rewrite_links(html2_str, cast(Any, None))
         with pytest.raises(
             TypeError, match="takes 0 positional arguments but 1 was given"
         ):
-            _ = rewrite_links(bightml_str, cast(Any, lambda: _BASE_HREF))
+            _ = rewrite_links(html2_str, cast(Any, lambda: _BASE_HREF))
         with pytest.raises(
             TypeError, match="Argument must be bytes or unicode, got 'int'"
         ):
-            _ = rewrite_links(bightml_str, cast(Any, lambda _: 1))  # pyright: ignore[reportUnknownLambdaType]
+            _ = rewrite_links(html2_str, cast(Any, lambda _: 1))  # pyright: ignore[reportUnknownLambdaType]
 
         def repl_func(orig: bytes) -> bytes:
             return orig.replace(b"http", b"ftp")
 
         with pytest.raises(TypeError, match="argument 1 must be str, not bytes"):
-            _ = rewrite_links(bightml_str, cast(Any, repl_func))
+            _ = rewrite_links(html2_str, cast(Any, repl_func))
 
     #
     # non-Element input + keyword args = Exception
@@ -246,23 +246,25 @@ class TestBadArgs:
 
     def test_bad_methodfunc(
         self,
-        bightml_str: str,
-        bightml_bytes: bytes,
-        bightml_filepath: Path,
+        html2_str: str,
+        html2_bytes: bytes,
+        html2_filepath: Path,
         bightml_root: HtmlElement,
     ) -> None:
-        sources: list[Any] = [bightml_str, str(bightml_filepath)]
+        sources = [html2_str, str(html2_filepath), html2_bytes]
         if _has_bytes_support():
-            sources.append(bightml_bytes)
+            sources.pop()
         for input in sources:
             with pytest.raises(
                 TypeError, match="got an unexpected keyword argument 'handle_failures'"
             ):
-                _ = make_links_absolute(doc=input, base_url=None, handle_failures=None)
+                _ = make_links_absolute(
+                    doc=cast(Any, input), base_url=None, handle_failures=None
+                )
         with pytest.raises(
             TypeError, match="got an unexpected keyword argument 'class_name'"
         ):
-            _ = find_class(cast(Any, bightml_str), class_name="something")
+            _ = find_class(cast(Any, html2_str), class_name="something")
         # kw are fine for Element input
         result = make_links_absolute(bightml_root, "", handle_failures=None)
         reveal_type(result)
@@ -320,7 +322,9 @@ class TestOutputType:
             reveal_type(result)
             del result
         with pytest.raises(TypeError, match="can only concatenate str"):
-            _ = rewrite_links(bightml_str, lambda _: cast(Any, _BASE_HREF.encode("ASCII")))
+            _ = rewrite_links(
+                bightml_str, lambda _: cast(Any, _BASE_HREF.encode("ASCII"))
+            )
         result2 = rewrite_links(bightml_str, lambda _: _BASE_HREF)
         reveal_type(result2)
         del result2

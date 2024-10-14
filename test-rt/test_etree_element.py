@@ -2,10 +2,9 @@ from __future__ import annotations
 
 from copy import deepcopy
 from inspect import Parameter
-from pathlib import Path
 from random import randrange
 from types import MappingProxyType
-from typing import Any, cast
+from typing import Any, BinaryIO, cast
 
 import _testutils
 import pytest
@@ -413,9 +412,10 @@ class TestAttribAccessMethods:
         _Element.values,
         _Element.items,
     )
-    def test_method_keyval(self, bightml_filepath: Path) -> None:
+    def test_method_keyval(self, bightml_bin_fp: BinaryIO) -> None:
         parser = etree.HTMLParser()
-        doc = etree.parse(bightml_filepath, parser=parser)
+        with bightml_bin_fp as f:
+            doc = etree.parse(f, parser=parser)
         for elem in doc.iter():
             if type(elem) != _Element:
                 continue
