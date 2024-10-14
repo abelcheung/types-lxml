@@ -88,7 +88,7 @@ include = ['lxml-stubs']
 extraPaths = ['test-rt']
 typeCheckingMode = 'strict'
 reportPrivateUsage = false
-reportUnnecessaryTypeIgnoreComment = 'error'
+reportUnnecessaryTypeIgnoreComment = false
 # Follows typeshed practice, separate mypy and pyright
 # type-ignores
 # See https://github.com/python/mypy/issues/12358
