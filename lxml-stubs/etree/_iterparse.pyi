@@ -75,7 +75,7 @@ class iterparse(Iterator[_T_co]):
     attribute default values are requested."""
 
     @overload  # html mode -> namespace events suppressed
-    def __new__(  # type: ignore[overload-overlap]
+    def __new__(  # type: ignore[overload-overlap]  # pyright: ignore[reportOverlappingOverload]
         cls,
         source: _FilePath | SupportsRead[bytes],
         events: Iterable[_SaxEventNames] = ("end",),
