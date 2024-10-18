@@ -73,7 +73,7 @@
     from lxml.etree import FunctionNamespace as F
     uri: str
     ns = F(uri)
-    reveal_type(ns)  # NR: .+ "[\w\.]+\._FunctionNamespaceRegistry"$
+    reveal_type(ns)  # NR: .+ "[\w\.]+\._XPathFunctionNamespaceRegistry"$
 
 - case: func_nsreg_create_badargs
   main: |
