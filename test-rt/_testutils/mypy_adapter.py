@@ -26,7 +26,7 @@ class _MypyDiagObj(_t.TypedDict):
 
 
 class _NameCollector(NameCollectorBase, ast.NodeTransformer):
-    def visit_Attribute(self, node: ast.Attribute) -> ast.expr:
+    def visit_Attribute(self, node: ast.Attribute) -> ast.AST:
         prefix = ast.unparse(node.value)
         name = node.attr
 
@@ -49,16 +49,28 @@ class _NameCollector(NameCollectorBase, ast.NodeTransformer):
                     self.modified = True
                     return ast.Name(id=name, ctx=node.ctx)
 
-        _ = self.generic_visit(node)
-        fullname = ast.unparse(node)
-        self.collected[fullname] = getattr(self.collected[prefix], name)
-        return node
+        node = _t.cast("ast.Attribute", self.generic_visit(node))
+
+        if (resolved := getattr(self.collected[prefix], name, False)):
+            self.collected[ast.unparse(node)] = resolved
+            return node
+
+        # For class defined in local scope, mypy just prepends test
+        # module name to class name. Of course concerned class does
+        # not exist directly under test module. Use bare name here.
+        try:
+            eval(name, self._globalns, self._localns | self.collected)
+        except NameError:
+            raise
+        else:
+            self.modified = True
+            return ast.Name(id=name, ctx=node.ctx)
 
     # Mypy usually dumps full inferred type with module name,
     # but with a few exceptions (like tuple, Union).
     # visit_Attribute can ultimately recurse into visit_Name
     # as well
-    def visit_Name(self, node: ast.Name) -> ast.expr:
+    def visit_Name(self, node: ast.Name) -> ast.AST:
         name = node.id
         try:
             eval(name, self._globalns, self._localns | self.collected)
@@ -80,6 +92,17 @@ class _NameCollector(NameCollectorBase, ast.NodeTransformer):
             return node
 
         raise NameError(f'Cannot resolve "{name}"')
+
+    # For class defined inside local function scope, mypy outputs
+    # something like "test_elem_class_lookup.FooClass@97".
+    # Return only the left operand after processing.
+    def visit_BinOp(self, node: ast.BinOp) -> ast.AST:
+        if isinstance(node.op, ast.MatMult) and isinstance(node.right, ast.Constant):
+            # Mypy disallows returning Any
+            return _t.cast("ast.AST", self.visit(node.left))
+        # For expression that haven't been accounted for, just don't
+        # process and allow name resolution to fail
+        return node
 
 
 class _TypeCheckerAdapter(TypeCheckerAdapterBase):
