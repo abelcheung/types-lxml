@@ -105,37 +105,22 @@ def reveal_type_wrapper(var: _T) -> _T:
             adapter.typechecker_result[pos] = VarType(var_name, tc_result.type)
 
         ref = tc_result.type
-        ref_ast = ast.parse(ref.__forward_arg__, mode="eval")
-        walker = adapter.create_collector(globalns, localns)
-        if isinstance(walker, ast.NodeTransformer):
+        try:
+            _ = eval(ref.__forward_arg__, globalns, localns)
+        except:
+            ref_ast = ast.parse(ref.__forward_arg__, mode="eval")
+            walker = adapter.create_collector(globalns, localns)
             new_ast = walker.visit(ref_ast)
             if walker.modified:
-                ref_ast = ast.fix_missing_locations(new_ast)
-                ref = _t.ForwardRef(ast.unparse(ref_ast))
+                ref = _t.ForwardRef(ast.unparse(new_ast))
+            memo = TypeCheckMemo(globalns, localns | walker.collected)
         else:
-            walker.visit(ref_ast)
-        memo = TypeCheckMemo(globalns, localns | walker.collected)
+            memo = TypeCheckMemo(globalns, localns)
+
         try:
             check_type_internal(var, ref, memo)
         except TypeCheckError as e:
             e.args = (f"({adapter.id}) " + e.args[0],) + e.args[1:]
             raise
-        except TypeError as e:
-            if "is not subscriptable" not in e.args[0]:
-                raise
-            assert isinstance(ref_ast.body, ast.Subscript)
-            # When type reference is a specialized class, we
-            # have to concede by verifying unsubscripted type,
-            # as specialized class is a stub-only thing here.
-            # Lxml runtime does not support __class_getitem__
-            #
-            # FIXME: Only the simplest, unnested subscript supported.
-            # Need some work for more complex ones.
-            bare_type = ast.unparse(ref_ast.body.value)
-            try:
-                check_type_internal(var, _t.ForwardRef(bare_type), memo)
-            except TypeCheckError as e:
-                e.args = (f"({adapter.id}) " + e.args[0],) + e.args[1:]
-                raise
 
     return var

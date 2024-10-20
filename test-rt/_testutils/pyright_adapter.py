@@ -12,7 +12,7 @@ from .common import FilePos, NameCollectorBase, TypeCheckerAdapterBase, VarType
 class _NameCollector(NameCollectorBase):
     # Pyright inferred type results always contain bare names only,
     # so don't need to bother with visit_Attribute()
-    def visit_Name(self, node: ast.Name) -> None:
+    def visit_Name(self, node: ast.Name) -> ast.Name:
         name = node.id
         try:
             eval(name, self._globalns, self._localns | self.collected)
@@ -20,10 +20,9 @@ class _NameCollector(NameCollectorBase):
             for m in ("typing", "typing_extensions"):
                 if hasattr(self.collected[m], name):
                     self.collected[name] = getattr(self.collected[m], name)
-                    break
-            else:
-                raise
-
+                    return node
+            raise
+        return node
 
 class _TypeCheckerAdapter(TypeCheckerAdapterBase):
     id = "pyright"

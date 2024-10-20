@@ -25,8 +25,8 @@ class _MypyDiagObj(_t.TypedDict):
     message: str
 
 
-class _NameCollector(NameCollectorBase, ast.NodeTransformer):
-    def visit_Attribute(self, node: ast.Attribute) -> ast.AST:
+class _NameCollector(NameCollectorBase):
+    def visit_Attribute(self, node: ast.Attribute) -> ast.expr:
         prefix = ast.unparse(node.value)
         name = node.attr
 
@@ -49,9 +49,9 @@ class _NameCollector(NameCollectorBase, ast.NodeTransformer):
                     self.modified = True
                     return ast.Name(id=name, ctx=node.ctx)
 
-        node = _t.cast("ast.Attribute", self.generic_visit(node))
+        _ = self.visit(node.value)
 
-        if (resolved := getattr(self.collected[prefix], name, False)):
+        if resolved := getattr(self.collected[prefix], name, False):
             self.collected[ast.unparse(node)] = resolved
             return node
 
@@ -70,7 +70,7 @@ class _NameCollector(NameCollectorBase, ast.NodeTransformer):
     # but with a few exceptions (like tuple, Union).
     # visit_Attribute can ultimately recurse into visit_Name
     # as well
-    def visit_Name(self, node: ast.Name) -> ast.AST:
+    def visit_Name(self, node: ast.Name) -> ast.Name:
         name = node.id
         try:
             eval(name, self._globalns, self._localns | self.collected)
@@ -96,10 +96,10 @@ class _NameCollector(NameCollectorBase, ast.NodeTransformer):
     # For class defined inside local function scope, mypy outputs
     # something like "test_elem_class_lookup.FooClass@97".
     # Return only the left operand after processing.
-    def visit_BinOp(self, node: ast.BinOp) -> ast.AST:
+    def visit_BinOp(self, node: ast.BinOp) -> ast.expr:
         if isinstance(node.op, ast.MatMult) and isinstance(node.right, ast.Constant):
             # Mypy disallows returning Any
-            return _t.cast("ast.AST", self.visit(node.left))
+            return _t.cast("ast.expr", self.visit(node.left))
         # For expression that haven't been accounted for, just don't
         # process and allow name resolution to fail
         return node

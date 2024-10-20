@@ -3,7 +3,7 @@ import ast
 import importlib
 import pathlib
 import re
-from typing import Any, ClassVar, ForwardRef, Iterable, NamedTuple
+from typing import Any, ClassVar, ForwardRef, Iterable, NamedTuple, cast
 
 from lxml.etree import LXML_VERSION
 
@@ -39,7 +39,7 @@ class FuncSignatureError(Exception):
         return "{}(): {}".format(self._func, self.args[0])
 
 
-class NameCollectorBase(ast.NodeVisitor):
+class NameCollectorBase(ast.NodeTransformer):
     def __init__(
         self,
         globalns: dict[str, Any],
@@ -49,10 +49,32 @@ class NameCollectorBase(ast.NodeVisitor):
         self._globalns = globalns
         self._localns = localns
         self.modified: bool = False
+        # typing_extensions guaranteed to be present,
+        # as a dependency of typeguard
         self.collected: dict[str, Any] = {
             m: importlib.import_module(m)
             for m in ("builtins", "typing", "typing_extensions")
         }
+
+    def visit_Subscript(self, node: ast.Subscript) -> ast.expr:
+        node.value = cast("ast.expr", self.visit(node.value))
+        node.slice = cast("ast.expr", self.visit(node.slice))
+
+        # When type reference is a stub-only specialized class
+        # which don't have runtime support (lxml classes have
+        # no __class_getitem__), concede by verifying
+        # unsubscripted type.
+        try:
+            eval(ast.unparse(node), self._globalns, self._localns | self.collected)
+        except TypeError as e:
+            if "is not subscriptable" not in e.args[0]:
+                raise
+            # TODO Insert node.value dependent hook for extra
+            # varification of subscript type
+            self.modified = True
+            return node.value
+        else:
+            return node
 
 
 class TypeCheckerAdapterBase:
