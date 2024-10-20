@@ -79,7 +79,9 @@ class TestNamespaceLookup:
                 count += 1
         assert count == 7
 
-    def test_single_ns_all_tag_2(self, svg_filepath: pathlib.Path) -> None:
+    def test_single_ns_all_tag_2(
+        self, svg_filepath: pathlib.Path, request: pytest.FixtureRequest
+    ) -> None:
         """Class lookup that creates my single element type
         for all nodes under specific namespace, while proving
         that parser subscript type can't be modified"""
@@ -101,9 +103,18 @@ class TestNamespaceLookup:
         tree = _e.parse(svg_filepath, parser=parser)
         root = tree.getroot()
 
-        with pytest.raises(TypeCheckError, match="not an instance of .*MyBaseElement"):
+        if getattr(request.config, "types_lxml_build") == "multiclass":
+            # For multiclass build, .iter() is hardcoded to return _Element,
+            # and author is expected to do method / annotation overrides
+            # in their classes
             for e in root.iter():
                 reveal_type(e)
+        else:
+            with pytest.raises(
+                TypeCheckError, match="not an instance of .*MyBaseElement"
+            ):
+                for e in root.iter():
+                    reveal_type(e)
 
     def test_single_ns_single_tag_1(self, svg_filepath: pathlib.Path) -> None:
         """Decorator and non-decorator ways of adding per-tag
@@ -170,7 +181,9 @@ class TestNamespaceLookup:
                 count += 1
         assert count == 3
 
-    def test_default_ns(self, svg_filepath: pathlib.Path) -> None:
+    def test_default_ns(
+        self, svg_filepath: pathlib.Path, request: pytest.FixtureRequest
+    ) -> None:
         """Class lookup that creates my single element type
         for all nodes under all namespaces, behaving like
         ElementDefaultClassLookup"""
@@ -192,6 +205,13 @@ class TestNamespaceLookup:
         root = tree.getroot()
         reveal_type(root)
 
-        with pytest.raises(TypeCheckError, match="not an instance of .*MyBaseElement"):
+        if getattr(request.config, "types_lxml_build") == "multiclass":
+            # See test_single_ns_all_tag_2 test
             for e in root.iter():
                 reveal_type(e)
+        else:
+            with pytest.raises(
+                TypeCheckError, match="not an instance of .*MyBaseElement"
+            ):
+                for e in root.iter():
+                    reveal_type(e)

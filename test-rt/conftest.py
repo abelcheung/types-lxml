@@ -18,6 +18,11 @@ def pytest_collection_finish(session: pytest.Session) -> None:
         adapter.run_typechecker_on(files)
 
 
+def pytest_configure(config: pytest.Config) -> None:
+    # "normal" or "multiclass"
+    setattr(config, "types_lxml_build", "normal")
+
+
 def _bightml_filepath() -> Path:
     return Path(__file__).resolve().parent / "data" / "sample.html.xz"
 
