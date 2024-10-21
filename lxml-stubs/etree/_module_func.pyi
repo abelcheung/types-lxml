@@ -1,6 +1,11 @@
 import sys
 from typing import Any, Iterable, Literal, final, overload
 
+if sys.version_info >= (3, 11):
+    from typing import Never
+else:
+    from typing_extensions import Never
+
 if sys.version_info >= (3, 13):
     from typing import TypeIs
     from warnings import deprecated
@@ -109,10 +114,12 @@ def fromstring(
     base_url: _AnyStr | None = None,
 ) -> _Element: ...
 @overload
+@deprecated("Raises exception if input is a single string")
 def fromstringlist(
-    strings: Iterable[_AnyStr],
-    parser: _DefEtreeParsers[_ET_co],
-) -> _ET_co:
+    strings: _AnyStr,
+    *args: Any,
+    **kw: Any,
+) -> Never:
     """Parses an XML document from a sequence of strings.  Returns the
     root node (or the result returned by a parser target).
 
@@ -120,6 +127,11 @@ def fromstringlist(
     the ``parser`` keyword argument.
     """
 
+@overload
+def fromstringlist(
+    strings: Iterable[_AnyStr],
+    parser: _DefEtreeParsers[_ET_co],
+) -> _ET_co: ...
 @overload
 def fromstringlist(
     strings: Iterable[_AnyStr],
