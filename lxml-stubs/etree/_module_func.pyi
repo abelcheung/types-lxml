@@ -53,7 +53,29 @@ def parse(
     parser: _DefEtreeParsers[_ET_co],
     *,
     base_url: _AnyStr | None = None,
-) -> _ElementTree[_ET_co]: ...
+) -> _ElementTree[_ET_co]:
+    """Return an ElementTree object loaded with source elements.  If no parser
+    is provided as second argument, the default parser is used.
+
+    The ``source`` can be any of the following:
+
+    - a file name/path
+    - a file object
+    - a file-like object
+    - a URL using the HTTP or FTP protocol
+
+    To parse from a string, use the ``fromstring()`` function instead.
+
+    Note that it is generally faster to parse from a file path or URL
+    than from an open file object or file-like object.  Transparent
+    decompression from gzip compressed sources is supported (unless
+    explicitly disabled in libxml2).
+
+    The ``base_url`` keyword allows setting a URL for the document
+    when parsing from a file-like object.  This is needed when looking
+    up external entities (DTD, XInclude, ...) with relative paths.
+    """
+
 @overload
 def parse(
     source: _FileReadSource,
@@ -67,7 +89,18 @@ def fromstring(
     parser: _DefEtreeParsers[_ET_co],
     *,
     base_url: _AnyStr | None = None,
-) -> _ET_co: ...
+) -> _ET_co:
+    """Parses an XML document or fragment from a string.  Returns the
+    root node (or the result returned by a parser target).
+
+    To override the default parser with a different parser you can pass it to
+    the ``parser`` keyword argument.
+
+    The ``base_url`` keyword argument allows to set the original base URL of
+    the document to support relative Paths when looking up external entities
+    (DTD, XInclude, ...).
+    """
+
 @overload
 def fromstring(
     text: _AnyStr,
@@ -79,7 +112,14 @@ def fromstring(
 def fromstringlist(
     strings: Iterable[_AnyStr],
     parser: _DefEtreeParsers[_ET_co],
-) -> _ET_co: ...
+) -> _ET_co:
+    """Parses an XML document from a sequence of strings.  Returns the
+    root node (or the result returned by a parser target).
+
+    To override the default parser with a different parser you can pass it to
+    the ``parser`` keyword argument.
+    """
+
 @overload
 def fromstringlist(
     strings: Iterable[_AnyStr],
@@ -96,7 +136,60 @@ def tostring(
     exclusive: bool = False,
     inclusive_ns_prefixes: Iterable[_AnyStr] | None = None,
     with_comments: bool = True,
-) -> bytes: ...
+) -> bytes:
+    """Serialize an element to an encoded string representation of its XML tree.
+
+    Annotation
+    ----------
+    There are 4 function overloads:
+    1. C14N version 1 (``method="c14n"``) with its keyword arguments
+    2. C14N version 2 (``method="c14n2"``) with its keyword arguments
+    3. Other output methods, with ``encoding=str`` or ``encoding="unicode"``.
+    Returns native string. In this case the usage of ``xml_declaration``
+    argument is disallowed.
+    4. Other output methods, with all other encodings. Returns byte string.
+
+    Original docstring
+    ------------------
+    Defaults to ASCII encoding without XML declaration.  This
+    behaviour can be configured with the keyword arguments ``encoding``
+    (string) and ``xml_declaration`` (bool).  Note that changing the
+    encoding to a non UTF-8 compatible encoding will enable a
+    declaration by default.
+
+    You can also serialise to a Unicode string without declaration by
+    passing the name ``'unicode'`` as encoding (or the ``str`` function
+    in Py3 or ``unicode`` in Py2).  This changes the return value from
+    a byte string to an unencoded unicode string.
+
+    The keyword argument ``pretty_print`` (bool) enables formatted XML.
+
+    The keyword argument ``method`` selects the output method: 'xml',
+    'html', plain 'text' (text content without tags), 'c14n' or 'c14n2'.
+    Default is 'xml'.
+
+    With ``method="c14n"`` (C14N version 1), the options ``exclusive``,
+    ``with_comments`` and ``inclusive_ns_prefixes`` request exclusive
+    C14N, include comments, and list the inclusive prefixes respectively.
+
+    With ``method="c14n2"`` (C14N version 2), the ``with_comments`` and
+    ``strip_text`` options control the output of comments and text space
+    according to C14N 2.0.
+
+    Passing a boolean value to the ``standalone`` option will output
+    an XML declaration with the corresponding ``standalone`` flag.
+
+    The ``doctype`` option allows passing in a plain string that will
+    be serialised before the XML tree.  Note that passing in non
+    well-formed content here will make the XML output non well-formed.
+    Also, an existing doctype in the document tree will not be removed
+    when serialising an ElementTree instance.
+
+    You can prevent the tail text of the element from being serialised
+    by passing the boolean ``with_tail`` option.  This has no impact
+    on the tail text of children, which will always be serialised.
+    """
+
 @overload  # method="c14n2"
 def tostring(
     element_or_tree: _ElementOrTree,
@@ -105,7 +198,7 @@ def tostring(
     with_comments: bool = True,
     strip_text: bool = False,
 ) -> bytes: ...
-@overload  # Native str, no XML declaration
+@overload  # Native str, no XML declaration allowed
 def tostring(  # type: ignore[overload-overlap]  # pyright: ignore[reportOverlappingOverload]
     element_or_tree: _ElementOrTree,
     *,
@@ -116,7 +209,7 @@ def tostring(  # type: ignore[overload-overlap]  # pyright: ignore[reportOverlap
     standalone: bool | None = None,
     doctype: str | None = None,
 ) -> str: ...
-@overload  # byte str, no XML declaration
+@overload  # byte str
 def tostring(
     element_or_tree: _ElementOrTree,
     *,
@@ -133,7 +226,22 @@ def indent(
     space: str = "  ",
     *,
     level: int = 0,
-) -> None: ...
+) -> None:
+    """Indent an XML document by inserting newlines and indentation space
+    after elements.
+
+    ``tree`` is the ElementTree or Element to modify.  The (root) element
+    itself will not be changed, but the tail text of all elements in its
+    subtree will be adapted.
+
+    ``space`` is the whitespace to insert for each indentation level, two
+    space characters by default.
+
+    ``level`` is the initial indentation level. Setting this to a higher
+    value than 0 can be used for indenting subtrees that are more deeply
+    nested inside of a document.
+    """
+
 @deprecated(
     "For ElementTree 1.3 compat only; result is tostring() output wrapped inside a list"
 )
@@ -149,7 +257,8 @@ def tounicode(
     with_tail: bool = True,
     doctype: str | None = None,
 ) -> None: ...
-def iselement(element: object) -> TypeIs[_Element]: ...
+def iselement(element: object) -> TypeIs[_Element]:
+    """Checks if an object appears to be a valid element object."""
 
 # HACK PyCapsule needs annotation of ctypes.pythonapi, which has no
 # annotation support currently. Use generic object for now.
@@ -157,18 +266,12 @@ def iselement(element: object) -> TypeIs[_Element]: ...
 def adopt_external_document(
     capsule: object,
     parser: _DefEtreeParsers[_ET],
-) -> _ElementTree[_ET]: ...
-@overload
-def adopt_external_document(
-    capsule: object,
-    parser: None = None,
-) -> _ElementTree:
-    """
+) -> _ElementTree[_ET]:
+    """Unpack a libxml2 document pointer from a PyCapsule and
+    wrap it in an lxml ElementTree object.
+
     Original Docstring
     ------------------
-    Unpack a libxml2 document pointer from a PyCapsule and wrap it in an
-    lxml ElementTree object.
-
     This allows external libraries to build XML/HTML trees using libxml2
     and then pass them efficiently into lxml for further processing.
 
@@ -195,6 +298,11 @@ def adopt_external_document(
     should not be attempted after transferring the ownership.
     """
 
+@overload
+def adopt_external_document(
+    capsule: object,
+    parser: None = None,
+) -> _ElementTree: ...
 def register_namespace(prefix: _AnyStr, uri: _AnyStr) -> None:
     """Registers a namespace prefix that newly created Elements in that
     namespace will use.  The registry is global, and any existing
