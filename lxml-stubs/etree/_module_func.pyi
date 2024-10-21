@@ -222,7 +222,7 @@ def tostring(
     doctype: str | None = None,
 ) -> bytes: ...
 def indent(
-    element_or_tree: _ElementOrTree,
+    tree: _ElementOrTree,
     space: str = "  ",
     *,
     level: int = 0,
