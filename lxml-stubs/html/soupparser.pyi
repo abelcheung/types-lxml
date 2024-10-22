@@ -49,7 +49,19 @@ def fromstring(
     *args: Any,
     exclude_encodings: str,
     **kw: Any,
-) -> Never: ...
+) -> Never:
+    """Parse a string of HTML data into an Element tree using the
+    BeautifulSoup parser.
+
+    Returns the root ``<html>`` Element of the tree.
+
+    You can pass a different BeautifulSoup parser through the
+    `beautifulsoup` keyword, and a diffent Element factory function
+    through the `makeelement` keyword.  By default, the standard
+    ``BeautifulSoup`` class and the default factory of `lxml.html` are
+    used.
+    """
+
 @overload  # makeelement is positional
 def fromstring(
     data: _AnyStr | SupportsRead[str] | SupportsRead[bytes],
@@ -102,7 +114,16 @@ def parse(
     *args: Any,
     exclude_encodings: str,
     **kw: Any,
-) -> Never: ...
+) -> Never:
+    """Parse a file into an ElemenTree using the BeautifulSoup parser.
+
+    You can pass a different BeautifulSoup parser through the
+    `beautifulsoup` keyword, and a diffent Element factory function
+    through the `makeelement` keyword.  By default, the standard
+    ``BeautifulSoup`` class and the default factory of `lxml.html` are
+    used.
+    """
+
 @overload  # makeelement is positional
 def parse(
     file: _FileReadSource,
@@ -146,7 +167,16 @@ def parse(
 def convert_tree(
     beautiful_soup_tree: BeautifulSoup,
     makeelement: _ElementFactory[_ET],
-) -> list[_ET]: ...
+) -> list[_ET]:
+    """Convert a BeautifulSoup tree to a list of Element trees.
+
+    Returns a list instead of a single root Element to support
+    HTML-like soup with more than one root element.
+
+    You can pass a different Element factory through the `makeelement`
+    keyword.
+    """
+
 @overload
 def convert_tree(
     beautiful_soup_tree: BeautifulSoup,
