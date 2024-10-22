@@ -7,10 +7,12 @@ from typing import Any, cast
 from urllib.request import urlopen
 
 import _testutils
-import lxml.etree as etree
-import lxml.html as _html
 import pytest
 from bs4 import BeautifulSoup
+from lxml import (
+    etree as _e,
+    html as _h,
+)
 from lxml.etree import _Element as _Element, _ElementTree as _ElementTree
 from lxml.html import HtmlElement as HtmlElement, soupparser as _soup
 
@@ -75,18 +77,25 @@ class TestFromstring:
         reveal_type(result)
         del result
 
-        with pytest.raises(TypeError, match=r"object of type '\w+' has no len\(\)"):
-            _ = _soup.fromstring(cast(Any, None))
+        for arg in (1, None, html2_filepath):
+            with pytest.raises(TypeError, match=r"object of type '\w+' has no len\(\)"):
+                _ = _soup.fromstring(cast(Any, arg))
 
-        with pytest.raises(TypeError, match=r"object of type '\w+' has no len\(\)"):
-            _ = _soup.fromstring(cast(Any, html2_filepath))
+            with pytest.raises(TypeError, match=r"object is not subscriptable"):
+                _ = _soup.fromstring(cast(Any, {s}))
+
+        for arg2 in ([s, b], (s, b)):
+            with pytest.raises(
+                TypeError, match=r"expected string or bytes-like object"
+            ):
+                _ = _soup.fromstring(cast(Any, arg2))
 
     def test_makeelement(self, html2_str: str) -> None:
-        result1 = _soup.fromstring(html2_str, makeelement=_html.xhtml_parser.makeelement)
+        result1 = _soup.fromstring(html2_str, makeelement=_h.xhtml_parser.makeelement)
         reveal_type(result1)
         del result1
 
-        result2 = _soup.fromstring(html2_str, None, etree.Element)
+        result2 = _soup.fromstring(html2_str, None, _e.Element)
         reveal_type(result2)
         del result2
 
@@ -94,7 +103,7 @@ class TestFromstring:
             _ = _soup.fromstring(html2_str, makeelement=cast(Any, 1))
 
         with pytest.raises(TypeError, match="unexpected keyword argument 'attrib"):
-            _ = _soup.fromstring(html2_str, makeelement=cast(Any, etree.CommentBase))
+            _ = _soup.fromstring(html2_str, makeelement=cast(Any, _e.CommentBase))
 
     # Just test capability to pass extra keywords to beautifulsoup
     # no intention to cover all keyword arguments supported by bs
@@ -139,7 +148,14 @@ class TestParse:
         reveal_type(result)
         root = result.getroot()
         reveal_type(root)
-        del root, result
+        del result
+
+        result = _soup.parse(html2_filepath)
+        reveal_type(result)
+        root2 = result.getroot()
+        assert root.tag == root2.tag
+        assert root.attrib == root2.attrib
+        del root, root2, result
 
         s_io = StringIO(s)
         result = _soup.parse(s_io)
@@ -166,36 +182,28 @@ class TestParse:
         reveal_type(result)
         del result
 
-        with pytest.raises(
-            TypeError, match=r"expected str, bytes or os\.PathLike object"
-        ):
-            _ = _soup.parse(cast(Any, None))
+        # Don't test integers, which are treated as file descriptor int
 
-        # recwarn fixture, pytest.warns() and warnings.catch_warnings()
-        # all fail to catch this warning:
-        # MarkupResemblesLocatorWarning: The input looks more like a
-        # filename than markup. You may want to open this file and
-        # pass the filehandle into Beautiful Soup.
-        result = _soup.parse(cast(Any, html2_filepath))
-        reveal_type(result)
-        del result
+        for arg in (None, [html2_filepath, html2_filepath]):
+            with pytest.raises(
+                TypeError, match=r"expected str, bytes or os\.PathLike object"
+            ):
+                _ = _soup.parse(cast(Any, arg))
 
     def test_makeelement(self, html2_filepath: Path) -> None:
-        result1 = _soup.parse(
-            str(html2_filepath), makeelement=_html.xhtml_parser.makeelement
-        )
+        result1 = _soup.parse(html2_filepath, makeelement=_h.xhtml_parser.makeelement)
         reveal_type(result1.getroot())
         del result1
 
-        result2 = _soup.parse(str(html2_filepath), None, etree.Element)
+        result2 = _soup.parse(html2_filepath, None, _e.Element)
         reveal_type(result2.getroot())
         del result2
 
         with pytest.raises(TypeError, match="object is not callable"):
-            _ = _soup.parse(str(html2_filepath), makeelement=cast(Any, 1))
+            _ = _soup.parse(html2_filepath, makeelement=cast(Any, 1))
 
         with pytest.raises(TypeError, match="unexpected keyword argument 'attrib"):
-            _ = _soup.parse(str(html2_filepath), makeelement=cast(Any, etree.CommentBase))
+            _ = _soup.parse(html2_filepath, makeelement=cast(Any, _e.CommentBase))
 
     # Just test capability to pass extra keywords to beautifulsoup
     # no intention to cover all keyword arguments supported by bs
@@ -220,7 +228,7 @@ class TestConvertTree:
         _soup.convert_tree,
         (
             ("beautiful_soup_tree", Parameter.POSITIONAL_OR_KEYWORD, Parameter.empty),
-            ("makeelement", Parameter.POSITIONAL_OR_KEYWORD, None),
+            ("makeelement"        , Parameter.POSITIONAL_OR_KEYWORD, None           ),
         ),
     )  # fmt: skip
     def test_func_sig(self) -> None:
@@ -236,7 +244,7 @@ class TestConvertTree:
                 reveal_type(item)
             del soup, result
 
-        tree = _html.parse(html2_filepath)
+        tree = _h.parse(html2_filepath)
         s_io = StringIO(html2_filepath.read_text())
 
         for src1 in (tree, html2_filepath):
@@ -255,11 +263,11 @@ class TestConvertTree:
     def test_makeelement(self, html2_str: str) -> None:
         soup = BeautifulSoup(html2_str, features="html.parser")
 
-        result1 = _soup.convert_tree(soup, makeelement=_html.xhtml_parser.makeelement)
+        result1 = _soup.convert_tree(soup, makeelement=_h.xhtml_parser.makeelement)
         reveal_type(result1)
         del result1
 
-        result2 = _soup.convert_tree(soup, makeelement=etree.Element)
+        result2 = _soup.convert_tree(soup, makeelement=_e.Element)
         reveal_type(result2)
         del result2
 
@@ -267,4 +275,4 @@ class TestConvertTree:
             _ = _soup.convert_tree(soup, makeelement=cast(Any, 1))
 
         with pytest.raises(TypeError, match="unexpected keyword argument 'attrib"):
-            _ = _soup.convert_tree(soup, makeelement=cast(Any, etree.CommentBase))
+            _ = _soup.convert_tree(soup, makeelement=cast(Any, _e.CommentBase))

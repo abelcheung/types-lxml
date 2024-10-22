@@ -5,7 +5,7 @@ from _typeshed import SupportsRead
 from bs4 import BeautifulSoup, PageElement, SoupStrainer
 from bs4.builder import TreeBuilder
 
-from .._types import _ET, _AnyStr, _ElementFactory
+from .._types import _ET, _AnyStr, _ElementFactory, _FileReadSource
 from ..etree import _ElementTree
 from . import HtmlElement
 
@@ -90,8 +90,12 @@ def fromstring(
     element_classes: dict[type[PageElement], type[Any]] | None = None,
 ) -> HtmlElement: ...
 
-# Technically Path is also accepted for parse() file argument
-# but emits visible warning
+#
+# parse() actually allows supplying file descriptor int
+# as input. But this is just a side-effect of implementation
+# detail, which is very unintuitive and way off from common
+# usage patterns.
+#
 @overload  # guard against plain string in exclude_encodings
 @deprecated("Use encoding collection or iterator, not a vanilla encoding string")
 def parse(
@@ -101,7 +105,7 @@ def parse(
 ) -> Never: ...
 @overload  # makeelement is positional
 def parse(
-    file: _AnyStr | SupportsRead[str] | SupportsRead[bytes],
+    file: _FileReadSource,
     beautifulsoup: type[BeautifulSoup] | None,
     makeelement: _ElementFactory[_ET],
     *,
@@ -114,7 +118,7 @@ def parse(
 ) -> _ElementTree[_ET]: ...
 @overload
 def parse(  # makeelement is kw
-    file: _AnyStr | SupportsRead[str] | SupportsRead[bytes],
+    file: _FileReadSource,
     beautifulsoup: type[BeautifulSoup] | None = None,
     *,
     makeelement: _ElementFactory[_ET],
@@ -127,7 +131,7 @@ def parse(  # makeelement is kw
 ) -> _ElementTree[_ET]: ...
 @overload  # makeelement not provided or is default
 def parse(
-    file: _AnyStr | SupportsRead[str] | SupportsRead[bytes],
+    file: _FileReadSource,
     beautifulsoup: type[BeautifulSoup] | None = None,
     makeelement: None = None,
     *,
