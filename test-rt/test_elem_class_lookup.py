@@ -58,6 +58,7 @@ class TestNamespaceLookup:
         for all nodes under specific namespace"""
         lookup = _e.ElementNamespaceClassLookup()
         ns = lookup.get_namespace(self.FOONS)
+
         @ns(None)
         class MyBaseElement(ElementBase):
             pass
@@ -87,6 +88,7 @@ class TestNamespaceLookup:
         that parser subscript type can't be modified"""
         lookup = _e.ElementNamespaceClassLookup()
         ns = lookup.get_namespace(self.FOONS)
+
         @ns(None)
         class MyBaseElement(ElementBase):
             pass
@@ -122,6 +124,7 @@ class TestNamespaceLookup:
         """
         lookup = _e.ElementNamespaceClassLookup()
         ns = lookup.get_namespace(self.FOONS)
+
         @ns
         class title(ElementBase):  # pyright: ignore[reportUnusedClass]
             pass
@@ -134,7 +137,8 @@ class TestNamespaceLookup:
 
         class emph(ElementBase):
             pass
-        ns['emph'] = emph
+
+        ns["emph"] = emph
 
         parser = XMLParser()
         parser.set_element_class_lookup(lookup)
@@ -155,18 +159,21 @@ class TestNamespaceLookup:
         are different"""
         lookup = _e.ElementNamespaceClassLookup()
         ns = lookup.get_namespace(self.FOONS)
+
         @ns("title")
         class _TitleClass(ElementBase):  # pyright: ignore[reportUnusedClass]
             pass
 
         class _DescClass(ElementBase):
             pass
+
         # mypy error: Cannot assign to a type
         _DescClass = ns("descr")(_DescClass)  # type: ignore[misc]
 
         class _EmphClass(ElementBase):
             pass
-        ns['emph'] = _EmphClass
+
+        ns["emph"] = _EmphClass
 
         parser = XMLParser()
         parser.set_element_class_lookup(lookup)
@@ -189,6 +196,7 @@ class TestNamespaceLookup:
         ElementDefaultClassLookup"""
         lookup = _e.ElementNamespaceClassLookup()
         ns = lookup.get_namespace(None)
+
         @ns(None)
         class MyBaseElement(ElementBase):
             pass

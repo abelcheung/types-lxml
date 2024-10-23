@@ -43,52 +43,52 @@ def bightml_bin_fp() -> _t.Iterator[lzma.LZMAFile]:
 # and don't include Iterator/Generator
 @pytest.fixture
 def bightml_txt_fp() -> _t.Iterator[_t.TextIO]:
-    fp = lzma.open(_bightml_filepath(), "rt", encoding='utf-8')
+    fp = lzma.open(_bightml_filepath(), "rt", encoding="utf-8")
     yield fp
     if not fp.closed:
         fp.close()
 
 
-@pytest.fixture(scope='session')
+@pytest.fixture(scope="session")
 def bightml_str() -> str:
-    with lzma.open(_bightml_filepath(), "rt", encoding='utf-8') as f:
+    with lzma.open(_bightml_filepath(), "rt", encoding="utf-8") as f:
         result = f.read()
     return result
 
 
-@pytest.fixture(scope='session')
+@pytest.fixture(scope="session")
 def bightml_bytes() -> bytes:
     with lzma.open(_bightml_filepath(), "rb") as f:
         result = f.read()
     return result
 
 
-@pytest.fixture(scope='session')
+@pytest.fixture(scope="session")
 def html2_filepath() -> Path:
     return Path(__file__).resolve().parent / "data" / "mdn-sample.html"
 
 
-@pytest.fixture(scope='session')
+@pytest.fixture(scope="session")
 def html2_fileuri(html2_filepath: Path) -> str:
     return "file:///" + str(html2_filepath)
 
 
-@pytest.fixture(scope='session')
+@pytest.fixture(scope="session")
 def html2_str(html2_filepath: Path) -> str:
     return html2_filepath.read_text()
 
 
-@pytest.fixture(scope='session')
+@pytest.fixture(scope="session")
 def html2_bytes(html2_filepath: Path) -> bytes:
     return html2_filepath.read_bytes()
 
 
-@pytest.fixture(scope='session')
+@pytest.fixture(scope="session")
 def svg_filepath() -> Path:
     return Path(__file__).resolve().parent / "data" / "w3c-example.svg"
 
 
-@pytest.fixture(scope='session')
+@pytest.fixture(scope="session")
 def xml2_filepath() -> Path:
     return Path(__file__).resolve().parent / "data" / "shiporder.xml"
 
@@ -136,7 +136,7 @@ def xml2_root(xml2_tree: _e._ElementTree) -> _e._Element:
     return xml2_tree.getroot()
 
 
-@pytest.fixture(scope='session')
+@pytest.fixture(scope="session")
 def xinc_sample_data(xml2_filepath: Path) -> str:
     inc_href = PurePosixPath(xml2_filepath.resolve().relative_to(Path.cwd()))
     return """<doc xmlns:xi="http://www.w3.org/2001/XInclude">
