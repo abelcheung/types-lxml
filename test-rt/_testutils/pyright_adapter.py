@@ -24,6 +24,7 @@ class _NameCollector(NameCollectorBase):
             raise
         return node
 
+
 class _TypeCheckerAdapter(TypeCheckerAdapterBase):
     id = "pyright"
     typechecker_result = {}

@@ -155,7 +155,9 @@ class TestFromstringFamily:
             ("fromstring",),
         ],
     )
-    def test_invalid_src(self, html2_str: str, html2_filepath: Path, funcname: str) -> None:
+    def test_invalid_src(
+        self, html2_str: str, html2_filepath: Path, funcname: str
+    ) -> None:
         sio = StringIO(html2_str)
         fh = open(html2_filepath, "rb")
         for src in (None, sio, fh):
