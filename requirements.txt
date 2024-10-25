@@ -1,3 +1,0 @@
-types-beautifulsoup4
-typing_extensions ~= 4.10
-cssselect ~= 1.2
