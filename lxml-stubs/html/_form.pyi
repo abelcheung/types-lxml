@@ -39,6 +39,8 @@ class FormElement(HtmlElement):
     action: str | None
     method: str
     def form_values(self) -> list[tuple[str, str]]: ...
+    @property
+    def _name(self) -> str: ...
 
 # FieldsDict is actually MutableMapping *sans* __delitem__
 # However it is much simpler to keep MutableMapping and only
