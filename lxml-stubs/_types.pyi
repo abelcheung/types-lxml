@@ -1,4 +1,3 @@
-import sys
 from os import PathLike
 from typing import (
     Any,
@@ -14,37 +13,32 @@ from typing import (
 
 from _typeshed import SupportsRead, SupportsWrite
 
-if sys.version_info >= (3, 10):
-    from typing import TypeAlias
-else:
-    from typing_extensions import TypeAlias
-
 from .etree import HTMLParser, QName, XMLParser, _Element, _ElementTree
 
 _KT_co = TypeVar("_KT_co", covariant=True)
 _VT_co = TypeVar("_VT_co", covariant=True)
 
 # Dup but deviate from recent _typeshed
-Unused: TypeAlias = Any
+Unused = Any
 
 # ElementTree API is notable of canonicalizing byte / unicode input data.
 # This type alias should only be used for input arguments, while one would
 # expect plain str in return type for most part of API (except a few places),
 # as far as python3 annotation is concerned.
 # Not to be confused with typing.AnyStr which is TypeVar.
-_AnyStr: TypeAlias = str | bytes
+_AnyStr = str | bytes
 
-# String argument also support QName in various places
-_TextArg: TypeAlias = str | bytes | QName
+# String argument also support QName in various places;
+# also include aliases semantically indicating the purpose
+# of text argument
+_TextArg = str | bytes | QName
+_TagName = str | bytes | QName
+_AttrName = str | bytes | QName
+_AttrVal = str | bytes | QName
 
 # On the other hand, Elementpath API doesn't do str/byte canonicalization,
 # only unicode accepted for py3
-_ElemPathArg: TypeAlias = str | QName
-
-# Aliases semantically indicating the purpose of text argument
-_TagName: TypeAlias = _TextArg
-_AttrName: TypeAlias = _TextArg
-_AttrVal: TypeAlias = _TextArg
+_ElemPathArg = str | QName
 
 # Due to Mapping having invariant key types, Mapping[A | B, ...]
 # would fail to validate against either Mapping[A, ...] or Mapping[B, ...]
@@ -73,7 +67,7 @@ _StrictNSMap = (
 
 # Some namespace map arguments also accept tuple form
 # such as in dict()
-_NSTuples: TypeAlias = Iterable[tuple[_AnyStr | None, _AnyStr]]
+_NSTuples = Iterable[tuple[_AnyStr | None, _AnyStr]]
 
 # https://lxml.de/extensions.html#xpath-extension-functions
 # The returned result of extension function itself is not exactly Any,
@@ -162,9 +156,9 @@ class _ElementFactory(Protocol, Generic[_ET_co]):
 # but checks for exact element *factory functions* instead
 # (etree.Element() and friends). Python typing system doesn't
 # support such outlandish usage. Use a generic callable instead.
-_TagSelector: TypeAlias = _TagName | Callable[..., _Element]
+_TagSelector = _TagName | Callable[..., _Element]
 
-_ElementOrTree: TypeAlias = _ET | _ElementTree[_ET]
+_ElementOrTree = _ET | _ElementTree[_ET]
 
 # The basic parsers bundled in lxml.etree
 _DefEtreeParsers = XMLParser[_ET_co] | HTMLParser[_ET_co]

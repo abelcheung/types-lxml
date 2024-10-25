@@ -1,10 +1,4 @@
-import sys
 from typing import Any, Iterable, Literal, MutableMapping, overload
-
-if sys.version_info >= (3, 10):
-    from typing import TypeAlias
-else:
-    from typing_extensions import TypeAlias
 
 from .. import etree
 from .._types import (
@@ -16,7 +10,7 @@ from .._types import (
 )
 from ._element import HtmlElement
 
-_HtmlElemParser: TypeAlias = _DefEtreeParsers[HtmlElement]
+_HtmlElemParser = _DefEtreeParsers[HtmlElement]
 
 #
 # Parser

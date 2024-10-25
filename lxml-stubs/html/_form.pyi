@@ -12,11 +12,6 @@ from typing import (
     overload,
 )
 
-if sys.version_info >= (3, 10):
-    from typing import TypeAlias
-else:
-    from typing_extensions import TypeAlias
-
 if sys.version_info >= (3, 11):
     from typing import Never
 else:
@@ -27,7 +22,7 @@ from ._element import HtmlElement
 
 _T = TypeVar("_T")
 
-_AnyInputElement: TypeAlias = InputElement | SelectElement | TextareaElement
+_AnyInputElement = InputElement | SelectElement | TextareaElement
 
 class FormElement(HtmlElement):
     @property

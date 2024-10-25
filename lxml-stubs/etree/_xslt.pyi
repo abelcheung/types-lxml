@@ -6,11 +6,6 @@ import abc
 import sys
 from typing import Any, ClassVar, Literal, TypedDict, final, overload
 
-if sys.version_info >= (3, 10):
-    from typing import TypeAlias
-else:
-    from typing_extensions import TypeAlias
-
 if sys.version_info >= (3, 13):
     from warnings import deprecated
 else:
@@ -30,7 +25,7 @@ from ._serializer import SerialisationError
 from ._xmlerror import _ListErrorLog
 from ._xpath import XPath
 
-_Stylesheet_Param: TypeAlias = _XSLTQuotedStringParam | XPath | str
+_Stylesheet_Param = _XSLTQuotedStringParam | XPath | str
 
 # exported constants
 LIBXSLT_VERSION: tuple[int, int, int]

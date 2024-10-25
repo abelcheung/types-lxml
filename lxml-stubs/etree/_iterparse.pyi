@@ -3,11 +3,6 @@ from typing import Collection, Iterable, Iterator, Literal, TypeVar, overload
 
 from _typeshed import SupportsRead
 
-if sys.version_info >= (3, 10):
-    from typing import TypeAlias
-else:
-    from typing_extensions import TypeAlias
-
 if sys.version_info >= (3, 11):
     from typing import LiteralString
 else:
@@ -32,8 +27,8 @@ _T_co = TypeVar("_T_co", covariant=True)
 
 # See https://lxml.de/parsing.html#event-types
 # Undocumented: 'comment' and 'pi' are actually supported!
-_NoNSEventNames: TypeAlias = Literal["start", "end", "comment", "pi"]
-_SaxNsEventValues: TypeAlias = tuple[str, str] | None  # for start-ns & end-ns event
+_NoNSEventNames = Literal["start", "end", "comment", "pi"]
+_SaxNsEventValues = tuple[str, str] | None  # for start-ns & end-ns event
 
 class iterparse(Iterator[_T_co]):
     """Incremental parser
