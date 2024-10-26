@@ -71,7 +71,6 @@ excludes = [
     '/*.py',
 ]
 source-includes = [
-    'requirements.txt',
     'test-rt/',
     'test-stub/',
     'tox.ini',

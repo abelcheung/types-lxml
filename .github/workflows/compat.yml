@@ -9,8 +9,6 @@ jobs:
       fail-fast: false
       matrix:
         myver:
-          - 1.10.0
-          - 1.10.1
           - 1.11.0
           - 1.11.1
           - 1.11.2
@@ -20,14 +18,24 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v4
+
       - uses: actions/setup-python@v5
         with:
-          python-version: 3.11
+          python-version: '3.10'
           cache: 'pip'
+
+      - uses: astral-sh/setup-uv@v3
+        with:
+          version: '0.4.27'
+          enable-cache: true
+          cache-dependency-glob: |
+            **/pyproject.toml
+
       - name: Install requirements
         run: |
-          pip install --progress-bar=off -r requirements.txt
-          pip install --progress-bar=off 'mypy == ${{ matrix.myver }}'
+          uv pip install -r pyproject.toml
+          uv pip install 'mypy == ${{ matrix.myver }}'
+
       - name: Perform check on source
         run: mypy lxml-stubs
 
@@ -70,15 +78,28 @@ jobs:
           - 1.1.382
           - 1.1.383
           - 1.1.384
+          - 1.1.385
+          - 1.1.386
     runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v4
+
       - uses: actions/setup-python@v5
         with:
-          python-version: 3.11
+          python-version: '3.10'
           cache: 'pip'
+
+      - uses: astral-sh/setup-uv@v3
+        with:
+          version: '0.4.27'
+          enable-cache: true
+          cache-dependency-glob: |
+            **/pyproject.toml
+
       - name: Install requirements
-        run: pip install --progress-bar=off -r requirements.txt
+        run: |
+          uv pip install -r pyproject.toml
+
       - uses: jakebailey/pyright-action@v2
         with:
           version: ${{ matrix.prver }}
