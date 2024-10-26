@@ -41,7 +41,7 @@ Element: _ElementFactory
 # type annotation attribute is modified.
 # OE users need to use E-factory for more flexibility.
 @overload
-def SubElement(  # type: ignore[overload-overlap]
+def SubElement(
     _parent: ObjectifiedElement,
     _tag: _TagName,
     /,

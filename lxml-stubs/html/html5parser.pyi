@@ -55,14 +55,14 @@ def document_fromstring(
 # 2 for html (bytes/str)
 # 2 for no_leading_text (true/false)
 @overload  # html=bytes, no_leading_text=true
-def fragments_fromstring(  # type: ignore[overload-overlap]  # pyright: ignore[reportOverlappingOverload]
+def fragments_fromstring(  # pyright: ignore[reportOverlappingOverload]
     html: bytes,
     no_leading_text: Literal[True],
     guess_charset: bool | None = None,
     parser: HTMLParser | None = None,
 ) -> list[_Element]: ...
 @overload  # html=str, no_leading_text=true
-def fragments_fromstring(  # type: ignore[overload-overlap]  # pyright: ignore[reportOverlappingOverload]
+def fragments_fromstring(  # pyright: ignore[reportOverlappingOverload]
     html: str,
     no_leading_text: Literal[True],
     guess_charset: None = None,
