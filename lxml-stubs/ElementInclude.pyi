@@ -7,7 +7,7 @@ else:
 
 from typing import Literal, Protocol, overload
 
-from lxml.etree import LxmlSyntaxError, _Element
+from .etree import LxmlSyntaxError, _Element
 
 from ._types import Unused, _ElementOrTree
 
