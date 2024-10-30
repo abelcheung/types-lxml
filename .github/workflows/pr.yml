@@ -26,16 +26,10 @@ jobs:
         python-version: '3.10'
         cache: 'pip'
 
-    - uses: astral-sh/setup-uv@v3
-      with:
-        version: '0.4.27'
-        enable-cache: true
-        cache-dependency-glob: |
-          **/pyproject.toml
-
-    - name: Install requirements
+    - name: Install prerequisites
       run: |
-        uv pip install -r pyproject.toml
+        pip install --progress-bar=off . mypy==1.11.*
+        pip uninstall -y types-lxml
 
     - name: Mypy review
       id: mypy
@@ -45,8 +39,7 @@ jobs:
         level: warning
         target: lxml-stubs
         fail_on_error: true
-        setup_command: pip install mypy==1.11.*
-        setup_method: install
+        setup_method: nothing
         install_types: false
         output_json: true
 

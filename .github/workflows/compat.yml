@@ -19,25 +19,25 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: actions/setup-python@v5
-        with:
-          python-version: '3.10'
-          cache: 'pip'
-
       - uses: astral-sh/setup-uv@v3
         with:
           version: '0.4.27'
           enable-cache: true
           cache-dependency-glob: |
-            **/pyproject.toml
+            ./pyproject.toml
+            ./tox.ini
 
-      - name: Install requirements
+      - name: Install prerequisites
         run: |
+          uv python install 3.10
+          uv venv --python-preference only-managed
           uv pip install -r pyproject.toml
           uv pip install 'mypy == ${{ matrix.myver }}'
 
-      - name: Perform check on source
-        run: mypy lxml-stubs
+      - name: Perform type check
+        run: |
+          source .venv/bin/activate
+          mypy lxml-stubs
 
   pyright_compat:
     strategy:
@@ -84,22 +84,21 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: actions/setup-python@v5
-        with:
-          python-version: '3.10'
-          cache: 'pip'
-
       - uses: astral-sh/setup-uv@v3
         with:
           version: '0.4.27'
           enable-cache: true
           cache-dependency-glob: |
-            **/pyproject.toml
+            ./pyproject.toml
+            ./tox.ini
 
-      - name: Install requirements
+      - name: Install prerequisites
         run: |
+          uv python install 3.10
+          uv venv --python-preference only-managed
           uv pip install -r pyproject.toml
 
       - uses: jakebailey/pyright-action@v2
         with:
           version: ${{ matrix.prver }}
+          python-path: .venv/bin/python
