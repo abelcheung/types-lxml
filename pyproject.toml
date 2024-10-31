@@ -46,7 +46,8 @@ homepage = 'https://github.com/abelcheung/types-lxml'
 test = [
     'tox ~= 4.22',
     'mypy ~= 1.11',
-    'pyright >= 1.1.351',
+    # https://github.com/microsoft/pyright/issues/9286
+    'pyright >= 1.1.386',
     'typeguard >= 3.0; python_full_version < "3.12.4"',
     'typeguard >= 4.3.0; python_full_version >= "3.12.4"',
     'pytest >= 7.0, < 9',
@@ -237,7 +238,7 @@ commands = [[
 change_dir = '{tox_root}/test-rt'
 commands = [['pytest', {replace = 'posargs', default = ['.'], extend = true}]]
 commands_pre = [
-    ['pyright', '--level', 'error'],
+    ['pyright', '--level', 'error', '.'],
     # HACK Resort to mypy.api since command line doesn't know
     # how to dump to file or discard output, and tox doesn't
     # support shell semantics.
