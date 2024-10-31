@@ -150,9 +150,6 @@ minversion = "7.0"
 addopts = "--tb=short"
 
 [tool.tox]
-requires = [
-    'tox-gh-actions ~= 3.2',
-]
 env_list = [
     # No project maintenance related envs here
     {replace = 'ref', of = ['tool', 'tox', 'labels', 'typecheck'], extend = true},
