@@ -87,14 +87,18 @@ jobs:
         python-version: ${{ matrix.pyver }}
         cache: 'pip'
 
+    # Trigger npm install pyright once, otherwise
+    # tox run-parallel would cause multiple concurrent
+    # installation into same location and fail
+    # RobertCraigie/pyright-python#318
     - name: Install prerequisites
-      run: >
-        pip install --progress-bar=off -v
-        "tox-gh-actions == 3.2.0"
+      run: |
+        pip install --progress-bar=off -v "tox-gh-actions == 3.2.0"
+        tox run -e pyright -- --version
 
     - name: Test runtime
       run: >
-        tox run -v
+        tox run-parallel -v
         --skip-env='.*-stub$'
         --result-json test-${{ inputs.flavor }}-rt-${{ matrix.os }}-py${{ matrix.pyver }}.json
 
