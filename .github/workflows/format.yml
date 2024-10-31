@@ -36,9 +36,8 @@ jobs:
 
       - name: Type checker validation on source
         run: >
-          tox run-parallel
-          --parallel-no-spinner -v
-          -e mypy,pyright
+          tox run-parallel -v
+          -m typecheck
 
       - uses: peter-evans/create-pull-request@v7
         with:

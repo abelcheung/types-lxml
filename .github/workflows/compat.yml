@@ -25,7 +25,6 @@ jobs:
           enable-cache: true
           cache-dependency-glob: |
             ./pyproject.toml
-            ./tox.ini
 
       - name: Install prerequisites
         run: |
@@ -90,7 +89,6 @@ jobs:
           enable-cache: true
           cache-dependency-glob: |
             ./pyproject.toml
-            ./tox.ini
 
       - name: Install prerequisites
         run: |

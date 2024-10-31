@@ -44,7 +44,7 @@ homepage = 'https://github.com/abelcheung/types-lxml'
 
 [project.optional-dependencies]
 test = [
-    'tox ~= 4.0',
+    'tox ~= 4.22',
     'mypy ~= 1.11',
     'pyright >= 1.1.351',
     'typeguard >= 3.0; python_full_version < "3.12.4"',
@@ -55,6 +55,35 @@ test = [
     'lxml >= 4.9',
     'beautifulsoup4 ~= 4.8'
 ]
+
+# mostly pinned for tox testing
+[dependency-groups]
+basic = [
+    "types-beautifulsoup4 == 4.12.0.20240907",
+    "typing_extensions == 4.12.2; python_version < '3.13'",
+    "cssselect == 1.2.0",
+]
+mypy    = ["mypy == 1.11.2"]
+pyright = ["pyright == 1.1.386"]
+format  = ["ruff ~= 0.6"]
+stub-test = [
+    "pytest-mypy-plugins == 3.1.2",
+    {include-group = "mypy"},
+]
+rt-test = [
+    'typeguard == 3.0; python_full_version < "3.12.4"',
+    'typeguard == 4.3.0; python_full_version >= "3.12.4"',
+    "pytest == 8.3.3",
+    "beautifulsoup4 == 4.12.3",
+    "html5lib == 1.1",
+    {include-group = "mypy"},
+    {include-group = "pyright"},
+]
+lxml49 = ["lxml == 4.9.4"]
+lxml50 = ["lxml == 5.0.2"]
+lxml51 = ["lxml == 5.1.1"]
+lxml52 = ["lxml == 5.2.2"]
+lxml53 = ["lxml == 5.3.0"]
 
 [tool.pdm.version]
 source = 'scm'
@@ -73,19 +102,9 @@ excludes = [
 source-includes = [
     'test-rt/',
     'test-stub/',
-    'tox.ini',
 ]
 
 [tool.setuptools_scm]
-
-[tool.isort]
-profile = 'black'
-combine_as_imports = true
-skip = [".git", ".github", ".venv", ".tox"]
-extra_standard_library = [
-    "typing_extensions",
-    "_typeshed",
-]
 
 [tool.pyright]
 include = ['lxml-stubs']
@@ -129,3 +148,169 @@ combine-as-imports = true
 [tool.pytest.ini_options]
 minversion = "7.0"
 addopts = "--tb=short"
+
+[tool.tox]
+requires = [
+    'tox-gh-actions ~= 3.2',
+]
+env_list = [
+    # No project maintenance related envs here
+    {replace = 'ref', of = ['tool', 'tox', 'labels', 'typecheck'], extend = true},
+    {replace = 'ref', of = ['tool', 'tox', 'labels', 'static'   ], extend = true},
+    {replace = 'ref', of = ['tool', 'tox', 'labels', 'runtime'  ], extend = true},
+]
+
+[tool.tox.labels]
+typecheck = [
+    'pyright',
+    'mypy',
+]
+static = [
+    'py38-stub',
+    'py39-stub',
+    'py310-stub',
+    'py311-stub',
+    'py312-stub',
+    'py313-stub',
+]
+runtime = [
+    'py310-rt-lxml49',
+    'py310-rt-lxml50',
+    'py310-rt-lxml51',
+    'py310-rt-lxml52',
+    'py310-rt-lxml53',
+    'py311-rt-lxml49',
+    'py311-rt-lxml50',
+    'py311-rt-lxml51',
+    'py311-rt-lxml52',
+    'py311-rt-lxml53',
+    'py312-rt-lxml49',
+    'py312-rt-lxml50',
+    'py312-rt-lxml51',
+    'py312-rt-lxml52',
+    'py312-rt-lxml53',
+    'py313-rt-lxml53',
+]
+
+# HACK Taking advantage of tox-gh-actions using
+# its own string processing when parsing config,
+# therefore works even when migrating tox config
+# to TOML. Beware that tox-gh-actions version
+# must be hardcoded to 3.2.0
+[tool.tox.gh-actions]
+python = """
+    3.8: py38
+    3.9: py39
+    3.10: py310
+    3.11: py311
+    3.12: py312
+    3.13: py313
+    """
+
+[tool.tox.env_run_base.set_env]
+PYTHONUTF8 = '1'
+
+[tool.tox.env.mypy]
+description = 'Use mypy to check annotation files for error'
+package = 'skip'
+dependency_groups = [
+    'basic',
+    'mypy',
+]
+commands = [['mypy', {replace = 'posargs', extend = true}]]
+
+[tool.tox.env.pyright]
+description = 'Use pyright to check annotation files for error'
+package = 'skip'
+dependency_groups = [
+    'basic',
+    'pyright',
+]
+commands = [['pyright', {replace = 'posargs', extend = true}]]
+
+[tool.tox._env_stub]
+dependency_groups = ['stub-test']
+commands = [[
+    'pytest',
+    '--mypy-ini-file=test-stub/mypy-pytest.ini',
+    {replace = 'posargs', default = ['test-stub'], extend = true},
+]]
+
+[tool.tox._env_rt]
+change_dir = '{tox_root}/test-rt'
+commands = [['pytest', {replace = 'posargs', default = ['.'], extend = true}]]
+commands_pre = [
+    ['pyright', '--level', 'error'],
+    # HACK Resort to mypy.api since command line doesn't know
+    # how to dump to file or discard output, and tox doesn't
+    # support shell semantics.
+    # Besides, early 1.11.* mypy unconditionally exits uncleanly
+    # when JSON output is requested. So use text mode here,
+    # unlike what's actually done in mypy_adapter.py
+    [
+        'python', '-c',
+        '''
+from mypy.api import run
+r=run(["--config-file=rttest-mypy.ini","."])
+for line in r[0].splitlines():
+    if ": note:" not in line:
+        print(line.strip())
+exit(r[2])
+        '''
+    ],
+]
+
+[tool.tox._env_lxml49]
+dependency_groups = ['rt-test', 'lxml49']
+
+[tool.tox._env_lxml50]
+dependency_groups = ['rt-test', 'lxml50']
+
+[tool.tox._env_lxml51]
+dependency_groups = ['rt-test', 'lxml51']
+
+[tool.tox._env_lxml52]
+dependency_groups = ['rt-test', 'lxml52']
+
+[tool.tox._env_lxml53]
+dependency_groups = ['rt-test', 'lxml53']
+
+[tool.tox.env]
+py38-stub  = {base = ['_env_stub']}
+py39-stub  = {base = ['_env_stub']}
+py310-stub = {base = ['_env_stub']}
+py311-stub = {base = ['_env_stub']}
+py312-stub = {base = ['_env_stub']}
+py313-stub = {base = ['_env_stub']}
+py310-rt-lxml49 = {base = ['_env_rt', '_env_lxml49']}
+py310-rt-lxml50 = {base = ['_env_rt', '_env_lxml50']}
+py310-rt-lxml51 = {base = ['_env_rt', '_env_lxml51']}
+py310-rt-lxml52 = {base = ['_env_rt', '_env_lxml52']}
+py310-rt-lxml53 = {base = ['_env_rt', '_env_lxml53']}
+py311-rt-lxml49 = {base = ['_env_rt', '_env_lxml49']}
+py311-rt-lxml50 = {base = ['_env_rt', '_env_lxml50']}
+py311-rt-lxml51 = {base = ['_env_rt', '_env_lxml51']}
+py311-rt-lxml52 = {base = ['_env_rt', '_env_lxml52']}
+py311-rt-lxml53 = {base = ['_env_rt', '_env_lxml53']}
+py312-rt-lxml49 = {base = ['_env_rt', '_env_lxml49']}
+py312-rt-lxml50 = {base = ['_env_rt', '_env_lxml50']}
+py312-rt-lxml51 = {base = ['_env_rt', '_env_lxml51']}
+py312-rt-lxml52 = {base = ['_env_rt', '_env_lxml52']}
+py312-rt-lxml53 = {base = ['_env_rt', '_env_lxml53']}
+py313-rt-lxml53 = {base = ['_env_rt', '_env_lxml53']}
+
+[tool.tox.env.build-normal]
+pass_env = ['PDM_BUILD_SCM_VERSION']
+deps = ['build']
+package = 'skip'
+commands = [[
+    'python', '-m', 'build',
+    {replace = 'posargs', extend = true},
+]]
+
+[tool.tox.env.build-alt]
+base = ['env.build-normal']
+allowlist_externals = ['git']
+commands_pre  = [['git', 'apply',              'multi-subclass.patch']]
+commands_post = [['git', 'apply', '--reverse', 'multi-subclass.patch']]
+

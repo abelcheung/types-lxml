@@ -83,6 +83,5 @@ jobs:
     - name: Run type checker on source
       run: >
         tox run-parallel -v
-        --parallel-no-spinner
-        -e mypy,pyright
+        -m typecheck
 
