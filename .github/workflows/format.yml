@@ -26,17 +26,19 @@ jobs:
           args: 'format'
           src: '.'
 
-      - uses: actions/setup-python@v5
+      - uses: astral-sh/setup-uv@v3
         with:
-          python-version: '3.11'
-          cache: 'pip'
+          version: '0.4.27'
+          enable-cache: true
+          cache-dependency-glob: |
+            ./pyproject.toml
 
-      - name: Install tox
-        run: pip install --progress-bar=off tox
-
-      - name: Type checker validation on source
+      - name: Run type checker on source
         run: >
-          tox run-parallel -v
+          uvx
+          --python-preference only-system
+          tox@4.23.2
+          run-parallel -vv
           -m typecheck
 
       - uses: peter-evans/create-pull-request@v7

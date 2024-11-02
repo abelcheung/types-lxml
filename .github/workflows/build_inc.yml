@@ -24,26 +24,32 @@ jobs:
         ref: ${{ inputs.gitref }}
         fetch-depth: 0  # detect tagged ver in repo
 
-    - uses: actions/setup-python@v5
+    - uses: astral-sh/setup-uv@v3
       with:
-        python-version: "3.10"
-        cache: "pip"
-
-    - name: Install tox
-      run: pip install --progress-bar=off tox
-
-    - name: Check version hardcode necessity
-      uses: haya14busa/action-cond@v1
-      id: run-tox
-      with:
-        cond: ${{ startsWith(inputs.gitref, 'refs/tags/') && matrix.flavor != 'normal' }}
-        if_true: "env PDM_BUILD_SCM_VERSION=$GITHUB_REF_NAME tox"
-        if_false: "tox"
+        version: '0.4.27'
+        enable-cache: true
+        cache-dependency-glob: |
+          ./pyproject.toml
 
     - name: Build flavor ${{ matrix.flavor }}
+      if: ( ! startsWith(inputs.gitref, 'refs/tags/') )
       run: >
-        ${{ steps.run-tox.outputs.value }}
-        run -v -e build-${{ matrix.flavor }}
+        uvx
+        --python-preference only-system
+        tox@4.23.2
+        run -v
+        -e build-${{ matrix.flavor }}
+
+    - name: Build tagged flavor ${{ matrix.flavor }}
+      if: startsWith(inputs.gitref, 'refs/tags/')
+      env:
+        PDM_BUILD_SCM_VERSION: ${{ github.ref_name }}
+      run: >
+        uvx
+        --python-preference only-system
+        tox@4.23.2
+        run -v
+        -e build-${{ matrix.flavor }}
 
     - uses: actions/upload-artifact@v4
       with:
@@ -70,18 +76,18 @@ jobs:
       run: >
         tar -zxf dist/*.tar.gz --strip-components=1
 
-    - uses: actions/setup-python@v5
+    - uses: astral-sh/setup-uv@v3
       with:
-        python-version: "3.10"
-        cache: "pip"
-
-    - name: Install prerequisites
-      run: >
-        pip install --progress-bar=off -v
-        "tox-gh-actions == 3.2.0"
+        version: '0.4.27'
+        enable-cache: true
+        cache-dependency-glob: |
+          ./pyproject.toml
 
     - name: Run type checker on source
       run: >
-        tox run-parallel -v
+        uvx
+        --python-preference only-system
+        tox@4.23.2
+        run-parallel -vv
         -m typecheck
 

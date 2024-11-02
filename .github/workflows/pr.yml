@@ -21,15 +21,19 @@ jobs:
       with:
         ref: ${{ github.event.pull_request.head.sha }}
 
-    - uses: actions/setup-python@v5
+    - uses: astral-sh/setup-uv@v3
       with:
-        python-version: '3.10'
-        cache: 'pip'
+        version: '0.4.27'
+        enable-cache: true
+        cache-dependency-glob: |
+          ./pyproject.toml
 
     - name: Install prerequisites
       run: |
-        pip install --progress-bar=off . mypy==1.11.*
-        pip uninstall -y types-lxml
+        uv python install 3.10
+        uv venv --python-preference only-managed
+        uv pip install -r pyproject.toml
+        uv pip install 'mypy == 1.11.2'
 
     - name: Mypy review
       id: mypy
@@ -42,7 +46,10 @@ jobs:
         setup_method: nothing
         install_types: false
         output_json: true
+        execute_command: .venv/bin/mypy
 
+    # Action doesn't support --pythonpath, smuggle it
+    # through misc flags
     - name: Pyright review
       id: pyright
       if: success() || steps.mypy.conclusion == 'failure'
@@ -52,4 +59,5 @@ jobs:
         level: warning
         workdir: lxml-stubs
         fail_on_error: true
+        pyright_flags: --pythonpath .venv/bin/python3
 

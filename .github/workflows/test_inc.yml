@@ -35,19 +35,20 @@ jobs:
       run: >
         tar -zxf dist/*.tar.gz --strip-components=1
 
-    - uses: actions/setup-python@v5
+    - uses: astral-sh/setup-uv@v3
       with:
-        python-version: ${{ matrix.pyver }}
-        cache: 'pip'
-
-    - name: Install prerequisites
-      run: >
-        pip install --progress-bar=off -v
-        "tox-gh-actions == 3.2.0"
+        version: '0.4.27'
+        enable-cache: true
+        cache-dependency-glob: |
+          ./pyproject.toml
 
     - name: Test stubs
       run: >
-        tox run -v
+        uvx
+        -p ${{ matrix.pyver }}
+        --python-preference only-managed
+        --with "tox-gh-actions == 3.2.0"
+        tox@4.23.2 run -v
         --skip-env='.*-rt-.*'
         --result-json test-${{ inputs.flavor }}-stub-py${{ matrix.pyver }}.json
 
@@ -82,10 +83,12 @@ jobs:
       run: >
         tar -zxf dist/*.tar.gz --strip-components=1
 
-    - uses: actions/setup-python@v5
+    - uses: astral-sh/setup-uv@v3
       with:
-        python-version: ${{ matrix.pyver }}
-        cache: 'pip'
+        version: '0.4.27'
+        enable-cache: true
+        cache-dependency-glob: |
+          ./pyproject.toml
 
     # Trigger npm install pyright once, otherwise
     # tox run-parallel would cause multiple concurrent
@@ -93,12 +96,13 @@ jobs:
     # RobertCraigie/pyright-python#318
     - name: Install prerequisites
       run: |
-        pip install --progress-bar=off -v "tox-gh-actions == 3.2.0"
-        tox run -e pyright -- --version
+        uv tool install -p ${{ matrix.pyver }} --python-preference only-managed --with "tox-gh-actions == 3.2.0" tox@4.23.2
+        uvx tox run -e pyright -- --version
 
     - name: Test runtime
       run: >
-        tox run-parallel -v
+        uvx
+        tox run-parallel -vv
         --skip-env='.*-stub$'
         --result-json test-${{ inputs.flavor }}-rt-${{ matrix.os }}-py${{ matrix.pyver }}.json
 
