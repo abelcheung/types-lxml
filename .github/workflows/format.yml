@@ -37,6 +37,7 @@ jobs:
         run: >
           uvx
           --python-preference only-system
+          --with tox-uv
           tox@4.23.2
           run-parallel -vv
           -m typecheck
