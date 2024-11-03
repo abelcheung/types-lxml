@@ -37,30 +37,14 @@ classifiers = [
 [project.urls]
 homepage = 'https://github.com/abelcheung/types-lxml'
 
-# Although mypy 1.10 itself produce no problem in stub,
-# it is basically unusable for real life code that uses lxml,
-# not until following improvement is done in 1.11.
-# https://mypy.readthedocs.io/en/stable/changelog.html#type-inference-improvements
-
 [project.optional-dependencies]
-test = [
-    'tox ~= 4.22',
-    'mypy ~= 1.11',
-    # microsoft/pyright#9286 and microsoft/pyright#9296
-    'pyright >= 1.1.387',
-    'typeguard >= 3.0; python_full_version < "3.12.4"',
-    'typeguard >= 4.3.0; python_full_version >= "3.12.4"',
-    'pytest >= 7.0, < 9',
-    'html5lib == 1.1',
-    'pytest-mypy-plugins >= 2.0',
-    'lxml >= 4.9',
-    'beautifulsoup4 ~= 4.8'
-]
+mypy = ['mypy ~= 1.11']
+pyright = ['pyright >= 1.1.351']
 
-# mostly pinned for tox testing
+# mostly pinned for tox testing except dev group
 [dependency-groups]
 basic = [
-    "types-beautifulsoup4 == 4.12.0.20240907",
+    "types-beautifulsoup4 == 4.12.0.20241020",
     "typing_extensions == 4.12.2; python_version < '3.13'",
     "cssselect == 1.2.0",
 ]
@@ -85,6 +69,19 @@ lxml50 = ["lxml == 5.0.2"]
 lxml51 = ["lxml == 5.1.1"]
 lxml52 = ["lxml == 5.2.2"]
 lxml53 = ["lxml == 5.3.0"]
+dev = [
+    'tox ~= 4.22',
+    'mypy >= 1.11.2',
+    # microsoft/pyright#9286 and microsoft/pyright#9296
+    'pyright >= 1.1.387',
+    'typeguard >= 3.0; python_full_version < "3.12.4"',
+    'typeguard >= 4.3.0; python_full_version >= "3.12.4"',
+    'pytest >= 7.0, < 9',
+    'html5lib == 1.1',
+    'pytest-mypy-plugins >= 2.0',
+    'lxml >= 4.9',
+    'beautifulsoup4 ~= 4.8',
+]
 
 [tool.pdm.version]
 source = 'scm'

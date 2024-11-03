@@ -5,11 +5,11 @@
 
 ## Important note
 
-- Since `2024.08.07`, each release will contain multiple builds; besides normal version, there is an alternative build suitable for multiple XML element subclassing. Please check out [relevant Installation section](#choosing-the-build) for detail (hint: many people don't need to bother with this). Also note that this release requires `mypy 1.11`.
+- Since `2024.08.07`, each release will contain multiple builds; besides normal version, there is an alternative build suitable for multiple XML element subclassing. Please check out [relevant Installation section](#choosing-the-build) for detail (hint: many people don't need to bother with this). Also note that this release requires `mypy 1.11` if one chooses to use `mypy` for type checking. `pyright` version requirement (`1.1.351`) is not changed.
 
 ## Introduction
 
-This repository contains [external type annotations](https://peps.python.org/pep-0561/) for [`lxml`](http://lxml.de/). It can be used by type-checking tools (currently supporting [`mypy`](https://pypi.org/project/mypy/) and [`pyright`](https://github.com/Microsoft/pyright)) to check code that uses `lxml`, or used within IDEs like [VSCode](https://code.visualstudio.com/) to facilitate development.
+This repository contains [external type annotations](https://peps.python.org/pep-0561/) for [`lxml`](http://lxml.de/). It can be used by type-checking tools (currently supporting [`pyright`](https://github.com/Microsoft/pyright) and [`mypy`](https://pypi.org/project/mypy/)) to check code that uses `lxml`, or used within IDEs like [VSCode](https://code.visualstudio.com/) to facilitate development.
 
 ## Goal ① : Completion
 
@@ -39,7 +39,8 @@ Check out [project page](https://github.com/abelcheung/types-lxml/projects) for 
 
 ## Goal ② : Support multiple type checkers
 
-Currently the annotations are validated for both `mypy` and `pyright`.
+Currently the annotations are validated for both `pyright` and `mypy`, with `pyright` recommended because of its greater flexibility and early adoption
+of newer type checking features.
 
 In the future, there is plan to bring even more type checker support.
 
