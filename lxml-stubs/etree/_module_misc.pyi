@@ -111,7 +111,7 @@ class QName:
     def __init__(
         self,
         text_or_uri_or_element: None,
-        tag: _TagName,
+        tag: _TagName | _Element,
     ) -> None: ...
     @property
     def localname(self) -> str: ...
