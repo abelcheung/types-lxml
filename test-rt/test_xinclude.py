@@ -22,9 +22,6 @@ INJECT_REVEAL_TYPE = True
 if INJECT_REVEAL_TYPE:
     reveal_type = getattr(_testutils, "reveal_type_wrapper")
 
-# See rttest-mypy.ini for explanation
-TC_CAN_RETURN_NONE = True
-
 
 # XInclude only works on ElementTree as method,
 # and only on Element when used as function.
@@ -43,8 +40,7 @@ class TestXInclude:
         elem = fromstring(xinc_sample_data)
         tree = elem.getroottree()
         reveal_type(tree)
-        if TC_CAN_RETURN_NONE:
-            assert tree.xinclude() is None
+        assert tree.xinclude() is None
 
     def test_xinclude_as_func(self, xinc_sample_data: str) -> None:
         xinc = XInclude()
@@ -62,8 +58,7 @@ class TestXInclude:
         with pytest.raises(TypeError, match="Argument 'node' has incorrect type"):
             xinc(cast(Any, tree))
 
-        if TC_CAN_RETURN_NONE:
-            assert xinc(elem) is None
+        assert xinc(elem) is None
 
 
 @overload
@@ -110,8 +105,7 @@ class TestElementInclude:
 
     def test_input_type(self, xinc_sample_data: str) -> None:
         elem = fromstring(xinc_sample_data)
-        if TC_CAN_RETURN_NONE:
-            assert EI.include(elem) is None
+        assert EI.include(elem) is None
         del elem
 
         sio = StringIO(xinc_sample_data)

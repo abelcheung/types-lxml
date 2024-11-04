@@ -24,8 +24,6 @@ if INJECT_REVEAL_TYPE:
     reveal_type = getattr(_testutils, "reveal_type_wrapper")
 
 # See rttest-mypy.ini for explanation
-TC_CAN_ASSIGN_DIFFERENT_TYPE = True
-TC_CAN_RETURN_NONE = True
 TC_HONORS_REVERSED = True
 
 
@@ -153,8 +151,7 @@ class TestBasicBehavior:
         subelem = deepcopy(elem[-1])
         length = len(elem)
 
-        if TC_CAN_RETURN_NONE:
-            assert elem.append(subelem) is None
+        assert elem.append(subelem) is None
         assert len(elem) == length + 1
 
         for obj in (0, None, "", object(), (elem[-1],)):
@@ -173,8 +170,7 @@ class TestBasicBehavior:
         elem = deepcopy(xml2_root)
         comment = etree.Comment("comment")
         pos = randrange(len(elem))
-        if TC_CAN_RETURN_NONE:
-            assert elem.insert(pos, comment) is None
+        assert elem.insert(pos, comment) is None
         assert elem.index(comment) == pos
 
         for obj in (0, None, "", object(), (elem[-1],)):
@@ -198,8 +194,7 @@ class TestBasicBehavior:
     ))  # fmt: skip
     def test_method_remove(self, xml2_root: _Element) -> None:
         elem = deepcopy(xml2_root)
-        if TC_CAN_RETURN_NONE:
-            assert elem.remove(elem[-1]) is None
+        assert elem.remove(elem[-1]) is None
 
         # Can construct a new node and fail removing it, but that is
         # pure runtime behavior and doesn't violate method annotation
@@ -220,8 +215,7 @@ class TestBasicBehavior:
         subelem = elem[-1]
         new_elem = deepcopy(subelem)
         new_elem.tag = "foo"
-        if TC_CAN_RETURN_NONE:
-            assert elem.replace(subelem, new_elem) is None
+        assert elem.replace(subelem, new_elem) is None
 
         for obj in (0, None, "", object(), (elem[-1],)):
             with pytest.raises(
@@ -242,8 +236,7 @@ class TestBasicBehavior:
         elem = deepcopy(xml2_root)
         new_elem1 = etree.Comment("foo")
         new_elem2 = etree.Entity("foo")
-        if TC_CAN_RETURN_NONE:
-            assert elem.extend([new_elem1]) is None
+        assert elem.extend([new_elem1]) is None
 
         elem.extend([new_elem1, new_elem2])
         elem.extend((new_elem1, new_elem2))
@@ -316,34 +309,30 @@ class TestProperties:
 
         elem.base = "http://dummy.site/"
         elem.base = None
-        if TC_CAN_ASSIGN_DIFFERENT_TYPE:
-            elem.base = b"http://dummy.site/"
+        elem.base = b"http://dummy.site/"
         for data1 in (1, cdata, qname):
             with pytest.raises(TypeError, match="must be string or unicode"):
                 elem.base = cast(Any, data1)
 
         elem.tag = "foo"
-        if TC_CAN_ASSIGN_DIFFERENT_TYPE:
-            elem.tag = b"foo"
-            elem.tag = qname
+        elem.tag = b"foo"
+        elem.tag = qname
         for data2 in (None, 1, cdata):
             with pytest.raises(TypeError, match="must be bytes or unicode"):
                 elem.tag = cast(Any, data2)
 
         elem.text = "sometext"
         elem.text = None
-        if TC_CAN_ASSIGN_DIFFERENT_TYPE:
-            elem.text = b"sometext"
-            elem.text = cdata
-            elem.text = qname
+        elem.text = b"sometext"
+        elem.text = cdata
+        elem.text = qname
         with pytest.raises(TypeError, match="must be bytes or unicode"):
             elem.text = cast(Any, 1)
 
         elem.tail = "sometail"
         elem.tail = None
-        if TC_CAN_ASSIGN_DIFFERENT_TYPE:
-            elem.tail = b"sometail"
-            elem.tail = cdata
+        elem.tail = b"sometail"
+        elem.tail = cdata
         for data in (1, qname):
             with pytest.raises(TypeError, match="must be bytes or unicode"):
                 elem.tail = cast(Any, data)
@@ -451,8 +440,7 @@ class TestAttribAccessMethods:
     def test_method_set(self, xml2_root: _Element) -> None:
         root = deepcopy(xml2_root)
 
-        if TC_CAN_RETURN_NONE:
-            assert root.set("foo", "bar") is None
+        assert root.set("foo", "bar") is None
 
         qname = etree.QName("foo")
         for arg1 in ("foo", b"foo", qname):
@@ -743,10 +731,7 @@ class TestAddMethods:
         root = deepcopy(xml2_root)
         comm = etree.Comment("foo")
 
-        if TC_CAN_RETURN_NONE:
-            assert root[0].addnext(comm) is None
-        else:
-            root[0].addnext(comm)
+        assert root[0].addnext(comm) is None
 
         for arg in ("junk", 1, object(), ("a", 0), [comm, comm]):
             with pytest.raises(
@@ -765,10 +750,7 @@ class TestAddMethods:
         root = deepcopy(xml2_root)
         comm = etree.Comment("foo")
 
-        if TC_CAN_RETURN_NONE:
-            assert root[0].addprevious(comm) is None
-        else:
-            root[0].addprevious(comm)
+        assert root[0].addprevious(comm) is None
 
         for arg in ("junk", 1, object(), ("a", 0), [comm, comm]):
             with pytest.raises(

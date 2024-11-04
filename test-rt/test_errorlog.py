@@ -24,9 +24,6 @@ INJECT_REVEAL_TYPE = True
 if INJECT_REVEAL_TYPE:
     reveal_type = getattr(_testutils, "reveal_type_wrapper")
 
-# See rttest-mypy.ini for explanation
-TC_CAN_RETURN_NONE = True
-
 ### NOTES
 #
 # - Not testing manual construction of _ErrorLog; technically
@@ -155,11 +152,10 @@ class TestListLogMethods:
         (("entry", Parameter.POSITIONAL_OR_KEYWORD, Parameter.empty),),
     )
     def test_receive(self, list_log: _ListErrorLog) -> None:
-        if TC_CAN_RETURN_NONE:
-            if _method_no_kwarg():
-                assert list_log.receive(list_log[0]) is None
-            else:
-                assert list_log.receive(entry=list_log[0]) is None
+        if _method_no_kwarg():
+            assert list_log.receive(list_log[0]) is None
+        else:
+            assert list_log.receive(entry=list_log[0]) is None
         with pytest.raises(TypeError, match=r"expected .+\._LogEntry, got int"):
             list_log.receive(cast(Any, 1))
 

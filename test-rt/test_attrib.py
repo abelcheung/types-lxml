@@ -13,9 +13,6 @@ INJECT_REVEAL_TYPE = True
 if INJECT_REVEAL_TYPE:
     reveal_type = getattr(_testutils, "reveal_type_wrapper")
 
-# See rttest-mypy.ini for explanation
-TC_CAN_RETURN_NONE = True
-
 
 class TestXmlAttrib:
     def test_basic_behavior(self, xml2_root: _Element) -> None:
@@ -48,8 +45,7 @@ class TestXmlAttrib:
     def test_method_clear(self, xml2_root: _Element) -> None:
         root = deepcopy(xml2_root)
         attrib = root.attrib
-        if TC_CAN_RETURN_NONE:
-            assert attrib.clear() is None
+        assert attrib.clear() is None
         assert len(attrib) == 0
 
     @_testutils.signature_tester(_Attrib.get, (
@@ -80,8 +76,7 @@ class TestXmlAttrib:
     def test_method_update(self, xml2_root: _Element) -> None:
         root = deepcopy(xml2_root)
         attrib = root.attrib
-        if TC_CAN_RETURN_NONE:
-            assert attrib.update({"foo": "bar"}) is None
+        assert attrib.update({"foo": "bar"}) is None
 
         attrib.update({
             "foo": b"bar",
