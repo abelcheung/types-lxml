@@ -32,7 +32,7 @@ _AnyStr = str | bytes
 # also include aliases semantically indicating the purpose
 # of text argument
 _TextArg = str | bytes | QName
-_TagName = str | bytes | QName
+_TagName = str | bytes | bytearray | QName
 _AttrName = str | bytes | QName
 _AttrVal = str | bytes | QName
 
