@@ -37,8 +37,11 @@ class _Element:
     #
     # Common properties
     #
+    # Tag type is str only on initial doc parsing. When tag
+    # is manually set, supplied value is directly stored
+    # in element and never normalized.
     @property
-    def tag(self) -> str: ...
+    def tag(self) -> _t._TagName: ...
     @tag.setter
     def tag(self, value: _t._TagName) -> None: ...
     @property

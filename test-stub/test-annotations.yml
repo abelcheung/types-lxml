@@ -44,17 +44,17 @@
     from lxml import etree as e
 
     def get_element(el: e._Element) -> None:
-        reveal_type(el.tag)  # N: Revealed type is "builtins.str"
+        reveal_type(el.tag)  # NR: .+ "Union\[[\w\.]+\.str, [\w\.]+\.bytes, [\w\.]+\.bytearray, [\w\.]+\.QName\]"
 
     def get_comment(comm: e._Comment) -> None:
-        reveal_type(comm)  # N: Revealed type is "lxml.etree._element._Comment"
-        reveal_type(comm.tag)  # N: Revealed type is "def (*Any, **Any) -> lxml.etree._element._Comment"
+        reveal_type(comm)  # NR: .+ "[\w\.]+\._Comment"
+        reveal_type(comm.tag)  # NR: .+ "def \(.+\) -> [\w\.]+\._Comment"
         get_element(comm)
 
     def check_if_element_is_comment(el: e._Element) -> bool:
         # The following should not be an error.
         # It is a valid check that an element is a comment.
-        return el.tag == e.Comment  # E: Non-overlapping equality check (left operand type: "str", right operand type: "Callable[[str | bytes | None], _Comment]")  [comparison-overlap]
+        return el.tag == e.Comment  # ER: Non-overlapping equality check .+  \[comparison-overlap\]
 
     comm = e.Comment("comment")
     print(comm.tag == e.Comment)

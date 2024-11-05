@@ -10,6 +10,7 @@ import _testutils
 import pytest
 from lxml import etree
 from lxml.etree import (
+    QName,
     _Attrib as _Attrib,
     _Comment as _Comment,
     _Element,
@@ -305,7 +306,7 @@ class TestProperties:
             reveal_type(subelem.tail)
 
         cdata = etree.CDATA("foo")
-        qname = etree.QName("dummyns", "dummytext")
+        qname = QName("dummyns", "dummytext")
 
         elem.base = "http://dummy.site/"
         elem.base = None
@@ -422,8 +423,8 @@ class TestAttribAccessMethods:
         reveal_type(root.get("width"))
         reveal_type(root.get("somejunk"))
         reveal_type(root.get(b"width"))
-        # Not meaningful to use etree.QName here, but still
-        qname = etree.QName(None, "width")
+        # Not meaningful to use QName here, but still
+        qname = QName(None, "width")
         reveal_type(root.get(qname))
 
         for arg in (1, object(), ["width"]):
@@ -442,14 +443,14 @@ class TestAttribAccessMethods:
 
         assert root.set("foo", "bar") is None
 
-        qname = etree.QName("foo")
+        qname = QName("foo")
         for arg1 in ("foo", b"foo", qname):
             root.set(arg1, "bar")
         for arg2 in (None, 1, object(), ["foo"]):
             with pytest.raises(TypeError, match="must be bytes or unicode"):
                 root.set(cast(Any, arg2), "bar")
 
-        qname = etree.QName("bar")
+        qname = QName("bar")
         for arg3 in ("bar", b"bar", qname):
             root.set("foo", arg3)
         for arg4 in (None, 1, object(), ["bar"]):
@@ -481,7 +482,7 @@ class TestFindMethods:
         reveal_type(iterator)
         del iterator
 
-        qn = etree.QName(None, tag)
+        qn = QName(None, tag)
         reveal_type(root.iterfind(qn))
 
         with pytest.raises(TypeError, match="a string pattern on a bytes-like object"):
@@ -497,7 +498,7 @@ class TestFindMethods:
         with pytest.raises(TypeError, match="expected string or bytes-like object"):
             _ = root.iterfind(cast(Any, (tag,)))
 
-        # Check etree.QName and namespace support
+        # Check QName and namespace support
         # Note that invalid entries in namespace dict (those
         # with invalid key or value types) wouldn't be fatal;
         # they only silently fail to select useful elements.
@@ -510,7 +511,7 @@ class TestFindMethods:
         defs = next(iterator)
         del iterator
 
-        qn = etree.QName(url, "piechart")
+        qn = QName(url, "piechart")
         result = tuple(elem for elem in defs.iterfind(f"{{{url}}}piechart"))
         assert result == tuple(elem for elem in defs.iterfind(qn, None))
         assert result == tuple(
@@ -553,7 +554,7 @@ class TestFindMethods:
         reveal_type(root.find(path="junk"))
         assert etree.iselement(root.find("defs/{http://example.org/myapp}piechart"))
 
-        qn = etree.QName(None, tag)
+        qn = QName(None, tag)
         reveal_type(root.find(qn))
 
         with pytest.raises(TypeError, match="a string pattern on a bytes-like object"):
@@ -569,7 +570,7 @@ class TestFindMethods:
         with pytest.raises(TypeError, match="expected string or bytes-like object"):
             _ = root.find(cast(Any, (tag,)))
 
-        # Check etree.QName and NS support; see iterfind() comment above
+        # Check QName and NS support; see iterfind() comment above
 
         defs = root.find("defs")
         assert defs is not None
@@ -577,7 +578,7 @@ class TestFindMethods:
         nsdict = {"m": url}
 
         result = defs.find(f"{{{url}}}piechart")
-        qn = etree.QName(url, "piechart")
+        qn = QName(url, "piechart")
         assert result == defs.find(qn, None)
         assert result == defs.find("m:piechart", namespaces=nsdict)
         assert result == defs.find("m:piechart", MappingProxyType(nsdict))
@@ -606,7 +607,7 @@ class TestFindMethods:
 
         tag = "desc"
         result = root.findall(tag)
-        qn = etree.QName(None, tag)
+        qn = QName(None, tag)
         assert result == root.findall(qn)
         del result
 
@@ -623,7 +624,7 @@ class TestFindMethods:
         with pytest.raises(TypeError, match="expected string or bytes-like object"):
             _ = root.findall(cast(Any, (tag,)))
 
-        # Check etree.QName and NS support; see iterfind() comment above
+        # Check QName and NS support; see iterfind() comment above
 
         result = root.findall("defs")
         assert len(result) == 1
@@ -632,7 +633,7 @@ class TestFindMethods:
         defs = result[0]
 
         result = defs.findall(f"{{{url}}}piechart")
-        qn = etree.QName(url, "piechart")
+        qn = QName(url, "piechart")
         assert result == defs.findall(qn, None)
         assert result == defs.findall("m:piechart", namespaces=nsdict)
         assert result == defs.findall("m:piechart", MappingProxyType(nsdict))
@@ -679,7 +680,7 @@ class TestFindMethods:
         result = root.findtext(tag)
         reveal_type(result)
         assert result and result.startswith("This chart")
-        qn = etree.QName(None, tag)
+        qn = QName(None, tag)
         assert result == root.findtext(qn)
         del result
 
@@ -696,7 +697,7 @@ class TestFindMethods:
         with pytest.raises(TypeError, match="expected string or bytes-like object"):
             _ = root.findtext(cast(Any, (tag,)))
 
-        # Check etree.QName and NS support; see iterfind() comment above
+        # Check QName and NS support; see iterfind() comment above
 
         url = "http://example.org/myfoo"
         nsdict = {"m": url}
@@ -708,7 +709,7 @@ class TestFindMethods:
         parent = resultnode.getparent()
         assert etree.iselement(parent)
 
-        qn = etree.QName(url, "title")
+        qn = QName(url, "title")
         assert result == parent.findtext(qn, namespaces=None)
         assert result == parent.findtext("m:title", namespaces=nsdict)
         assert result == parent.findtext("m:title", namespaces=MappingProxyType(nsdict))
@@ -846,7 +847,7 @@ class TestIterMethods:
         assert result == [e for e in itr]
         del itr, result
 
-        itr = root.iter(etree.QName("price", None))
+        itr = root.iter(QName("price", None))
         reveal_type(itr)
         assert len([e for e in itr]) == 2
         del itr
@@ -898,7 +899,7 @@ class TestIterMethods:
         assert result[:1] == [e for e in itr]
         del itr
 
-        itr = grandchild.iterancestors(child.tag.encode(), root.tag)
+        itr = grandchild.iterancestors(str(child.tag).encode(), root.tag)
         reveal_type(itr)
         assert result == [e for e in itr]
         del itr, result
@@ -906,7 +907,7 @@ class TestIterMethods:
         itr = root.iter(etree.Comment)
         comm = next(itr)
         del itr
-        itr = comm.iterancestors([etree.QName(grandchild.tag), child.tag])
+        itr = comm.iterancestors([QName(grandchild.tag), child.tag])
         reveal_type(itr)
         result = [e for e in itr]
         assert len(result) == 2
@@ -949,7 +950,7 @@ class TestIterMethods:
         assert result == [e for e in itr]
         del itr, result
 
-        itr = root.iterdescendants(etree.QName("price", None))
+        itr = root.iterdescendants(QName("price", None))
         reveal_type(itr)
         assert len([e for e in itr]) == 2
         del itr
@@ -1007,7 +1008,7 @@ class TestIterMethods:
         assert result[2:3] == [e for e in itr]
         del itr
 
-        qn = etree.QName("desc")
+        qn = QName("desc")
         itr = child.itersiblings(qn)
         reveal_type(itr)
         assert result[1:2] == [e for e in itr]
@@ -1069,12 +1070,12 @@ class TestIterMethods:
         assert result[2:3] == [e for e in itr]
         del itr
 
-        itr = root.iterchildren(tag=root[2].tag.encode())
+        itr = root.iterchildren(tag=str(root[2].tag).encode())
         reveal_type(itr)
         assert result[2:3] == [e for e in itr]
         del itr
 
-        qn = etree.QName(root[-1].tag)
+        qn = QName(root[-1].tag)
         itr = root.iterchildren(qn)
         reveal_type(itr)
         assert result[-2:] == [e for e in itr]
@@ -1090,7 +1091,7 @@ class TestIterMethods:
         assert len([e for e in itr]) == 3
         del itr
 
-        itr = root.iterchildren({root[0].tag, etree.Comment}, reversed=True)
+        itr = root.iterchildren({str(root[0].tag), etree.Comment}, reversed=True)
         reveal_type(itr)
         assert next(itr) == result[1]
         assert next(itr) == result[0]
@@ -1138,7 +1139,7 @@ class TestIterMethods:
         assert result == [s for s in itr]
         del itr, result
 
-        qn = etree.QName("address")
+        qn = QName("address")
         itr = root.itertext(qn)
         reveal_type(itr)
         reveal_type(next(itr))
