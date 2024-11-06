@@ -1,13 +1,13 @@
  lxml-stubs/etree/_element.pyi      | 76 +++++++++++++++++++-------------------
  lxml-stubs/etree/_factory_func.pyi |  6 +--
  lxml-stubs/html/_element.pyi       | 35 ++++++++++--------
- lxml-stubs/objectify/_element.pyi  |  8 ++--
+ lxml-stubs/objectify/_element.pyi  | 10 +++--
  pyproject.toml                     |  2 +-
  test-rt/conftest.py                |  2 +-
- 6 files changed, 66 insertions(+), 63 deletions(-)
+ 6 files changed, 68 insertions(+), 63 deletions(-)
 
 diff --git a/lxml-stubs/etree/_element.pyi b/lxml-stubs/etree/_element.pyi
-index a093bea..445c801 100644
+index e34d92c..28ba642 100644
 --- a/lxml-stubs/etree/_element.pyi
 +++ b/lxml-stubs/etree/_element.pyi
 @@ -14,9 +14,9 @@ from typing import (
@@ -22,7 +22,7 @@ index a093bea..445c801 100644
  
  if sys.version_info >= (3, 13):
      from warnings import deprecated
-@@ -73,34 +73,34 @@ class _Element:
+@@ -76,34 +76,34 @@ class _Element:
      #
      def __delitem__(self, __k: int | slice) -> None: ...
      @overload
@@ -69,7 +69,7 @@ index a093bea..445c801 100644
      ) -> int: ...
      @overload
      def get(self, key: _t._AttrName) -> str | None: ...
-@@ -112,53 +112,53 @@ class _Element:
+@@ -115,53 +115,53 @@ class _Element:
      #
      # extra Element / ET methods
      #
@@ -140,7 +140,7 @@ index a093bea..445c801 100644
      @overload
      def itertext(
          self, *tags: _t._TagSelector, with_tail: bool = True
-@@ -170,10 +170,10 @@ class _Element:
+@@ -173,10 +173,10 @@ class _Element:
          *,
          with_tail: bool = True,
      ) -> Iterator[str]: ...
@@ -153,7 +153,7 @@ index a093bea..445c801 100644
      # Original method has no star. If somebody only supplies
      # 'path' and 'default' argument as positional one, it
      # would be misinterpreted as namespaces argument in first
-@@ -194,10 +194,10 @@ class _Element:
+@@ -197,10 +197,10 @@ class _Element:
      ) -> str | _T: ...
      def findall(
          self, path: _t._ElemPathArg, namespaces: _t._StrictNSMap | None = None
@@ -166,7 +166,7 @@ index a093bea..445c801 100644
      def xpath(
          self,
          _path: _t._AnyStr,
-@@ -213,15 +213,15 @@ class _Element:
+@@ -216,15 +216,15 @@ class _Element:
          expr: str,
          *,
          translator: _CSSTransArg = "xml",
@@ -283,10 +283,10 @@ index f314a2a..9c84a76 100644
          expr: str,
          *,
 diff --git a/lxml-stubs/objectify/_element.pyi b/lxml-stubs/objectify/_element.pyi
-index 2b8a301..7fc46e5 100644
+index 66702b0..98a5796 100644
 --- a/lxml-stubs/objectify/_element.pyi
 +++ b/lxml-stubs/objectify/_element.pyi
-@@ -48,7 +48,7 @@ class ObjectifiedElement(ElementBase):
+@@ -51,7 +51,7 @@ class ObjectifiedElement(ElementBase):
      def addattr(self, tag: _TagName, value: object) -> None: ...
      def countchildren(self) -> int: ...
      def descendantpaths(self, prefix: str | list[str] | None = None) -> list[str]: ...
@@ -295,20 +295,22 @@ index 2b8a301..7fc46e5 100644
      def __iter__(self) -> Iterator[ObjectifiedElement]: ...
      def __reversed__(self) -> Iterator[ObjectifiedElement]: ...
      def __getattr__(self, __name: str) -> ObjectifiedElement: ...
-@@ -56,10 +56,10 @@ class ObjectifiedElement(ElementBase):
-     # converted to DataElement on-the-fly. Same for __setitem__ below.
-     def __setattr__(self, __name: str, __value: object) -> None: ...
+@@ -60,10 +60,12 @@ class ObjectifiedElement(ElementBase):
      def __delattr__(self, __name: str) -> None: ...
+     # elem['foo'] is equivalent to elem.foo, but allows for
+     # special attribute names (like 'text' or 'tail')
 -    @overload
 +    @overload  # type: ignore[override]
-     def __getitem__(self, __k: int) -> ObjectifiedElement: ...
+     def __getitem__(self, key: int | str | bytes, /) -> ObjectifiedElement: ...
      @overload
--    def __getitem__(self, __k: slice) -> list[ObjectifiedElement]: ...
-+    def __getitem__(self, __k: slice) -> list[ObjectifiedElement]: ...  # pyright: ignore[reportIncompatibleMethodOverride]
+-    def __getitem__(self, key: slice, /) -> list[ObjectifiedElement]: ...
++    def __getitem__(  # pyright: ignore[reportIncompatibleMethodOverride]
++        self, key: slice, /
++    ) -> list[ObjectifiedElement]: ...
      @overload
-     def __setitem__(self, __k: int, __v: object) -> None: ...
+     def __setitem__(self, key: int | str | bytes, value: object, /) -> None: ...
      @overload
-@@ -68,7 +68,7 @@ class ObjectifiedElement(ElementBase):
+@@ -72,7 +74,7 @@ class ObjectifiedElement(ElementBase):
      # TODO Check if _Element methods need overriding
      # CSS selector is not a normal use case for objectified
      # element (and unnecessary), but still usable nontheless
@@ -318,7 +320,7 @@ index 2b8a301..7fc46e5 100644
          expr: str,
          *,
 diff --git a/pyproject.toml b/pyproject.toml
-index 94a0848..648d1cd 100644
+index a7bd703..59ff9cd 100644
 --- a/pyproject.toml
 +++ b/pyproject.toml
 @@ -5,7 +5,7 @@ requires = ['pdm-backend ~= 2.3']
@@ -331,7 +333,7 @@ index 94a0848..648d1cd 100644
  description = 'Complete lxml external type annotation'
  readme = 'README.md'
 diff --git a/test-rt/conftest.py b/test-rt/conftest.py
-index 27ea129..8e611ce 100644
+index 35de466..c257b5b 100644
 --- a/test-rt/conftest.py
 +++ b/test-rt/conftest.py
 @@ -20,7 +20,7 @@ def pytest_collection_finish(session: pytest.Session) -> None:
