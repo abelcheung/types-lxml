@@ -31,10 +31,9 @@ _AnyStr = str | bytes
 # String argument also support QName in various places;
 # also include aliases semantically indicating the purpose
 # of text argument
-_TextArg = str | bytes | QName
 _TagName = str | bytes | bytearray | QName
-_AttrName = str | bytes | QName
-_AttrVal = str | bytes | QName
+_AttrName = str | bytes | bytearray | QName
+_AttrVal = str | bytes | bytearray | QName
 
 # On the other hand, Elementpath API doesn't do str/byte canonicalization,
 # only unicode accepted for py3
