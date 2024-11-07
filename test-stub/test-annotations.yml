@@ -1,9 +1,5 @@
 # Test functions with lxml type annotations.
 - case: annaotate_element
-  mypy_config: |
-    strict=True
-    # Ignore error in typeshed.
-    disallow_subclassing_any=False
   main: |
     from lxml import etree as e
 
@@ -16,9 +12,6 @@
         view_element(el)
 
 - case: annaotate_tree
-  mypy_config: |
-    strict=True
-    disallow_subclassing_any=False
   main: |
     from lxml import etree as e
 
@@ -37,9 +30,6 @@
         tree_root(tree)
 
 - case: annaotate_comment
-  mypy_config: |
-    strict=True
-    disallow_subclassing_any=False
   main: |
     from lxml import etree as e
 
@@ -61,9 +51,6 @@
     check_if_element_is_comment(comm)
 
 - case: annaotate_html
-  mypy_config: |
-    strict=True
-    disallow_subclassing_any=False
   main: |
     from lxml import etree as e
     from lxml import html as h

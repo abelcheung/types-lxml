@@ -260,8 +260,7 @@ class _ElementTree(Generic[_t._ET_co]):
     #     - method is 'c14n2', and
     #     - no compression
     #
-    @overload  # type: ignore[arg-type]  # mypy err since 1.6
-    # deprecated usage of docstring param
+    @overload  # deprecated usage of docstring param
     @deprecated('Since v3.8.0; use "doctype" parameter instead')
     def write(
         self,
