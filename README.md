@@ -5,6 +5,7 @@
 
 ## Important note
 
+- Since upcoming November release, `pyright` users will see warning if a single string is supplied where collection of string is expected (`tuple`, `set`, `list` etc). In terms of typing, a single `str` itself is valid as a `Sequence`, so type checkers normally would not raise alarm when using `str` in such function parameters, but can induce unexpected runtime behavior. See [#64](https://github.com/abelcheung/types-lxml/issues/64) for more info. `mypy` does not support this feature (which (ab)uses `@deprecated` warning).
 - Since `2024.08.07`, each release will contain multiple builds; besides normal version, there is an alternative build suitable for multiple XML element subclass. Please check out [relevant Installation section](#choosing-the-build) for detail (hint: many people don't need to bother with this). Also note that this release requires `mypy 1.11` if one chooses to use `mypy` for type checking. `pyright` version requirement (`1.1.351`) is not changed.
 
 ## Introduction
