@@ -44,7 +44,7 @@
     def check_if_element_is_comment(el: e._Element) -> bool:
         # The following should not be an error.
         # It is a valid check that an element is a comment.
-        return el.tag == e.Comment  # ER: Non-overlapping equality check .+  \[comparison-overlap\]
+        return el.tag == e.Comment
 
     comm = e.Comment("comment")
     print(comm.tag == e.Comment)
