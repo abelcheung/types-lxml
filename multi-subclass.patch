@@ -7,7 +7,7 @@
  6 files changed, 68 insertions(+), 63 deletions(-)
 
 diff --git a/lxml-stubs/etree/_element.pyi b/lxml-stubs/etree/_element.pyi
-index e34d92c..28ba642 100644
+index 0007dc7..95e5b58 100644
 --- a/lxml-stubs/etree/_element.pyi
 +++ b/lxml-stubs/etree/_element.pyi
 @@ -14,9 +14,9 @@ from typing import (
@@ -215,7 +215,7 @@ index d30d366..d02992f 100644
  def ElementTree(element: _ET) -> _ElementTree[_ET]: ...
  @overload  # from file source, custom parser
 diff --git a/lxml-stubs/html/_element.pyi b/lxml-stubs/html/_element.pyi
-index f314a2a..9c84a76 100644
+index 824828a..239b540 100644
 --- a/lxml-stubs/html/_element.pyi
 +++ b/lxml-stubs/html/_element.pyi
 @@ -128,26 +128,29 @@ class HtmlElement(etree.ElementBase):
@@ -283,7 +283,7 @@ index f314a2a..9c84a76 100644
          expr: str,
          *,
 diff --git a/lxml-stubs/objectify/_element.pyi b/lxml-stubs/objectify/_element.pyi
-index 66702b0..98a5796 100644
+index abc5a86..a099d79 100644
 --- a/lxml-stubs/objectify/_element.pyi
 +++ b/lxml-stubs/objectify/_element.pyi
 @@ -51,7 +51,7 @@ class ObjectifiedElement(ElementBase):
@@ -313,7 +313,7 @@ index 66702b0..98a5796 100644
 @@ -72,7 +74,7 @@ class ObjectifiedElement(ElementBase):
      # TODO Check if _Element methods need overriding
      # CSS selector is not a normal use case for objectified
-     # element (and unnecessary), but still usable nontheless
+     # element (and unnecessary), but still usable nonetheless
 -    def cssselect(
 +    def cssselect(  # type: ignore[override]  # pyright: ignore[reportIncompatibleMethodOverride]
          self,
