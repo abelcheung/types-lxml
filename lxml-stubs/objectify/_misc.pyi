@@ -1,5 +1,5 @@
 #
-# Parsing and other module level funcs
+# Parsing and other module level functions
 #
 
 from typing import Iterable, Literal, TypeVar, overload
@@ -136,7 +136,7 @@ XML = fromstring
 # Not using ._types._ET, which supports PEP 696, but causes
 # problem in 2nd overload of ObjectPath.__call__()
 # if _ET has a default type, then all subsequent argument
-# typevars need default type too (namely, _default: _T)
+# TypeVars need default type too (namely, _default: _T)
 _ET = TypeVar("_ET", bound=etree._Element)
 
 #

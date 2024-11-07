@@ -15,7 +15,7 @@ _HtmlDoc_T = TypeVar("_HtmlDoc_T", str, bytes, HtmlElement)
 #   of the resulting document.
 #
 # Special Notes:
-# 1. These funcs operate on attributes that only make sense on
+# 1. These functions operate on attributes that only make sense on
 #    normal HtmlElements; lxml raises exception otherwise.
 # 2. Although extra 'copy' argument is available, it is intended
 #    only for internal use by each function, not something to be
@@ -23,7 +23,7 @@ _HtmlDoc_T = TypeVar("_HtmlDoc_T", str, bytes, HtmlElement)
 #
 # HACK Interesting, a 15+ yrs bug remains undiscovered,
 # probably nobody is using them at all?
-# All these standalone link funcs make use of _MethodFunc
+# All these standalone link functions make use of _MethodFunc
 # internal class in html/__init__.py, which has bug when
 # converting input data. If input is not Element, the class
 # automatically converts input to Element via fromstring(),

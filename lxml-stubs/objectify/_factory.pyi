@@ -198,7 +198,7 @@ def DataElement(
     1. Current DataElement stub overloads only represent cases where
     data type is inferred from value or from lxml's own PyType arg.
     If XMLSchema Interface types are involved, the overload list
-    will become unbearably long (well, it alreaday is), which is
+    will become unbearably long (well, it already is), which is
     both a nightmare for maintainer and users alike. As a result,
     please read description of `_xsi` parameter carefully
     before using, which is not covered in original docstring.
@@ -280,7 +280,7 @@ class ElementMaker:
     Example
     -------
 
-    ```pycon
+    ```python-console
     >>> M = ElementMaker(annotate=False)
     >>> attributes = {'class': 'par'}
     >>> html = M.html( M.body( M.p('hello', attributes, M.br, 'objectify', style="font-weight: bold") ) )
@@ -293,7 +293,7 @@ class ElementMaker:
     To create tags that are not valid Python identifiers, call the factory
     directly and pass the tag name as first argument::
 
-    ```pycon
+    ```python-console
     >>> root = M('tricky-tag', 'some text')
     >>> print(root.tag)
     tricky-tag

@@ -56,7 +56,7 @@ def fromstring(
     Returns the root ``<html>`` Element of the tree.
 
     You can pass a different BeautifulSoup parser through the
-    `beautifulsoup` keyword, and a diffent Element factory function
+    `beautifulsoup` keyword, and a different Element factory function
     through the `makeelement` keyword.  By default, the standard
     ``BeautifulSoup`` class and the default factory of `lxml.html` are
     used.
@@ -115,10 +115,10 @@ def parse(
     exclude_encodings: str,
     **kw: Any,
 ) -> Never:
-    """Parse a file into an ElemenTree using the BeautifulSoup parser.
+    """Parse a file into an ElementTree using the BeautifulSoup parser.
 
     You can pass a different BeautifulSoup parser through the
-    `beautifulsoup` keyword, and a diffent Element factory function
+    `beautifulsoup` keyword, and a different Element factory function
     through the `makeelement` keyword.  By default, the standard
     ``BeautifulSoup`` class and the default factory of `lxml.html` are
     used.

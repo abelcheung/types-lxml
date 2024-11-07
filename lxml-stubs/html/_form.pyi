@@ -87,6 +87,13 @@ class SelectElement(_InputMixin, HtmlElement):
     @property
     def value_options(self) -> list[str]: ...
 
+# Notes for MultipleSelectOptions and CheckboxValues
+#
+# Not adding any SetMixin methods here. What they do now
+# are just functional aliases of standard set operators.
+# They make sense for ancient python (2.6 or below), but
+# not anymore for code written in these 10 years or so.
+
 class MultipleSelectOptions(MutableSet[str]):
     select: SelectElement
     def __init__(self, select: SelectElement) -> None: ...

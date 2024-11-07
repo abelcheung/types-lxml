@@ -64,7 +64,7 @@ def reveal_type_wrapper(var: _T) -> _T:
     Such maneuver is designed to circumvent type checkers'
     ability to resolve `reveal_type()`'s origin. Otherwise,
     when type checkers managed to detect `reveal_type()` is
-    somehow overriden, they refuse to print any output.
+    somehow overridden, they refuse to print any output.
 
     Its calling behavior is identical to official
     `reveal_type()`: returns input argument unchanged.

@@ -72,7 +72,7 @@ html_parser: HTMLParser
 xhtml_parser: XHTMLParser
 
 #
-# Parsing funcs
+# Parsing functions
 #
 
 # Calls etree.fromstring(html, parser, **kw) which has signature

@@ -164,7 +164,7 @@ def tostring(
     Original docstring
     ------------------
     Defaults to ASCII encoding without XML declaration.  This
-    behaviour can be configured with the keyword arguments ``encoding``
+    behavior can be configured with the keyword arguments ``encoding``
     (string) and ``xml_declaration`` (bool).  Note that changing the
     encoding to a non UTF-8 compatible encoding will enable a
     declaration by default.

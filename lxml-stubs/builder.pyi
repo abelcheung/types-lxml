@@ -38,7 +38,7 @@ class _EMakerCallProtocol(Protocol[_ET_co]):
     @property
     def keywords(self) -> dict[str, Any]: ...
 
-# One might be tempted to use artibrary callable in
+# One might be tempted to use arbitrary callable in
 # makeelement argument, because ElementMaker
 # constructor can actually accept any callable as
 # makeelement. However all element creation attempt

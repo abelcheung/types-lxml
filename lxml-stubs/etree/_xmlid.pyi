@@ -9,7 +9,7 @@ else:
 from .._types import _ET, _AnyStr, _DefEtreeParsers, _FileReadSource
 from ._element import _Element, _ElementTree
 
-# arguments for these module funcs are the same as XML() and parse()
+# arguments for these functions are the same as XML() and parse()
 
 @overload
 def XMLID(
@@ -58,7 +58,7 @@ def parseid(
 ) -> tuple[_ElementTree, _IDDict]: ...
 
 class _IDDict(Collection[str], Generic[_ET]):
-    """Dictionary-like proxy class that mapps ID attributes to elements
+    """Dictionary-like proxy class that maps ID attributes to elements
 
     Original Docstring
     ------------------

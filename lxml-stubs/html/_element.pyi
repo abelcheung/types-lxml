@@ -47,7 +47,7 @@ _HANDLE_FAILURES = Literal["ignore", "discard"]
 #
 # 1. Coerce HtmlComment etc to inherit from HtmlElement, instead of HtmlMixin.
 # This is for simplifying return type of various ElementPath / ElementTree
-# methods (like iter and findall). Instead of handling a long unioned list of
+# methods (like iter and findall). Instead of handling a long union of
 # possible element types, one can now just handle HtmlElement.
 # This change doesn't make other content only element types suffer too much;
 # most existing methods / properties already aren't applicable to them.
@@ -224,7 +224,7 @@ class HtmlElement(etree.ElementBase):
 # HTML element class attribute
 #
 class Classes(MutableSet[str]):
-    # Theorectically, the internal structure need not be _Attrib,
+    # Theoretically, the internal structure need not be _Attrib,
     # any Protocol that conforms would suffice. (Needs get(),
     # __setitem__ and __delitem__)
     # But practically, if other python generic data type were used,
@@ -247,7 +247,7 @@ class Classes(MutableSet[str]):
 #
 # Processing Instruction is only useful for XML in real life;
 # it is considered bogus error in HTML spec, but still allowed
-# to be constructed in lxml nontheless.
+# to be constructed in lxml nonetheless.
 # https://html.spec.whatwg.org/multipage/parsing.html#tag-open-state
 #
 # HtmlEntity is also rare; it can only appear if a specially constructed

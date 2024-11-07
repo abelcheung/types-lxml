@@ -31,7 +31,7 @@ class ObjectifiedElement(ElementBase):
     Example
     -------
 
-    ```pycon
+    ```python-console
     >>> root = XML("<root><c1><c2>0</c2><c2>1</c2></c1></root>")
     >>> second_c2 = root.c1.c2[1]
     >>> print(second_c2.text)
@@ -71,7 +71,7 @@ class ObjectifiedElement(ElementBase):
     def __delitem__(self, key: int | slice, /) -> None: ...
     # TODO Check if _Element methods need overriding
     # CSS selector is not a normal use case for objectified
-    # element (and unnecessary), but still usable nontheless
+    # element (and unnecessary), but still usable nonetheless
     def cssselect(
         self,
         expr: str,
@@ -84,7 +84,7 @@ class ObjectifiedDataElement(ObjectifiedElement):
 
     Original Docstring
     ------------------
-    Subclasses should override the `pyval` property and possibly
+    Subclasses should override the `.pyval` property and possibly
     the `__str__` method.
     """
 
@@ -122,7 +122,7 @@ class ObjectifiedDataElement(ObjectifiedElement):
 # These data elements emulate native python data type operations,
 # but lack all non-dunder methods. Too lazy to write all dunders
 # one by one; directly inheriting from int and float is much more
-# succint. Some day, maybe. (See known bug in BoolElement)
+# succinct. Some day, maybe. (See known bug in BoolElement)
 #
 # Not doing the same for StringElement and BoolElement though,
 # each for different reason.
@@ -189,7 +189,7 @@ class BoolElement(IntElement):
     # FIXME Unlike arbitrary floating point / integer powers,
     # power involving bool always have fixed results (0 or 1).
     # However, python maintainers have delved into some disgusting
-    # sort of half-arsed "type annotation arithmatics":
+    # sort of half-arsed "type annotation arithmetics":
     # - int**0  = Literal[1]
     # - int**25 = int
     # - int**26 = Any

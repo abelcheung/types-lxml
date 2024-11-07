@@ -91,8 +91,8 @@ class QName:
     order to allow for generic 2-argument usage.
 
     The ``text`` property holds the qualified name in
-    ``{namespace}tagname`` notation.  The ``namespace`` and
-    ``localname`` properties hold the respective parts of the tag
+    ``{namespace}tagname`` notation.  The ``.namespace`` and
+    ``.localname`` properties hold the respective parts of the tag
     name.
 
     You can pass QName objects wherever a tag name is expected.  Also,

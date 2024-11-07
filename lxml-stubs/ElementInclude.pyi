@@ -7,9 +7,8 @@ else:
 
 from typing import Literal, Protocol, overload
 
-from .etree import LxmlSyntaxError, _Element
-
 from ._types import Unused, _ElementOrTree
+from .etree import LxmlSyntaxError, _Element
 
 # exported constants
 XINCLUDE: LiteralString
@@ -43,7 +42,7 @@ class LoaderProtocol(Protocol):
         _mode: Literal["xml"],
         /,
         encoding: Unused = None,  # Under XML mode this param is ignored
-        # but must be present nontheless
+        # but must be present nonetheless
     ) -> _Element: ...
     @overload
     def __call__(

@@ -63,14 +63,14 @@ class NameCollectorBase(ast.NodeTransformer):
         # When type reference is a stub-only specialized class
         # which don't have runtime support (lxml classes have
         # no __class_getitem__), concede by verifying
-        # unsubscripted type.
+        # non-subscripted type.
         try:
             eval(ast.unparse(node), self._globalns, self._localns | self.collected)
         except TypeError as e:
             if "is not subscriptable" not in e.args[0]:
                 raise
             # TODO Insert node.value dependent hook for extra
-            # varification of subscript type
+            # verification of subscript type
             self.modified = True
             return node.value
         else:

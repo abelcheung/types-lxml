@@ -179,7 +179,7 @@ class ErrorLevels(enum.IntEnum):
 
     Annotation notes
     ----------------
-    These integer constants sementically fit int enum better, but
+    These integer constants semantically fit int enum better, but
     in the end they are just integers. No enum properties and mechanics
     would work on them.
     """
@@ -196,7 +196,7 @@ class ErrorDomains(enum.IntEnum):
 
     Annotation notes
     ----------------
-    These integer constants sementically fit int enum better, but
+    These integer constants semantically fit int enum better, but
     in the end they are just integers. No enum properties and mechanics
     would work on them.
     """
@@ -241,7 +241,7 @@ class ErrorTypes(enum.IntEnum):
 
     Annotation notes
     ----------------
-    These integer constants sementically fit int enum better, but
+    These integer constants semantically fit int enum better, but
     in the end they are just integers. No enum properties and mechanics
     would work on them.
 
@@ -257,7 +257,7 @@ class RelaxNGErrorTypes(enum.IntEnum):
 
     Annotation notes
     ----------------
-    These integer constants sementically fit int enum better, but
+    These integer constants semantically fit int enum better, but
     in the end they are just integers. No enum properties and mechanics
     would work on them.
     """

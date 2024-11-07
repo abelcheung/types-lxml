@@ -140,7 +140,7 @@ class _TypeCheckerAdapter(TypeCheckerAdapterBase):
             if (m := cls._type_mesg_re.match(diag["message"])) is None:
                 continue
             # Mypy can insert extra character into expression so that it
-            # becomes invalid and unparseable. 0.9x days there
+            # becomes invalid and unparsable. 0.9x days there
             # was '*', and now '?' (and '=' for typeddict too).
             # Try stripping those character and pray we get something
             # usable for evaluation

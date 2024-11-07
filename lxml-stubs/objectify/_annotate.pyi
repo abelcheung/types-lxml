@@ -1,5 +1,5 @@
 #
-# Pytype management and annotation
+# PyType management and annotation
 #
 
 from typing import Any, Callable, Iterable
@@ -10,7 +10,7 @@ from ._element import ObjectifiedDataElement
 class PyType:
     """User defined type
 
-    Origianl Docstring
+    Original Docstring
     ------------------
     Named type that contains a type check function, a type class that
     inherits from `ObjectifiedDataElement` and an optional "stringification"
@@ -114,7 +114,7 @@ def pyannotate(
     ignore_xsi: bool, optional
         If True, `xsi:type` annotations are completely ignored during element
         type determination. If False (which is default), use them as initial hint.
-    empty_pytype: str or bytes, optioanl
+    empty_pytype: str or bytes, optional
         Sets the default pytype annotation of empty elements. Pass 'str',
         for example, to annotate them as string elements. Default is None,
         which means not to process empty elements at all.
@@ -145,7 +145,7 @@ def xsiannotate(
     ignore_pytype:
         If True, `py:pytype` annotations are completely ignored during element
         type determination. If False (which is default), use them as initial hint.
-    empty_pytype: str or bytes, optioanl
+    empty_pytype: str or bytes, optional
         Sets the default `xsi:type` attribute of empty elements.
         Pass 'string', for example, to annotate them as string elements. Default
         is None, which means not to process empty elements at all. In particular,
@@ -186,11 +186,11 @@ def annotate(
     ignore_xsi: bool, optional
         If True, `xsi:type` annotations are completely ignored during element
         type determination. If False (which is default), use them as initial hint.
-    empty_pytype: str or bytes, optioanl
+    empty_pytype: str or bytes, optional
         Sets the default pytype annotation of empty elements. Pass `str`,
         for example, to annotate them as string elements. Default is None,
         which means not to process empty elements at all.
-    empty_type: str or bytes, optioanl
+    empty_type: str or bytes, optional
         Sets the default `xsi:type` annotation of empty elements. Pass `string`,
         for example, to annotate them as string elements. Default is None,
         which means not to process empty elements at all.

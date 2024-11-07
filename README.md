@@ -5,7 +5,7 @@
 
 ## Important note
 
-- Since `2024.08.07`, each release will contain multiple builds; besides normal version, there is an alternative build suitable for multiple XML element subclassing. Please check out [relevant Installation section](#choosing-the-build) for detail (hint: many people don't need to bother with this). Also note that this release requires `mypy 1.11` if one chooses to use `mypy` for type checking. `pyright` version requirement (`1.1.351`) is not changed.
+- Since `2024.08.07`, each release will contain multiple builds; besides normal version, there is an alternative build suitable for multiple XML element subclass. Please check out [relevant Installation section](#choosing-the-build) for detail (hint: many people don't need to bother with this). Also note that this release requires `mypy 1.11` if one chooses to use `mypy` for type checking. `pyright` version requirement (`1.1.351`) is not changed.
 
 ## Introduction
 
@@ -39,8 +39,7 @@ Check out [project page](https://github.com/abelcheung/types-lxml/projects) for 
 
 ## Goal ② : Support multiple type checkers
 
-Currently the annotations are validated for both `pyright` and `mypy`, with `pyright` recommended because of its greater flexibility and early adoption
-of newer type checking features.
+Currently the annotations are validated for both `pyright` and `mypy`, with `pyright` recommended because of its greater flexibility and early adoption of newer type checking features.
 
 In the future, there is plan to bring even more type checker support.
 
@@ -62,17 +61,17 @@ Besides docstring, current annotations are geared towards convenience for code w
 
 ## Installation
 
-The normal choice for most people is to fetch package from PyPI via `pip`:
+The normal choice for most people is to fetch package from PyPI, like:
 
-    pip install -U types-lxml
+    uv pip install -U types-lxml  # using uv
+    pip install -U types-lxml  # using pip
 
-In the unlikely case PyPI is down, one can directly download wheel from [latest release in GitHub](https://github.com/abelcheung/types-lxml/releases/latest), and then perform installation as local file:
+In the unlikely case PyPI is down, one can directly download wheel from [latest release in GitHub](https://github.com/abelcheung/types-lxml/releases/latest), and then perform installation as local file.
 
-    pip install -U types-lxml*.whl
+As convenience, it is possible to pull type checker directly [with extras](https://peps.python.org/pep-0508/#extras):
 
-Or directly run bleeding edge version from GitHub repository:
-
-    pip install -U git+https://github.com/abelcheung/types-lxml.git
+    uv pip install -U types-lxml[pyright]
+    pip install -U types-lxml[mypy]
 
 ### Choosing the build
 
@@ -87,7 +86,12 @@ The second version, `types-lxml-multi-subclass`, is intended for specific need, 
       MyBaseElement-->MySubElement2;
 ```
 
-If a parsed or constructed element tree consists of single type of element nodes, it is safe to assume the children or parent of a node are of the same type too. But this assumption does not hold for multiple subclasses. Using diagram above as example, we can only deduce the children and parent type is `MyBaseElement` (or any of its subclasses). The 2 paradigms can't coexist within a single type annotation package. See [bug #51](https://github.com/abelcheung/types-lxml/issues/51) that illustrated why multiple build is necessary.
+If a parsed or constructed element tree consists of single type of element nodes, it is safe to assume the children or parent of a node are of the same type too. But this assumption does not hold for multiple subclasses. Using diagram above as example, calling `.iter()` method from `MyBaseElement` node may produce element of any subelement or even `MyBaseElement` itself.
+Therefore output type should be simply `MyBaseElement` only.
+
+Such scenario is already in effect for `lxml.html`. `<form>` element (`FormElement`) is supposed to contain other form related tags like `<input>`, `<select>` etc. But we can't possibly pinpoint single subelement type, so `<form>` children can only possibly be of type `HtmlElement`. The multiple subelement scenario is already hardcoded for `HtmlElement` and `ObjectifiedElement` within this annotation package, but users may choose to have their own overridden element subclasses (inherit from `ElementBase`) too.
+
+The 2 paradigms can't coexist within a single type annotation package. See [bug #51](https://github.com/abelcheung/types-lxml/issues/51) that illustrated why multiple build is necessary.
 
 Remember that anybody can only choose one of the 2 builds. It is impossible to install both, as `pip` just [arbitrarily overwrite conflicting files with one another](https://github.com/pypa/pip/issues/4625). If in doubt, removing existing package first, then install the one you needed.
 

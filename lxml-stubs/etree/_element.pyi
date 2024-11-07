@@ -57,9 +57,9 @@ class _Element:
     #
     # _Element-only properties
     # Following props are marked as read-only in comment,
-    # but 'sourceline' and 'base' provide __set__ method.
+    # but .sourceline and .base provide __set__() method.
     # However, we only implement rw property for base, as
-    # modifying sourceline is meaningless.
+    # modifying .sourceline is meaningless.
     #
     @property
     def prefix(self) -> str | None: ...
@@ -419,7 +419,7 @@ class _Attrib:
     def iteritems(self) -> Iterator[tuple[str, str]]: ...
     def has_key(self, key: _t._AttrName) -> bool: ...
     def __contains__(self, __o: object) -> bool: ...
-    # richcmp dropped, mapping has no concept of inequality comparison
+    # richcmp() dropped, mapping has no concept of inequality comparison
 
 #
 # Element types and content node types

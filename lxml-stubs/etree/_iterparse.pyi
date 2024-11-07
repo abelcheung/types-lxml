@@ -235,7 +235,7 @@ class iterwalk(Iterator[_T_co]):
     by calling the ``skip_subtree()`` method.
     """
 
-    # There is no concept of html mode in iterwalk; namespace events
+    # There is no concept of html mode in iterwalk(); namespace events
     # are not suppressed like iterparse()
     @overload  # element-only events
     def __new__(

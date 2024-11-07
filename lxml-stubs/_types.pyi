@@ -65,7 +65,7 @@ _StrictNSMap = (
 )  # fmt: skip
 
 # Some namespace map arguments also accept tuple form
-# such as in dict()
+# like what dict() does
 _NSTuples = Iterable[tuple[_AnyStr | None, _AnyStr]]
 
 # https://lxml.de/extensions.html#xpath-extension-functions
@@ -92,7 +92,7 @@ _XPathObject = Any
 
 # XPath variable supports most of the XPathObject types
 # as _input_ argument value, but most users would probably
-# only use primivite types for substitution.
+# only use primitive types for substitution.
 _XPathVarArg = (
     bool
     | int
