@@ -265,10 +265,17 @@ class _ElementTree(Generic[_t._ET_co]):
     @deprecated('Since v3.8.0; use "doctype" parameter instead')
     def write(
         self,
-        file: Any,
-        *,
+        *args: Any,
         docstring: str,
-        __kw: Any,
+        **kw: Any,
+    ) -> None: ...
+    @overload  # warn if inclusive_ns_prefixes is not collection
+    @deprecated("'inclusive_ns_prefixes' should be collection, otherwise will either search for wrong NS prefix or raise exception")
+    def write(
+        self,
+        *args: Any,
+        inclusive_ns_prefixes: _t._AnyStr,
+        **kw: Any,
     ) -> None: ...
     @overload  # method=c14n
     def write(

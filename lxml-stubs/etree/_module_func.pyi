@@ -1,5 +1,5 @@
 import sys
-from typing import Any, Iterable, Literal, final, overload
+from typing import Any, Collection, Iterable, Literal, final, overload
 
 if sys.version_info >= (3, 11):
     from typing import Never
@@ -140,15 +140,14 @@ def fromstringlist(
 
 # Under XML Canonicalization (C14N) mode, most arguments are ignored,
 # some arguments would even raise exception outright if specified.
-@overload  # method="c14n"
+@overload  # warn if inclusive_ns_prefixes is not collection
+@deprecated("'inclusive_ns_prefixes' should be collection, otherwise will either search for wrong NS prefix or raise exception")
 def tostring(
-    element_or_tree: _ElementOrTree,
+    element_or_tree: Any,
     *,
-    method: Literal["c14n"],
-    exclusive: bool = False,
-    inclusive_ns_prefixes: Iterable[_AnyStr] | None = None,
-    with_comments: bool = True,
-) -> bytes:
+    inclusive_ns_prefixes: _AnyStr,
+    **_kw: Any,
+) -> Never:
     """Serialize an element to an encoded string representation of its XML tree.
 
     Annotation
@@ -202,6 +201,15 @@ def tostring(
     on the tail text of children, which will always be serialised.
     """
 
+@overload  # method="c14n"
+def tostring(
+    element_or_tree: _ElementOrTree,
+    *,
+    method: Literal["c14n"],
+    exclusive: bool = False,
+    inclusive_ns_prefixes: Collection[_AnyStr] | None = None,
+    with_comments: bool = True,
+) -> bytes: ...
 @overload  # method="c14n2"
 def tostring(
     element_or_tree: _ElementOrTree,
