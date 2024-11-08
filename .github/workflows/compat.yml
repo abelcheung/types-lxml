@@ -97,23 +97,44 @@ jobs:
         run: |
           uv venv -p 3.10 --python-preference only-system
           uv pip install -r pyproject.toml
-          uv pip install tomli
 
       # HACK Only pyright 1.1.386+ is capable of parsing
       # current pyproject.toml which incorporated tox
       # config. Generate pyright config on-the-fly to
       # make sure pyright compatibility check is not
       # hindered by config issues.
-      - name: Generate pyright config
-        uses: aorizondo/run-python-script-action@e4af956c603ae6572eb93bb261aca2a3bc59116a
+
+      - uses: actions/setup-node@v4
         with:
-          python-binary: .venv/bin/python3
+          node-version: '20'
+      - run: npm install js-toml
+
+      - name: Generate pyright config
+        uses: actions/github-script@v7
+        with:
           script: |
-            import tomli, json
-            with open('pyproject.toml', 'rb') as f:
-              cfg = tomli.load(f)
-            with open('pyrightconfig.json', 'w') as f:
-              json.dump(cfg['tool']['pyright'], f)
+            const fs = require('fs');
+            const toml = require('js-toml');
+
+            fs.readFile('pyproject.toml', 'utf-8', (err, data) => {
+              if (err) {
+                console.error('Error reading pyproject.toml:', err);
+                process.exit(1);
+              }
+
+              const config = toml.load(data);
+              const outData = JSON.stringify(config.tool.pyright, null, 2)
+
+              fs.writeFile('pyrightconfig.json', outData, (err) => {
+                if (err) {
+                  console.error('Error writing pyrightconfig.json:', err);
+                  process.exit(1);
+                }
+                core.startGroup('Data written to pyrightconfig.json');
+                console.log(outData);
+                core.endGroup();
+              });
+            });
 
       - uses: jakebailey/pyright-action@v2
         with:
