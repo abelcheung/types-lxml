@@ -5,6 +5,8 @@
 
 ## Important note
 
+![image showing deprecation warning](https://github.com/user-attachments/assets/6ab30a54-60e7-4e34-932a-2ac2e253c669)
+
 - Since `2024.11.08`:
   - `pyright` users will see warning if a single string is supplied where collection of string is expected (`tuple`, `set`, `list` etc). In terms of typing, a single `str` itself is valid as a `Sequence`, so type checkers normally would not raise alarm when using `str` in such function parameters, but can induce unexpected runtime behavior. See [#64](https://github.com/abelcheung/types-lxml/issues/64) for more info. `mypy` does not support this feature (which (ab)uses `@deprecated` warning).
   - It is possible to verify release files indeed come from GitHub and not maliciously altered. See [Release file attestation](#release-file-attestation) for detail.
@@ -108,6 +110,18 @@ After downloading release wheel file (say `pip download types-lxml`, or browser 
 
 ```
 gh at verify types_lxml-2024.11.8-py3-none-any.whl --repo abelcheung/types-lxml
+```
+
+Should generate following result:
+
+```
+Loaded digest sha256:4b4fa7f9e2f1d5f58b98ac9852a75927e4e0f69363249f9cebc78db095c046e0 for file://types_lxml-2024.11.8-py3-none-any.whl
+Loaded 1 attestation from GitHub API
+✓ Verification succeeded!
+
+sha256:4b4fa7f9e2f1d5f58b98ac9852a75927e4e0f69363249f9cebc78db095c046e0 was attested by:
+REPO                   PREDICATE_TYPE                  WORKFLOW
+abelcheung/types-lxml  https://slsa.dev/provenance/v1  .github/workflows/release.yml@refs/tags/2024.11.08
 ```
 
 
