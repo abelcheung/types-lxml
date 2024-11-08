@@ -5,8 +5,11 @@
 
 ## Important note
 
-- Since upcoming November release, `pyright` users will see warning if a single string is supplied where collection of string is expected (`tuple`, `set`, `list` etc). In terms of typing, a single `str` itself is valid as a `Sequence`, so type checkers normally would not raise alarm when using `str` in such function parameters, but can induce unexpected runtime behavior. See [#64](https://github.com/abelcheung/types-lxml/issues/64) for more info. `mypy` does not support this feature (which (ab)uses `@deprecated` warning).
-- Since `2024.08.07`, each release will contain multiple builds; besides normal version, there is an alternative build suitable for multiple XML element subclass. Please check out [relevant Installation section](#choosing-the-build) for detail (hint: many people don't need to bother with this). Also note that this release requires `mypy 1.11` if one chooses to use `mypy` for type checking. `pyright` version requirement (`1.1.351`) is not changed.
+- Since `2024.11.08`:
+  - `pyright` users will see warning if a single string is supplied where collection of string is expected (`tuple`, `set`, `list` etc). In terms of typing, a single `str` itself is valid as a `Sequence`, so type checkers normally would not raise alarm when using `str` in such function parameters, but can induce unexpected runtime behavior. See [#64](https://github.com/abelcheung/types-lxml/issues/64) for more info. `mypy` does not support this feature (which (ab)uses `@deprecated` warning).
+  - It is possible to verify release files indeed come from GitHub and not maliciously altered. See [Release file attestation](#release-file-attestation) for detail.
+- Since `2024.08.07`:
+  - Each release will contain multiple builds; besides normal version, there is an alternative build suitable for multiple XML element subclass. Please check out [relevant Installation section](#choosing-the-build) for detail (hint: many people don't need to bother with this). Also note that this release requires `mypy 1.11` if one chooses to use `mypy` for type checking. `pyright` version requirement (`1.1.351`) is not changed.
 
 ## Introduction
 
@@ -95,6 +98,17 @@ Such scenario is already in effect for `lxml.html`. `<form>` element (`FormEleme
 The 2 paradigms can't coexist within a single type annotation package. See [bug #51](https://github.com/abelcheung/types-lxml/issues/51) that illustrated why multiple build is necessary.
 
 Remember that anybody can only choose one of the 2 builds. It is impossible to install both, as `pip` just [arbitrarily overwrite conflicting files with one another](https://github.com/pypa/pip/issues/4625). If in doubt, removing existing package first, then install the one you needed.
+
+
+### Release file attestation
+
+Since `2024.11.08` users can download `types-lxml` release files and verify that they indeed do originate from GitHub. For those haven't heard of it, this is sort of like `gnupg` or [`minisign`](https://jedisct1.github.io/minisign/) signatures, but with GitHub backed infrastructure.
+
+After downloading release wheel file (say `pip download types-lxml`, or browser access to PyPI directly), one can use [GitHub cli](https://cli.github.com/) to verify it comes from this GitHub repository without being altered:
+
+```
+gh at verify types_lxml-2024.11.8-py3-none-any.whl --repo abelcheung/types-lxml
+```
 
 
 ## History
