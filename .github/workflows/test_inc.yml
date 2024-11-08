@@ -42,6 +42,13 @@ jobs:
         cache-dependency-glob: |
           ./pyproject.toml
 
+    # Glob not supported under default windows env
+    - name: Determine wheel file name
+      id: wheel-name
+      shell: bash
+      run: |
+        echo "filename=$(echo dist/*.whl)" >> "$GITHUB_OUTPUT"
+
     - name: Test stubs
       run: >
         uvx
@@ -51,6 +58,7 @@ jobs:
         --with tox-uv
         tox@4.23.2 run -v
         --skip-env='.*-rt-.*'
+        --installpkg ${{ steps.wheel-name.outputs.filename }}
         --result-json test-${{ inputs.flavor }}-stub-py${{ matrix.pyver }}.json
 
     - uses: actions/upload-artifact@v4
@@ -113,11 +121,19 @@ jobs:
         uvx tox run -e pyright -- --version
         uvx tox run -v --skip-env='.*-stub$' --notest
 
+    # Glob not supported under default windows env
+    - name: Determine wheel file name
+      id: wheel-name
+      shell: bash
+      run: |
+        echo "filename=$(echo dist/*.whl)" >> "$GITHUB_OUTPUT"
+
     - name: Test runtime
       run: >
         uvx
         tox run-parallel -vv
         --skip-env='.*-stub$'
+        --installpkg ${{ steps.wheel-name.outputs.filename }}
         --result-json test-${{ inputs.flavor }}-rt-${{ matrix.os }}-py${{ matrix.pyver }}.json
 
     - uses: actions/upload-artifact@v4
