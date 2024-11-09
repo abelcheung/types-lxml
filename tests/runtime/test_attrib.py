@@ -5,7 +5,7 @@ from inspect import Parameter
 from types import MappingProxyType
 from typing import Any, cast
 
-import _testutils
+from . import _testutils
 import pytest
 from lxml.etree import QName, _Attrib, _Element
 

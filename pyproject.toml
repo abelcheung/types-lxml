@@ -87,9 +87,8 @@ dev = [
 source = 'scm'
 
 [tool.pdm.build]
-includes = [
-    'lxml-stubs/',
-]
+includes = ['src']
+package-dir = 'src'
 excludes = [
     '**/__pycache__',
     '**/.*',
@@ -97,16 +96,12 @@ excludes = [
     '**/*.patch',
     '/*.py',
 ]
-source-includes = [
-    'test-rt/',
-    'test-stub/',
-]
 
 [tool.setuptools_scm]
 
 [tool.pyright]
-include = ['lxml-stubs']
-extraPaths = ['test-rt']
+stubPath = 'src'
+extraPaths = ['tests/runtime']
 typeCheckingMode = 'strict'
 reportPrivateUsage = false
 reportUnnecessaryTypeIgnoreComment = false
@@ -116,7 +111,8 @@ reportUnnecessaryTypeIgnoreComment = false
 enableTypeIgnoreComments = false
 
 [tool.mypy]
-packages = 'lxml-stubs'
+mypy_path = '$MYPY_CONFIG_FILE_DIR/src'
+packages = "lxml-stubs"
 strict = true
 show_error_context = true
 pretty = true
@@ -221,21 +217,27 @@ dependency_groups = [
     'basic',
     'pyright',
 ]
-commands = [['pyright', {replace = 'posargs', extend = true}]]
+commands = [['pyright', {replace = 'posargs', extend = true}, 'src']]
 
 [tool.tox._env_stub]
+package = 'wheel'
+wheel_build_env = '{package_env}'
 dependency_groups = ['stub-test']
 commands = [[
     'pytest',
-    '--mypy-ini-file=test-stub/mypy-pytest.ini',
-    {replace = 'posargs', default = ['test-stub'], extend = true},
+    '--mypy-ini-file=tests/static/mypy-pytest.ini',
+    {replace = 'posargs', default = ['tests/static'], extend = true},
 ]]
 
 [tool.tox._env_rt]
-change_dir = '{tox_root}/test-rt'
-commands = [['pytest', {replace = 'posargs', default = ['.'], extend = true}]]
+package = 'wheel'
+wheel_build_env = '{package_env}'
+commands = [[
+    'pytest',
+    {replace = 'posargs', default = ['tests/runtime'], extend = true}
+]]
 commands_pre = [
-    ['pyright', '--level', 'error', '.'],
+    ['pyright', '--level', 'error', 'tests/runtime'],
     # HACK Resort to mypy.api since command line doesn't know
     # how to dump to file or discard output, and tox doesn't
     # support shell semantics.
@@ -246,7 +248,7 @@ commands_pre = [
         'python', '-c',
         '''
 from mypy.api import run
-r=run(["--config-file=rttest-mypy.ini","."])
+r=run(["--config-file=tests/runtime/rttest-mypy.ini","tests/runtime"])
 for line in r[0].splitlines():
     if ": note:" not in line:
         print(line.strip())

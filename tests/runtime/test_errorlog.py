@@ -4,7 +4,7 @@ import logging
 from inspect import Parameter
 from typing import Any, cast
 
-import _testutils
+from . import _testutils
 import pytest
 from lxml.etree import (
     LXML_VERSION,

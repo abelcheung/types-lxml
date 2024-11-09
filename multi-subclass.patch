@@ -1,15 +1,28 @@
- lxml-stubs/etree/_element.pyi      | 76 +++++++++++++++++++-------------------
- lxml-stubs/etree/_factory_func.pyi |  6 +--
- lxml-stubs/html/_element.pyi       | 35 ++++++++++--------
- lxml-stubs/objectify/_element.pyi  | 10 +++--
- pyproject.toml                     |  2 +-
- test-rt/conftest.py                |  2 +-
+ pyproject.toml                         |  2 +-
+ src/lxml-stubs/etree/_element.pyi      | 76 +++++++++++++++++-----------------
+ src/lxml-stubs/etree/_factory_func.pyi |  6 +--
+ src/lxml-stubs/html/_element.pyi       | 35 +++++++++-------
+ src/lxml-stubs/objectify/_element.pyi  | 10 +++--
+ tests/runtime/conftest.py              |  2 +-
  6 files changed, 68 insertions(+), 63 deletions(-)
 
-diff --git a/lxml-stubs/etree/_element.pyi b/lxml-stubs/etree/_element.pyi
-index 0007dc7..95e5b58 100644
---- a/lxml-stubs/etree/_element.pyi
-+++ b/lxml-stubs/etree/_element.pyi
+diff --git a/pyproject.toml b/pyproject.toml
+index a2a7155..7c2dd7a 100644
+--- a/pyproject.toml
++++ b/pyproject.toml
+@@ -5,7 +5,7 @@ requires = ['pdm-backend ~= 2.3']
+ build-backend = 'pdm.backend'
+ 
+ [project]
+-name = 'types-lxml'
++name = 'types-lxml-multi-subclass'
+ dynamic = ['version']
+ description = 'Complete lxml external type annotation'
+ readme = 'README.md'
+diff --git a/src/lxml-stubs/etree/_element.pyi b/src/lxml-stubs/etree/_element.pyi
+index bfb8f76..1b78f37 100644
+--- a/src/lxml-stubs/etree/_element.pyi
++++ b/src/lxml-stubs/etree/_element.pyi
 @@ -14,9 +14,9 @@ from typing import (
  )
  
@@ -185,10 +198,10 @@ index 0007dc7..95e5b58 100644
  
  # ET class notation is specialized, indicating the type of element
  # it is holding (e.g. XML element, HTML element or Objectified
-diff --git a/lxml-stubs/etree/_factory_func.pyi b/lxml-stubs/etree/_factory_func.pyi
+diff --git a/src/lxml-stubs/etree/_factory_func.pyi b/src/lxml-stubs/etree/_factory_func.pyi
 index d30d366..d02992f 100644
---- a/lxml-stubs/etree/_factory_func.pyi
-+++ b/lxml-stubs/etree/_factory_func.pyi
+--- a/src/lxml-stubs/etree/_factory_func.pyi
++++ b/src/lxml-stubs/etree/_factory_func.pyi
 @@ -13,7 +13,7 @@ from .._types import (
  )
  from ..html import HtmlElement
@@ -214,10 +227,10 @@ index d30d366..d02992f 100644
  @overload  # from element, parser ignored
  def ElementTree(element: _ET) -> _ElementTree[_ET]: ...
  @overload  # from file source, custom parser
-diff --git a/lxml-stubs/html/_element.pyi b/lxml-stubs/html/_element.pyi
+diff --git a/src/lxml-stubs/html/_element.pyi b/src/lxml-stubs/html/_element.pyi
 index 824828a..239b540 100644
---- a/lxml-stubs/html/_element.pyi
-+++ b/lxml-stubs/html/_element.pyi
+--- a/src/lxml-stubs/html/_element.pyi
++++ b/src/lxml-stubs/html/_element.pyi
 @@ -128,26 +128,29 @@ class HtmlElement(etree.ElementBase):
      # Subclassing of _Element should not go beyond HtmlElement. For example,
      # while children of HtmlElement are mostly HtmlElement, FormElement never
@@ -282,10 +295,10 @@ index 824828a..239b540 100644
          self,
          expr: str,
          *,
-diff --git a/lxml-stubs/objectify/_element.pyi b/lxml-stubs/objectify/_element.pyi
+diff --git a/src/lxml-stubs/objectify/_element.pyi b/src/lxml-stubs/objectify/_element.pyi
 index abc5a86..a099d79 100644
---- a/lxml-stubs/objectify/_element.pyi
-+++ b/lxml-stubs/objectify/_element.pyi
+--- a/src/lxml-stubs/objectify/_element.pyi
++++ b/src/lxml-stubs/objectify/_element.pyi
 @@ -51,7 +51,7 @@ class ObjectifiedElement(ElementBase):
      def addattr(self, tag: _TagName, value: object) -> None: ...
      def countchildren(self) -> int: ...
@@ -319,24 +332,11 @@ index abc5a86..a099d79 100644
          self,
          expr: str,
          *,
-diff --git a/pyproject.toml b/pyproject.toml
-index a7bd703..59ff9cd 100644
---- a/pyproject.toml
-+++ b/pyproject.toml
-@@ -5,7 +5,7 @@ requires = ['pdm-backend ~= 2.3']
- build-backend = 'pdm.backend'
- 
- [project]
--name = 'types-lxml'
-+name = 'types-lxml-multi-subclass'
- dynamic = ['version']
- description = 'Complete lxml external type annotation'
- readme = 'README.md'
-diff --git a/test-rt/conftest.py b/test-rt/conftest.py
-index 35de466..c257b5b 100644
---- a/test-rt/conftest.py
-+++ b/test-rt/conftest.py
-@@ -20,7 +20,7 @@ def pytest_collection_finish(session: pytest.Session) -> None:
+diff --git a/tests/runtime/conftest.py b/tests/runtime/conftest.py
+index 5a7482f..af31137 100644
+--- a/tests/runtime/conftest.py
++++ b/tests/runtime/conftest.py
+@@ -22,7 +22,7 @@ def pytest_collection_finish(session: pytest.Session) -> None:
  
  def pytest_configure(config: pytest.Config) -> None:
      # "normal" or "multiclass"

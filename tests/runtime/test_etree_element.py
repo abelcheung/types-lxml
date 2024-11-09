@@ -6,7 +6,7 @@ from random import randrange
 from types import MappingProxyType
 from typing import Any, BinaryIO, cast
 
-import _testutils
+from . import _testutils
 import pytest
 from lxml import etree
 from lxml.etree import (
