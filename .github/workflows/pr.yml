@@ -41,7 +41,7 @@ jobs:
       with:
         reporter: github-pr-review
         level: warning
-        target: lxml-stubs
+        target: src/lxml-stubs
         fail_on_error: true
         setup_method: nothing
         install_types: false
@@ -57,7 +57,6 @@ jobs:
       with:
         reporter: github-pr-review
         level: warning
-        workdir: lxml-stubs
         fail_on_error: true
-        pyright_flags: --pythonpath .venv/bin/python3
+        pyright_flags: --pythonpath .venv/bin/python3 src
 

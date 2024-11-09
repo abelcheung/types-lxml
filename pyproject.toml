@@ -87,9 +87,8 @@ dev = [
 source = 'scm'
 
 [tool.pdm.build]
-includes = [
-    'lxml-stubs/',
-]
+includes = ['src']
+package-dir = 'src'
 excludes = [
     '**/__pycache__',
     '**/.*',
@@ -105,7 +104,7 @@ source-includes = [
 [tool.setuptools_scm]
 
 [tool.pyright]
-include = ['lxml-stubs']
+stubPath = 'src'
 extraPaths = ['test-rt']
 typeCheckingMode = 'strict'
 reportPrivateUsage = false
@@ -116,6 +115,7 @@ reportUnnecessaryTypeIgnoreComment = false
 enableTypeIgnoreComments = false
 
 [tool.mypy]
+mypy_path = '$MYPY_CONFIG_FILE_DIR/src'
 packages = 'lxml-stubs'
 strict = true
 show_error_context = true
@@ -221,7 +221,7 @@ dependency_groups = [
     'basic',
     'pyright',
 ]
-commands = [['pyright', {replace = 'posargs', extend = true}]]
+commands = [['pyright', {replace = 'posargs', extend = true}, 'src']]
 
 [tool.tox._env_stub]
 dependency_groups = ['stub-test']

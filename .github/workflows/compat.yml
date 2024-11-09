@@ -37,7 +37,7 @@ jobs:
       - name: Perform type check
         run: |
           source .venv/bin/activate
-          mypy lxml-stubs
+          mypy
 
   pyright_compat:
     strategy:
@@ -119,3 +119,4 @@ jobs:
         with:
           version: ${{ matrix.prver }}
           python-path: .venv/bin/python
+          extra-args: src
