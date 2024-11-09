@@ -112,6 +112,7 @@ enableTypeIgnoreComments = false
 
 [tool.mypy]
 mypy_path = '$MYPY_CONFIG_FILE_DIR/src'
+packages = "lxml-stubs"
 strict = true
 show_error_context = true
 pretty = true
