@@ -98,7 +98,6 @@ excludes = [
 ]
 source-includes = [
     'test-rt/',
-    'test-stub/',
 ]
 
 [tool.setuptools_scm]
@@ -227,8 +226,8 @@ commands = [['pyright', {replace = 'posargs', extend = true}, 'src']]
 dependency_groups = ['stub-test']
 commands = [[
     'pytest',
-    '--mypy-ini-file=test-stub/mypy-pytest.ini',
-    {replace = 'posargs', default = ['test-stub'], extend = true},
+    '--mypy-ini-file=tests/static/mypy-pytest.ini',
+    {replace = 'posargs', default = ['tests/static'], extend = true},
 ]]
 
 [tool.tox._env_rt]
