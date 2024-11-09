@@ -223,6 +223,8 @@ dependency_groups = [
 commands = [['pyright', {replace = 'posargs', extend = true}, 'src']]
 
 [tool.tox._env_stub]
+package = 'wheel'
+wheel_build_env = '{package_env}'
 dependency_groups = ['stub-test']
 commands = [[
     'pytest',
@@ -231,6 +233,8 @@ commands = [[
 ]]
 
 [tool.tox._env_rt]
+package = 'wheel'
+wheel_build_env = '{package_env}'
 change_dir = '{tox_root}/test-rt'
 commands = [['pytest', {replace = 'posargs', default = ['.'], extend = true}]]
 commands_pre = [
