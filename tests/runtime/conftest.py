@@ -6,9 +6,11 @@ from pathlib import Path, PurePosixPath
 
 import pytest
 import typeguard
-from _testutils import mypy_adapter, pyright_adapter
 from lxml import etree as _e, html as _h
 
+from ._testutils import mypy_adapter, pyright_adapter
+
+pytest_plugins = ["typeguard"]
 typeguard.config.forward_ref_policy = typeguard.ForwardRefPolicy.ERROR
 
 

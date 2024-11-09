@@ -112,11 +112,16 @@ class _TypeCheckerAdapter(TypeCheckerAdapterBase):
 
     @classmethod
     def run_typechecker_on(cls, paths: _t.Iterable[pathlib.Path]) -> None:
+        this_file = pathlib.Path(__file__).resolve()
+        mypy_ini = this_file.parent.parent / "rttest-mypy.ini"
+        if not mypy_ini.is_file():
+            raise FileNotFoundError(f"mypy config not found at {mypy_ini}")
         mypy_args = [
             "--output=json",
-            "--config-file=rttest-mypy.ini",
+            f"--config-file={mypy_ini}",
         ]
         mypy_args.extend(str(p) for p in paths)
+        # print(f"Running mypy with args: {mypy_args}")
         # Note that mypy UNCONDITIONALLY exits with error when
         # output format is json, there is no point checking
         # exit code for problems
@@ -130,7 +135,8 @@ class _TypeCheckerAdapter(TypeCheckerAdapterBase):
             # If it fails parsing data, json must be containing
             # multiline error hint, just let it KABOOM
             diag: _MypyDiagObj = json.loads(line)
-            pos = FilePos(diag["file"], diag["line"])
+            filename = pathlib.Path(diag["file"]).name
+            pos = FilePos(filename, diag["line"])
             if diag["severity"] != "note":
                 raise TypeCheckerError(
                     "Mypy {}: {}".format(diag["severity"], diag["message"]),

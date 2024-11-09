@@ -3,7 +3,7 @@ from __future__ import annotations
 import pathlib
 from typing import TYPE_CHECKING, cast
 
-import _testutils
+from . import _testutils
 import lxml.etree as _e
 import pytest
 from lxml.etree import (

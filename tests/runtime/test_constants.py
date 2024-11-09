@@ -1,4 +1,4 @@
-import _testutils
+from . import _testutils
 import lxml.ElementInclude as _ei
 import lxml.etree as _e
 import lxml.html as _h

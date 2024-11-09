@@ -6,7 +6,7 @@ from io import StringIO
 from pathlib import Path
 from typing import Any, Literal, cast, overload
 
-import _testutils
+from . import _testutils
 import lxml.ElementInclude as EI
 import pytest
 from lxml.etree import (

@@ -5,7 +5,7 @@ from io import BytesIO, StringIO
 from pathlib import Path
 from typing import Any, cast
 
-import _testutils
+from . import _testutils
 import lxml.html.html5parser as h5
 import pytest
 from lxml.etree import (

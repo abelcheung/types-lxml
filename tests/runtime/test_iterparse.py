@@ -3,7 +3,7 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Any, cast
 
-import _testutils
+from . import _testutils
 import pytest
 from lxml.etree import _Element as _Element, _ElementTree, iterparse, iterwalk
 from lxml.html import HtmlElement

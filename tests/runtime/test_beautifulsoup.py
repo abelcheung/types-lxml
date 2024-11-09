@@ -6,7 +6,7 @@ from pathlib import Path
 from typing import Any, cast
 from urllib.request import urlopen
 
-import _testutils
+from . import _testutils
 import pytest
 from bs4 import BeautifulSoup
 from lxml import (
