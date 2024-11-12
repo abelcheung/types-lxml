@@ -1,25 +1,17 @@
 from __future__ import annotations
 
 import operator
-from typing import Any, Literal
+from typing import Any, Literal, cast
 
 import hypothesis.strategies as st
 from hypothesis import note
 from lxml.etree import QName
 
 
-def all_instances_except_of_type(*excluded: type[Any]) -> st.SearchStrategy[Any]:
-    if object in excluded:
-        raise ValueError("Cannot exclude everything")
-    strategy: st.SearchStrategy[Any] = st.from_type(type).flatmap(st.from_type)
-    if len(excluded) == 0:
-        return strategy
-    else:
-        return strategy.filter(lambda x: not isinstance(x, excluded))
-
-
-def all_types_except(*excluded: type, exact: bool = False) -> st.SearchStrategy[type]:
-    if Any in excluded:  # type: ignore[comparison-overlap]
+def all_types_except(
+    *excluded: type[Any], exact: bool = False
+) -> st.SearchStrategy[type]:
+    if Any in excluded or object in excluded:  # type: ignore[comparison-overlap]
         raise ValueError("Cannot exclude everything")
     strategy: st.SearchStrategy[type] = st.from_type(type)
     if len(excluded) == 0:
@@ -28,6 +20,12 @@ def all_types_except(*excluded: type, exact: bool = False) -> st.SearchStrategy[
         return strategy.filter(lambda x: x not in excluded)
     else:
         return strategy.filter(lambda x: not issubclass(x, excluded))
+
+
+def all_instances_except_of_type(*excluded: type[Any]) -> st.SearchStrategy[Any]:
+    return cast(  # type: ignore[redundant-cast]
+        st.SearchStrategy[Any], all_types_except(*excluded).flatmap(st.from_type)
+    )
 
 
 # Although stringified XML names use colon (:) character,
