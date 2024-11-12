@@ -127,7 +127,7 @@ jobs:
       if: runner.os != 'Windows'
       run: >
         uvx
-        tox run-parallel -vv
+        tox run-parallel
         --skip-env='.*-stub$'
         --installpkg ${{ steps.wheel-name.outputs.filename }}
         --result-json test-${{ inputs.flavor }}-rt-${{ matrix.os }}-py${{ matrix.pyver }}.json
@@ -140,7 +140,7 @@ jobs:
       if: runner.os == 'Windows'
       run: >
         uvx
-        tox run -v
+        tox run
         --skip-env='.*-stub$'
         --installpkg ${{ steps.wheel-name.outputs.filename }}
         --result-json test-${{ inputs.flavor }}-rt-${{ matrix.os }}-py${{ matrix.pyver }}.json
