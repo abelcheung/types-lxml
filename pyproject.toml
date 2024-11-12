@@ -143,7 +143,10 @@ combine-as-imports = true
 
 [tool.pytest.ini_options]
 minversion = "7.0"
-addopts = "--tb=short"
+addopts = [
+    "--tb=short",
+    "--import-mode=importlib",
+]
 
 [tool.tox]
 env_list = [
