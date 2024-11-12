@@ -7,7 +7,14 @@ from types import MappingProxyType
 from typing import Any, Iterable, cast
 
 import pytest
-from hypothesis import assume, example, given, settings, strategies as st
+from hypothesis import (
+    HealthCheck,
+    assume,
+    example,
+    given,
+    settings,
+    strategies as st,
+)
 from lxml.etree import Element, QName, _Attrib, _Element
 
 from . import _testutils
@@ -32,7 +39,9 @@ class TestAttrib:
         for k1 in attrib:
             reveal_type(k1)
 
+    @settings(suppress_health_check=[HealthCheck.too_slow])
     @given(k=_st.all_instances_except_of_type(str, bytes, bytearray, QName))
+    @pytest.mark.slow
     def test_wrong_key_type(self, disposable_attrib: _Attrib, k: Any) -> None:
         with pytest.raises(TypeError, match="Argument must be bytes or unicode"):
             _ = disposable_attrib[k]

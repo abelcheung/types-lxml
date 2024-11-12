@@ -147,6 +147,9 @@ addopts = [
     "--tb=short",
     "--import-mode=importlib",
 ]
+markers = [
+    "slow: marks tests as slow",
+]
 
 [tool.tox]
 env_list = [

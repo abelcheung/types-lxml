@@ -34,6 +34,7 @@ class TestIterwalk:
             else:
                 reveal_type(item[1])
 
+    @pytest.mark.slow
     def test_html_default_event(self, bightml_tree: _ElementTree[HtmlElement]) -> None:
         walker = iterwalk(bightml_tree, tag=("div", "span"))
         reveal_type(walker)
@@ -41,6 +42,7 @@ class TestIterwalk:
             reveal_type(event)
             reveal_type(elem)
 
+    @pytest.mark.slow
     def test_html_more_event(self, bightml_tree: _ElementTree[HtmlElement]) -> None:
         # Since HtmlComment is pretended as HtmlElement subclass
         # in stub but not runtime, adding 'comment' event would fail
