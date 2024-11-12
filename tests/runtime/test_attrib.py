@@ -221,6 +221,8 @@ class TestMethodUpdate:
         else:
             return str(v)
 
+    # HACK Merely an attempted external reproduction of how lxml
+    # normalize keys before insertion into _Attrib.
     def _normalized_key(self, k: str | bytes | bytearray | QName) -> str:
         norm = self._normalized_value(k)
         return norm[2:] if norm.startswith("{}") else norm
@@ -251,7 +253,7 @@ class TestMethodUpdate:
                 # end result becomes {'k': 'v2'}. Dict key
                 # uniqueness is broken in this case and we can
                 # no longer guarantee value equality.
-                if k in blacklist_keys:
+                if self._normalized_key(k) in blacklist_keys:
                     continue
 
                 # Counter example 2: {'k': QName('{n}v')}
