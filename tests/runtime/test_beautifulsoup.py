@@ -1,12 +1,12 @@
 from __future__ import annotations
 
+import sys
 from inspect import Parameter
 from io import BytesIO, StringIO
 from pathlib import Path
 from typing import Any, cast
 from urllib.request import urlopen
 
-from . import _testutils
 import pytest
 from bs4 import BeautifulSoup
 from lxml import (
@@ -16,9 +16,12 @@ from lxml import (
 from lxml.etree import _Element as _Element, _ElementTree as _ElementTree
 from lxml.html import HtmlElement as HtmlElement, soupparser as _soup
 
-INJECT_REVEAL_TYPE = True
-if INJECT_REVEAL_TYPE:
-    reveal_type = getattr(_testutils, "reveal_type_wrapper")
+from . import _testutils
+
+if sys.version_info >= (3, 11):
+    from typing import reveal_type
+else:
+    from typing_extensions import reveal_type
 
 
 class TestFromstring:

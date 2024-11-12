@@ -1,9 +1,9 @@
 from __future__ import annotations
 
 import pathlib
+import sys
 from typing import TYPE_CHECKING, cast
 
-from . import _testutils
 import lxml.etree as _e
 import pytest
 from lxml.etree import (
@@ -15,9 +15,10 @@ from lxml.etree import (
 from lxml.objectify import ObjectifiedElement, ObjectifyElementClassLookup
 from typeguard import TypeCheckError
 
-INJECT_REVEAL_TYPE = True
-if INJECT_REVEAL_TYPE:
-    reveal_type = getattr(_testutils, "reveal_type_wrapper")
+if sys.version_info >= (3, 11):
+    from typing import reveal_type
+else:
+    from typing_extensions import reveal_type
 
 
 def test_manual_objectify_parser(xml2_filepath: pathlib.Path) -> None:

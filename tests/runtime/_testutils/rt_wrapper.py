@@ -48,26 +48,21 @@ def reveal_type_wrapper(var: _T) -> _T:
 
     Usage
     -----
-    This function needs special boiler plate to fool command
-    line type checkers. Add following fragment to any python
-    source using `reveal_type()` function:
+    No special handling is required. Just import `reveal_type`
+    as usual in pytest test functions, and it will be replaced
+    with this function behind the scene. However, since
+    `reveal_type()` is not available in Python 3.10 or earlier,
+    you need to import it conditionally, like this:
 
-    ```python
-        INJECT_REVEAL_TYPE = True
-        if INJECT_REVEAL_TYPE:
-            reveal_type = getattr(_testutils, "reveal_type_wrapper")
-    ```
+        ```python
+        if sys.version_info >= (3, 11):
+            from typing import reveal_type
+        else:
+            from typing_extensions import reveal_type
+        ```
 
-    Mypy needs extra configuration; add
-    `INJECT_REVEAL_TYPE` to `always_false` setting.
-    No configuration needed for pyright.
-    Such maneuver is designed to circumvent type checkers'
-    ability to resolve `reveal_type()`'s origin. Otherwise,
-    when type checkers managed to detect `reveal_type()` is
-    somehow overridden, they refuse to print any output.
-
-    Its calling behavior is identical to official
-    `reveal_type()`: returns input argument unchanged.
+    The signature is identical to official `reveal_type()`:
+    returns input argument unchanged.
 
     Raises
     ------

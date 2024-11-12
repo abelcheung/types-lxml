@@ -1,10 +1,10 @@
 from __future__ import annotations
 
 import logging
+import sys
 from inspect import Parameter
 from typing import Any, cast
 
-from . import _testutils
 import pytest
 from lxml.etree import (
     LXML_VERSION,
@@ -20,9 +20,13 @@ from lxml.etree import (
     use_global_python_log,
 )
 
-INJECT_REVEAL_TYPE = True
-if INJECT_REVEAL_TYPE:
-    reveal_type = getattr(_testutils, "reveal_type_wrapper")
+from . import _testutils
+
+if sys.version_info >= (3, 11):
+    from typing import reveal_type
+else:
+    from typing_extensions import reveal_type
+
 
 ### NOTES
 #

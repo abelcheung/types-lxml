@@ -1,12 +1,12 @@
 from __future__ import annotations
 
+import sys
 from copy import deepcopy
 from inspect import Parameter
 from random import randrange
 from types import MappingProxyType
 from typing import Any, BinaryIO, cast
 
-from . import _testutils
 import pytest
 from lxml import etree
 from lxml.etree import (
@@ -20,9 +20,13 @@ from lxml.etree import (
 )
 from lxml.html import Element as h_Element
 
-INJECT_REVEAL_TYPE = True
-if INJECT_REVEAL_TYPE:
-    reveal_type = getattr(_testutils, "reveal_type_wrapper")
+from . import _testutils
+
+if sys.version_info >= (3, 11):
+    from typing import reveal_type
+else:
+    from typing_extensions import reveal_type
+
 
 # See rttest-mypy.ini for explanation
 TC_HONORS_REVERSED = True

@@ -1,9 +1,9 @@
 from __future__ import annotations
 
+import sys
 from pathlib import Path
 from typing import Any, Callable, Sequence, cast
 
-from . import _testutils
 import pytest
 from lxml.etree import __version__ as _lxml_ver, _ElementTree
 from lxml.html import (
@@ -16,9 +16,11 @@ from lxml.html import (
     rewrite_links,
 )
 
-INJECT_REVEAL_TYPE = True
-if INJECT_REVEAL_TYPE:
-    reveal_type = getattr(_testutils, "reveal_type_wrapper")
+if sys.version_info >= (3, 11):
+    from typing import reveal_type
+else:
+    from typing_extensions import reveal_type
+
 
 _BASE_HREF = "http://dummy"
 

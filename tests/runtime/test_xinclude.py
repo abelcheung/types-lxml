@@ -1,12 +1,12 @@
 from __future__ import annotations
 
 import copy
+import sys
 from inspect import Parameter, _ParameterKind
 from io import StringIO
 from pathlib import Path
 from typing import Any, Literal, cast, overload
 
-from . import _testutils
 import lxml.ElementInclude as EI
 import pytest
 from lxml.etree import (
@@ -18,10 +18,12 @@ from lxml.etree import (
     parse,
 )
 
-INJECT_REVEAL_TYPE = True
-if INJECT_REVEAL_TYPE:
-    reveal_type = getattr(_testutils, "reveal_type_wrapper")
+from . import _testutils
 
+if sys.version_info >= (3, 11):
+    from typing import reveal_type
+else:
+    from typing_extensions import reveal_type
 
 # XInclude only works on ElementTree as method,
 # and only on Element when used as function.

@@ -1,13 +1,17 @@
-from . import _testutils
+from __future__ import annotations
+
+import sys
+
 import lxml.ElementInclude as _ei
 import lxml.etree as _e
 import lxml.html as _h
 import lxml.isoschematron as _sch
 import lxml.objectify as _o
 
-INJECT_REVEAL_TYPE = True
-if INJECT_REVEAL_TYPE:
-    reveal_type = getattr(_testutils, "reveal_type_wrapper")
+if sys.version_info >= (3, 11):
+    from typing import reveal_type
+else:
+    from typing_extensions import reveal_type
 
 
 class TestEtreeConstants:

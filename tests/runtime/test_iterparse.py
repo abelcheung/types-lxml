@@ -1,16 +1,17 @@
 from __future__ import annotations
 
+import sys
 from pathlib import Path
 from typing import Any, cast
 
-from . import _testutils
 import pytest
 from lxml.etree import _Element as _Element, _ElementTree, iterparse, iterwalk
 from lxml.html import HtmlElement
 
-INJECT_REVEAL_TYPE = True
-if INJECT_REVEAL_TYPE:
-    reveal_type = getattr(_testutils, "reveal_type_wrapper")
+if sys.version_info >= (3, 11):
+    from typing import reveal_type
+else:
+    from typing_extensions import reveal_type
 
 
 class TestIterwalk:

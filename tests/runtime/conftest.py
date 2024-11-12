@@ -8,16 +8,8 @@ import pytest
 import typeguard
 from lxml import etree as _e, html as _h
 
-from ._testutils import mypy_adapter, pyright_adapter
-
-pytest_plugins = ["typeguard", "hypothesis"]
+pytest_plugins = ["typeguard", "hypothesis", "runtime.reveal_type_inject"]
 typeguard.config.forward_ref_policy = typeguard.ForwardRefPolicy.ERROR
-
-
-def pytest_collection_finish(session: pytest.Session) -> None:
-    files = {i.path for i in session.items}
-    for adapter in (pyright_adapter.adapter, mypy_adapter.adapter):
-        adapter.run_typechecker_on(files)
 
 
 def pytest_configure(config: pytest.Config) -> None:

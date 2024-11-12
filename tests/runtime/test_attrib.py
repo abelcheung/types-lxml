@@ -1,10 +1,11 @@
 from __future__ import annotations
 
+import sys
 from collections import ChainMap, Counter, defaultdict
-from collections.abc import Mapping
+from collections.abc import Iterable, Mapping
 from inspect import Parameter
 from types import MappingProxyType
-from typing import Any, Iterable, cast
+from typing import Any, cast
 
 import pytest
 from hypothesis import (
@@ -17,16 +18,16 @@ from hypothesis import (
 )
 from lxml.etree import Element, QName, _Attrib, _Element
 
-from . import _testutils
 from ._testutils import (
     empty_signature_tester,
     signature_tester,
     strategy as _st,
 )
 
-INJECT_REVEAL_TYPE = True
-if INJECT_REVEAL_TYPE:
-    reveal_type = getattr(_testutils, "reveal_type_wrapper")
+if sys.version_info >= (3, 11):
+    from typing import reveal_type
+else:
+    from typing_extensions import reveal_type
 
 
 class TestAttrib:
