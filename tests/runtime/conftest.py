@@ -10,7 +10,7 @@ from lxml import etree as _e, html as _h
 
 from ._testutils import mypy_adapter, pyright_adapter
 
-pytest_plugins = ["typeguard"]
+pytest_plugins = ["typeguard", "hypothesis"]
 typeguard.config.forward_ref_policy = typeguard.ForwardRefPolicy.ERROR
 
 
@@ -157,3 +157,14 @@ def list_log() -> _e._ListErrorLog:
         raise RuntimeError("Unknown error when creating error_log fixture")
 
     return err
+
+
+# For hypothesis tests, parsing valid document spends too much
+# time and raises HealthCheck warning, use simple stuff instead
+@pytest.fixture(scope="class")
+def disposable_element() -> _e._Element:
+    return _e.Element("order", date = "1900-01-01", id = "123")
+
+@pytest.fixture(scope="class")
+def disposable_attrib(disposable_element: _e._Element) -> _e._Attrib:
+    return disposable_element.attrib

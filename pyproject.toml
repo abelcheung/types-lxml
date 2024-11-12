@@ -61,6 +61,7 @@ rt-test = [
     "pytest == 8.3.3",
     "beautifulsoup4 == 4.12.3",
     "html5lib == 1.1",
+    "hypothesis[zoneinfo] == 6.116.0",
     {include-group = "mypy"},
     {include-group = "pyright"},
 ]
@@ -81,6 +82,7 @@ dev = [
     'pytest-mypy-plugins >= 2.0',
     'lxml >= 4.9',
     'beautifulsoup4 ~= 4.8',
+    'hypothesis[zoneinfo] ~= 6.0',
 ]
 
 [tool.pdm.version]
