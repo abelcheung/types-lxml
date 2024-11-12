@@ -152,7 +152,7 @@ jobs:
         if-no-files-found: error
 
   log-aggregation:
-    if: ${{ always() }}
+    if: success() || failure()
     needs: [test-stub, test-rt]
     runs-on: ubuntu-latest
     permissions:
