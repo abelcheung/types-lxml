@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from collections import ChainMap, defaultdict
+from collections import ChainMap, Counter, defaultdict
 from collections.abc import Mapping
 from inspect import Parameter
 from types import MappingProxyType
@@ -221,9 +221,9 @@ class TestMethodUpdate:
         else:
             return str(v)
 
-    def _toggle_empty_ns(self, k: str | bytes | bytearray | QName) -> str:
+    def _normalized_key(self, k: str | bytes | bytearray | QName) -> str:
         norm = self._normalized_value(k)
-        return norm[2:] if norm.startswith("{}") else "{}" + norm
+        return norm[2:] if norm.startswith("{}") else norm
 
     def _verify_key_val_present(self, test_object: _Attrib, inserted: Any) -> None:
         test_object.update(inserted)
@@ -235,21 +235,23 @@ class TestMethodUpdate:
         # Rigorously verify key / value pairs inserted into Attrib,
         # but there are still exceptions. See below.
         if isinstance(inserted, Mapping):
-            normalized_data = inserted.items()  # pyright: ignore[reportUnknownVariableType]
+            iterable_pairs = inserted.items()  # pyright: ignore[reportUnknownVariableType]
         else:
-            normalized_data = inserted  # pyright: ignore[reportUnknownVariableType]
-        normalized_data = cast(Iterable[tuple[Any, Any]], normalized_data)
+            iterable_pairs = inserted  # pyright: ignore[reportUnknownVariableType]
+        iterable_pairs = cast(Iterable[tuple[Any, Any]], iterable_pairs)
+        all_norm_keys = [self._normalized_key(k) for k, _ in iterable_pairs]
+        blacklist_keys = {k for k, c in Counter(all_norm_keys).items() if c > 1}
         try:
-            for k, v in normalized_data:
+            for k, v in iterable_pairs:
                 assert k in test_object
                 # Things become dirty here.
                 #
-                # Counter example 1: {'k': 'v1', '{}k': 'v2'}
+                # Counter example 1: {'k': 'v1', b'{}k': 'v2'}
                 # Keys are normalized before insertion, so
-                # 'k' and '{}k' are both inserted as 'k',
-                # therefore end result becomes {'k': 'v2'}.
-                tk = self._toggle_empty_ns(k)
-                if k != tk and tk in [_k for _k, _ in normalized_data]:
+                # end result becomes {'k': 'v2'}. Dict key
+                # uniqueness is broken in this case and we can
+                # no longer guarantee value equality.
+                if k in blacklist_keys:
                     continue
 
                 # Counter example 2: {'k': QName('{n}v')}
