@@ -228,6 +228,10 @@ dependency_groups = [
 commands = [['pyright', {replace = 'posargs', extend = true}, 'src']]
 
 [tool.tox._env_stub]
+pass_env = [
+    'CI',
+    'TF_BUILD',
+]
 package = 'wheel'
 wheel_build_env = '{package_env}'
 dependency_groups = ['stub-test']
@@ -238,6 +242,10 @@ commands = [[
 ]]
 
 [tool.tox._env_rt]
+pass_env = [
+    'CI',
+    'TF_BUILD',
+]
 package = 'wheel'
 wheel_build_env = '{package_env}'
 commands = [[
