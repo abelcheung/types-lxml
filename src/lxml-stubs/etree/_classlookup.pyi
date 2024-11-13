@@ -81,7 +81,7 @@ class CommentBase(_Comment):
     """
 
     @final
-    def __init__(self, text: _AnyStr | None) -> None: ...
+    def __init__(self, text: str | bytes | bytearray | None) -> None: ...
     def _init(self) -> None: ...
 
 class PIBase(_ProcessingInstruction):
@@ -101,7 +101,11 @@ class PIBase(_ProcessingInstruction):
     """
 
     @final
-    def __init__(self, target: _AnyStr, text: _AnyStr | None = None) -> None: ...
+    def __init__(
+        self,
+        target: str | bytes | bytearray,
+        text: str | bytes | bytearray | None = None,
+    ) -> None: ...
     def _init(self) -> None: ...
 
 class EntityBase(_Entity):
@@ -118,7 +122,7 @@ class EntityBase(_Entity):
     """
 
     @final
-    def __init__(self, name: _AnyStr) -> None: ...
+    def __init__(self, name: str | bytes | bytearray) -> None: ...
     def _init(self) -> None: ...
 
 #

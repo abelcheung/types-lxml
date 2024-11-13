@@ -139,7 +139,7 @@ class CDATA:
         <content><![CDATA[a string]]></content>
     ```
     """
-    def __init__(self, data: _AnyStr) -> None: ...
+    def __init__(self, data: str | bytes | bytearray) -> None: ...
 
 class Error(Exception):
     """Error superclass for ElementTree compatibility"""

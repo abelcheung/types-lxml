@@ -15,14 +15,14 @@ from ..html import HtmlElement
 from ..objectify import ObjectifiedElement, StringElement
 from ._element import _Comment, _ElementTree, _Entity, _ProcessingInstruction
 
-def Comment(text: _AnyStr | None = None) -> _Comment: ...
+def Comment(text: str | bytes | bytearray | None = None) -> _Comment: ...
 def ProcessingInstruction(
-    target: _AnyStr, text: _AnyStr | None = None
+    target: str | bytes | bytearray, text: str | bytes | bytearray | None = None
 ) -> _ProcessingInstruction: ...
 
 PI = ProcessingInstruction
 
-def Entity(name: _AnyStr) -> _Entity: ...
+def Entity(name: str | bytes | bytearray) -> _Entity: ...
 
 Element: _ElementFactory
 
