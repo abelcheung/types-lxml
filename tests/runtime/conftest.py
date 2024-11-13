@@ -9,12 +9,14 @@ import typeguard
 from lxml import etree as _e, html as _h
 
 pytest_plugins = ["typeguard", "hypothesis", "runtime.reveal_type_inject"]
+
 typeguard.config.forward_ref_policy = typeguard.ForwardRefPolicy.ERROR
+
+is_multi_subclass_build = pytest.StashKey[bool]()
 
 
 def pytest_configure(config: pytest.Config) -> None:
-    # "normal" or "multiclass"
-    setattr(config, "types_lxml_build", "normal")
+    config.stash[is_multi_subclass_build] = False
 
 
 def _bightml_filepath() -> Path:

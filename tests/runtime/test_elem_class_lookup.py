@@ -106,7 +106,9 @@ class TestNamespaceLookup:
         tree = _e.parse(svg_filepath, parser=parser)
         root = tree.getroot()
 
-        if getattr(request.config, "types_lxml_build") == "multiclass":
+        from .conftest import is_multi_subclass_build
+
+        if request.config.stash[is_multi_subclass_build]:
             # For multiclass build, .iter() is hardcoded to return _Element,
             # and author is expected to do method / annotation overrides
             # in their classes
@@ -214,7 +216,9 @@ class TestNamespaceLookup:
         root = tree.getroot()
         reveal_type(root)
 
-        if getattr(request.config, "types_lxml_build") == "multiclass":
+        from .conftest import is_multi_subclass_build
+
+        if request.config.stash[is_multi_subclass_build]:
             # See test_single_ns_all_tag_2 test
             for e in root.iter():
                 reveal_type(e)
