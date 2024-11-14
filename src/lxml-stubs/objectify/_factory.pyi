@@ -4,20 +4,30 @@
 
 from typing import Any, Literal, Protocol, TypeVar, overload
 
-from .._types import SupportsLaxedItems, _AnyStr, _ElementFactory, _NSMapArg, _TagName
+from .._types import (
+    _AnyStr,
+    _AttrMapping,
+    _AttrTuples,
+    _AttrVal,
+    _ElementFactory,
+    _NSMapArg,
+    _TagName,
+)
 from ..etree import _Element
 from . import _element as _e
 
 _DataElem_T = TypeVar("_DataElem_T", bound=_e.ObjectifiedDataElement)
 
+# Objectified Element factories does extra dict() conversion of
+# attrib argument, thus supports tuple form
 def Element(
     _tag: _TagName,
     /,
-    attrib: SupportsLaxedItems[str, _AnyStr] | None = None,
+    attrib: _AttrMapping | _AttrTuples | None = None,
     nsmap: _NSMapArg | None = None,
     *,
     _pytype: str | None = None,
-    **__attr: _AnyStr,
+    **_attributes: _AttrVal,
 ) -> _e.ObjectifiedElement:
     """Objectify specific version of `lxml.etree` `Element()` factory
 
@@ -48,9 +58,9 @@ def SubElement(
     _parent: _e.ObjectifiedElement,
     _tag: _TagName,
     /,
-    attrib: SupportsLaxedItems[str, _AnyStr] | None = None,
+    attrib: _AttrMapping | None = None,
     nsmap: _NSMapArg | None = None,
-    **__attr: _AnyStr,
+    **_extra: _AttrVal,
 ) -> _e.ObjectifiedElement: ...
 
 # TODO Current overload situation is unsatisfactory. Will decide
@@ -62,133 +72,133 @@ def SubElement(
 def DataElement(
     _value: _DataElem_T,
     /,
-    attrib: SupportsLaxedItems[str, _AnyStr] | None = None,
+    attrib: _AttrMapping | _AttrTuples | None = None,
     nsmap: _NSMapArg | None = None,
     *,
     _pytype: None = None,
     _xsi: None = None,
-    **__attr: _AnyStr,
+    **__attr: _AttrVal,
 ) -> _DataElem_T: ...
 @overload  # native type None
 def DataElement(
     _value: None,
     /,
-    attrib: SupportsLaxedItems[str, _AnyStr] | None = None,
+    attrib: _AttrMapping | _AttrTuples | None = None,
     nsmap: _NSMapArg | None = None,
     *,
     _pytype: None = None,
     _xsi: None = None,
-    **__attr: _AnyStr,
+    **__attr: _AttrVal,
 ) -> _e.NoneElement: ...
 @overload  # native type str
 def DataElement(
     _value: str,
     /,
-    attrib: SupportsLaxedItems[str, _AnyStr] | None = None,
+    attrib: _AttrMapping | _AttrTuples | None = None,
     nsmap: _NSMapArg | None = None,
     *,
     _pytype: None = None,
     _xsi: None = None,
-    **__attr: _AnyStr,
+    **__attr: _AttrVal,
 ) -> _e.StringElement: ...
 @overload  # native type bool
 def DataElement(  # pyright: ignore[reportOverlappingOverload]
     _value: bool,
     /,
-    attrib: SupportsLaxedItems[str, _AnyStr] | None = None,
+    attrib: _AttrMapping | _AttrTuples | None = None,
     nsmap: _NSMapArg | None = None,
     *,
     _pytype: None = None,
     _xsi: None = None,
-    **__attr: _AnyStr,
+    **__attr: _AttrVal,
 ) -> _e.BoolElement: ...
 @overload  # native type int
 def DataElement(
     _value: int,
     /,
-    attrib: SupportsLaxedItems[str, _AnyStr] | None = None,
+    attrib: _AttrMapping | _AttrTuples | None = None,
     nsmap: _NSMapArg | None = None,
     *,
     _pytype: None = None,
     _xsi: None = None,
-    **__attr: _AnyStr,
+    **__attr: _AttrVal,
 ) -> _e.IntElement: ...
 @overload  # native type float
 def DataElement(
     _value: float,
     /,
-    attrib: SupportsLaxedItems[str, _AnyStr] | None = None,
+    attrib: _AttrMapping | _AttrTuples | None = None,
     nsmap: _NSMapArg | None = None,
     *,
     _pytype: None = None,
     _xsi: None = None,
-    **__attr: _AnyStr,
+    **__attr: _AttrVal,
 ) -> _e.FloatElement: ...
 @overload  # pytype None
 def DataElement(
     _value: object,
     /,
-    attrib: SupportsLaxedItems[str, _AnyStr] | None = None,
+    attrib: _AttrMapping | _AttrTuples | None = None,
     nsmap: _NSMapArg | None = None,
     *,
     _pytype: Literal["NoneType", "none"],
     _xsi: str | None = None,
-    **__attr: _AnyStr,
+    **__attr: _AttrVal,
 ) -> _e.NoneElement: ...
 @overload  # pytype str
 def DataElement(
     _value: object,
     /,
-    attrib: SupportsLaxedItems[str, _AnyStr] | None = None,
+    attrib: _AttrMapping | _AttrTuples | None = None,
     nsmap: _NSMapArg | None = None,
     *,
     _pytype: Literal["str"],
     _xsi: str | None = None,
-    **__attr: _AnyStr,
+    **__attr: _AttrVal,
 ) -> _e.StringElement: ...
 @overload  # pytype bool
 def DataElement(
     _value: object,
     /,
-    attrib: SupportsLaxedItems[str, _AnyStr] | None = None,
+    attrib: _AttrMapping | _AttrTuples | None = None,
     nsmap: _NSMapArg | None = None,
     *,
     _pytype: Literal["bool"],
     _xsi: str | None = None,
-    **__attr: _AnyStr,
+    **__attr: _AttrVal,
 ) -> _e.BoolElement: ...
 @overload  # pytype int
 def DataElement(
     _value: object,
     /,
-    attrib: SupportsLaxedItems[str, _AnyStr] | None = None,
+    attrib: _AttrMapping | _AttrTuples | None = None,
     nsmap: _NSMapArg | None = None,
     *,
     _pytype: Literal["int"],
     _xsi: str | None = None,
-    **__attr: _AnyStr,
+    **__attr: _AttrVal,
 ) -> _e.IntElement: ...
 @overload  # pytype float
 def DataElement(
     _value: object,
     /,
-    attrib: SupportsLaxedItems[str, _AnyStr] | None = None,
+    attrib: _AttrMapping | _AttrTuples | None = None,
     nsmap: _NSMapArg | None = None,
     *,
     _pytype: Literal["float"],
     _xsi: str | None = None,
-    **__attr: _AnyStr,
+    **__attr: _AttrVal,
 ) -> _e.FloatElement: ...
 @overload  # Generic fallback
 def DataElement(
     _value: object,
     /,
-    attrib: SupportsLaxedItems[str, _AnyStr] | None = None,
+    attrib: _AttrMapping | _AttrTuples | None = None,
     nsmap: _NSMapArg | None = None,
     *,
     _pytype: str | None = None,
     _xsi: str | None = None,
-    **__attr: _AnyStr,
+    **__attr: _AttrVal,
 ) -> _e.ObjectifiedElement:
     """Create a new element from a Python value and XML attributes taken
     from keyword arguments or a dictionary passed as second argument.
@@ -269,7 +279,7 @@ class _OEMakerCallProtocol(Protocol):
         | dict[str, Any]
         | _OEMakerCallProtocol
         | None,
-        **_attrib: _AnyStr,
+        **_attrib: _AttrVal,
     ) -> _e.ObjectifiedElement: ...
 
 class ElementMaker:
@@ -333,7 +343,7 @@ class ElementMaker:
         | dict[str, Any]
         | _OEMakerCallProtocol
         | None,
-        **_attrib: _AnyStr,
+        **_attrib: _AttrVal,
     ) -> _e.ObjectifiedElement: ...
     # __getattr__ here is special. ElementMaker supports using any
     # attribute name as tag, which is sort of like a functools.partial

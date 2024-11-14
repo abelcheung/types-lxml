@@ -6,9 +6,9 @@ from abc import ABCMeta, abstractmethod
 from typing import Mapping, final
 
 from .._types import (
-    SupportsLaxedItems,
-    _AnyStr,
+    _AttrMapping,
     _AttrName,
+    _AttrVal,
     _ElemClsLookupArg,
     _NSMapArg,
 )
@@ -59,9 +59,9 @@ class ElementBase(_Element):
     def __init__(
         self,
         *children: object,
-        attrib: SupportsLaxedItems[str, _AnyStr] | None = None,
+        attrib: _AttrMapping | None = None,
         nsmap: _NSMapArg | None = None,
-        **_extra: _AnyStr,
+        **_extra: _AttrVal,
     ) -> None: ...
     def _init(self) -> None: ...
 

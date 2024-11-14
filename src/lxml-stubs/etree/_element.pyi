@@ -392,7 +392,8 @@ class _ElementTree(Generic[_t._ET_co]):
 class _Attrib:
     def __setitem__(self, __k: _t._AttrName, __v: _t._AttrVal) -> None: ...
     def __delitem__(self, __k: _t._AttrName) -> None: ...
-    # explicitly checks for dict and _Attrib
+    # _only_ checks for dict and _Attrib to do
+    # .items() conversion, not any Mapping
     def update(
         self,
         sequence_or_dict: (

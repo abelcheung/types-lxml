@@ -34,10 +34,33 @@ _AnyStr = str | bytes
 _TagName = str | bytes | bytearray | QName
 _AttrName = str | bytes | bytearray | QName
 _AttrVal = str | bytes | bytearray | QName
+_AttrNameKey = str | bytes | QName
+"""Types supported in attribute name, sans bytearray"""
 
 # On the other hand, Elementpath API doesn't do str/byte canonicalization,
 # only unicode accepted for py3
 _ElemPathArg = str | QName
+
+_AttrMapping = SupportsLaxedItems[_AttrNameKey, _AttrVal]
+"""Attribute dict-like mapping
+
+Used in attrib argument of various factories and methods.
+Bytearray not supported as key (not hashable).
+
+Internal stuff
+--------------
+Anything that delves into `_initNodeAttributes()`
+(in `apihelper.pxi`) should be able to use it.
+Need to make sure `_Attrib` and `dict` are supported in
+places wherever this alias is used.
+"""
+
+_AttrTuples = Iterable[tuple[_AttrNameKey, _AttrVal]]
+"""Tuple form of attribute key/value pairs
+
+Used in attrib argument where tuple form is accepted,
+in place of or in addition to `_AttrMapping`.
+"""
 
 # Due to Mapping having invariant key types, Mapping[A | B, ...]
 # would fail to validate against either Mapping[A, ...] or Mapping[B, ...]
@@ -131,24 +154,24 @@ class _ElementFactory(Protocol, Generic[_ET_co]):
 
     This is callback protocol for `makeelement()` method of
     various element objects, with following signature (which
-    is identical to `etree.Element()` function):
+    is identical to `etree.Element()` factory):
 
     ```python
     (_tag, attrib=..., nsmap=..., **_extra)
     ```
 
     The mapping in `attrib` argument and all `_extra` keyword
-    arguments would be merged together. The result is usually
-    `{**attrib, **_extra}`, but some places may deviate.
+    arguments would be merged together, with `_extra` taking
+    precedence over `attrib`.
     """
 
     def __call__(
         self,
         _tag: _TagName,
         /,
-        attrib: SupportsLaxedItems[str, _AnyStr] | None = None,
+        attrib: _AttrMapping | None = None,
         nsmap: _NSMapArg | None = None,
-        **_extra: _AnyStr,
+        **_extra: _AttrVal,
     ) -> _ET_co: ...
 
 # Note that _TagSelector filters element type not by classes,
@@ -165,9 +188,11 @@ _DefEtreeParsers = XMLParser[_ET_co] | HTMLParser[_ET_co]
 class SupportsLaxedItems(Protocol[_KT_co, _VT_co]):
     """Relaxed form of SupportsItems
 
-    Original SupportsItems from typeshed returns generic set which
-    is compatible with ItemsView. However, _Attrib doesn't conform
-    and returns list instead. Gotta find a common ground here.
+    Original `SupportsItems` from typeshed returns
+    generic set which is compatible with `ItemsView`.
+    However, `_Attrib.items()` returns `list` instead.
+    Here we find a common ground that satisfies both
+    and avoid the mapping invariance culprit.
     """
 
     def items(self) -> Collection[tuple[_KT_co, _VT_co]]: ...

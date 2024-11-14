@@ -2,8 +2,8 @@ from typing import overload
 
 from .._types import (
     _ET,
-    SupportsLaxedItems,
-    _AnyStr,
+    _AttrMapping,
+    _AttrVal,
     _DefEtreeParsers,
     _ElementFactory,
     _ET_co,
@@ -45,27 +45,27 @@ def SubElement(
     _parent: ObjectifiedElement,
     _tag: _TagName,
     /,
-    attrib: SupportsLaxedItems[str, _AnyStr] | None = None,
+    attrib: _AttrMapping | None = None,
     nsmap: _NSMapArg | None = None,
-    **_extra: _AnyStr,
+    **_extra: _AttrVal,
 ) -> StringElement: ...
 @overload
 def SubElement(
     _parent: HtmlElement,
     _tag: _TagName,
     /,
-    attrib: SupportsLaxedItems[str, _AnyStr] | None = None,
+    attrib: _AttrMapping | None = None,
     nsmap: _NSMapArg | None = None,
-    **_extra: _AnyStr,
+    **_extra: _AttrVal,
 ) -> HtmlElement: ...
 @overload
 def SubElement(
     _parent: _ET,
     _tag: _TagName,
     /,
-    attrib: SupportsLaxedItems[str, _AnyStr] | None = None,
+    attrib: _AttrMapping | None = None,
     nsmap: _NSMapArg | None = None,
-    **_extra: _AnyStr,
+    **_extra: _AttrVal,
 ) -> _ET: ...
 @overload  # from element, parser ignored
 def ElementTree(element: _ET) -> _ElementTree[_ET]: ...

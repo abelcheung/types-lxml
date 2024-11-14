@@ -14,6 +14,8 @@ from _typeshed import SupportsWrite
 from .._types import (
     SupportsLaxedItems,
     _AnyStr,
+    _AttrMapping,
+    _AttrVal,
     _ElementOrTree,
     _FileReadSource,
     _FileWriteSource,
@@ -139,10 +141,10 @@ class _IncrementalFileWriter:
     def element(
         self,
         tag: _TagName,
-        attrib: SupportsLaxedItems[str, _AnyStr] | None = None,
+        attrib: _AttrMapping | None = None,
         nsmap: _NSMapArg | None = None,
         method: _OutputMethodArg | None = None,
-        **_extra: _AnyStr,
+        **_extra: _AttrVal,
     ) -> ContextManager[None]: ...
 
 @final
@@ -166,10 +168,10 @@ class _AsyncIncrementalFileWriter:
     def element(
         self,
         tag: _TagName,
-        attrib: SupportsLaxedItems[str, _AnyStr] | None = None,
+        attrib: _AttrMapping | None = None,
         nsmap: _NSMapArg | None = None,
         method: _OutputMethodArg | None = None,
-        **_extra: _AnyStr,
+        **_extra: _AttrVal,
     ) -> AsyncContextManager[None]: ...
 
 class xmlfile(
