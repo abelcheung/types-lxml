@@ -7,7 +7,7 @@
  6 files changed, 68 insertions(+), 63 deletions(-)
 
 diff --git a/pyproject.toml b/pyproject.toml
-index a2a7155..7c2dd7a 100644
+index debd683..8c4fd99 100644
 --- a/pyproject.toml
 +++ b/pyproject.toml
 @@ -5,7 +5,7 @@ requires = ['pdm-backend ~= 2.3']
@@ -20,7 +20,7 @@ index a2a7155..7c2dd7a 100644
  description = 'Complete lxml external type annotation'
  readme = 'README.md'
 diff --git a/src/lxml-stubs/etree/_element.pyi b/src/lxml-stubs/etree/_element.pyi
-index bfb8f76..1b78f37 100644
+index b322210..9c774b3 100644
 --- a/src/lxml-stubs/etree/_element.pyi
 +++ b/src/lxml-stubs/etree/_element.pyi
 @@ -14,9 +14,9 @@ from typing import (
@@ -199,7 +199,7 @@ index bfb8f76..1b78f37 100644
  # ET class notation is specialized, indicating the type of element
  # it is holding (e.g. XML element, HTML element or Objectified
 diff --git a/src/lxml-stubs/etree/_factory_func.pyi b/src/lxml-stubs/etree/_factory_func.pyi
-index d30d366..d02992f 100644
+index 23fa520..143770c 100644
 --- a/src/lxml-stubs/etree/_factory_func.pyi
 +++ b/src/lxml-stubs/etree/_factory_func.pyi
 @@ -13,7 +13,7 @@ from .._types import (
@@ -209,7 +209,7 @@ index d30d366..d02992f 100644
 -from ._element import _Comment, _ElementTree, _Entity, _ProcessingInstruction
 +from ._element import _Comment, _Element, _ElementTree, _Entity, _ProcessingInstruction
  
- def Comment(text: _AnyStr | None = None) -> _Comment: ...
+ def Comment(text: str | bytes | bytearray | None = None) -> _Comment: ...
  def ProcessingInstruction(
 @@ -60,13 +60,13 @@ def SubElement(
  ) -> HtmlElement: ...
@@ -219,9 +219,9 @@ index d30d366..d02992f 100644
 +    _parent: _Element,
      _tag: _TagName,
      /,
-     attrib: SupportsLaxedItems[str, _AnyStr] | None = None,
+     attrib: _AttrMapping | None = None,
      nsmap: _NSMapArg | None = None,
-     **_extra: _AnyStr,
+     **_extra: _AttrVal,
 -) -> _ET: ...
 +) -> _Element: ...
  @overload  # from element, parser ignored
@@ -333,15 +333,15 @@ index abc5a86..a099d79 100644
          expr: str,
          *,
 diff --git a/tests/runtime/conftest.py b/tests/runtime/conftest.py
-index 5a7482f..af31137 100644
+index d5e3ec8..b984424 100644
 --- a/tests/runtime/conftest.py
 +++ b/tests/runtime/conftest.py
-@@ -22,7 +22,7 @@ def pytest_collection_finish(session: pytest.Session) -> None:
+@@ -16,7 +16,7 @@ is_multi_subclass_build = pytest.StashKey[bool]()
+ 
  
  def pytest_configure(config: pytest.Config) -> None:
-     # "normal" or "multiclass"
--    setattr(config, "types_lxml_build", "normal")
-+    setattr(config, "types_lxml_build", "multiclass")
+-    config.stash[is_multi_subclass_build] = False
++    config.stash[is_multi_subclass_build] = True
  
  
  def _bightml_filepath() -> Path:
