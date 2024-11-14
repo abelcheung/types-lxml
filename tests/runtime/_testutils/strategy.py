@@ -4,8 +4,8 @@ import operator
 from typing import Any, Literal, cast
 
 import hypothesis.strategies as st
+import lxml.etree as _e
 from hypothesis import note
-from lxml.etree import QName
 
 
 def all_types_except(
@@ -108,10 +108,10 @@ def xml_name(
     )
 
 
-# FIXME: For future test, QName("", "foo") raise exception
-def xml_name_arg() -> st.SearchStrategy[str | bytes | bytearray | QName]:
+# FIXME: For future test, _e.QName("", "foo") raise exception
+def xml_name_arg() -> st.SearchStrategy[str | bytes | bytearray | _e.QName]:
     s = xml_name()
-    qn = s.map(QName)
+    qn = s.map(_e.QName)
     b = xml_name("ascii").map(lambda x: x.encode("ascii"))
     ba = b.map(bytearray)
     return st.one_of(s, b, ba, qn)
@@ -168,12 +168,82 @@ def xml_attr_value(
     ).map(lambda x: "".join(x))
 
 
-def xml_attr_value_arg() -> st.SearchStrategy[str | bytes | bytearray | QName]:
+def xml_attr_value_arg() -> st.SearchStrategy[str | bytes | bytearray | _e.QName]:
     s = xml_attr_value()
-    # Note that QName only accepts characters usable in XML name
-    # Practically QName is not used for attribute values, but
+    # Note that _e.QName only accepts characters usable in XML name
+    # Practically _e.QName is not used for attribute values, but
     # we concern about annotation only
-    qn = xml_name().map(QName)
+    qn = xml_name().map(_e.QName)
     b = xml_attr_value("ascii").map(lambda x: x.encode("ascii"))
     ba = b.map(bytearray)
     return st.one_of(s, b, ba, qn)
+
+
+#
+# Below are generator of basic XML elements and its siblings
+#
+
+
+# https://www.w3.org/TR/xml/#NT-Comment
+def comment(
+    variant: Literal["unicode", "ascii"] = "unicode",
+) -> st.SearchStrategy[_e._Comment]:
+    return st.builds(
+        _e.Comment,
+        st.one_of(
+            st.none(),
+            st.text(max_size=10, alphabet=xml_legal_char(variant)).filter(
+                lambda s: "--" not in s and not s.endswith("-")
+            ),
+        ),
+    )
+
+
+# https://www.w3.org/TR/xml/#NT-PI
+def processing_instruction(
+    variant: Literal["unicode", "ascii"] = "unicode",
+) -> st.SearchStrategy[_e._ProcessingInstruction]:
+    return st.builds(
+        _e.ProcessingInstruction,
+        xml_name(variant).filter(lambda x: x.lower() != "xml"),
+        st.one_of(
+            st.none(),
+            st.text(max_size=10, alphabet=xml_legal_char(variant)).filter(
+                lambda s: "?>" not in s
+            ),
+        ),
+    )
+
+
+# https://www.w3.org/TR/xml/#NT-Reference
+# Lxml expects input argument to be the entity reference
+# itself, but with head '&' and tail ';' chopped off.
+def entity(
+    variant: Literal["unicode", "ascii"] = "unicode",
+) -> st.SearchStrategy[_e._Entity]:
+    ref = st.one_of(
+        xml_char_decimal_ref(),
+        xml_char_hex_ref(),
+        xml_entity_ref(variant),
+    )
+    return st.builds(
+        _e.Entity,
+        ref.map(lambda x: x[2:-1]),
+    )
+
+
+#
+# Below are generator for auxiliary types
+#
+
+
+# https://www.w3.org/TR/xml/#NT-CData
+def cdata(
+    variant: Literal["unicode", "ascii"] = "unicode",
+) -> st.SearchStrategy[_e.CDATA]:
+    return st.builds(
+        _e.CDATA,
+        st.text(max_size=10, alphabet=xml_legal_char(variant)).filter(
+            lambda s: "]]>" not in s
+        ),
+    )
