@@ -141,7 +141,9 @@ def fromstringlist(
 # Under XML Canonicalization (C14N) mode, most arguments are ignored,
 # some arguments would even raise exception outright if specified.
 @overload  # warn if inclusive_ns_prefixes is not collection
-@deprecated("'inclusive_ns_prefixes' should be collection, otherwise will either search for wrong NS prefix or raise exception")
+@deprecated(
+    "'inclusive_ns_prefixes' should be collection, otherwise will either search for wrong NS prefix or raise exception"
+)
 def tostring(
     element_or_tree: Any,
     *,

@@ -157,7 +157,8 @@ def list_log() -> _e._ListErrorLog:
 # time and raises HealthCheck warning, use simple stuff instead
 @pytest.fixture(scope="class")
 def disposable_element() -> _e._Element:
-    return _e.Element("order", date = "1900-01-01", id = "123")
+    return _e.Element("order", date="1900-01-01", id="123")
+
 
 @pytest.fixture(scope="class")
 def disposable_attrib(disposable_element: _e._Element) -> _e._Attrib:

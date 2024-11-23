@@ -153,7 +153,9 @@ class LabelElement(HtmlElement):
 @overload
 def submit_form(
     form: FormElement,
-    extra_values: Iterable[tuple[str, str]] | SupportsLaxedItems[str, str] | None = None,
+    extra_values: Iterable[tuple[str, str]]
+    | SupportsLaxedItems[str, str]
+    | None = None,
     open_http: None = None,
 ) -> Any: ...  # See typeshed _UrlOpenRet
 @overload  # open_http as positional argument
@@ -165,7 +167,9 @@ def submit_form(
 @overload  # open_http as keyword argument
 def submit_form(
     form: FormElement,
-    extra_values: Iterable[tuple[str, str]] | SupportsLaxedItems[str, str] | None = None,
+    extra_values: Iterable[tuple[str, str]]
+    | SupportsLaxedItems[str, str]
+    | None = None,
     *,
     open_http: Callable[[Literal["GET", "POST"], str, list[tuple[str, str]]], _T],
 ) -> _T: ...
