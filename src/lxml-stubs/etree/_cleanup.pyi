@@ -1,11 +1,25 @@
+import sys
 from typing import Collection, Iterable, overload
 
-from .._types import _AnyStr, _ElementOrTree, _NSMapArg, _TagSelector
+if sys.version_info >= (3, 13):
+    from warnings import deprecated
+else:
+    from typing_extensions import deprecated
 
+from .._types import _ElementOrTree, _NSMapArg, _TagSelector
+
+@overload
+@deprecated("Supply an iterator or collection of namespace prefixes instead.")
 def cleanup_namespaces(
     tree_or_element: _ElementOrTree,
     top_nsmap: _NSMapArg | None = None,
-    keep_ns_prefixes: Iterable[_AnyStr] | None = None,
+    keep_ns_prefixes: str | bytes | bytearray | None = None,
+) -> None: ...
+@overload
+def cleanup_namespaces(
+    tree_or_element: _ElementOrTree,
+    top_nsmap: _NSMapArg | None = None,
+    keep_ns_prefixes: Iterable[str | bytes | bytearray] | None = None,
 ) -> None: ...
 
 # For functions below, the first `tree_or_element` argument
