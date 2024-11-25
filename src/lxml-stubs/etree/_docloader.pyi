@@ -1,8 +1,7 @@
 import sys
+from _typeshed import SupportsRead
 from abc import ABCMeta, abstractmethod
 from typing import Any, final, type_check_only
-
-from _typeshed import SupportsRead
 
 if sys.version_info >= (3, 11):
     from typing import Self

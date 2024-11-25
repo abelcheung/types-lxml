@@ -1,3 +1,4 @@
+from _typeshed import SupportsRead, SupportsWrite
 from os import PathLike
 from typing import (
     Any,
@@ -10,8 +11,6 @@ from typing import (
     Protocol,
     TypeVar,
 )
-
-from _typeshed import SupportsRead, SupportsWrite
 
 from .etree import HTMLParser, QName, XMLParser, _Element, _ElementTree
 

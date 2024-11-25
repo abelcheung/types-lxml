@@ -5,7 +5,6 @@
 import abc
 import sys
 from typing import Any, Callable, Iterable, Iterator, Literal, overload
-
 from typing_extensions import SupportsIndex
 
 if sys.version_info >= (3, 11):

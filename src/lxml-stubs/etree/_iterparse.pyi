@@ -1,7 +1,6 @@
 import sys
-from typing import Collection, Iterable, Iterator, Literal, TypeVar, overload
-
 from _typeshed import SupportsRead
+from typing import Collection, Iterable, Iterator, Literal, TypeVar, overload
 
 if sys.version_info >= (3, 11):
     from typing import LiteralString

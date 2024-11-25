@@ -144,8 +144,10 @@ task-tags = [
 ]
 
 [tool.ruff.lint.isort]
-# doesn't work
-# known-first-party = ["typing_extensions", "_typeshed"]
+extra-standard-library = [
+    "typing_extensions",
+    "_typeshed",
+]
 combine-as-imports = true
 
 [tool.pytest.ini_options]
