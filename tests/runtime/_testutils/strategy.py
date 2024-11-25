@@ -97,6 +97,7 @@ def xml_name(
         st.builds(
             add_ns,
             st.text(
+                min_size=1,
                 max_size=5,
                 # Exclude characters used in Clark notation
                 alphabet=xml_legal_char(variant).filter(lambda c: c not in "{}"),
@@ -246,4 +247,18 @@ def cdata(
         st.text(max_size=10, alphabet=xml_legal_char(variant)).filter(
             lambda s: "]]>" not in s
         ),
+    )
+
+
+# Don't need bytes or bytearray since they are normalized to str
+def qname(
+    variant: Literal["unicode", "ascii"] = "unicode",
+) -> st.SearchStrategy[_e.QName]:
+    return st.builds(
+        _e.QName,
+        st.one_of(
+            st.none(),
+            xml_legal_char(variant).filter(lambda c: c not in "{}"),
+        ),
+        xml_name_nons(variant),
     )
