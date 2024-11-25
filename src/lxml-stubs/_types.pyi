@@ -174,7 +174,7 @@ class _ElementFactory(Protocol, Generic[_ET_co]):
         **_extra: _AttrVal,
     ) -> _ET_co: ...
 
-# Note that _TagSelector filters element type not by classes,
+# HACK _TagSelector filters element type not by classes,
 # but checks for exact element *factory functions* instead
 # (etree.Element() and friends). Python typing system doesn't
 # support such outlandish usage. Use a generic callable instead.

@@ -144,7 +144,7 @@ def tostring(
 ) -> bytes: ...
 
 #
-# Debug
+# For debugging
 #
 def open_in_browser(
     doc: _ElementOrTree[HtmlElement], encoding: str | type[str] | None = None

@@ -93,7 +93,7 @@ class ElementMaker(Generic[_ET_co]):
 
     # Private read-only attributes, could be useful for understanding
     # how the ElementMaker is constructed
-    # Note that the corresponding input arguments during ElementMaker
+    # The corresponding input arguments during ElementMaker
     # instantiation are much more relaxed, as typing.Mapping argument
     # invariance has posed some challenge to typing. We can afford
     # some more restriction as return value or attribute.

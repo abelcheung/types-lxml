@@ -245,15 +245,15 @@ class Classes(MutableSet[str]):
 #
 # Types of other HTML elements
 #
-# Processing Instruction is only useful for XML in real life;
-# it is considered bogus error in HTML spec, but still allowed
-# to be constructed in lxml nonetheless.
+# Processing Instruction is only useful for XML in real life; it is considered
+# bogus error in HTML spec, but still allowed to be constructed in lxml
+# nonetheless.
 # https://html.spec.whatwg.org/multipage/parsing.html#tag-open-state
 #
-# HtmlEntity is also rare; it can only appear if a specially constructed
-# HTML parser is used. By default entities are merged into text content.
+# HtmlEntity is also rare; it can only appear if a specially constructed HTML
+# parser is used. By default entities are merged into text content.
 #
-# Note the reversed MRO order -- fatal dunders from __ContentOnlyElement
+# Beware of the reversed MRO order -- fatal dunders from __ContentOnlyElement
 # are dominant in runtime
 #
 class HtmlProcessingInstruction(etree.PIBase, HtmlElement): ...  # type: ignore[misc]  # pyright: ignore[reportIncompatibleMethodOverride]

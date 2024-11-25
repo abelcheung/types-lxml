@@ -170,9 +170,9 @@ def xml_attr_value(
 
 def xml_attr_value_arg() -> st.SearchStrategy[str | bytes | bytearray | _e.QName]:
     s = xml_attr_value()
-    # Note that _e.QName only accepts characters usable in XML name
-    # Practically _e.QName is not used for attribute values, but
-    # we concern about annotation only
+    # QName only accepts characters usable in XML name.
+    # TODO Practically QName is not used for attribute values.
+    # If we decide using QName is inappropriate, drop tests for it.
     qn = xml_name().map(_e.QName)
     b = xml_attr_value("ascii").map(lambda x: x.encode("ascii"))
     ba = b.map(bytearray)

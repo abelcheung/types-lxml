@@ -186,9 +186,9 @@ class BoolElement(IntElement):
     def __bool__(self) -> bool: ...
     def __int__(self) -> int: ...
     def __float__(self) -> float: ...
-    # FIXME Unlike arbitrary floating point / integer powers,
+    # HACK Unlike arbitrary floating point / integer powers,
     # power involving bool always have fixed results (0 or 1).
-    # However, python maintainers have delved into some disgusting
+    # However, typing maintainers have delved into some disgusting
     # sort of half-arsed "type annotation arithmetics":
     # - int**0  = Literal[1]
     # - int**25 = int

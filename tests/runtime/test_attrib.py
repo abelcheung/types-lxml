@@ -209,9 +209,8 @@ class TestMethodPop:
         assert type(val) == type(default)
 
 
-# Note that monkeypatch is useless here. _Attrib merely provides an
+# Beware that monkeypatch is useless here. _Attrib merely provides an
 # interface to the underlying _Element which is not patched
-#
 class TestMethodUpdate:
     def _normalized_value(self, v: str | bytes | bytearray | QName) -> str:
         if isinstance(v, QName):

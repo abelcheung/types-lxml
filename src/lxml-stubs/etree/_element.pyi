@@ -404,9 +404,10 @@ class _Attrib:
             | Iterable[tuple[_t._AttrName, _t._AttrVal]]
         ),
     ) -> None: ...
-    # Signature is pop(self, key, *default), yet followed by runtime
-    # check and raise exception if multiple default argument is supplied
-    # Note that get() is forgiving with non-existent key yet pop() isn't.
+    # Signature is actually pop(self, key, *default), yet
+    # followed by runtime check and raise exception if multiple
+    # default argument is supplied.
+    # get() is forgiving with non-existent key yet pop() isn't.
     @overload
     def pop(self, key: _t._AttrName) -> str: ...
     @overload

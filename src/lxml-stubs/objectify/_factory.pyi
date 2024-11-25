@@ -66,7 +66,7 @@ def SubElement(
 # TODO Current overload situation is unsatisfactory. Will decide
 # whether the list should be trimmed or extended in future.
 #
-# XXX Order matters! float can't be listed before int
+# Order matters! float can't be listed before int
 #
 @overload  # DataElement retains same type if no other hint given
 def DataElement(
@@ -320,7 +320,7 @@ class ElementMaker:
         annotate: bool = True,
         makeelement: _ElementFactory[_e.ObjectifiedElement] | None = None,
     ) -> None: ...
-    # Note:
+    # Special notes:
     # - Attribute values supplied as children dict will be stringified,
     #   but those as keyword argument _must_ be string itself as they
     #   are not converted

@@ -122,7 +122,7 @@ class _TypeCheckerAdapter(TypeCheckerAdapterBase):
         ]
         mypy_args.extend(str(p) for p in paths)
         # print(f"Running mypy with args: {mypy_args}")
-        # Note that mypy UNCONDITIONALLY exits with error when
+        # mypy 1.11.0 UNCONDITIONALLY exits with error when
         # output format is json, there is no point checking
         # exit code for problems
         stdout, _, _ = mypy.api.run(mypy_args)

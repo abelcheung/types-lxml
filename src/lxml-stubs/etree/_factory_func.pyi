@@ -28,7 +28,7 @@ Element: _ElementFactory
 
 # SubElement is a bit more complex than expected, as it
 # handles other kinds of element, like HtmlElement
-# and ObjectiedElement.
+# and ObjectifiedElement.
 #
 # - If parent is HtmlElement, generated subelement is
 # HtmlElement or its relatives, depending on the tag name

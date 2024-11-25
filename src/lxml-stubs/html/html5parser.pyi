@@ -1,5 +1,5 @@
 #
-# Note that this interface only generates lxml.etree Elements, not lxml.html ones
+# This interface only generates lxml.etree Elements, not lxml.html ones.
 # See https://github.com/html5lib/html5lib-python/issues/102
 #
 
@@ -11,9 +11,9 @@ from _typeshed import SupportsRead
 from .._types import _AnyStr
 from ..etree import _Element, _ElementTree
 
-# Note that tree arg is dropped, because the sole purpose of using
-# this parser is to generate lxml element tree with html5lib parser.
-# Other arguments good for html5lib >= 1.0
+# Beware that tree arg is dropped, because the sole purpose of using this parser
+# is to generate lxml element tree with html5lib parser. Other arguments good
+# for html5lib >= 1.0
 class HTMLParser(_html5lib.HTMLParser):
     def __init__(
         self,

@@ -503,11 +503,11 @@ class TestFindMethods:
             _ = root.iterfind(cast(Any, (tag,)))
 
         # Check QName and namespace support
-        # Note that invalid entries in namespace dict (those
-        # with invalid key or value types) wouldn't be fatal;
-        # they only silently fail to select useful elements.
-        # Therefore no key/val type check is performed. Same
-        # for all find*() methods below.
+        #
+        # Invalid entries in namespace dict (those with invalid key or value
+        # types) wouldn't be fatal; they only silently fail to select useful
+        # elements. Therefore no key/val type check is performed. Same for all
+        # find*() methods below.
 
         iterator = root.iterfind("defs")
         url = "http://example.org/myapp"
@@ -823,10 +823,6 @@ class TestIterMethods:
     def test_iter_method(self, xml2_root: _Element) -> None:
         root = xml2_root
 
-        # HACK Mypy requires result variable pre-defined
-        # through typing, and the same type be used throughout
-        # whole function. Otherwise variables can't be reused,
-        # even deleting and recreating won't make it.
         itr = root.iter()
         reveal_type(itr)
         result: list[_Element] = []

@@ -130,9 +130,16 @@ preview = true
 select = ["I"]
 task-tags = [
     "BUG",
+    "DEBUG",
+    "FIX",
     "FIXME",
     "HACK",
+    "IDEA",
+    "NOTE",
+    "OPTIMIZE",
+    "REVIEW",
     "TODO",
+    "UGLY",
     "XXX",
 ]
 

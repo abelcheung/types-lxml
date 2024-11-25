@@ -1,5 +1,5 @@
 #
-# Note that exception classes and functions defined in
+# Exception classes and functions defined in
 # etree/_extension.pxi are merged here.
 #
 
