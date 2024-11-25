@@ -206,7 +206,7 @@ def processing_instruction(
 ) -> st.SearchStrategy[_e._ProcessingInstruction]:
     return st.builds(
         _e.ProcessingInstruction,
-        xml_name(variant).filter(lambda x: x.lower() != "xml"),
+        xml_name_nons(variant).filter(lambda x: x.lower() != "xml"),
         st.one_of(
             st.none(),
             st.text(max_size=10, alphabet=xml_legal_char(variant)).filter(
@@ -229,7 +229,7 @@ def entity(
     )
     return st.builds(
         _e.Entity,
-        ref.map(lambda x: x[2:-1]),
+        ref.map(lambda x: x[1:-1]),
     )
 
 
