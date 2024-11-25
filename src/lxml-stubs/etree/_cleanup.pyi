@@ -1,6 +1,8 @@
 import sys
 from typing import Collection, Iterable, overload
 
+from ._module_misc import QName
+
 if sys.version_info >= (3, 13):
     from warnings import deprecated
 else:
@@ -27,14 +29,15 @@ def cleanup_namespaces(
 # that followed are considered positional arguments in
 # all possible function signature overloads.
 
+# internal: bytearray disallowed for _MultiTagMatcher
 @overload
 def strip_attributes(
-    __tree_or_elem: _ElementOrTree,
-    *attribute_names: str,
+    tree_or_elem: _ElementOrTree,
+    *attribute_names: str | bytes | QName,
 ) -> None: ...
 @overload
 def strip_attributes(
-    __tree_or_elem: _ElementOrTree, __attrib: Collection[str], /
+    tree_or_elem: _ElementOrTree, attribute_names: Iterable[str | bytes | QName], /
 ) -> None: ...
 @overload
 def strip_elements(
