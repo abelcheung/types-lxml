@@ -6,6 +6,7 @@ updates:
       interval: "monthly"
     labels:
       - "build/ci"
+      - "bot"
     commit-message:
       prefix: "ci"
     groups:
