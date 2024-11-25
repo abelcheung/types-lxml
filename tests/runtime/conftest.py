@@ -8,7 +8,12 @@ import pytest
 import typeguard
 from lxml import etree as _e, html as _h
 
-pytest_plugins = ["typeguard", "hypothesis", "runtime.reveal_type_inject"]
+pytest_plugins = [
+    "typeguard",
+    "hypothesis",
+    "runtime.reveal_type_inject",
+    "runtime.register_strategy",
+]
 
 typeguard.config.forward_ref_policy = typeguard.ForwardRefPolicy.ERROR
 
