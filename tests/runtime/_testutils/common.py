@@ -17,11 +17,7 @@ from typing import (
     get_type_hints,
 )
 
-from lxml.etree import LXML_VERSION
-
 from . import strategy as _st
-
-is_lxml_4x = LXML_VERSION < (5, 0)
 
 
 class FilePos(NamedTuple):
@@ -105,7 +101,6 @@ class TypeCheckerAdapterBase:
     def create_collector(
         cls, globalns: dict[str, Any], localns: dict[str, Any]
     ) -> NameCollectorBase: ...
-
 
 
 @dataclass

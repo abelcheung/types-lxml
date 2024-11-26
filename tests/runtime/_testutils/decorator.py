@@ -2,7 +2,9 @@ import functools
 from inspect import Parameter, Signature, _ParameterKind, isclass, signature
 from typing import Any, Callable, ParamSpec, Sequence
 
-from .common import FuncSignatureError, is_lxml_4x
+from lxml.etree import LXML_VERSION
+
+from .common import FuncSignatureError
 
 _P = ParamSpec("_P")
 
@@ -48,7 +50,7 @@ def signature_tester(
             # This is probably due to older cython
             # compiler which doesn't support that yet
             no_default = False
-            if is_lxml_4x and is_cython_class_method(func_to_check):
+            if LXML_VERSION < (5, 0) and is_cython_class_method(func_to_check):
                 no_default = True
 
             for i in range(len(expect_param)):
