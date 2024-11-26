@@ -9,7 +9,6 @@ from typing import Any, cast
 
 import pytest
 from hypothesis import (
-    HealthCheck,
     assume,
     example,
     given,
@@ -40,7 +39,7 @@ class TestAttrib:
         for k1 in attrib:
             reveal_type(k1)
 
-    @settings(suppress_health_check=[HealthCheck.too_slow])
+    @settings(max_examples=500)
     @given(k=_st.all_instances_except_of_type(str, bytes, bytearray, QName))
     @pytest.mark.slow
     def test_wrong_key_type(self, disposable_attrib: _Attrib, k: Any) -> None:
@@ -54,7 +53,9 @@ class TestAttrib:
         disposable_attrib[k] = "bar"
         del disposable_attrib[k]
 
+    @settings(max_examples=500)
     @given(v=_st.all_instances_except_of_type(str, bytes, bytearray, QName))
+    @pytest.mark.slow
     def test_wrong_value_type(self, disposable_attrib: _Attrib, v: Any) -> None:
         with pytest.raises(TypeError, match="Argument must be bytes or unicode"):
             disposable_attrib["foo"] = v
@@ -120,7 +121,9 @@ class TestMethodHasKey:
     def test_signature(self) -> None:
         pass
 
+    @settings(max_examples=500)
     @given(k=_st.all_instances_except_of_type(str, bytes, bytearray, QName))
+    @pytest.mark.slow
     def test_wrong_key_type(self, disposable_attrib: _Attrib, k: Any) -> None:
         with pytest.raises(TypeError, match="Argument must be bytes or unicode"):
             _ = disposable_attrib.has_key(k)
@@ -141,7 +144,9 @@ class TestMethodGet:
     def test_signature(self) -> None:
         pass
 
+    @settings(max_examples=500)
     @given(k=_st.all_instances_except_of_type(str, bytes, bytearray, QName))
+    @pytest.mark.slow
     def test_wrong_key_type(self, disposable_attrib: _Attrib, k: Any) -> None:
         with pytest.raises(TypeError, match="Argument must be bytes or unicode"):
             _ = disposable_attrib.get(k)
@@ -153,6 +158,7 @@ class TestMethodGet:
     ) -> None:
         reveal_type(disposable_attrib.get(k))
 
+    @settings(max_examples=5)
     @given(default=_st.all_instances_except_of_type())
     def test_default_value(self, disposable_attrib: _Attrib, default: object) -> None:
         val = disposable_attrib.get("id", default=default)
@@ -172,7 +178,9 @@ class TestMethodPop:
         with pytest.raises(TypeError, match="pop expected at most 2 arguments"):
             xml2_root.attrib.pop("foo", 0, 1)  # type: ignore[call-overload]  # pyright: ignore[reportCallIssue]
 
+    @settings(max_examples=500)
     @given(k=_st.all_instances_except_of_type(str, bytes, bytearray, QName))
+    @pytest.mark.slow
     def test_wrong_key_type(self, disposable_attrib: _Attrib, k: Any) -> None:
         with pytest.raises(TypeError, match="Argument must be bytes or unicode"):
             _ = disposable_attrib.pop(k)

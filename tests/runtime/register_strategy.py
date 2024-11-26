@@ -10,7 +10,8 @@ import pytest
 from ._testutils import strategy as _st
 
 
-def pytest_collection_finish(session: pytest.Session) -> None:
+# Need to register early, before any tests are collected.
+def pytest_configure(config: pytest.Config) -> None:
     st.register_type_strategy(_e._Comment, _st.comment())
     st.register_type_strategy(_e._Entity, _st.entity())
     st.register_type_strategy(_e._ProcessingInstruction, _st.processing_instruction())

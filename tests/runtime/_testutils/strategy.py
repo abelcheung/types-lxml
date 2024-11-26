@@ -1,9 +1,11 @@
 from __future__ import annotations
 
+import inspect
 import operator
 from typing import Any, Literal, cast
 
 import hypothesis.strategies as st
+import hypothesis.strategies._internal.types as st_types
 import lxml.etree as _e
 from hypothesis import note
 
@@ -13,19 +15,32 @@ def all_types_except(
 ) -> st.SearchStrategy[type]:
     if Any in excluded or object in excluded:  # type: ignore[comparison-overlap]
         raise ValueError("Cannot exclude everything")
-    strategy: st.SearchStrategy[type] = st.from_type(type)
-    if len(excluded) == 0:
-        return strategy
-    elif exact:
-        return strategy.filter(lambda x: x not in excluded)
+    # HACK The everything_except() receipe in hypothesis explicitly says
+    # it excludes instances of types added via register_type_strategy().
+    # That forces one to peek into internal lookup table instead, along
+    # with the mess that followed without from_type(type)
+    all_types = st_types._global_type_lookup.keys()
+    if exact:
+        strategy = st.sampled_from([t for t in all_types if t not in excluded])
     else:
-        return strategy.filter(lambda x: not issubclass(x, excluded))
+        strategy = st.sampled_from([
+            t for t in all_types if inspect.isclass(t) and not issubclass(t, excluded)
+        ])
+    return strategy
 
 
 def all_instances_except_of_type(*excluded: type[Any]) -> st.SearchStrategy[Any]:
+    def _aux_filter(typ_: Any) -> bool:
+        note(f"Failed type: {typ_.__qualname__=} {typ_.__module__=}")
+        # HACK from_type() handles TypeVar as a special case, but we don't have
+        # the luxury. Interactive use creates mostly str, bytes, int and float,
+        # and can even raise inside tests. Disallow explicitly as a workaround.
+        return st_types.is_a_type(typ_) and typ_.__qualname__ not in {"TypeVar"}
+
     return cast(  # type: ignore[redundant-cast]
-        st.SearchStrategy[Any], all_types_except(*excluded).flatmap(st.from_type)
-    )
+        st.SearchStrategy[Any],
+        all_types_except(*excluded).filter(_aux_filter).flatmap(st.from_type),
+    ).filter(lambda x: not isinstance(x, excluded))
 
 
 # Although stringified XML names use colon (:) character,
