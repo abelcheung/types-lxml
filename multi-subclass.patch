@@ -7,7 +7,7 @@
  6 files changed, 68 insertions(+), 63 deletions(-)
 
 diff --git a/pyproject.toml b/pyproject.toml
-index debd683..8c4fd99 100644
+index 4e160eb..eb9c890 100644
 --- a/pyproject.toml
 +++ b/pyproject.toml
 @@ -5,7 +5,7 @@ requires = ['pdm-backend ~= 2.3']
@@ -20,7 +20,7 @@ index debd683..8c4fd99 100644
  description = 'Complete lxml external type annotation'
  readme = 'README.md'
 diff --git a/src/lxml-stubs/etree/_element.pyi b/src/lxml-stubs/etree/_element.pyi
-index b322210..9c774b3 100644
+index 9544f58..a8a60c6 100644
 --- a/src/lxml-stubs/etree/_element.pyi
 +++ b/src/lxml-stubs/etree/_element.pyi
 @@ -14,9 +14,9 @@ from typing import (
@@ -199,7 +199,7 @@ index b322210..9c774b3 100644
  # ET class notation is specialized, indicating the type of element
  # it is holding (e.g. XML element, HTML element or Objectified
 diff --git a/src/lxml-stubs/etree/_factory_func.pyi b/src/lxml-stubs/etree/_factory_func.pyi
-index 23fa520..143770c 100644
+index 08fe9bc..36cfe3f 100644
 --- a/src/lxml-stubs/etree/_factory_func.pyi
 +++ b/src/lxml-stubs/etree/_factory_func.pyi
 @@ -13,7 +13,7 @@ from .._types import (
@@ -228,7 +228,7 @@ index 23fa520..143770c 100644
  def ElementTree(element: _ET) -> _ElementTree[_ET]: ...
  @overload  # from file source, custom parser
 diff --git a/src/lxml-stubs/html/_element.pyi b/src/lxml-stubs/html/_element.pyi
-index 824828a..239b540 100644
+index 58998eb..4d09668 100644
 --- a/src/lxml-stubs/html/_element.pyi
 +++ b/src/lxml-stubs/html/_element.pyi
 @@ -128,26 +128,29 @@ class HtmlElement(etree.ElementBase):
@@ -296,10 +296,10 @@ index 824828a..239b540 100644
          expr: str,
          *,
 diff --git a/src/lxml-stubs/objectify/_element.pyi b/src/lxml-stubs/objectify/_element.pyi
-index abc5a86..a099d79 100644
+index 8ef012e..d8948d2 100644
 --- a/src/lxml-stubs/objectify/_element.pyi
 +++ b/src/lxml-stubs/objectify/_element.pyi
-@@ -51,7 +51,7 @@ class ObjectifiedElement(ElementBase):
+@@ -50,7 +50,7 @@ class ObjectifiedElement(ElementBase):
      def addattr(self, tag: _TagName, value: object) -> None: ...
      def countchildren(self) -> int: ...
      def descendantpaths(self, prefix: str | list[str] | None = None) -> list[str]: ...
@@ -308,7 +308,7 @@ index abc5a86..a099d79 100644
      def __iter__(self) -> Iterator[ObjectifiedElement]: ...
      def __reversed__(self) -> Iterator[ObjectifiedElement]: ...
      def __getattr__(self, __name: str) -> ObjectifiedElement: ...
-@@ -60,10 +60,12 @@ class ObjectifiedElement(ElementBase):
+@@ -59,10 +59,12 @@ class ObjectifiedElement(ElementBase):
      def __delattr__(self, __name: str) -> None: ...
      # elem['foo'] is equivalent to elem.foo, but allows for
      # special attribute names (like 'text' or 'tail')
@@ -323,7 +323,7 @@ index abc5a86..a099d79 100644
      @overload
      def __setitem__(self, key: int | str | bytes, value: object, /) -> None: ...
      @overload
-@@ -72,7 +74,7 @@ class ObjectifiedElement(ElementBase):
+@@ -71,7 +73,7 @@ class ObjectifiedElement(ElementBase):
      # TODO Check if _Element methods need overriding
      # CSS selector is not a normal use case for objectified
      # element (and unnecessary), but still usable nonetheless
@@ -333,10 +333,10 @@ index abc5a86..a099d79 100644
          expr: str,
          *,
 diff --git a/tests/runtime/conftest.py b/tests/runtime/conftest.py
-index d5e3ec8..b984424 100644
+index fde7a18..c5e8326 100644
 --- a/tests/runtime/conftest.py
 +++ b/tests/runtime/conftest.py
-@@ -16,7 +16,7 @@ is_multi_subclass_build = pytest.StashKey[bool]()
+@@ -21,7 +21,7 @@ is_multi_subclass_build = pytest.StashKey[bool]()
  
  
  def pytest_configure(config: pytest.Config) -> None:
