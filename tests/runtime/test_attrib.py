@@ -5,7 +5,11 @@ from collections import ChainMap, Counter, defaultdict
 from collections.abc import Iterable, Mapping
 from inspect import Parameter
 from types import MappingProxyType
-from typing import Any, cast
+from typing import (
+    TYPE_CHECKING,
+    Any,
+    cast,
+)
 
 import pytest
 from hypothesis import (
@@ -27,6 +31,13 @@ if sys.version_info >= (3, 11):
     from typing import reveal_type
 else:
     from typing_extensions import reveal_type
+from ._testutils.common import attr_name_types, attr_value_types
+
+if TYPE_CHECKING:
+    from lxml._types import (  # pyright: ignore[reportMissingModuleSource]
+        _AttrName,
+        _AttrVal,
+    )
 
 
 class TestAttrib:
@@ -40,30 +51,34 @@ class TestAttrib:
             reveal_type(k1)
 
     @settings(max_examples=500)
-    @given(k=_st.all_instances_except_of_type(str, bytes, bytearray, QName))
+    @given(
+        k=_st.all_instances_except_of_type(
+            *attr_name_types.allow, *attr_name_types.skip
+        )
+    )
     @pytest.mark.slow
     def test_wrong_key_type(self, disposable_attrib: _Attrib, k: Any) -> None:
         with pytest.raises(TypeError, match="Argument must be bytes or unicode"):
             _ = disposable_attrib[k]
 
     @given(k=_st.xml_name_arg())
-    def test_valid_key_type(
-        self, disposable_attrib: _Attrib, k: str | bytes | bytearray | QName
-    ) -> None:
+    def test_valid_key_type(self, disposable_attrib: _Attrib, k: _AttrName) -> None:
         disposable_attrib[k] = "bar"
         del disposable_attrib[k]
 
     @settings(max_examples=500)
-    @given(v=_st.all_instances_except_of_type(str, bytes, bytearray, QName))
+    @given(
+        v=_st.all_instances_except_of_type(
+            *attr_value_types.allow, *attr_value_types.skip
+        )
+    )
     @pytest.mark.slow
     def test_wrong_value_type(self, disposable_attrib: _Attrib, v: Any) -> None:
         with pytest.raises(TypeError, match="Argument must be bytes or unicode"):
             disposable_attrib["foo"] = v
 
     @given(v=_st.xml_attr_value_arg())
-    def test_valid_value_type(
-        self, disposable_attrib: _Attrib, v: str | bytes | bytearray | QName
-    ) -> None:
+    def test_valid_value_type(self, disposable_attrib: _Attrib, v: _AttrVal) -> None:
         disposable_attrib["foo"] = v
         reveal_type(disposable_attrib["foo"])
 
@@ -122,7 +137,11 @@ class TestMethodHasKey:
         pass
 
     @settings(max_examples=500)
-    @given(k=_st.all_instances_except_of_type(str, bytes, bytearray, QName))
+    @given(
+        k=_st.all_instances_except_of_type(
+            *attr_name_types.allow, *attr_name_types.skip
+        )
+    )
     @pytest.mark.slow
     def test_wrong_key_type(self, disposable_attrib: _Attrib, k: Any) -> None:
         with pytest.raises(TypeError, match="Argument must be bytes or unicode"):
@@ -130,9 +149,7 @@ class TestMethodHasKey:
 
     @given(k=_st.xml_name_arg())
     @example(k="date")
-    def test_valid_key_type(
-        self, disposable_attrib: _Attrib, k: str | bytes | bytearray | QName
-    ) -> None:
+    def test_valid_key_type(self, disposable_attrib: _Attrib, k: _AttrName) -> None:
         reveal_type(disposable_attrib.has_key(k))
 
 
@@ -145,7 +162,11 @@ class TestMethodGet:
         pass
 
     @settings(max_examples=500)
-    @given(k=_st.all_instances_except_of_type(str, bytes, bytearray, QName))
+    @given(
+        k=_st.all_instances_except_of_type(
+            *attr_name_types.allow, *attr_name_types.skip
+        )
+    )
     @pytest.mark.slow
     def test_wrong_key_type(self, disposable_attrib: _Attrib, k: Any) -> None:
         with pytest.raises(TypeError, match="Argument must be bytes or unicode"):
@@ -153,9 +174,7 @@ class TestMethodGet:
 
     @given(k=_st.xml_name_arg())
     @example(k="date")
-    def test_valid_key_type(
-        self, disposable_attrib: _Attrib, k: str | bytes | bytearray | QName
-    ) -> None:
+    def test_valid_key_type(self, disposable_attrib: _Attrib, k: _AttrName) -> None:
         reveal_type(disposable_attrib.get(k))
 
     @settings(max_examples=5)
@@ -179,7 +198,11 @@ class TestMethodPop:
             xml2_root.attrib.pop("foo", 0, 1)  # type: ignore[call-overload]  # pyright: ignore[reportCallIssue]
 
     @settings(max_examples=500)
-    @given(k=_st.all_instances_except_of_type(str, bytes, bytearray, QName))
+    @given(
+        k=_st.all_instances_except_of_type(
+            *attr_name_types.allow, *attr_name_types.skip
+        )
+    )
     @pytest.mark.slow
     def test_wrong_key_type(self, disposable_attrib: _Attrib, k: Any) -> None:
         with pytest.raises(TypeError, match="Argument must be bytes or unicode"):
@@ -189,8 +212,8 @@ class TestMethodPop:
     def test_valid_key_type(
         self,
         disposable_attrib: _Attrib,
-        k: str | bytes | bytearray | QName,
-        v: str | bytes | bytearray | QName,
+        k: _AttrName,
+        v: _AttrVal,
     ) -> None:
         assume(k not in disposable_attrib)
         disposable_attrib[k] = v
@@ -220,7 +243,9 @@ class TestMethodPop:
 # Beware that monkeypatch is useless here. _Attrib merely provides an
 # interface to the underlying _Element which is not patched
 class TestMethodUpdate:
-    def _normalized_value(self, v: str | bytes | bytearray | QName) -> str:
+    # HACK Using _AttrName instead of _AttrVal to play safe, as attribute names
+    # use this routine as well
+    def _normalized_value(self, v: _AttrName) -> str:
         if isinstance(v, QName):
             return v.text
         elif isinstance(v, (bytes, bytearray)):
@@ -231,7 +256,7 @@ class TestMethodUpdate:
 
     # HACK Merely an attempted external reproduction of how lxml
     # normalize keys before insertion into _Attrib.
-    def _normalized_key(self, k: str | bytes | bytearray | QName) -> str:
+    def _normalized_key(self, k: _AttrName) -> str:
         norm = self._normalized_value(k)
         return norm[2:] if norm.startswith("{}") else norm
 
