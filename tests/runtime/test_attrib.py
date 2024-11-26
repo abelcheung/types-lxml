@@ -311,8 +311,7 @@ class TestMethodUpdate:
 
     @given(
         atts=st.dictionaries(
-            # Can't use mutable bytearray as Mapping key
-            keys=_st.xml_name_arg().filter(lambda x: not isinstance(x, bytearray)),
+            keys=_st.xml_name_key_arg(),
             values=_st.xml_attr_value_arg(),
             max_size=3,
         )
@@ -325,8 +324,7 @@ class TestMethodUpdate:
 
     @given(
         atts=st.dictionaries(
-            # Can't use mutable bytearray as Mapping key
-            keys=_st.xml_name_arg().filter(lambda x: not isinstance(x, bytearray)),
+            keys=_st.xml_name_key_arg(),
             values=_st.xml_attr_value_arg(),
             max_size=3,
         )
@@ -340,8 +338,7 @@ class TestMethodUpdate:
     @settings(max_examples=5)
     @given(
         atts=st.dictionaries(
-            # Can't use mutable bytearray as Mapping key
-            keys=_st.xml_name_arg().filter(lambda x: not isinstance(x, bytearray)),
+            keys=_st.xml_name_key_arg(),
             values=_st.xml_attr_value_arg(),
             min_size=1,
             max_size=3,
@@ -355,8 +352,7 @@ class TestMethodUpdate:
 
     @given(
         atts=st.dictionaries(
-            # Can't use mutable bytearray as dict key
-            keys=_st.xml_name_arg().filter(lambda x: not isinstance(x, bytearray)),
+            keys=_st.xml_name_key_arg(),
             values=_st.xml_attr_value_arg(),
             min_size=1,
             max_size=3,

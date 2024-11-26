@@ -133,6 +133,15 @@ def xml_name_arg() -> st.SearchStrategy[str | bytes | bytearray | _e.QName]:
     return st.one_of(s, b, ba, qn)
 
 
+# Corresponds to _AttrNameKey in stubs, where bytearray is not supported as
+# mapping key because it's not hashable.
+def xml_name_key_arg() -> st.SearchStrategy[str | bytes | _e.QName]:
+    s = xml_name()
+    qn = s.map(_e.QName)
+    b = xml_name("ascii").map(lambda x: x.encode("ascii"))
+    return st.one_of(s, b, qn)
+
+
 # https://www.w3.org/TR/xml/#NT-Char
 def xml_legal_char(
     variant: Literal["unicode", "ascii"] = "unicode",
