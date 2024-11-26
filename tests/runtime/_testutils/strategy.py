@@ -8,6 +8,7 @@ import hypothesis.strategies as st
 import hypothesis.strategies._internal.types as st_types
 import lxml.etree as _e
 from hypothesis import note
+from lxml.builder import E
 
 
 def all_types_except(
@@ -207,6 +208,48 @@ def xml_attr_value_arg() -> st.SearchStrategy[str | bytes | bytearray | _e.QName
 #
 # Below are generator of basic XML elements and its siblings
 #
+
+
+# def single_element(
+#     variant: Literal["unicode", "ascii"] = "unicode",
+# ) -> st.SearchStrategy[_e._Element]:
+#     return st.builds(
+#         _e.Element,
+#         xml_name(variant),
+#         st.dictionaries(
+#             xml_name_key_arg(),
+#             xml_attr_value_arg(),
+#             max_size=5,
+#         ),
+#         st.lists(
+#             st.one_of(
+#                 st.none(),
+#                 st.text(
+#                     max_size=10,
+#                     alphabet=xml_legal_char(variant),
+#                 ),
+#                 cdata(variant),
+#                 entity(variant),
+#                 comment(variant),
+#                 processing_instruction(variant),
+#             ),
+#             max_size=5,
+#         ),
+#     )
+
+
+@st.composite
+def single_simple_element(draw: st.DrawFn) -> _e._Element:
+    tag_name = draw(xml_name_nons())
+    attrib = draw(st.dictionaries(xml_name_nons(), xml_attr_value(), max_size=3))
+    # After discarding value quoting issue, attribute value is equivalent to
+    # chardata sans child elements, so use it instead of recreating chardata
+    # strategy.
+    # HACK: Lxml builder doesn't allow adding cdata if element text is present.
+    #   Seems to disagree with XML spec.
+    first_child = draw(st.lists(cdata(), max_size=1))
+    other_child = draw(st.lists(xml_attr_value(), max_size=1))
+    return E(tag_name, *first_child, *other_child, **attrib)
 
 
 # https://www.w3.org/TR/xml/#NT-Comment

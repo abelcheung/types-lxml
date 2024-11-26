@@ -17,3 +17,4 @@ def pytest_configure(config: pytest.Config) -> None:
     st.register_type_strategy(_e._ProcessingInstruction, _st.processing_instruction())
     st.register_type_strategy(_e.CDATA, _st.cdata())
     st.register_type_strategy(_e.QName, _st.qname())
+    st.register_type_strategy(_e._Element, _st.single_simple_element())
