@@ -11,7 +11,7 @@ from lxml import etree as _e, html as _h
 pytest_plugins = [
     "typeguard",
     "hypothesis",
-    "runtime.reveal_type_inject",
+    "pytest-revealtype-injector",
     "runtime.register_strategy",
 ]
 

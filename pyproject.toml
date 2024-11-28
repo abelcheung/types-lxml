@@ -56,12 +56,11 @@ stub-test = [
     {include-group = "mypy"},
 ]
 rt-test = [
-    'typeguard == 3.0; python_full_version < "3.12.4"',
-    'typeguard == 4.3.0; python_full_version >= "3.12.4"',
     "pytest == 8.3.3",
     "beautifulsoup4 == 4.12.3",
     "html5lib == 1.1",
     "hypothesis[zoneinfo] == 6.116.0",
+    "pytest-revealtype-injector",
     {include-group = "mypy"},
     {include-group = "pyright"},
 ]
@@ -75,11 +74,10 @@ dev = [
     'mypy >= 1.11.2',
     # microsoft/pyright#9286 and microsoft/pyright#9296
     'pyright >= 1.1.387',
-    'typeguard >= 3.0; python_full_version < "3.12.4"',
-    'typeguard >= 4.3.0; python_full_version >= "3.12.4"',
     'pytest >= 7.0, < 9',
     'html5lib == 1.1',
     'pytest-mypy-plugins >= 2.0',
+    'pytest-revealtype-injector',
     'lxml >= 4.9',
     'beautifulsoup4 ~= 4.8',
     'hypothesis[zoneinfo] ~= 6.0',
@@ -155,6 +153,7 @@ minversion = "7.0"
 addopts = [
     "--tb=short",
     "--import-mode=importlib",
+    "--revealtype-mypy-config=tests/runtime/mypy.ini",
 ]
 markers = [
     "slow: marks tests as slow",
@@ -261,26 +260,6 @@ commands = [[
     'pytest',
     {replace = 'posargs', default = ['tests/runtime'], extend = true}
 ]]
-commands_pre = [
-    ['pyright', '--level', 'error', 'tests/runtime'],
-    # HACK Resort to mypy.api since command line doesn't know
-    # how to dump to file or discard output, and tox doesn't
-    # support shell semantics.
-    # Besides, early 1.11.* mypy unconditionally exits uncleanly
-    # when JSON output is requested. So use text mode here,
-    # unlike what's actually done in mypy_adapter.py
-    [
-        'python', '-c',
-        '''
-from mypy.api import run
-r=run(["--config-file=tests/runtime/rttest-mypy.ini","tests/runtime"])
-for line in r[0].splitlines():
-    if ": note:" not in line:
-        print(line.strip())
-exit(r[2])
-        '''
-    ],
-]
 
 [tool.tox._env_lxml49]
 dependency_groups = ['rt-test', 'lxml49']

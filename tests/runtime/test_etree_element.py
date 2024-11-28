@@ -28,7 +28,7 @@ else:
     from typing_extensions import reveal_type
 
 
-# See rttest-mypy.ini for explanation
+# See mypy.ini in testsuite for explanation
 TC_HONORS_REVERSED = True
 
 
