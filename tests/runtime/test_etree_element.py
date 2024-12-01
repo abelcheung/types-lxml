@@ -277,7 +277,7 @@ class TestProperties:
         elem = deepcopy(xml2_root)
 
         for subelem in elem:
-            if type(subelem) != _Element:
+            if type(subelem) is not _Element:
                 continue
             reveal_type(subelem.attrib)
             reveal_type(subelem.prefix)
@@ -302,7 +302,7 @@ class TestProperties:
         elem = deepcopy(xml2_root)
 
         for subelem in elem:
-            if type(subelem) != _Element:
+            if type(subelem) is not _Element:
                 continue
             reveal_type(subelem.base)
             reveal_type(subelem.tag)
@@ -411,7 +411,7 @@ class TestAttribAccessMethods:
         with bightml_bin_fp as f:
             doc = etree.parse(f, parser=parser)
         for elem in doc.iter():
-            if type(elem) != _Element:
+            if type(elem) is not _Element:
                 continue
             reveal_type(elem.keys())
             reveal_type(elem.values())
@@ -660,7 +660,7 @@ class TestFindMethods:
 
         result = root.findtext(path="junk")
         reveal_type(result)
-        assert result == None
+        assert result is None
         del result
 
         result2 = root.findtext("junk", 1)

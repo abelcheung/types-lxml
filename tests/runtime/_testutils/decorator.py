@@ -58,14 +58,14 @@ def signature_tester(
                     continue
                 if param[i].name != p[0]:
                     raise FuncSignatureError(
-                        "Name of parameter {} don't match, expected {} but got {}".format(
-                            i + 1, p[0], param[i].name
-                        ),
+                        "Name of parameter {} don't match, "
+                        "expected {} but got {}".format(i + 1, p[0], param[i].name),
                         funcname,
                     )
                 if param[i].kind != p[1]:
                     raise FuncSignatureError(
-                        "Type of '{}' parameter don't match, expected {} but got {}".format(
+                        "Type of '{}' parameter don't match, "
+                        "expected {} but got {}".format(
                             p[0], p[1].name, param[i].kind.name
                         ),
                         funcname,
@@ -73,7 +73,8 @@ def signature_tester(
                 def_val = Parameter.empty if no_default else p[2]
                 if param[i].default != def_val:
                     raise FuncSignatureError(
-                        "Default value of '{}' parameter don't match, expected {} but got {}".format(
+                        "Default value of '{}' parameter don't match, "
+                        "expected {} but got {}".format(
                             p[0],
                             "no default" if def_val is Parameter.empty else def_val,
                             "no default"

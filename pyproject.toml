@@ -127,7 +127,11 @@ target-version = "py312"
 preview = true
 
 [tool.ruff.lint]
-select = ["I"]
+select = [
+    "E",
+    "F",
+    "I",
+]
 task-tags = [
     "BUG",
     "DEBUG",

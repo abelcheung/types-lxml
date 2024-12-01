@@ -2,6 +2,8 @@
 # Includes both xslt.pxi and xsltext.pxi
 #
 
+from __future__ import annotations
+
 import abc
 import sys
 from typing import Any, ClassVar, Literal, TypedDict, final, overload
@@ -25,7 +27,7 @@ from ._serializer import SerialisationError
 from ._xmlerror import _ListErrorLog
 from ._xpath import XPath
 
-_Stylesheet_Param = _XSLTQuotedStringParam | XPath | str
+_Stylesheet_Param = _XSLTQuotedStringParam | XPath | str  # noqa: F821
 
 # exported constants
 LIBXSLT_VERSION: tuple[int, int, int]

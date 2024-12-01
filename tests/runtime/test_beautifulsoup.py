@@ -37,7 +37,8 @@ class TestFromstring:
     # Even though input content could be invalid, it is still correct
     # with respect to typing (str)
     @pytest.mark.filterwarnings(
-        "ignore:.* input looks more like a filename .*:bs4.MarkupResemblesLocatorWarning"
+        "ignore:.* input looks more like a filename .*:"
+        "bs4.MarkupResemblesLocatorWarning"
     )
     def test_dubious_input(self, html2_filepath: Path) -> None:
         result = _soup.fromstring(str(html2_filepath))

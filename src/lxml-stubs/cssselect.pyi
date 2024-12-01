@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from typing import Literal, overload
 
 import cssselect as _csel
@@ -9,7 +11,7 @@ from .etree import XPath
 from .html import HtmlElement
 from .objectify import ObjectifiedElement
 
-_CSSTransArg = LxmlTranslator | Literal["xml", "html", "xhtml"]
+_CSSTransArg = LxmlTranslator | Literal["xml", "html", "xhtml"]  # noqa: F821
 
 SelectorError = _csel.SelectorError
 SelectorSyntaxError = _csel.SelectorSyntaxError

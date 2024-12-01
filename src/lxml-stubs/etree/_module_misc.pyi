@@ -145,7 +145,8 @@ class Error(Exception):
     """Error superclass for ElementTree compatibility"""
 
 class LxmlError(Error):
-    """Main exception base class for lxml.  All other exceptions inherit from this one."""
+    """Main exception base class for lxml.
+    All other exceptions inherit from this one."""
     def __init__(
         self, message: object, error_log: _BaseErrorLog | None = None
     ) -> None: ...

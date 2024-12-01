@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from _typeshed import SupportsRead, SupportsWrite
 from os import PathLike
 from typing import (
@@ -40,7 +42,7 @@ _AttrNameKey = str | bytes | QName
 # only unicode accepted for py3
 _ElemPathArg = str | QName
 
-_AttrMapping = SupportsLaxedItems[_AttrNameKey, _AttrVal]
+_AttrMapping = SupportsLaxedItems[_AttrNameKey, _AttrVal]  # noqa: F821
 """Attribute dict-like mapping
 
 Used in attrib argument of various factories and methods.

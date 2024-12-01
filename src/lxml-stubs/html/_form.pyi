@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import sys
 from typing import (
     Any,
@@ -22,7 +24,7 @@ from ._element import HtmlElement
 
 _T = TypeVar("_T")
 
-_AnyInputElement = InputElement | SelectElement | TextareaElement
+_AnyInputElement = InputElement | SelectElement | TextareaElement  # noqa: F821
 
 class FormElement(HtmlElement):
     @property

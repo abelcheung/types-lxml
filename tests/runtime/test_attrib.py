@@ -182,8 +182,8 @@ class TestMethodGet:
     def test_default_value(self, disposable_attrib: _Attrib, default: object) -> None:
         val = disposable_attrib.get("id", default=default)
         reveal_type(val)  # Not useful for typeguard, too generic
-        assert type(val) == str
-        assert type(disposable_attrib.get("foo", default)) == type(default)
+        assert type(val) is str
+        assert type(disposable_attrib.get("foo", default)) is type(default)
 
 
 class TestMethodPop:
@@ -228,7 +228,7 @@ class TestMethodPop:
             m.setitem(disposable_attrib, "fakekey", "fakevalue")  # type: ignore[arg-type]  # pyright: ignore[reportArgumentType]
             val = disposable_attrib.pop("fakekey", default)
             reveal_type(val)  # Not useful for typeguard too generic
-            assert type(val) == str
+            assert type(val) is str
 
     @settings(max_examples=5)
     @given(default=_st.all_instances_except_of_type())
@@ -237,7 +237,7 @@ class TestMethodPop:
     ) -> None:
         val = disposable_attrib.pop("foo", default)
         reveal_type(val)  # Not useful for typeguard, too generic
-        assert type(val) == type(default)
+        assert type(val) is type(default)
 
 
 # Beware that monkeypatch is useless here. _Attrib merely provides an
