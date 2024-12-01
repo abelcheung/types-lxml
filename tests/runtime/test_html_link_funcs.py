@@ -5,7 +5,7 @@ from pathlib import Path
 from typing import Any, Callable, Sequence, cast
 
 import pytest
-from lxml.etree import __version__ as _lxml_ver, _ElementTree
+from lxml.etree import LXML_VERSION, _ElementTree
 from lxml.html import (
     HtmlElement,
     find_class,
@@ -25,9 +25,10 @@ else:
 _BASE_HREF = "http://dummy"
 
 
-def _has_bytes_support() -> bool:
-    # See https://github.com/lxml/lxml/commit/6619dfd4c446b3a813ab380b22ddd583d32b9a29
-    return _lxml_ver != "5.1.0"
+byte_support_marker = pytest.mark.skipif(
+    LXML_VERSION[:3] == (5, 1, 0),
+    reason="lxml 5.1.0 has bug in bytes support of html processing functions",
+)
 
 
 class TestInputType:
@@ -73,6 +74,7 @@ class TestInputType:
             ):
                 _ = rewrite_links(cast(Any, bad_input), lambda _: None)
 
+    @byte_support_marker
     def test_find_rel_links(
         self,
         html2_filepath: Path,
@@ -80,10 +82,9 @@ class TestInputType:
         html2_bytes: bytes,
         bightml_root: HtmlElement,
     ) -> None:
-        if _has_bytes_support():
-            links = find_rel_links(html2_bytes, "nofollow noopener noreferrer")
-            reveal_type(links)
-            del links
+        links = find_rel_links(html2_bytes, "nofollow noopener noreferrer")
+        reveal_type(links)
+        del links
         links = find_rel_links(str(html2_filepath), "nofollow noopener noreferrer")
         reveal_type(links)
         del links
@@ -96,6 +97,7 @@ class TestInputType:
         for link in links:
             reveal_type(link)
 
+    @byte_support_marker
     def test_find_class(
         self,
         html2_filepath: Path,
@@ -103,10 +105,9 @@ class TestInputType:
         html2_bytes: bytes,
         bightml_root: HtmlElement,
     ) -> None:
-        if _has_bytes_support():
-            elems = find_class(html2_bytes, "single")
-            reveal_type(elems)
-            del elems
+        elems = find_class(html2_bytes, "single")
+        reveal_type(elems)
+        del elems
         elems = find_class(str(html2_filepath), "single")
         reveal_type(elems)
         del elems
@@ -118,6 +119,7 @@ class TestInputType:
         for e in elems:
             reveal_type(e)
 
+    @byte_support_marker
     def test_iterlinks(
         self,
         html2_filepath: Path,
@@ -125,10 +127,9 @@ class TestInputType:
         html2_bytes: bytes,
         bightml_root: HtmlElement,
     ) -> None:
-        if _has_bytes_support():
-            results = iterlinks(html2_bytes)
-            reveal_type(results)
-            del results
+        results = iterlinks(html2_bytes)
+        reveal_type(results)
+        del results
         results = iterlinks(str(html2_filepath))
         reveal_type(results)
         del results
@@ -246,6 +247,7 @@ class TestBadArgs:
     # See comment on module level functions in html/_funcs.pyi
     #
 
+    @byte_support_marker
     def test_bad_methodfunc(
         self,
         html2_str: str,
@@ -254,8 +256,6 @@ class TestBadArgs:
         bightml_root: HtmlElement,
     ) -> None:
         sources = [html2_str, str(html2_filepath), html2_bytes]
-        if _has_bytes_support():
-            sources.pop()
         for input in sources:
             with pytest.raises(
                 TypeError, match="got an unexpected keyword argument 'handle_failures'"
@@ -275,20 +275,20 @@ class TestBadArgs:
 class TestOutputType:
     BASE = "http://dummy.link"
 
+    @byte_support_marker
     def test_make_links_absolute(
         self,
         bightml_str: str,
         bightml_bytes: bytes,
         bightml_root: HtmlElement,
     ) -> None:
-        if _has_bytes_support():
-            with pytest.raises(
-                TypeError, match="No base_url given, and the document has no base_url"
-            ):
-                _ = make_links_absolute(bightml_bytes)
-            result = make_links_absolute(bightml_bytes, _BASE_HREF)
-            reveal_type(result)
-            del result
+        with pytest.raises(
+            TypeError, match="No base_url given, and the document has no base_url"
+        ):
+            _ = make_links_absolute(bightml_bytes)
+        result = make_links_absolute(bightml_bytes, _BASE_HREF)
+        reveal_type(result)
+        del result
         with pytest.raises(TypeError, match="Cannot mix str and non-str"):
             _ = make_links_absolute(bightml_str, cast(Any, _BASE_HREF.encode("ascii")))
         result1 = make_links_absolute(bightml_str, _BASE_HREF)
@@ -297,32 +297,32 @@ class TestOutputType:
         result2 = make_links_absolute(bightml_root, _BASE_HREF)
         reveal_type(result2)
 
+    @byte_support_marker
     def test_resolve_base_href(
         self,
         bightml_str: str,
         bightml_bytes: bytes,
         bightml_root: HtmlElement,
     ) -> None:
-        if _has_bytes_support():
-            result = resolve_base_href(bightml_bytes)
-            reveal_type(result)
-            del result
+        result = resolve_base_href(bightml_bytes)
+        reveal_type(result)
+        del result
         result1 = resolve_base_href(bightml_str)
         reveal_type(result1)
         del result1
         result2 = resolve_base_href(bightml_root)
         reveal_type(result2)
 
+    @byte_support_marker
     def test_rewrite_links(
         self,
         bightml_str: str,
         bightml_bytes: bytes,
         bightml_root: HtmlElement,
     ) -> None:
-        if _has_bytes_support():
-            result = rewrite_links(bightml_bytes, lambda _: _BASE_HREF)
-            reveal_type(result)
-            del result
+        result = rewrite_links(bightml_bytes, lambda _: _BASE_HREF)
+        reveal_type(result)
+        del result
         with pytest.raises(TypeError, match="can only concatenate str"):
             _ = rewrite_links(
                 bightml_str, lambda _: cast(Any, _BASE_HREF.encode("ASCII"))
