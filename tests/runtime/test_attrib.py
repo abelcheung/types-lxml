@@ -13,6 +13,7 @@ from typing import (
 
 import pytest
 from hypothesis import (
+    HealthCheck,
     assume,
     example,
     given,
@@ -50,7 +51,7 @@ class TestAttrib:
         for k1 in attrib:
             reveal_type(k1)
 
-    @settings(max_examples=500)
+    @settings(suppress_health_check=[HealthCheck.too_slow], max_examples=500)
     @given(
         k=_st.all_instances_except_of_type(
             *attr_name_types.allow, *attr_name_types.skip
