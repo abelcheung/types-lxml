@@ -26,17 +26,22 @@ Unused = Any
 # This type alias should only be used for input arguments, while one would
 # expect plain str in return type for most part of API (except a few places),
 # as far as python3 annotation is concerned.
-# Not to be confused with typing.AnyStr which is TypeVar.
+# _AnyStr should not to be confused with typing.AnyStr which is TypeVar.
+# TODO slowly migrating to _TextArg
 _AnyStr = str | bytes
+_TextArg = str | bytes | bytearray
+"""Generic text arguments or properties supported
+throughout lxml API."""
 
 # String argument also support QName in various places;
 # also include aliases semantically indicating the purpose
 # of text argument
-_TagName = str | bytes | bytearray | QName
-_AttrName = str | bytes | bytearray | QName
-_AttrVal = str | bytes | bytearray | QName
+_TagName = _TextArg | QName
+_AttrName = _TextArg | QName
+_AttrVal = _TextArg | QName  # TODO Consider dropping QName
 _AttrNameKey = str | bytes | QName
-"""Types supported in attribute name, sans bytearray"""
+"""Equivalent to _AttrName or _TagName, but for use in
+mapping keys where unhashable type is not allowed."""
 
 # On the other hand, Elementpath API doesn't do str/byte canonicalization,
 # only unicode accepted for py3

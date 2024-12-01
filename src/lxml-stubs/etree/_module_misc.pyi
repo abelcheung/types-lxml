@@ -11,7 +11,12 @@ if sys.version_info >= (3, 11):
 else:
     from typing_extensions import LiteralString
 
-from .._types import _AnyStr, _ElementOrTree, _TagName
+from .._types import (
+    _AnyStr,
+    _ElementOrTree,
+    _TagName,
+    _TextArg,
+)
 from ._dtd import DTD
 from ._element import _Element
 from ._xmlerror import _BaseErrorLog, _ListErrorLog
@@ -139,7 +144,7 @@ class CDATA:
         <content><![CDATA[a string]]></content>
     ```
     """
-    def __init__(self, data: str | bytes | bytearray) -> None: ...
+    def __init__(self, data: _TextArg) -> None: ...
 
 class Error(Exception):
     """Error superclass for ElementTree compatibility"""

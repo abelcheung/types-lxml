@@ -11,6 +11,7 @@ from .._types import (
     _AttrVal,
     _ElemClsLookupArg,
     _NSMapArg,
+    _TextArg,
 )
 from ._element import _Comment, _Element, _Entity, _ProcessingInstruction
 
@@ -81,7 +82,7 @@ class CommentBase(_Comment):
     """
 
     @final
-    def __init__(self, text: str | bytes | bytearray | None) -> None: ...
+    def __init__(self, text: _TextArg | None) -> None: ...
     def _init(self) -> None: ...
 
 class PIBase(_ProcessingInstruction):
@@ -103,8 +104,8 @@ class PIBase(_ProcessingInstruction):
     @final
     def __init__(
         self,
-        target: str | bytes | bytearray,
-        text: str | bytes | bytearray | None = None,
+        target: _TextArg,
+        text: _TextArg | None = None,
     ) -> None: ...
     def _init(self) -> None: ...
 
@@ -122,7 +123,7 @@ class EntityBase(_Entity):
     """
 
     @final
-    def __init__(self, name: str | bytes | bytearray) -> None: ...
+    def __init__(self, name: _TextArg) -> None: ...
     def _init(self) -> None: ...
 
 #

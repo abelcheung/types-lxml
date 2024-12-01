@@ -7,7 +7,7 @@
  6 files changed, 68 insertions(+), 63 deletions(-)
 
 diff --git a/pyproject.toml b/pyproject.toml
-index 4e160eb..eb9c890 100644
+index bc08196..7e6af31 100644
 --- a/pyproject.toml
 +++ b/pyproject.toml
 @@ -5,7 +5,7 @@ requires = ['pdm-backend ~= 2.3']
@@ -20,7 +20,7 @@ index 4e160eb..eb9c890 100644
  description = 'Complete lxml external type annotation'
  readme = 'README.md'
 diff --git a/src/lxml-stubs/etree/_element.pyi b/src/lxml-stubs/etree/_element.pyi
-index 9544f58..a8a60c6 100644
+index 7b6076d..65eec60 100644
 --- a/src/lxml-stubs/etree/_element.pyi
 +++ b/src/lxml-stubs/etree/_element.pyi
 @@ -14,9 +14,9 @@ from typing import (
@@ -199,19 +199,19 @@ index 9544f58..a8a60c6 100644
  # ET class notation is specialized, indicating the type of element
  # it is holding (e.g. XML element, HTML element or Objectified
 diff --git a/src/lxml-stubs/etree/_factory_func.pyi b/src/lxml-stubs/etree/_factory_func.pyi
-index 08fe9bc..36cfe3f 100644
+index 407eda6..3f6c237 100644
 --- a/src/lxml-stubs/etree/_factory_func.pyi
 +++ b/src/lxml-stubs/etree/_factory_func.pyi
-@@ -13,7 +13,7 @@ from .._types import (
+@@ -14,7 +14,7 @@ from .._types import (
  )
  from ..html import HtmlElement
  from ..objectify import ObjectifiedElement, StringElement
 -from ._element import _Comment, _ElementTree, _Entity, _ProcessingInstruction
 +from ._element import _Comment, _Element, _ElementTree, _Entity, _ProcessingInstruction
  
- def Comment(text: str | bytes | bytearray | None = None) -> _Comment: ...
+ def Comment(text: _TextArg | None = None) -> _Comment: ...
  def ProcessingInstruction(
-@@ -60,13 +60,13 @@ def SubElement(
+@@ -61,13 +61,13 @@ def SubElement(
  ) -> HtmlElement: ...
  @overload
  def SubElement(
@@ -333,7 +333,7 @@ index 8ef012e..d8948d2 100644
          expr: str,
          *,
 diff --git a/tests/runtime/conftest.py b/tests/runtime/conftest.py
-index fde7a18..c5e8326 100644
+index 54a6a08..c4ecbad 100644
 --- a/tests/runtime/conftest.py
 +++ b/tests/runtime/conftest.py
 @@ -21,7 +21,7 @@ is_multi_subclass_build = pytest.StashKey[bool]()

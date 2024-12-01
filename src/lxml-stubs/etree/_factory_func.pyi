@@ -10,19 +10,20 @@ from .._types import (
     _FileReadSource,
     _NSMapArg,
     _TagName,
+    _TextArg,
 )
 from ..html import HtmlElement
 from ..objectify import ObjectifiedElement, StringElement
 from ._element import _Comment, _ElementTree, _Entity, _ProcessingInstruction
 
-def Comment(text: str | bytes | bytearray | None = None) -> _Comment: ...
+def Comment(text: _TextArg | None = None) -> _Comment: ...
 def ProcessingInstruction(
-    target: str | bytes | bytearray, text: str | bytes | bytearray | None = None
+    target: _TextArg, text: _TextArg | None = None
 ) -> _ProcessingInstruction: ...
 
 PI = ProcessingInstruction
 
-def Entity(name: str | bytes | bytearray) -> _Entity: ...
+def Entity(name: _TextArg) -> _Entity: ...
 
 Element: _ElementFactory
 

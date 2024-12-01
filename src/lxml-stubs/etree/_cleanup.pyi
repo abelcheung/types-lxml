@@ -1,27 +1,31 @@
 import sys
 from typing import Collection, Iterable, overload
 
-from ._module_misc import QName
-
 if sys.version_info >= (3, 13):
     from warnings import deprecated
 else:
     from typing_extensions import deprecated
 
-from .._types import _ElementOrTree, _NSMapArg, _TagSelector
+from .._types import (
+    _AttrNameKey,
+    _ElementOrTree,
+    _NSMapArg,
+    _TagSelector,
+    _TextArg,
+)
 
 @overload
 @deprecated("Supply an iterator or collection of namespace prefixes instead.")
 def cleanup_namespaces(
     tree_or_element: _ElementOrTree,
     top_nsmap: _NSMapArg | None = None,
-    keep_ns_prefixes: str | bytes | bytearray | None = None,
+    keep_ns_prefixes: _TextArg | None = None,
 ) -> None: ...
 @overload
 def cleanup_namespaces(
     tree_or_element: _ElementOrTree,
     top_nsmap: _NSMapArg | None = None,
-    keep_ns_prefixes: Iterable[str | bytes | bytearray] | None = None,
+    keep_ns_prefixes: Iterable[_TextArg] | None = None,
 ) -> None: ...
 
 # For functions below, the first `tree_or_element` argument
@@ -33,11 +37,11 @@ def cleanup_namespaces(
 @overload
 def strip_attributes(
     tree_or_elem: _ElementOrTree,
-    *attribute_names: str | bytes | QName,
+    *attribute_names: _AttrNameKey,
 ) -> None: ...
 @overload
 def strip_attributes(
-    tree_or_elem: _ElementOrTree, attribute_names: Iterable[str | bytes | QName], /
+    tree_or_elem: _ElementOrTree, attribute_names: Iterable[_AttrNameKey], /
 ) -> None: ...
 @overload
 def strip_elements(
