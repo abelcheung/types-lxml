@@ -15,7 +15,7 @@ from lxml.etree import (
 )
 from lxml.html.html5parser import HTMLParser
 
-from . import _testutils
+from .._testutils import signature_tester
 
 if sys.version_info >= (3, 11):
     from typing import reveal_type
@@ -27,7 +27,7 @@ class TestParserConstruct:
     def test_default_parser(self) -> None:
         reveal_type(h5.html_parser)
 
-    @_testutils.signature_tester(HTMLParser.__init__, (
+    @signature_tester(HTMLParser.__init__, (
         ("strict", Parameter.POSITIONAL_OR_KEYWORD, False          ),
         ("kwargs", Parameter.VAR_KEYWORD          , Parameter.empty),
     ))  # fmt: skip
@@ -63,7 +63,7 @@ class TestParserConstruct:
 
 
 class TestFromstringFamily:
-    @_testutils.signature_tester(h5.document_fromstring, (
+    @signature_tester(h5.document_fromstring, (
         ("html"         , Parameter.POSITIONAL_OR_KEYWORD, Parameter.empty),
         ("guess_charset", Parameter.POSITIONAL_OR_KEYWORD, None           ),
         ("parser"       , Parameter.POSITIONAL_OR_KEYWORD, None           ),
@@ -80,7 +80,7 @@ class TestFromstringFamily:
         reveal_type(elem)
         del elem
 
-    @_testutils.signature_tester(h5.fragments_fromstring, (
+    @signature_tester(h5.fragments_fromstring, (
         ("html"           , Parameter.POSITIONAL_OR_KEYWORD, Parameter.empty),
         ("no_leading_text", Parameter.POSITIONAL_OR_KEYWORD, False          ),
         ("guess_charset"  , Parameter.POSITIONAL_OR_KEYWORD, None           ),
@@ -111,7 +111,7 @@ class TestFromstringFamily:
             reveal_type(elem)
         del elems2
 
-    @_testutils.signature_tester(h5.fragment_fromstring, (
+    @signature_tester(h5.fragment_fromstring, (
         ("html"         , Parameter.POSITIONAL_OR_KEYWORD, Parameter.empty),
         ("create_parent", Parameter.POSITIONAL_OR_KEYWORD, False          ),
         ("guess_charset", Parameter.POSITIONAL_OR_KEYWORD, None           ),
@@ -132,7 +132,7 @@ class TestFromstringFamily:
         reveal_type(elem)
         del elem
 
-    @_testutils.signature_tester(h5.fromstring, (
+    @signature_tester(h5.fromstring, (
         ("html"         , Parameter.POSITIONAL_OR_KEYWORD, Parameter.empty),
         ("guess_charset", Parameter.POSITIONAL_OR_KEYWORD, None           ),
         ("parser"       , Parameter.POSITIONAL_OR_KEYWORD, None           ),
@@ -169,7 +169,7 @@ class TestFromstringFamily:
                 _ = func(cast(Any, src))
         fh.close()
 
-    @_testutils.signature_tester(h5.parse, (
+    @signature_tester(h5.parse, (
         ("filename_url_or_file", Parameter.POSITIONAL_OR_KEYWORD, Parameter.empty),
         ("guess_charset"       , Parameter.POSITIONAL_OR_KEYWORD, None           ),
         ("parser"              , Parameter.POSITIONAL_OR_KEYWORD, None           ),

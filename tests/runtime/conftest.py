@@ -25,7 +25,7 @@ def pytest_configure(config: pytest.Config) -> None:
 
 
 def _bightml_filepath() -> Path:
-    return Path(__file__).resolve().parent / "data" / "sample.html.xz"
+    return Path(__file__).resolve().parent / "_data" / "sample.html.xz"
 
 
 # To fool test functions that use this fixture,
@@ -66,7 +66,7 @@ def bightml_bytes() -> bytes:
 
 @pytest.fixture(scope="session")
 def html2_filepath() -> Path:
-    return Path(__file__).resolve().parent / "data" / "mdn-sample.html"
+    return Path(__file__).resolve().parent / "_data" / "mdn-sample.html"
 
 
 @pytest.fixture(scope="session")
@@ -86,12 +86,12 @@ def html2_bytes(html2_filepath: Path) -> bytes:
 
 @pytest.fixture(scope="session")
 def svg_filepath() -> Path:
-    return Path(__file__).resolve().parent / "data" / "w3c-example.svg"
+    return Path(__file__).resolve().parent / "_data" / "w3c-example.svg"
 
 
 @pytest.fixture(scope="session")
 def xml2_filepath() -> Path:
-    return Path(__file__).resolve().parent / "data" / "shiporder.xml"
+    return Path(__file__).resolve().parent / "_data" / "shiporder.xml"
 
 
 @pytest.fixture

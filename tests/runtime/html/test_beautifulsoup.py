@@ -16,7 +16,7 @@ from lxml import (
 from lxml.etree import _Element as _Element, _ElementTree as _ElementTree
 from lxml.html import HtmlElement as HtmlElement, soupparser as _soup
 
-from . import _testutils
+from .._testutils import signature_tester
 
 if sys.version_info >= (3, 11):
     from typing import reveal_type
@@ -25,7 +25,7 @@ else:
 
 
 class TestFromstring:
-    @_testutils.signature_tester(_soup.fromstring, (
+    @signature_tester(_soup.fromstring, (
         ("data"         , Parameter.POSITIONAL_OR_KEYWORD, Parameter.empty),
         ("beautifulsoup", Parameter.POSITIONAL_OR_KEYWORD, None           ),
         ("makeelement"  , Parameter.POSITIONAL_OR_KEYWORD, None           ),
@@ -125,7 +125,7 @@ class TestFromstring:
 
 
 class TestParse:
-    @_testutils.signature_tester(_soup.parse, (
+    @signature_tester(_soup.parse, (
         ("file"         , Parameter.POSITIONAL_OR_KEYWORD, Parameter.empty),
         ("beautifulsoup", Parameter.POSITIONAL_OR_KEYWORD, None           ),
         ("makeelement"  , Parameter.POSITIONAL_OR_KEYWORD, None           ),
@@ -228,7 +228,7 @@ class TestParse:
 
 
 class TestConvertTree:
-    @_testutils.signature_tester(
+    @signature_tester(
         _soup.convert_tree,
         (
             ("beautiful_soup_tree", Parameter.POSITIONAL_OR_KEYWORD, Parameter.empty),
