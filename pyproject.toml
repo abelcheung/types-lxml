@@ -159,7 +159,6 @@ minversion = "7.0"
 addopts = [
     "--tb=short",
     "--import-mode=importlib",
-    "--revealtype-mypy-config=tests/runtime/mypy.ini",
 ]
 markers = [
     "slow: marks tests as slow",
@@ -264,6 +263,7 @@ package = 'wheel'
 wheel_build_env = '{package_env}'
 commands = [[
     'pytest',
+    '--revealtype-mypy-config=tests/runtime/mypy.ini',
     {replace = 'posargs', default = ['tests/runtime'], extend = true}
 ]]
 
