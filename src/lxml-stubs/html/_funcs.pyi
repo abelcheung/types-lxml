@@ -1,7 +1,26 @@
-from typing import AnyStr, Callable, Iterator, Literal, TypeVar, overload
+from __future__ import annotations
 
-from .._types import _AnyStr, _ElementOrTree, _OutputMethodArg
+import sys
+from typing import (
+    Any,
+    Callable,
+    Iterator,
+    Literal,
+    Never,
+    TypeVar,
+    overload,
+)
+
+from .._types import (
+    _ElementOrTree,
+    _OutputMethodArg,
+)
 from ._element import _HANDLE_FAILURES, HtmlElement
+
+if sys.version_info >= (3, 13):
+    from warnings import deprecated
+else:
+    from typing_extensions import deprecated
 
 _HtmlDoc_T = TypeVar("_HtmlDoc_T", str, bytes, HtmlElement)
 
@@ -32,71 +51,91 @@ _HtmlDoc_T = TypeVar("_HtmlDoc_T", str, bytes, HtmlElement)
 # thus causing Exception. Workaround this using @overload.
 
 @overload
+@deprecated('Raises exception if keyword argument is used while input is str or bytes')
 def find_rel_links(
-    doc: HtmlElement,
+    doc: str | bytes,
+    *,
+    rel: Any,
+) -> Never: ...
+@overload
+def find_rel_links(
+    doc: str | bytes | HtmlElement,
     rel: str,
 ) -> list[HtmlElement]: ...
 @overload
-def find_rel_links(
-    doc: _AnyStr,
-    rel: str,
-    /,
-) -> list[HtmlElement]: ...
+@deprecated('Raises exception if keyword argument is used while input is str or bytes')
+def find_class(
+    doc: str | bytes,
+    *,
+    class_name: Any,
+) -> Never: ...
 @overload
 def find_class(
-    doc: HtmlElement,
-    class_name: _AnyStr,
+    doc: str | bytes | HtmlElement,
+    class_name: str | bytes,  # bytearray banned in etree._wrapXPathObject
 ) -> list[HtmlElement]: ...
+# fromstring() accepts 'base_url' keyword
 @overload
-def find_class(
-    doc: _AnyStr,
-    class_name: _AnyStr,
-    /,
-) -> list[HtmlElement]: ...
+@deprecated('Raises exception if keyword argument is used while input is str or bytes')
+def make_links_absolute(
+    doc: str | bytes,
+    *arg: Any,
+    resolve_base_href: Any,
+    **kw: Any,
+) -> Never: ...
+@overload
+@deprecated('Raises exception if keyword argument is used while input is str or bytes')
+def make_links_absolute(
+    doc: str | bytes,
+    *arg: Any,
+    handle_failures: Any,
+    **kw: Any,
+) -> Never: ...
 @overload
 def make_links_absolute(
-    doc: HtmlElement,
-    base_url: str | None = None,
-    resolve_base_href: bool = True,
-    handle_failures: _HANDLE_FAILURES | None = None,
-) -> HtmlElement: ...
-@overload
-def make_links_absolute(
-    doc: AnyStr,
-    base_url: str | None = None,
-    resolve_base_href: bool = True,
-    handle_failures: _HANDLE_FAILURES | None = None,
-    /,
-) -> AnyStr: ...
-@overload
-def resolve_base_href(
-    doc: HtmlElement,
-    handle_failures: _HANDLE_FAILURES | None = None,
-) -> HtmlElement: ...
-@overload
-def resolve_base_href(
-    doc: AnyStr,
-    handle_failures: _HANDLE_FAILURES | None = None,
-    /,
-) -> AnyStr: ...
-def iterlinks(
     doc: _HtmlDoc_T,
+    base_url: str | None = None,
+    resolve_base_href: bool = True,
+    handle_failures: _HANDLE_FAILURES | None = None,
+) -> _HtmlDoc_T: ...
+@overload
+@deprecated('Raises exception if keyword argument is used while input is str or bytes')
+def resolve_base_href(
+    doc: str | bytes,
+    *,
+    handle_failures: Any,
+) -> Never: ...
+@overload
+def resolve_base_href(
+    doc: _HtmlDoc_T,
+    handle_failures: _HANDLE_FAILURES | None = None,
+) -> _HtmlDoc_T: ...
+def iterlinks(
+    doc: str | bytes | HtmlElement,
 ) -> Iterator[tuple[HtmlElement, str | None, str, int]]: ...
 @overload
+@deprecated('Raises exception if keyword argument is used while input is str or bytes')
 def rewrite_links(
-    doc: HtmlElement,
-    link_repl_func: Callable[[str], str | None],
-    resolve_base_href: bool = True,
-    base_href: str | None = None,
-) -> HtmlElement: ...
+    doc: str | bytes,
+    *arg: Any,
+    resolve_base_href: Any,
+    **kw: Any,
+) -> Never: ...
+@overload
+@deprecated('Raises exception if keyword argument is used while input is str or bytes')
+def rewrite_links(
+    doc: str | bytes,
+    *arg: Any,
+    link_repl_func: Any,
+    **kw: Any,
+) -> Never: ...
 @overload
 def rewrite_links(
-    doc: AnyStr,
+    doc: _HtmlDoc_T,
     link_repl_func: Callable[[str], str | None],
     resolve_base_href: bool = True,
     base_href: str | None = None,
-    /,
-) -> AnyStr: ...
+) -> _HtmlDoc_T: ...
 
 #
 # Tree conversion
