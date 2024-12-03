@@ -102,15 +102,25 @@ excludes = [
 [tool.setuptools_scm]
 
 [tool.pyright]
-stubPath = 'src'
-extraPaths = ['tests/runtime']
 typeCheckingMode = 'strict'
+# We may as well scrap the whole project without this
 reportPrivateUsage = false
+# Currently all @deprecated warnings originate from here.
+# They are for user consumption, we don't want to
+# trip over it ourselves.
+reportDeprecated = false
+# Newer and older pyright versions may need different
+# type-ignore locations, and we want to support a wider
+# range of pyright versions.
 reportUnnecessaryTypeIgnoreComment = false
 # Follows typeshed practice, separate mypy and pyright
 # type-ignores
 # See https://github.com/python/mypy/issues/12358
 enableTypeIgnoreComments = false
+executionEnvironments = [
+    { root = 'src' },
+    { root = 'tests/runtime', stubPath = 'src' },
+]
 
 [tool.mypy]
 mypy_path = '$MYPY_CONFIG_FILE_DIR/src'
