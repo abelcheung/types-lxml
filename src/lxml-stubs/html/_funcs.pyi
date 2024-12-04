@@ -6,7 +6,6 @@ from typing import (
     Callable,
     Iterator,
     Literal,
-    Never,
     TypeVar,
     overload,
 )
@@ -17,6 +16,11 @@ from .._types import (
     _OutputMethodArg,
 )
 from ._element import _HANDLE_FAILURES, HtmlElement
+
+if sys.version_info >= (3, 11):
+    from typing import Never
+else:
+    from typing_extensions import Never
 
 if sys.version_info >= (3, 13):
     from warnings import deprecated
