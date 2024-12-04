@@ -12,6 +12,7 @@ from typing import (
 )
 
 from .._types import (
+    _AttrVal,
     _ElementOrTree,
     _OutputMethodArg,
 )
@@ -125,7 +126,7 @@ def rewrite_links(
 @deprecated('Raises exception if keyword argument is used while input is str or bytes')
 def rewrite_links(
     doc: str | bytes,
-    link_repl_func: Callable[[str], str | None],
+    link_repl_func: Callable[[str], _AttrVal | None],
     *,
     resolve_base_href: Any,
     **kw: Any,
@@ -134,7 +135,7 @@ def rewrite_links(
 @deprecated('Raises exception if keyword argument is used while input is str or bytes')
 def rewrite_links(
     doc: str | bytes,
-    link_repl_func: Callable[[str], str | None],
+    link_repl_func: Callable[[str], _AttrVal | None],
     *,
     base_href: Any,
     **kw: Any,
@@ -142,7 +143,7 @@ def rewrite_links(
 @overload
 def rewrite_links(
     doc: _HtmlDoc_T,
-    link_repl_func: Callable[[str], str | None],
+    link_repl_func: Callable[[str], _AttrVal | None],
     resolve_base_href: bool = True,
     base_href: str | None = None,
 ) -> _HtmlDoc_T: ...
