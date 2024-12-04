@@ -1,8 +1,26 @@
 from __future__ import annotations
 
+import bz2
+import gzip
+import io
 import lzma
-import typing as _t
+from collections.abc import (
+    Callable,
+    Collection,
+    Iterator,
+)
+from contextlib import AbstractContextManager, nullcontext
 from pathlib import Path, PurePosixPath
+from typing import (
+    Any,
+    BinaryIO,
+    Literal,
+    TextIO,
+    cast,
+    overload,
+)
+from urllib.request import urlopen
+from urllib.response import addinfourl
 
 import pytest
 import typeguard
@@ -32,7 +50,7 @@ def _bightml_filepath() -> Path:
 # specify argument type as typing.BinaryIO
 # and don't include Iterator/Generator
 @pytest.fixture
-def bightml_bin_fp() -> _t.Iterator[lzma.LZMAFile]:
+def bightml_bin_fp() -> Iterator[lzma.LZMAFile]:
     fp = lzma.open(_bightml_filepath(), "rb")
     yield fp
     if not fp.closed:
@@ -43,7 +61,7 @@ def bightml_bin_fp() -> _t.Iterator[lzma.LZMAFile]:
 # specify argument type as typing.TextIO
 # and don't include Iterator/Generator
 @pytest.fixture
-def bightml_txt_fp() -> _t.Iterator[_t.TextIO]:
+def bightml_txt_fp() -> Iterator[TextIO]:
     fp = lzma.open(_bightml_filepath(), "rt", encoding="utf-8")
     yield fp
     if not fp.closed:
@@ -95,7 +113,7 @@ def xml2_filepath() -> Path:
 
 
 @pytest.fixture
-def bightml_tree(bightml_bin_fp: _t.BinaryIO) -> _e._ElementTree[_h.HtmlElement]:
+def bightml_tree(bightml_bin_fp: BinaryIO) -> _e._ElementTree[_h.HtmlElement]:
     with bightml_bin_fp as f:
         tree = _h.parse(f)
     return tree
@@ -168,3 +186,77 @@ def disposable_element() -> _e._Element:
 @pytest.fixture(scope="class")
 def disposable_attrib(disposable_element: _e._Element) -> _e._Attrib:
     return disposable_element.attrib
+
+
+@overload
+def _get_compressed_fp_from(
+    zmode: Literal["gz"],
+) -> Callable[[Path], gzip.GzipFile]: ...
+@overload
+def _get_compressed_fp_from(
+    zmode: Literal["bz2"],
+) -> Callable[[Path], bz2.BZ2File]: ...
+@overload
+def _get_compressed_fp_from(
+    zmode: Literal["xz"],
+) -> Callable[[Path], lzma.LZMAFile]: ...
+def _get_compressed_fp_from(zmode: str) -> Any:
+    param_name = {
+        "gz": (gzip.GzipFile, "fileobj"),
+        "bz2": (bz2.BZ2File, "filename"),
+        "xz": (lzma.LZMAFile, "filename"),
+    }
+
+    def _wrapped(path: Path, /) -> Any:
+        buffer = io.BytesIO()
+        comp_type, param = param_name[zmode]
+        with path.open("rb") as f, comp_type(**{param: buffer, "mode": "wb"}) as z:  # pyright: ignore
+            z.write(f.read())
+
+        return comp_type(**{param: buffer, "mode": "rb"})  # pyright: ignore
+
+    return _wrapped
+
+
+# It's too much to create protocol signature just for this thing
+@pytest.fixture
+def generate_input_file_arguments() -> Callable[..., Iterator[Any]]:
+    def _wrapped(
+        path: Path,
+        *,
+        exclude_type: tuple[type[Any]] = tuple(),
+        include: Collection[Callable[[Path], Any]] = tuple(),
+    ) -> Iterator[Any]:
+        assert path.is_file()
+        items = [
+            path,
+            str(path),
+            str(path).encode("utf-8"),
+            path.open("rb"),
+            path.open("rt", encoding="utf-8"),
+            io.BytesIO(path.read_bytes()),
+            io.StringIO(path.read_text()),
+            # Just because typeshed doesn't have typing for urlopen!
+            cast(
+                AbstractContextManager[addinfourl],
+                urlopen("file:///" + str(path)),
+            ),
+            _get_compressed_fp_from("gz"),
+            _get_compressed_fp_from("bz2"),
+            _get_compressed_fp_from("xz"),
+        ]
+        for func in include:
+            items.append(func)
+        for i in items:
+            if isinstance(i, exclude_type):
+                continue
+            if callable(i):
+                i = i(path)
+            if isinstance(i, AbstractContextManager):
+                cm = i
+            else:
+                cm = nullcontext(i)
+            with cm as f:
+                yield f
+
+    return _wrapped
