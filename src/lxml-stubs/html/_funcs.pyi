@@ -117,7 +117,16 @@ def iterlinks(
 @deprecated('Raises exception if keyword argument is used while input is str or bytes')
 def rewrite_links(
     doc: str | bytes,
-    *arg: Any,
+    *,
+    link_repl_func: Any,
+    **kw: Any,
+) -> Never: ...
+@overload
+@deprecated('Raises exception if keyword argument is used while input is str or bytes')
+def rewrite_links(
+    doc: str | bytes,
+    link_repl_func: Callable[[str], str | None],
+    *,
     resolve_base_href: Any,
     **kw: Any,
 ) -> Never: ...
@@ -125,8 +134,9 @@ def rewrite_links(
 @deprecated('Raises exception if keyword argument is used while input is str or bytes')
 def rewrite_links(
     doc: str | bytes,
-    *arg: Any,
-    link_repl_func: Any,
+    link_repl_func: Callable[[str], str | None],
+    *,
+    base_href: Any,
     **kw: Any,
 ) -> Never: ...
 @overload
