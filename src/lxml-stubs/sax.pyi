@@ -1,7 +1,7 @@
 from typing import Generic, overload
 from xml.sax.handler import ContentHandler
 
-from ._types import _ET, SupportsLaxedItems, Unused, _ElementFactory, _ElementOrTree
+from ._types import _ET, SupportsLaxItems, Unused, _ElementFactory, _ElementOrTree
 from .etree import LxmlError, _ElementTree, _ProcessingInstruction
 
 class SaxError(LxmlError): ...
@@ -30,7 +30,7 @@ class ElementTreeContentHandler(Generic[_ET], ContentHandler):
         self,
         ns_name: tuple[str, str],
         qname: Unused,
-        attributes: SupportsLaxedItems[tuple[str | None, str], str] | None = None,
+        attributes: SupportsLaxItems[tuple[str | None, str], str] | None = None,
     ) -> None: ...
     def endElementNS(  # pyright: ignore[reportIncompatibleMethodOverride]
         self,
@@ -44,7 +44,7 @@ class ElementTreeContentHandler(Generic[_ET], ContentHandler):
     def startElement(  # pyright: ignore[reportIncompatibleMethodOverride]
         self,
         name: str,
-        attributes: SupportsLaxedItems[str, str] | None = None,
+        attributes: SupportsLaxItems[str, str] | None = None,
     ) -> None: ...
     ignorableWhitespace = characters  # type: ignore[assignment]  # pyright: ignore[reportAssignmentType]
 

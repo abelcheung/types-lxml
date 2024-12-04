@@ -47,7 +47,7 @@ mapping keys where unhashable type is not allowed."""
 # only unicode accepted for py3
 _ElemPathArg = str | QName
 
-_AttrMapping = SupportsLaxedItems[_AttrNameKey, _AttrVal]  # noqa: F821
+_AttrMapping = SupportsLaxItems[_AttrNameKey, _AttrVal]  # noqa: F821
 """Attribute dict-like mapping
 
 Used in attrib argument of various factories and methods.
@@ -104,7 +104,7 @@ _NSTuples = Iterable[tuple[_AnyStr | None, _AnyStr]]
 # not just any mapping.
 _XPathExtFuncArg = (
     Iterable[
-        SupportsLaxedItems[
+        SupportsLaxItems[
             tuple[str | None, str],
             Callable[..., Any],
         ]
@@ -191,7 +191,7 @@ _ElementOrTree = _ET | _ElementTree[_ET]
 # The basic parsers bundled in lxml.etree
 _DefEtreeParsers = XMLParser[_ET_co] | HTMLParser[_ET_co]
 
-class SupportsLaxedItems(Protocol[_KT_co, _VT_co]):
+class SupportsLaxItems(Protocol[_KT_co, _VT_co]):
     """Relaxed form of SupportsItems
 
     Original `SupportsItems` from typeshed returns

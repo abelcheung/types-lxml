@@ -19,7 +19,7 @@ if sys.version_info >= (3, 11):
 else:
     from typing_extensions import Never
 
-from .._types import SupportsLaxedItems, _TextArg
+from .._types import SupportsLaxItems, _TextArg
 from ._element import HtmlElement
 
 _T = TypeVar("_T")
@@ -32,7 +32,7 @@ class FormElement(HtmlElement):
     @property
     def fields(self) -> FieldsDict: ...
     @fields.setter
-    def fields(self, __v: SupportsLaxedItems[str, str]) -> None: ...
+    def fields(self, __v: SupportsLaxItems[str, str]) -> None: ...
     @property
     def action(self) -> str | None: ...
     @action.setter
@@ -177,21 +177,21 @@ class LabelElement(HtmlElement):
 def submit_form(
     form: FormElement,
     extra_values: Iterable[tuple[str, str]]
-    | SupportsLaxedItems[str, str]
+    | SupportsLaxItems[str, str]
     | None = None,
     open_http: None = None,
 ) -> Any: ...  # See typeshed _UrlOpenRet
 @overload  # open_http as positional argument
 def submit_form(
     form: FormElement,
-    extra_values: Iterable[tuple[str, str]] | SupportsLaxedItems[str, str] | None,
+    extra_values: Iterable[tuple[str, str]] | SupportsLaxItems[str, str] | None,
     open_http: Callable[[Literal["GET", "POST"], str, list[tuple[str, str]]], _T],
 ) -> _T: ...
 @overload  # open_http as keyword argument
 def submit_form(
     form: FormElement,
     extra_values: Iterable[tuple[str, str]]
-    | SupportsLaxedItems[str, str]
+    | SupportsLaxItems[str, str]
     | None = None,
     *,
     open_http: Callable[[Literal["GET", "POST"], str, list[tuple[str, str]]], _T],

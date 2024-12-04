@@ -56,7 +56,7 @@ _HtmlDoc_T = TypeVar("_HtmlDoc_T", str, bytes, HtmlElement)
 # thus causing Exception. Workaround this using @overload.
 
 @overload
-@deprecated('Raises exception if keyword argument is used while input is str or bytes')
+@deprecated("Raises exception if keyword argument is used while input is str or bytes")
 def find_rel_links(
     doc: str | bytes,
     *,
@@ -68,7 +68,7 @@ def find_rel_links(
     rel: str,
 ) -> list[HtmlElement]: ...
 @overload
-@deprecated('Raises exception if keyword argument is used while input is str or bytes')
+@deprecated("Raises exception if keyword argument is used while input is str or bytes")
 def find_class(
     doc: str | bytes,
     *,
@@ -79,9 +79,10 @@ def find_class(
     doc: str | bytes | HtmlElement,
     class_name: str | bytes,  # bytearray banned in etree._wrapXPathObject
 ) -> list[HtmlElement]: ...
+
 # fromstring() accepts 'base_url' keyword
 @overload
-@deprecated('Raises exception if keyword argument is used while input is str or bytes')
+@deprecated("Raises exception if keyword argument is used while input is str or bytes")
 def make_links_absolute(
     doc: str | bytes,
     *arg: Any,
@@ -89,7 +90,7 @@ def make_links_absolute(
     **kw: Any,
 ) -> Never: ...
 @overload
-@deprecated('Raises exception if keyword argument is used while input is str or bytes')
+@deprecated("Raises exception if keyword argument is used while input is str or bytes")
 def make_links_absolute(
     doc: str | bytes,
     *arg: Any,
@@ -104,7 +105,7 @@ def make_links_absolute(
     handle_failures: _HANDLE_FAILURES | None = None,
 ) -> _HtmlDoc_T: ...
 @overload
-@deprecated('Raises exception if keyword argument is used while input is str or bytes')
+@deprecated("Raises exception if keyword argument is used while input is str or bytes")
 def resolve_base_href(
     doc: str | bytes,
     *,
@@ -119,7 +120,7 @@ def iterlinks(
     doc: str | bytes | HtmlElement,
 ) -> Iterator[tuple[HtmlElement, str | None, str, int]]: ...
 @overload
-@deprecated('Raises exception if keyword argument is used while input is str or bytes')
+@deprecated("Raises exception if keyword argument is used while input is str or bytes")
 def rewrite_links(
     doc: str | bytes,
     *,
@@ -127,7 +128,7 @@ def rewrite_links(
     **kw: Any,
 ) -> Never: ...
 @overload
-@deprecated('Raises exception if keyword argument is used while input is str or bytes')
+@deprecated("Raises exception if keyword argument is used while input is str or bytes")
 def rewrite_links(
     doc: str | bytes,
     link_repl_func: Callable[[str], _AttrVal | None],
@@ -136,7 +137,7 @@ def rewrite_links(
     **kw: Any,
 ) -> Never: ...
 @overload
-@deprecated('Raises exception if keyword argument is used while input is str or bytes')
+@deprecated("Raises exception if keyword argument is used while input is str or bytes")
 def rewrite_links(
     doc: str | bytes,
     link_repl_func: Callable[[str], _AttrVal | None],

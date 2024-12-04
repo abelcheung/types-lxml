@@ -14,7 +14,7 @@ else:
     from typing_extensions import deprecated
 
 from .._types import (
-    SupportsLaxedItems,
+    SupportsLaxItems,
     _AnyStr,
     _DefEtreeParsers,
     _ElementOrTree,
@@ -141,7 +141,7 @@ class XSLT:
         self,
         xslt_input: _ElementOrTree,
         extensions: (
-            SupportsLaxedItems[tuple[_AnyStr, _AnyStr], XSLTExtension] | None
+            SupportsLaxItems[tuple[_AnyStr, _AnyStr], XSLTExtension] | None
         ) = None,
         regexp: bool = True,
         access_control: XSLTAccessControl | None = None,

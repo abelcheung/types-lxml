@@ -364,7 +364,7 @@ class _ElementTree(Generic[_t._ET_co]):
         _xslt: _t._ElementOrTree,
         /,
         extensions: (
-            _t.SupportsLaxedItems[tuple[_t._AnyStr, _t._AnyStr], XSLTExtension] | None
+            _t.SupportsLaxItems[tuple[_t._AnyStr, _t._AnyStr], XSLTExtension] | None
         ) = None,
         access_control: XSLTAccessControl | None = None,
         *,  # all keywords are passed to XSLT.__call__

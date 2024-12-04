@@ -14,7 +14,7 @@ if sys.version_info >= (3, 10):
 else:
     from typing_extensions import ParamSpec
 
-from .._types import SupportsLaxedItems
+from .._types import SupportsLaxItems
 from ._classlookup import ElementBase, ElementClassLookup, FallbackElementClassLookup
 from ._module_misc import LxmlError
 
@@ -43,7 +43,7 @@ class _ClassNamespaceRegistry:
     def __len__(self) -> int: ...
     def update(
         self,
-        class_dict_iterable: SupportsLaxedItems[str | None, type[ElementBase]]
+        class_dict_iterable: SupportsLaxItems[str | None, type[ElementBase]]
         | Iterable[tuple[str | None, type[ElementBase]]],
     ) -> None:
         """Forgivingly update the registry.
@@ -116,7 +116,7 @@ class _XPathFunctionNamespaceRegistry:
     def __len__(self) -> int: ...
     def update(
         self,
-        class_dict_iterable: SupportsLaxedItems[str, Callable[..., Any]]
+        class_dict_iterable: SupportsLaxItems[str, Callable[..., Any]]
         | Iterable[tuple[str, Callable[..., Any]]],
     ) -> None:
         """Forgivingly update the registry.
