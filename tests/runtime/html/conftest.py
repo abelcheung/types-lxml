@@ -20,6 +20,8 @@ def disposable_html_with_base_href() -> HtmlElement:
             b.BASE(href="?foo?<")
         ),
         b.BODY(
-            b.A("Link text", href="#id1", id="id1"),
+            b.A("Anchor", href="#id1", id="id1"),
+            b.A("Relative Link", href="./relative"),
+            b.A("Full Link", href="http://example.org"),
         )
     )

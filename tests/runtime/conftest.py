@@ -130,6 +130,9 @@ def html2_tree(html2_filepath: Path) -> _e._ElementTree[_h.HtmlElement]:
         tree = _h.parse(f)
     return tree
 
+@pytest.fixture
+def html2_root(html2_tree: _e._ElementTree[_h.HtmlElement]) -> _h.HtmlElement:
+    return html2_tree.getroot()
 
 @pytest.fixture
 def svg_tree(svg_filepath: Path) -> _e._ElementTree:
