@@ -31,8 +31,6 @@ from ._form import FormElement, LabelElement
 
 _T = TypeVar("_T")
 
-_HANDLE_FAILURES = Literal["ignore", "discard"]
-
 #
 # Making some compromise for HTML, in that iteration of subelements
 # and methods would produce HTML elements instead of the base
@@ -109,11 +107,11 @@ class HtmlElement(etree.ElementBase):
         self,
         base_url: str | None = None,  # not bytes
         resolve_base_href: bool = True,
-        handle_failures: _HANDLE_FAILURES | None = None,
+        handle_failures: Literal["ignore", "discard"] | None = None,
     ) -> None: ...
     def resolve_base_href(
         self,
-        handle_failures: _HANDLE_FAILURES | None = None,
+        handle_failures: Literal["ignore", "discard"] | None = None,
     ) -> None: ...
     # (element, attribute, link, pos)
     def iterlinks(self) -> Iterator[tuple[HtmlElement, str | None, str, int]]: ...

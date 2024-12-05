@@ -15,7 +15,7 @@ from .._types import (
     _ElementOrTree,
     _OutputMethodArg,
 )
-from ._element import _HANDLE_FAILURES, HtmlElement
+from ._element import HtmlElement
 
 if sys.version_info >= (3, 11):
     from typing import Never
@@ -102,7 +102,7 @@ def make_links_absolute(
     doc: _HtmlDoc_T,
     base_url: str | None = None,
     resolve_base_href: bool = True,
-    handle_failures: _HANDLE_FAILURES | None = None,
+    handle_failures: Literal["ignore", "discard"] | None = None,
 ) -> _HtmlDoc_T: ...
 @overload
 @deprecated("Raises exception if keyword argument is used while input is str or bytes")
@@ -114,7 +114,7 @@ def resolve_base_href(
 @overload
 def resolve_base_href(
     doc: _HtmlDoc_T,
-    handle_failures: _HANDLE_FAILURES | None = None,
+    handle_failures: Literal["ignore", "discard"] | None = None,
 ) -> _HtmlDoc_T: ...
 def iterlinks(
     doc: str | bytes | HtmlElement,
