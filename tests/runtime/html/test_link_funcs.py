@@ -16,7 +16,11 @@ from typing import (
 )
 
 import pytest
-from hypothesis import given, settings
+from hypothesis import (
+    HealthCheck,
+    given,
+    settings,
+)
 from lxml.etree import (
     LXML_VERSION,
     XPathResultError,
@@ -190,7 +194,7 @@ class TestFindRelLinksArg:
         links = find_rel_links(bightml_root, cast(Any, bytearray(b)))
         assert len(links) == 0
 
-    @settings(max_examples=500)
+    @settings(suppress_health_check=[HealthCheck.too_slow], max_examples=500)
     @given(t=_st.all_instances_except_of_type(str, bytes, bytearray))
     @pytest.mark.slow
     def test_wrong_type_raises(
@@ -224,7 +228,7 @@ class TestFindClassArg:
             return len(x) > 0
         return (x.stop - x.start) / x.step > 0
 
-    @settings(max_examples=500)
+    @settings(suppress_health_check=[HealthCheck.too_slow], max_examples=500)
     @given(
         t=_st.all_instances_except_of_type(
             str,
@@ -290,7 +294,7 @@ class TestResolveBaseHrefArg:
                 else:
                     assert old != new
 
-    @settings(max_examples=500)
+    @settings(suppress_health_check=[HealthCheck.too_slow], max_examples=500)
     @given(
         t=_st.all_instances_except_of_type().filter(
             lambda x: x not in ("discard", "ignore", None)
@@ -330,7 +334,7 @@ class TestMakeLinksAbsoluteArg:
                 else:
                     assert old != new
 
-    @settings(max_examples=500)
+    @settings(suppress_health_check=[HealthCheck.too_slow], max_examples=500)
     @given(
         t=_st.all_instances_except_of_type().filter(
             lambda _: _ not in ("ignore", "discard", None)
@@ -348,7 +352,7 @@ class TestMakeLinksAbsoluteArg:
     # Not testing resolve_base_href type, as it is a truthy/falsy argument
     # that can be anything
 
-    @settings(max_examples=500)
+    @settings(suppress_health_check=[HealthCheck.too_slow], max_examples=500)
     @given(t=_st.all_instances_except_of_type(str, NoneType).filter(bool))
     @pytest.mark.slow
     def test_base_href(
@@ -371,7 +375,7 @@ class TestRewriteLinksArg:
 
     # QName has the unintended consequence of doing tag name check while
     # replaced link is an attribute value, thus raising ValueError instead
-    @settings(max_examples=500)
+    @settings(suppress_health_check=[HealthCheck.too_slow], max_examples=500)
     @given(
         t=_st.all_instances_except_of_type(
             *attr_value_types.allow,
@@ -405,7 +409,7 @@ class TestRewriteLinksArg:
     # that can be anything
 
     # Falsy values got short circuited by urljoin() and never raises
-    @settings(max_examples=500)
+    @settings(suppress_health_check=[HealthCheck.too_slow], max_examples=500)
     @given(t=_st.all_instances_except_of_type(str, NoneType).filter(bool))
     @pytest.mark.slow
     def test_base_href(

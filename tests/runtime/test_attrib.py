@@ -67,7 +67,7 @@ class TestAttrib:
         disposable_attrib[k] = "bar"
         del disposable_attrib[k]
 
-    @settings(max_examples=500)
+    @settings(suppress_health_check=[HealthCheck.too_slow], max_examples=500)
     @given(
         v=_st.all_instances_except_of_type(
             *attr_value_types.allow, *attr_value_types.skip
@@ -137,7 +137,7 @@ class TestMethodHasKey:
     def test_signature(self) -> None:
         pass
 
-    @settings(max_examples=500)
+    @settings(suppress_health_check=[HealthCheck.too_slow], max_examples=500)
     @given(
         k=_st.all_instances_except_of_type(
             *attr_name_types.allow, *attr_name_types.skip
@@ -162,7 +162,7 @@ class TestMethodGet:
     def test_signature(self) -> None:
         pass
 
-    @settings(max_examples=500)
+    @settings(suppress_health_check=[HealthCheck.too_slow], max_examples=500)
     @given(
         k=_st.all_instances_except_of_type(
             *attr_name_types.allow, *attr_name_types.skip
@@ -198,7 +198,7 @@ class TestMethodPop:
         with pytest.raises(TypeError, match="pop expected at most 2 arguments"):
             xml2_root.attrib.pop("foo", 0, 1)  # type: ignore[call-overload]  # pyright: ignore[reportCallIssue]
 
-    @settings(max_examples=500)
+    @settings(suppress_health_check=[HealthCheck.too_slow], max_examples=500)
     @given(
         k=_st.all_instances_except_of_type(
             *attr_name_types.allow, *attr_name_types.skip
