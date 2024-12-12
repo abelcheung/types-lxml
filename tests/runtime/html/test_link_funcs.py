@@ -352,9 +352,12 @@ class TestMakeLinksAbsoluteArg:
     # Not testing resolve_base_href type, as it is a truthy/falsy argument
     # that can be anything
 
+    # Falsy values got short circuited by urljoin() and never raises
     @settings(suppress_health_check=[HealthCheck.too_slow], max_examples=500)
     @given(t=_st.all_instances_except_of_type(str, NoneType).filter(bool))
     @pytest.mark.slow
+    @pytest.mark.filterwarnings("ignore:NotImplemented should not be used in a boolean context:DeprecationWarning")  # noqa: E501
+    @pytest.mark.filterwarnings("ignore:The behavior of this method will change .+:FutureWarning")  # noqa: E501
     def test_base_href(
         self, disposable_html_with_base_href: HtmlElement, t: Any
     ) -> None:
@@ -412,6 +415,8 @@ class TestRewriteLinksArg:
     @settings(suppress_health_check=[HealthCheck.too_slow], max_examples=500)
     @given(t=_st.all_instances_except_of_type(str, NoneType).filter(bool))
     @pytest.mark.slow
+    @pytest.mark.filterwarnings("ignore:NotImplemented should not be used in a boolean context:DeprecationWarning")  # noqa: E501
+    @pytest.mark.filterwarnings("ignore:The behavior of this method will change .+:FutureWarning")  # noqa: E501
     def test_base_href(
         self, disposable_html_with_base_href: HtmlElement, t: Any
     ) -> None:
