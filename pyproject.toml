@@ -51,19 +51,17 @@ basic = [
     "cssselect == 1.2.0",
 ]
 mypy    = ["mypy == 1.11.2"]
-pyright = ["pyright == 1.1.387"]
+pyright = ["pyright == 1.1.390"]
 format  = ["ruff ~= 0.6"]
 stub-test = [
     "pytest-mypy-plugins == 3.1.2",
     {include-group = "mypy"},
 ]
 rt-test = [
-    "pytest == 8.3.3",
     "beautifulsoup4 == 4.12.3",
     "html5lib == 1.1",
-    "hypothesis[zoneinfo] == 6.116.0",
+    "hypothesis[zoneinfo] == 6.122.3",
     "pytest-revealtype-injector",
-    {include-group = "mypy"},
     {include-group = "pyright"},
 ]
 lxml49 = ["lxml == 4.9.4"]
@@ -73,10 +71,8 @@ lxml52 = ["lxml == 5.2.2"]
 lxml53 = ["lxml == 5.3.0"]
 dev = [
     'tox ~= 4.22',
-    'mypy >= 1.11.2',
-    # microsoft/pyright#9286 and microsoft/pyright#9296
-    'pyright >= 1.1.387',
-    'pytest >= 7.0, < 9',
+    # microsoft/pyright#9286, microsoft/pyright#9296, microsoft/pyright#9412
+    'pyright >= 1.1.389',
     'html5lib == 1.1',
     'pytest-mypy-plugins >= 2.0',
     'pytest-revealtype-injector',
