@@ -1,7 +1,7 @@
 #:schema https://json.schemastore.org/pyproject.json
 
 [build-system]
-requires = ['pdm-backend ~= 2.3']
+requires = ['pdm-backend ~= 2.4']
 build-backend = 'pdm.backend'
 
 [project]
@@ -10,7 +10,8 @@ dynamic = ['version']
 description = 'Complete lxml external type annotation'
 readme = 'README.md'
 requires-python = '>=3.8'
-license = {text = 'Apache-2.0'}
+license = 'Apache-2.0'
+license-files = ['LICENSE']
 dependencies = [
     'types-beautifulsoup4 ~= 4.12',
     'typing_extensions ~= 4.10; python_version < "3.13"',
@@ -32,7 +33,6 @@ classifiers = [
     'Programming Language :: Python :: 3.12',
     'Programming Language :: Python :: 3.13',
     'Typing :: Stubs Only',
-    'License :: OSI Approved :: Apache Software License',
     'Operating System :: OS Independent',
 ]
 
