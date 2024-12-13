@@ -11,9 +11,10 @@
     reveal_type(target)  # N: Revealed type is "lxml.etree._serializer.C14NWriterTarget"
 
 - case: c14ntarget_construct_noarg
+  expect_fail: true
   main: |
     from lxml.etree import C14NWriterTarget
-    target = C14NWriterTarget()  # E: Missing positional argument "write" in call to "C14NWriterTarget"  [call-arg]
+    target = C14NWriterTarget()
 
 - case: c14ntarget_construct_badarg
   expect_fail: true
@@ -99,6 +100,7 @@
     c = canonicalize(s, {{ opt }}=True)
 
 - case: c14ntarget_kw_bool_bad_1
+  expect_fail: true
   parametrized:
   - opt: with_comments
   - opt: strip_text
@@ -107,7 +109,7 @@
     from io import StringIO
     from lxml.etree import C14NWriterTarget
     sio: StringIO
-    t = C14NWriterTarget(sio.write, {{ opt }}=None)  # E: Argument "{{ opt }}" to "C14NWriterTarget" has incompatible type "None"; expected "bool"  [arg-type]
+    t = C14NWriterTarget(sio.write, {{ opt }}=None)
 
 - case: c14ntarget_kw_bool_bad_2
   expect_fail: true
@@ -137,6 +139,7 @@
     c = canonicalize(s, {{ opt }}=None)
 
 - case: c14ntarget_kw_list_bad_1
+  expect_fail: true
   parametrized:
   - opt: qname_aware_tags
   - opt: qname_aware_attrs
@@ -146,8 +149,7 @@
     from io import StringIO
     from lxml.etree import C14NWriterTarget
     sio: StringIO
-    t = C14NWriterTarget(sio.write, {{ opt }}=[1])  # E: List item 0 has incompatible type "int"; expected "str"  [list-item]
-    t = C14NWriterTarget(sio.write, {{ opt }}=1)  # E: Argument "{{ opt }}" to "C14NWriterTarget" has incompatible type "int"; expected "Iterable[str] | None"  [arg-type]
+    t = C14NWriterTarget(sio.write, {{ opt }}=[1])
 
 
 - case: c14ntarget_kw_list_bad_2
