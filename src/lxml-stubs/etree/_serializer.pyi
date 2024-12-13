@@ -56,7 +56,7 @@ class C14NWriterTarget:
 # options keyword arguments come from C14NWriterTarget.__init__
 @overload
 def canonicalize(
-    xml_data: _AnyStr | _ElementOrTree,
+    xml_data: str | _ElementOrTree,
     *,
     out: SupportsWrite[str],
     with_comments: bool = False,
@@ -83,7 +83,7 @@ def canonicalize(
 ) -> None: ...
 @overload
 def canonicalize(
-    xml_data: _AnyStr | _ElementOrTree,
+    xml_data: str | _ElementOrTree,
     *,
     out: None = None,
     with_comments: bool = False,
