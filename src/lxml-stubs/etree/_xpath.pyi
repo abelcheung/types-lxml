@@ -6,7 +6,20 @@
 import sys
 from abc import abstractmethod
 from types import ModuleType
-from typing import Any, Callable, Collection, Generic, Protocol, final, overload
+from typing import (
+    Any,
+    Callable,
+    Generic,
+    Iterable,
+    Protocol,
+    final,
+    overload,
+)
+
+if sys.version_info >= (3, 11):
+    from typing import Never
+else:
+    from typing_extensions import Never
 
 if sys.version_info >= (3, 13):
     from warnings import deprecated
@@ -142,17 +155,26 @@ class _ElementUnicodeResult(str, Generic[_ET]):
     def attrname(self) -> str | None: ...
     def getparent(self: _ElementUnicodeResult[_ET]) -> _ET | None: ...
 
+@overload  # guard against str
+@deprecated(
+    "Use Iterable even when only one function is specified in function_mapping argument"
+)
+def Extension(
+    module: object | ModuleType,
+    function_mapping: str,
+    **kw: Any,
+) -> Never: ...
 @overload  # no namespace
 def Extension(
     module: object | ModuleType,
-    function_mapping: dict[str, str] | Collection[str] | None = None,
+    function_mapping: dict[str, str] | Iterable[str] | None = None,
     *,
     ns: None = None,
 ) -> dict[tuple[None, str], Callable[..., Any]]: ...
 @overload  # namespace present
 def Extension(
     module: object | ModuleType,
-    function_mapping: dict[str, str] | Collection[str] | None = None,
+    function_mapping: dict[str, str] | Iterable[str] | None = None,
     *,
     ns: str,
 ) -> dict[tuple[str, str], Callable[..., Any]]:
