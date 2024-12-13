@@ -1,3 +1,4 @@
+import sys
 from _typeshed import SupportsWrite
 from types import TracebackType
 from typing import (
@@ -25,11 +26,34 @@ from .._types import (
 from ._element import _Element
 from ._module_misc import LxmlError
 
+if sys.version_info >= (3, 11):
+    from typing import Never
+else:
+    from typing_extensions import Never
+
+if sys.version_info >= (3, 13):
+    from warnings import deprecated
+else:
+    from typing_extensions import deprecated
+
 class SerialisationError(LxmlError): ...
 
 # Interface quite similar to a ParserTarget, but canonicalized output
 # is written during various stages before calling .close()
 class C14NWriterTarget:
+    @overload
+    @deprecated("Should specify a collection or iterator of tags")
+    def __init__(self, *args: Any, qname_aware_tags: str, **kw: Any) -> Never: ...
+    @overload
+    @deprecated("Should specify a collection or iterator of attributes")
+    def __init__(self, *args: Any, qname_aware_attrs: str, **kw: Any) -> Never: ...
+    @overload
+    @deprecated("Should specify a collection or iterator of attributes")
+    def __init__(self, *args: Any, exclude_attrs: str, **kw: Any) -> Never: ...
+    @overload
+    @deprecated("Should specify a collection or iterator of tags")
+    def __init__(self, *args: Any, exclude_tags: str, **kw: Any) -> Never: ...
+    @overload
     def __init__(
         self,
         write: Callable[[str], Any],
@@ -50,10 +74,40 @@ class C14NWriterTarget:
     def pi(self, target: str, data: str | None) -> None: ...
     def close(self) -> None: ...
 
-# canonicalize() overload matrix:
-# 2x input (via xml_data, via from_file)
-# 2x output (None, .write())
-# options keyword arguments come from C14NWriterTarget.__init__
+# totally 8 canonicalize() overloads, first 4 are guards against
+# string argument where iterable is expected
+# latter 4 are 2x2 combinations of:
+#   - input: via xml_data, via from_file
+#   - output: None, .write()
+# keyword arguments come from C14NWriterTarget.__init__
+@overload
+@deprecated("Should specify a collection or iterator of tags")
+def canonicalize(
+    *args: Any,
+    qname_aware_tags: str,
+    **kw: Any,
+) -> Never: ...
+@overload
+@deprecated("Should specify a collection or iterator of attributes")
+def canonicalize(
+    *args: Any,
+    qname_aware_attrs: str,
+    **kw: Any,
+) -> Never: ...
+@overload
+@deprecated("Should specify a collection or iterator of attributes")
+def canonicalize(
+    *args: Any,
+    exclude_attrs: str,
+    **kw: Any,
+) -> Never: ...
+@overload
+@deprecated("Should specify a collection or iterator of tags")
+def canonicalize(
+    *args: Any,
+    exclude_tags: str,
+    **kw: Any,
+) -> Never: ...
 @overload
 def canonicalize(
     xml_data: str | _ElementOrTree,
