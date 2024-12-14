@@ -310,7 +310,7 @@ class ElementMaker:
     >>> print(root.text)
     some text
     ```
-    """  # noqa: E501
+    """
 
     def __init__(
         self,

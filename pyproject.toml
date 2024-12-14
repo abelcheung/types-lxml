@@ -138,6 +138,9 @@ select = [
     "F",
     "I",
 ]
+ignore = [
+    "E501",
+]
 task-tags = [
     "BUG",
     "DEBUG",

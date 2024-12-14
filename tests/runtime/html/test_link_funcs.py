@@ -357,7 +357,7 @@ class TestMakeLinksAbsoluteArg:
     @given(t=_st.all_instances_except_of_type(str, NoneType).filter(bool))
     @pytest.mark.slow
     @pytest.mark.filterwarnings(
-        "ignore:NotImplemented should not be used in a boolean context:DeprecationWarning"  # noqa: E501
+        "ignore:NotImplemented should not be used in a boolean context:DeprecationWarning"
     )
     @pytest.mark.filterwarnings(
         "ignore:The behavior of this method will change .+:FutureWarning"
@@ -420,7 +420,7 @@ class TestRewriteLinksArg:
     @given(t=_st.all_instances_except_of_type(str, NoneType).filter(bool))
     @pytest.mark.slow
     @pytest.mark.filterwarnings(
-        "ignore:NotImplemented should not be used in a boolean context:DeprecationWarning"  # noqa: E501
+        "ignore:NotImplemented should not be used in a boolean context:DeprecationWarning"
     )
     @pytest.mark.filterwarnings(
         "ignore:The behavior of this method will change .+:FutureWarning"
