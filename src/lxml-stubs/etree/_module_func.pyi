@@ -30,28 +30,82 @@ def HTML(
     parser: HTMLParser[_ET_co],
     *,
     base_url: _AnyStr | None = None,
-) -> _ET_co: ...
+) -> _ET_co:
+    """Parses an HTML document or fragment from a string constant.
+    Returns the root node (or the result returned by a parser target).
+
+    Annotation
+    ----------
+    When subscripted `etree.HTMLParser` is provided that indicate it can produce
+    some `_Element` subclass, `HTML()` returns a node of that subclass.
+
+    Please [refer to wiki](https://github.com/abelcheung/types-lxml/wiki/Using-specialised-class-directly#no-automatic-change-of-subscript)
+    on how to create such annotation-only specialized parsers.
+
+    Returning result of custom parser target is unsupported in stubs.
+    Please use `typing.cast()` directly in such case.
+
+    See Also
+    --------
+    [API Documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree.HTML)
+    """
+
 @overload
 def HTML(
     text: _AnyStr,
     parser: None = None,
     *,
     base_url: _AnyStr | None = None,
-) -> _Element: ...
+) -> _Element:
+    """Parses an HTML document or fragment from a string constant.
+    Returns the root node (or the result returned by a parser target).
+
+    See Also
+    --------
+    [API Documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree.HTML)
+    """
+
 @overload
 def XML(
     text: _AnyStr,
     parser: XMLParser[_ET_co],
     *,
     base_url: _AnyStr | None = None,
-) -> _ET_co: ...
+) -> _ET_co:
+    """Parses an XML document or fragment from a string constant.
+    Returns the root node (or the result returned by a parser target).
+
+    Annotation
+    ----------
+    When subscripted `etree.XMLParser` is provided that indicate it can produce
+    some `_Element` subclass, `XML()` returns a node of that subclass.
+
+    Please [refer to wiki](https://github.com/abelcheung/types-lxml/wiki/Using-specialised-class-directly#no-automatic-change-of-subscript)
+    on how to create such annotation-only specialized parsers.
+
+    Returning result of custom parser target is unsupported in stubs.
+    Please use `typing.cast()` directly in such case.
+
+    See Also
+    --------
+    [API Documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree.XML)
+    """
+
 @overload
 def XML(
     text: _AnyStr,
     parser: None = None,
     *,
     base_url: _AnyStr | None = None,
-) -> _Element: ...
+) -> _Element:
+    """Parses an XML document or fragment from a string constant.
+    Returns the root node (or the result returned by a parser target).
+
+    See Also
+    --------
+    [API Documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree.XML)
+    """
+
 @overload
 def parse(
     source: _FileReadSource,
@@ -59,26 +113,23 @@ def parse(
     *,
     base_url: _AnyStr | None = None,
 ) -> _ElementTree[_ET_co]:
-    """Return an ElementTree object loaded with source elements.  If no parser
-    is provided as second argument, the default parser is used.
+    """Return an ElementTree object loaded with source elements.
 
-    The ``source`` can be any of the following:
+    Annotation
+    ----------
+    When subscripted `etree.XMLParser` or `etree.HTMLParser` is provided
+    that indicate it can produce some `_Element` subclass, this function
+    returns an `_ElementTree` containing node of that subclass.
 
-    - a file name/path
-    - a file object
-    - a file-like object
-    - a URL using the HTTP or FTP protocol
+    Please [refer to wiki](https://github.com/abelcheung/types-lxml/wiki/Using-specialised-class-directly#no-automatic-change-of-subscript)
+    on how to create such annotation-only specialized parsers.
 
-    To parse from a string, use the ``fromstring()`` function instead.
+    Returning result of custom parser target is unsupported in stubs.
+    Please use `typing.cast()` directly in such case.
 
-    Note that it is generally faster to parse from a file path or URL
-    than from an open file object or file-like object.  Transparent
-    decompression from gzip compressed sources is supported (unless
-    explicitly disabled in libxml2).
-
-    The ``base_url`` keyword allows setting a URL for the document
-    when parsing from a file-like object.  This is needed when looking
-    up external entities (DTD, XInclude, ...) with relative paths.
+    See Also
+    --------
+    [API Documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree.parse)
     """
 
 @overload
@@ -87,7 +138,14 @@ def parse(
     parser: None = None,
     *,
     base_url: _AnyStr | None = None,
-) -> _ElementTree: ...
+) -> _ElementTree:
+    """Return an ElementTree object loaded with source elements.
+
+    See Also
+    --------
+    [API Documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree.parse)
+    """
+
 @overload
 def fromstring(
     text: _AnyStr,
@@ -95,15 +153,24 @@ def fromstring(
     *,
     base_url: _AnyStr | None = None,
 ) -> _ET_co:
-    """Parses an XML document or fragment from a string.  Returns the
-    root node (or the result returned by a parser target).
+    """Parses an XML document or fragment from a string.
+    Returns the root node (or the result returned by a parser target).
 
-    To override the default parser with a different parser you can pass it to
-    the ``parser`` keyword argument.
+    Annotation
+    ----------
+    When subscripted `etree.XMLParser` or `etree.HTMLParser` is provided
+    that indicate it can produce some `_Element` subclass, this function
+    returns a node of that subclass.
 
-    The ``base_url`` keyword argument allows to set the original base URL of
-    the document to support relative Paths when looking up external entities
-    (DTD, XInclude, ...).
+    Please [refer to wiki](https://github.com/abelcheung/types-lxml/wiki/Using-specialised-class-directly#no-automatic-change-of-subscript)
+    on how to create such annotation-only specialized parsers.
+
+    Returning result of custom parser target is unsupported in stubs.
+    Please use `typing.cast()` directly in such case.
+
+    See Also
+    --------
+    [API Documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree.fromstring)
     """
 
 @overload
@@ -112,7 +179,15 @@ def fromstring(
     parser: None = None,
     *,
     base_url: _AnyStr | None = None,
-) -> _Element: ...
+) -> _Element:
+    """Parses an XML document or fragment from a string.
+    Returns the root node (or the result returned by a parser target).
+
+    See Also
+    --------
+    [API Documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree.fromstring)
+    """
+
 @overload
 @deprecated("Raises exception if input is a single string")
 def fromstringlist(
@@ -120,34 +195,68 @@ def fromstringlist(
     *args: Any,
     **kw: Any,
 ) -> Never:
-    """Parses an XML document from a sequence of strings.  Returns the
-    root node (or the result returned by a parser target).
+    """Parses an XML document from a sequence of strings.
+    Returns the root node (or the result returned by a parser target).
 
-    To override the default parser with a different parser you can pass it to
-    the ``parser`` keyword argument.
+    Annotation
+    ----------
+    This `@overload` is a guard against using single string as input, which is
+    specifically disallowed in source but permitted in typing.
+
+    See Also
+    --------
+    [API Documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree.fromstringlist)
     """
 
 @overload
 def fromstringlist(
     strings: Iterable[_AnyStr],
     parser: _DefEtreeParsers[_ET_co],
-) -> _ET_co: ...
+) -> _ET_co:
+    """Parses an XML document from a sequence of strings.
+    Returns the root node (or the result returned by a parser target).
+
+    Annotation
+    ----------
+    When subscripted `etree.XMLParser` or `etree.HTMLParser` is provided
+    that indicate it can produce some `_Element` subclass, this function
+    returns a node of that subclass.
+
+    Please [refer to wiki](https://github.com/abelcheung/types-lxml/wiki/Using-specialised-class-directly#no-automatic-change-of-subscript)
+    on how to create such annotation-only specialized parsers.
+
+    Returning result of custom parser target is unsupported in stubs.
+    Please use `typing.cast()` directly in such case.
+
+    See Also
+    --------
+    [API Documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree.fromstringlist)
+    """
+
 @overload
 def fromstringlist(
     strings: Iterable[_AnyStr],
     parser: None = None,
-) -> _Element: ...
+) -> _Element:
+    """Parses an XML document from a sequence of strings.
+    Returns the root node (or the result returned by a parser target).
+
+    See Also
+    --------
+    [API Documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree.fromstringlist)
+    """
 
 # Under XML Canonicalization (C14N) mode, most arguments are ignored,
 # some arguments would even raise exception outright if specified.
 @overload  # warn if inclusive_ns_prefixes is not collection
 @deprecated(
-    "'inclusive_ns_prefixes' should be collection, otherwise "
+    "`inclusive_ns_prefixes` should be collection, otherwise "
     "will either search for wrong NS prefix or raise exception"
 )
 def tostring(
     element_or_tree: Any,
     *,
+    method: Literal["c14n"],
     inclusive_ns_prefixes: _AnyStr,
     **_kw: Any,
 ) -> Never:
@@ -155,53 +264,14 @@ def tostring(
 
     Annotation
     ----------
-    There are 4 function overloads:
-    1. C14N version 1 (``method="c14n"``) with its keyword arguments
-    2. C14N version 2 (``method="c14n2"``) with its keyword arguments
-    3. Other output methods, with ``encoding=str`` or ``encoding="unicode"``.
-    Returns native string. In this case the usage of ``xml_declaration``
-    argument is disallowed.
-    4. Other output methods, with all other encodings. Returns byte string.
+    This `@overload` is a guard against using plain string in
+    `inclusive_ns_prefixes` argument, which can result in subtle bug.
+    The prefix string would be split into single characters and each
+    treated as a separate namespace prefix.
 
-    Original docstring
-    ------------------
-    Defaults to ASCII encoding without XML declaration.  This
-    behavior can be configured with the keyword arguments ``encoding``
-    (string) and ``xml_declaration`` (bool).  Note that changing the
-    encoding to a non UTF-8 compatible encoding will enable a
-    declaration by default.
-
-    You can also serialise to a Unicode string without declaration by
-    passing the name ``'unicode'`` as encoding (or the ``str`` function
-    in Py3 or ``unicode`` in Py2).  This changes the return value from
-    a byte string to an unencoded unicode string.
-
-    The keyword argument ``pretty_print`` (bool) enables formatted XML.
-
-    The keyword argument ``method`` selects the output method: 'xml',
-    'html', plain 'text' (text content without tags), 'c14n' or 'c14n2'.
-    Default is 'xml'.
-
-    With ``method="c14n"`` (C14N version 1), the options ``exclusive``,
-    ``with_comments`` and ``inclusive_ns_prefixes`` request exclusive
-    C14N, include comments, and list the inclusive prefixes respectively.
-
-    With ``method="c14n2"`` (C14N version 2), the ``with_comments`` and
-    ``strip_text`` options control the output of comments and text space
-    according to C14N 2.0.
-
-    Passing a boolean value to the ``standalone`` option will output
-    an XML declaration with the corresponding ``standalone`` flag.
-
-    The ``doctype`` option allows passing in a plain string that will
-    be serialised before the XML tree.  Note that passing in non
-    well-formed content here will make the XML output non well-formed.
-    Also, an existing doctype in the document tree will not be removed
-    when serialising an ElementTree instance.
-
-    You can prevent the tail text of the element from being serialised
-    by passing the boolean ``with_tail`` option.  This has no impact
-    on the tail text of children, which will always be serialised.
+    See Also
+    --------
+    [API Documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree.tostring)
     """
 
 @overload  # method="c14n"
@@ -212,7 +282,19 @@ def tostring(
     exclusive: bool = False,
     inclusive_ns_prefixes: Collection[_AnyStr] | None = None,
     with_comments: bool = True,
-) -> bytes: ...
+) -> bytes:
+    """Serialize an element to an encoded string representation of its XML tree.
+
+    Annotation
+    ----------
+    This `@overload` covers C14N version 1 (``method="c14n"``), along with its
+    specific keyword arguments.
+
+    See Also
+    --------
+    [API Documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree.tostring)
+    """
+
 @overload  # method="c14n2"
 def tostring(
     element_or_tree: _ElementOrTree,
@@ -220,7 +302,19 @@ def tostring(
     method: Literal["c14n2"],
     with_comments: bool = True,
     strip_text: bool = False,
-) -> bytes: ...
+) -> bytes:
+    """Serialize an element to an encoded string representation of its XML tree.
+
+    Annotation
+    ----------
+    This `@overload` covers C14N version 2 (``method="c14n2"``), along with its
+    specific keyword arguments.
+
+    See Also
+    --------
+    [API Documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree.tostring)
+    """
+
 @overload  # Native str, no XML declaration allowed
 def tostring(  # type: ignore[overload-overlap]  # pyright: ignore[reportOverlappingOverload]
     element_or_tree: _ElementOrTree,
@@ -231,7 +325,20 @@ def tostring(  # type: ignore[overload-overlap]  # pyright: ignore[reportOverlap
     with_tail: bool = True,
     standalone: bool | None = None,
     doctype: str | None = None,
-) -> str: ...
+) -> str:
+    """Serialize an element to an encoded string representation of its XML tree.
+
+    Annotation
+    ----------
+    This `@overload` covers the case where `encoding` is either literal string
+    `"unicode"` or the type `str`. In such case, the returned value is a
+    native Python string.
+
+    See Also
+    --------
+    [API Documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree.tostring)
+    """
+
 @overload  # byte str
 def tostring(
     element_or_tree: _ElementOrTree,
@@ -243,7 +350,19 @@ def tostring(
     with_tail: bool = True,
     standalone: bool | None = None,
     doctype: str | None = None,
-) -> bytes: ...
+) -> bytes:
+    """Serialize an element to an encoded string representation of its XML tree.
+
+    Annotation
+    ----------
+    This `@overload` covers all remaining generic usage of `tostring()`.
+    Returns byte string.
+
+    See Also
+    --------
+    [API Documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree.tostring)
+    """
+
 def indent(
     tree: _ElementOrTree,
     space: str = "  ",
@@ -253,16 +372,9 @@ def indent(
     """Indent an XML document by inserting newlines and indentation space
     after elements.
 
-    ``tree`` is the ElementTree or Element to modify.  The (root) element
-    itself will not be changed, but the tail text of all elements in its
-    subtree will be adapted.
-
-    ``space`` is the whitespace to insert for each indentation level, two
-    space characters by default.
-
-    ``level`` is the initial indentation level. Setting this to a higher
-    value than 0 can be used for indenting subtrees that are more deeply
-    nested inside of a document.
+    See Also
+    --------
+    [API Documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree.indent)
     """
 
 @deprecated(
@@ -280,8 +392,7 @@ def tounicode(
     with_tail: bool = True,
     doctype: str | None = None,
 ) -> None: ...
-def iselement(element: object) -> TypeIs[_Element]:
-    """Checks if an object appears to be a valid element object."""
+def iselement(element: object) -> TypeIs[_Element]: ...
 
 # HACK PyCapsule needs annotation of ctypes.pythonapi, which has no
 # annotation support currently. Use generic object for now.
@@ -293,49 +404,42 @@ def adopt_external_document(
     """Unpack a libxml2 document pointer from a PyCapsule and
     wrap it in an lxml ElementTree object.
 
-    Original Docstring
-    ------------------
-    This allows external libraries to build XML/HTML trees using libxml2
-    and then pass them efficiently into lxml for further processing.
+    Annotation
+    ----------
+    When subscripted `etree.XMLParser` or `etree.HTMLParser` is provided
+    that indicate it can produce some `_Element` subclass, this function
+    returns an `_ElementTree` containing node of that subclass.
 
-    If a ``parser`` is provided, it will be used for configuring the
-    lxml document.  No parsing will be done.
+    Please [refer to wiki](https://github.com/abelcheung/types-lxml/wiki/Using-specialised-class-directly#no-automatic-change-of-subscript)
+    on how to create such annotation-only specialized parsers.
 
-    The capsule must have the name ``"libxml2:xmlDoc"`` and its pointer
-    value must reference a correct libxml2 document of type ``xmlDoc*``.
-    The creator of the capsule must take care to correctly clean up the
-    document using an appropriate capsule destructor.  By default, the
-    libxml2 document will be copied to let lxml safely own the memory
-    of the internal tree that it uses.
+    Returning result of custom parser target is unsupported in stubs.
+    Please use `typing.cast()` directly in such case.
 
-    If the capsule context is non-NULL, it must point to a C string that
-    can be compared using ``strcmp()``.  If the context string equals
-    ``"destructor:xmlFreeDoc"``, the libxml2 document will not be copied
-    but the capsule invalidated instead by clearing its destructor and
-    name.  That way, lxml takes ownership of the libxml2 document in memory
-    without creating a copy first, and the capsule destructor will not be
-    called.  The document will then eventually be cleaned up by lxml using
-    the libxml2 API function ``xmlFreeDoc()`` once it is no longer used.
-
-    If no copy is made, later modifications of the tree outside of lxml
-    should not be attempted after transferring the ownership.
+    See Also
+    --------
+    [API Documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree.adopt_external_document)
     """
 
 @overload
 def adopt_external_document(
     capsule: object,
     parser: None = None,
-) -> _ElementTree: ...
-def register_namespace(prefix: _AnyStr, uri: _AnyStr) -> None:
-    """Registers a namespace prefix that newly created Elements in that
-    namespace will use.  The registry is global, and any existing
-    mapping for either the given prefix or the namespace URI will be
-    removed."""
+) -> _ElementTree:
+    """Unpack a libxml2 document pointer from a PyCapsule and
+    wrap it in an lxml ElementTree object.
+
+    See Also
+    --------
+    [API Documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree.adopt_external_document)
+    """
+
+def register_namespace(prefix: _AnyStr, uri: _AnyStr) -> None: ...
 
 # Debugging only
-def dump(elem: _Element, *, pretty_print: bool = True, with_tail: bool = True) -> None:
-    """Writes an element tree or element structure to sys.stdout.
-    This function should be used for debugging only."""
+def dump(
+    elem: _Element, *, pretty_print: bool = True, with_tail: bool = True
+) -> None: ...
 @final
 class _MemDebug:
     """Debugging support for the memory allocation in libxml2"""
