@@ -20,6 +20,7 @@ from .._types import (
     _ET_co,
     _FileReadSource,
     _OutputMethodArg,
+    _TextArg,
 )
 from ._element import _Element, _ElementTree
 from ._parser import HTMLParser, XMLParser
@@ -257,7 +258,7 @@ def tostring(
     element_or_tree: Any,
     *,
     method: Literal["c14n"],
-    inclusive_ns_prefixes: _AnyStr,
+    inclusive_ns_prefixes: _TextArg,
     **_kw: Any,
 ) -> Never:
     """Serialize an element to an encoded string representation of its XML tree.
@@ -280,7 +281,7 @@ def tostring(
     *,
     method: Literal["c14n"],
     exclusive: bool = False,
-    inclusive_ns_prefixes: Collection[_AnyStr] | None = None,
+    inclusive_ns_prefixes: Collection[_TextArg] | None = None,
     with_comments: bool = True,
 ) -> bytes:
     """Serialize an element to an encoded string representation of its XML tree.
@@ -434,7 +435,7 @@ def adopt_external_document(
     [API Documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree.adopt_external_document)
     """
 
-def register_namespace(prefix: _AnyStr, uri: _AnyStr) -> None: ...
+def register_namespace(prefix: _TextArg, uri: _TextArg) -> None: ...
 
 # Debugging only
 def dump(
