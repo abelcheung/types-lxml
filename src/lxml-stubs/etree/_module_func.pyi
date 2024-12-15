@@ -14,7 +14,6 @@ else:
 
 from .._types import (
     _ET,
-    _AnyStr,
     _DefEtreeParsers,
     _ElementOrTree,
     _ET_co,
@@ -27,10 +26,10 @@ from ._parser import HTMLParser, XMLParser
 
 @overload
 def HTML(
-    text: _AnyStr,
+    text: str | bytes,
     parser: HTMLParser[_ET_co],
     *,
-    base_url: _AnyStr | None = None,
+    base_url: str | bytes | None = None,
 ) -> _ET_co:
     """Parses an HTML document or fragment from a string constant.
     Returns the root node (or the result returned by a parser target).
@@ -53,10 +52,10 @@ def HTML(
 
 @overload
 def HTML(
-    text: _AnyStr,
+    text: str | bytes,
     parser: None = None,
     *,
-    base_url: _AnyStr | None = None,
+    base_url: str | bytes | None = None,
 ) -> _Element:
     """Parses an HTML document or fragment from a string constant.
     Returns the root node (or the result returned by a parser target).
@@ -68,10 +67,10 @@ def HTML(
 
 @overload
 def XML(
-    text: _AnyStr,
+    text: str | bytes,
     parser: XMLParser[_ET_co],
     *,
-    base_url: _AnyStr | None = None,
+    base_url: str | bytes | None = None,
 ) -> _ET_co:
     """Parses an XML document or fragment from a string constant.
     Returns the root node (or the result returned by a parser target).
@@ -94,10 +93,10 @@ def XML(
 
 @overload
 def XML(
-    text: _AnyStr,
+    text: str | bytes,
     parser: None = None,
     *,
-    base_url: _AnyStr | None = None,
+    base_url: str | bytes | None = None,
 ) -> _Element:
     """Parses an XML document or fragment from a string constant.
     Returns the root node (or the result returned by a parser target).
@@ -112,7 +111,7 @@ def parse(
     source: _FileReadSource,
     parser: _DefEtreeParsers[_ET_co],
     *,
-    base_url: _AnyStr | None = None,
+    base_url: str | bytes | None = None,
 ) -> _ElementTree[_ET_co]:
     """Return an ElementTree object loaded with source elements.
 
@@ -138,7 +137,7 @@ def parse(
     source: _FileReadSource,
     parser: None = None,
     *,
-    base_url: _AnyStr | None = None,
+    base_url: str | bytes | None = None,
 ) -> _ElementTree:
     """Return an ElementTree object loaded with source elements.
 
@@ -149,10 +148,10 @@ def parse(
 
 @overload
 def fromstring(
-    text: _AnyStr,
+    text: str | bytes,
     parser: _DefEtreeParsers[_ET_co],
     *,
-    base_url: _AnyStr | None = None,
+    base_url: str | bytes | None = None,
 ) -> _ET_co:
     """Parses an XML document or fragment from a string.
     Returns the root node (or the result returned by a parser target).
@@ -176,10 +175,10 @@ def fromstring(
 
 @overload
 def fromstring(
-    text: _AnyStr,
+    text: str | bytes,
     parser: None = None,
     *,
-    base_url: _AnyStr | None = None,
+    base_url: str | bytes | None = None,
 ) -> _Element:
     """Parses an XML document or fragment from a string.
     Returns the root node (or the result returned by a parser target).
@@ -192,7 +191,7 @@ def fromstring(
 @overload
 @deprecated("Raises exception if input is a single string")
 def fromstringlist(
-    strings: _AnyStr,
+    strings: str | bytes,
     *args: Any,
     **kw: Any,
 ) -> Never:
@@ -211,7 +210,7 @@ def fromstringlist(
 
 @overload
 def fromstringlist(
-    strings: Iterable[_AnyStr],
+    strings: Iterable[str | bytes],
     parser: _DefEtreeParsers[_ET_co],
 ) -> _ET_co:
     """Parses an XML document from a sequence of strings.
@@ -236,7 +235,7 @@ def fromstringlist(
 
 @overload
 def fromstringlist(
-    strings: Iterable[_AnyStr],
+    strings: Iterable[str | bytes],
     parser: None = None,
 ) -> _Element:
     """Parses an XML document from a sequence of strings.
@@ -472,7 +471,7 @@ class _MemDebug:
             for the current thread.  Each thread has its own dictionary.
         """
     def dump(
-        self, output_file: _AnyStr | None = None, byte_count: int | None = None
+        self, output_file: str | bytes | None = None, byte_count: int | None = None
     ) -> None:
         """Dumps the current memory blocks allocated by libxml2 to a file
 
@@ -484,7 +483,7 @@ class _MemDebug:
             Limits number of bytes in the dump, default is None (unlimited)
         """
     def show(
-        self, output_file: _AnyStr | None = None, block_count: int | None = None
+        self, output_file: str | bytes | None = None, block_count: int | None = None
     ) -> None:
         """Dumps the current memory blocks allocated by libxml2 to a file
         The output file format is suitable for line diffing.
