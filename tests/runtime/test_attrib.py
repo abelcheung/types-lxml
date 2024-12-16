@@ -99,20 +99,9 @@ class TestAttrib:
     def test_method_keyval(self, xml2_root: _Element) -> None:
         attrib = xml2_root.attrib
 
-        ks = attrib.keys()
-        reveal_type(ks)
-        for k in ks:
-            reveal_type(k)
-
-        vs = attrib.values()
-        reveal_type(vs)
-        for v in vs:
-            reveal_type(v)
-
-        items = attrib.items()
-        reveal_type(items)
-        for i in items:
-            reveal_type(i)
+        reveal_type(attrib.keys())
+        reveal_type(attrib.values())
+        reveal_type(attrib.items())
 
         ik = attrib.iterkeys()
         reveal_type(ik)

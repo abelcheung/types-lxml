@@ -244,8 +244,6 @@ class TestConvertTree:
             soup = BeautifulSoup(html2_filepath.read_text(), features=feat)
             result = _soup.convert_tree(soup)
             reveal_type(result)
-            for item in result:
-                reveal_type(item)
             del soup, result
 
         tree = _h.parse(html2_filepath)

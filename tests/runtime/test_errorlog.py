@@ -238,9 +238,7 @@ class TestPyErrorLog:
         use_global_python_log(pylog)
 
         reveal_type(pylog.last_error)  # None initially
-        for mapping in pylog.level_map.items():
-            reveal_type(mapping[0])
-            reveal_type(mapping[1])
+        reveal_type(pylog.level_map)
 
         broken_xml = "<doc><a><b></a>&bar;</doc>"
         with pytest.raises(XMLSyntaxError):

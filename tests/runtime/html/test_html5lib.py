@@ -92,24 +92,9 @@ class TestFromstringFamily:
     def test_fs_fs_src(self) -> None:
         src_s: str = '<div><img src=""/></div><span>nothing</span>'
         src_b: bytes = src_s.encode()
-
-        elems = h5.fragments_fromstring(src_s)
-        reveal_type(elems)
-        for elem in elems:
-            reveal_type(elem)
-        del elems
-
-        elems = h5.fragments_fromstring(src_b)
-        reveal_type(elems)
-        for elem in elems:
-            reveal_type(elem)
-        del elems
-
-        elems2 = h5.fragments_fromstring(src_b, no_leading_text=True)
-        reveal_type(elems2)
-        for elem in elems2:
-            reveal_type(elem)
-        del elems2
+        reveal_type(h5.fragments_fromstring(src_s))
+        reveal_type(h5.fragments_fromstring(src_b))
+        reveal_type(h5.fragments_fromstring(src_b, no_leading_text=True))
 
     @signature_tester(h5.fragment_fromstring, (
         ("html"         , Parameter.POSITIONAL_OR_KEYWORD, Parameter.empty),
@@ -123,14 +108,8 @@ class TestFromstringFamily:
     def test_f_fs_src(self) -> None:
         src_s: str = "<span>nothing</span>"
         src_b: bytes = src_s.encode()
-
-        elem = h5.fragment_fromstring(src_s)
-        reveal_type(elem)
-        del elem
-
-        elem = h5.fragment_fromstring(src_b)
-        reveal_type(elem)
-        del elem
+        reveal_type(h5.fragment_fromstring(src_s))
+        reveal_type(h5.fragment_fromstring(src_b))
 
     @signature_tester(h5.fromstring, (
         ("html"         , Parameter.POSITIONAL_OR_KEYWORD, Parameter.empty),
@@ -212,23 +191,10 @@ class TestParserArg:
     def test_subclass(self, html2_str: str) -> None:
         parser = MyParser()
 
-        elem = h5.document_fromstring(html2_str, parser=parser)
-        reveal_type(elem)
-        del elem
-
-        elems = h5.fragments_fromstring(html2_str, parser=parser)
-        reveal_type(elems)
-        for elem2 in elems:
-            reveal_type(elem2)
-        del elems
-
-        elem3 = h5.fragment_fromstring(html2_str, parser=parser, create_parent=True)
-        reveal_type(elem3)
-        del elem3
-
-        elem4 = h5.fromstring(html2_str, parser=parser)
-        reveal_type(elem4)
-        del elem4
+        reveal_type(h5.document_fromstring(html2_str, parser=parser))
+        reveal_type(h5.fragments_fromstring(html2_str, parser=parser))
+        reveal_type(h5.fragment_fromstring(html2_str, parser=parser, create_parent=True))  # fmt: skip  # noqa: E501
+        reveal_type(h5.fromstring(html2_str, parser=parser))
 
         s_io = StringIO(html2_str)
         tree = h5.parse(s_io, parser=parser)
@@ -260,25 +226,10 @@ class TestParserArg:
 # guess_charset is a truthy/falsy value, thus no arg type test
 class TestCharsetArg:
     def test_bool(self, html2_bytes: bytes) -> None:
-        elem = h5.document_fromstring(html2_bytes, True)
-        reveal_type(elem)
-        del elem
-
-        elems = h5.fragments_fromstring(html2_bytes, guess_charset=True)
-        reveal_type(elems)
-        for elem2 in elems:
-            reveal_type(elem2)
-        del elems
-
-        elem = h5.fragment_fromstring(
-            html2_bytes, create_parent=b"article", guess_charset=False
-        )
-        reveal_type(elem)
-        del elem
-
-        elem = h5.fromstring(html2_bytes, guess_charset=False)
-        reveal_type(elem)
-        del elem
+        reveal_type(h5.document_fromstring(html2_bytes, True))
+        reveal_type(h5.fragments_fromstring(html2_bytes, guess_charset=True))
+        reveal_type(h5.fragment_fromstring(html2_bytes, create_parent=b"article", guess_charset=False))  # fmt: skip  # noqa: E501
+        reveal_type(h5.fromstring(html2_bytes, guess_charset=False))
 
         b_io = BytesIO(html2_bytes)
         tree = h5.parse(b_io, guess_charset=False)

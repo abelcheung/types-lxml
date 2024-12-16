@@ -605,8 +605,6 @@ class TestFindMethods:
 
         result = root.findall("defs/{http://example.org/myapp}piechart")
         reveal_type(result)
-        for elem in result:
-            reveal_type(elem)
         del result
 
         tag = "desc"
