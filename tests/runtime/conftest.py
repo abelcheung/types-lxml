@@ -23,7 +23,6 @@ from urllib.request import urlopen
 from urllib.response import addinfourl
 
 import pytest
-import typeguard
 from lxml import etree as _e, html as _h
 
 pytest_plugins = [
@@ -32,8 +31,6 @@ pytest_plugins = [
     "pytest-revealtype-injector",
     "runtime.register_strategy",
 ]
-
-typeguard.config.forward_ref_policy = typeguard.ForwardRefPolicy.ERROR
 
 is_multi_subclass_build = pytest.StashKey[bool]()
 

@@ -172,6 +172,7 @@ addopts = [
 markers = [
     "slow: marks tests as slow",
 ]
+typeguard-forward-ref-policy = "ERROR"
 
 [tool.tox]
 env_list = [
