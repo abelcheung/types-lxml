@@ -24,7 +24,7 @@ jobs:
         ref: ${{ inputs.gitref }}
         fetch-depth: 0  # detect tagged ver in repo
 
-    - uses: astral-sh/setup-uv@v4
+    - uses: astral-sh/setup-uv@v5
       with:
         version: '0.4.27'
         enable-cache: true
@@ -78,7 +78,7 @@ jobs:
       run: >
         tar -zxf dist/*.tar.gz --strip-components=1
 
-    - uses: astral-sh/setup-uv@v4
+    - uses: astral-sh/setup-uv@v5
       with:
         version: '0.4.27'
         enable-cache: true
