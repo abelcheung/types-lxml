@@ -21,7 +21,6 @@ from .._types import (
     _AnyStr,
     _AttrName,
     _AttrVal,
-    _ElementFactory,
     _ElemPathArg,
     _StrictNSMap,
     _TagSelector,
@@ -149,7 +148,7 @@ class HtmlElement(etree.ElementBase):
     def getparent(self) -> HtmlElement | None: ...
     def getnext(self) -> HtmlElement | None: ...
     def getprevious(self) -> HtmlElement | None: ...
-    def getroottree(self) -> etree._ElementTree[HtmlElement]: ...
+    def getroottree(self) -> etree._ElementTree[Self]: ...
     @overload
     def itersiblings(
         self, *tags: _TagSelector, preceding: bool = False
@@ -168,11 +167,11 @@ class HtmlElement(etree.ElementBase):
         self, tag: _TagSelector | Collection[_TagSelector] | None = None
     ) -> Iterator[HtmlElement]: ...
     @overload
-    def iterdescendants(self, *tags: _TagSelector) -> Iterator[HtmlElement]: ...
+    def iterdescendants(self, *tags: _TagSelector) -> Iterator[Self]: ...
     @overload
     def iterdescendants(
         self, tag: _TagSelector | Collection[_TagSelector] | None = None
-    ) -> Iterator[HtmlElement]: ...
+    ) -> Iterator[Self]: ...
     @overload
     def iterchildren(
         self, *tags: _TagSelector, reversed: bool = False
@@ -201,7 +200,7 @@ class HtmlElement(etree.ElementBase):
         *,
         with_tail: bool = True,
     ) -> Iterator[str]: ...
-    makeelement: _ElementFactory[HtmlElement]
+    makeelement: type[HtmlElement]
     def find(
         self, path: _ElemPathArg, namespaces: _StrictNSMap | None = None
     ) -> HtmlElement | None: ...
@@ -262,4 +261,4 @@ class HtmlEntity(etree.EntityBase, HtmlElement): ...  # type: ignore[misc]  # py
 # Factory func, there is no counterpart for SubElement though
 # (use etree.SubElement())
 #
-Element: _ElementFactory[HtmlElement]
+Element: type[HtmlElement]

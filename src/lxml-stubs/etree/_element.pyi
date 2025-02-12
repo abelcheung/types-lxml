@@ -9,6 +9,7 @@ from typing import (
     Literal,
     Mapping,
     Sequence,
+    TypeAlias,
     TypeVar,
     overload,
 )
@@ -34,6 +35,15 @@ _T = TypeVar("_T")
 # plus mixin methods for _Attrib.
 # Extra methods follow the order of _Element source approximately
 class _Element:
+    def __init__(  # Args identical to Element.makeelement
+        self,
+        _tag: _t._TagName,
+        /,
+        attrib: _t._AttrMapping | None = ...,
+        nsmap: _t._NSMapArg | None = ...,
+        **_extra: _t._AttrVal,
+    ) -> None: ...
+
     #
     # Common properties
     #
@@ -173,7 +183,7 @@ class _Element:
         *,
         with_tail: bool = True,
     ) -> Iterator[str]: ...
-    makeelement: _t._ElementFactory[Self]
+    makeelement: type[Self]
     def find(
         self, path: _t._ElemPathArg, namespaces: _t._StrictNSMap | None = None
     ) -> Self | None: ...
@@ -226,6 +236,8 @@ class _Element:
         self, tag: _t._TagSelector | None = None, *tags: _t._TagSelector
     ) -> Iterator[Self]: ...
 
+Element: TypeAlias = _Element
+
 # ET class notation is specialized, indicating the type of element
 # it is holding (e.g. XML element, HTML element or Objectified
 # Element).
@@ -234,6 +246,25 @@ class _Element:
 # It is considered harmful to support such corner case, which
 # adds much complexity without any benefit.
 class _ElementTree(Generic[_t._ET_co]):
+    @overload  # from element, parser ignored
+    def __new__(cls, element: _t._ET_co) -> _ElementTree[_t._ET_co]: ...
+    @overload  # from file source, custom parser
+    def __new__(
+        cls,
+        element: None = ...,
+        *,
+        file: _t._FileReadSource,
+        parser: _t._DefEtreeParsers[_t._ET_co],
+    ) -> _ElementTree[_t._ET_co]: ...
+    @overload  # from file source, default parser
+    def __new__(
+        cls,
+        element: None = ...,
+        *,
+        file: _t._FileReadSource,
+        parser: None = ...,
+    ) -> _ElementTree: ...
+
     @property
     def parser(self) -> _t._DefEtreeParsers[_t._ET_co] | None: ...
     @property
@@ -390,6 +421,8 @@ class _ElementTree(Generic[_t._ET_co]):
         compression: int | None = 0,
         inclusive_ns_prefixes: Iterable[_t._AnyStr] | None = None,
     ) -> None: ...
+
+ElementTree: TypeAlias = _ElementTree
 
 # Behaves like MutableMapping but deviates a lot in details
 class _Attrib:
