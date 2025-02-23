@@ -51,7 +51,10 @@ basic = [
     "cssselect == 1.2.0",
 ]
 mypy    = ["mypy == 1.11.2"]
-pyright = ["pyright == 1.1.390"]
+pyright = [
+    "pyright == 1.1.390",
+    "basedpyright == 1.27.1",
+]
 format  = ["ruff ~= 0.6"]
 stub-test = [
     "pytest-mypy-plugins == 3.1.2",
@@ -61,7 +64,7 @@ rt-test = [
     "beautifulsoup4 == 4.12.3",
     "html5lib == 1.1",
     "hypothesis[zoneinfo] == 6.122.3",
-    "pytest-revealtype-injector",
+    "pytest-revealtype-injector >= 0.3",
     {include-group = "pyright"},
 ]
 lxml49 = ["lxml == 4.9.4"]
@@ -75,7 +78,7 @@ dev = [
     'pyright >= 1.1.389',
     'html5lib == 1.1',
     'pytest-mypy-plugins >= 2.0',
-    'pytest-revealtype-injector',
+    'pytest-revealtype-injector >= 0.3',
     'lxml >= 4.9',
     'beautifulsoup4 ~= 4.8',
     'hypothesis[zoneinfo] ~= 6.0',
@@ -115,7 +118,8 @@ reportUnnecessaryTypeIgnoreComment = false
 enableTypeIgnoreComments = false
 executionEnvironments = [
     { root = 'src' },
-    { root = 'tests/runtime', stubPath = 'src' },
+    # basedpyright doesn't understand stubPath
+    { root = 'tests/runtime', extraPaths = ['src'] },
 ]
 
 [tool.mypy]

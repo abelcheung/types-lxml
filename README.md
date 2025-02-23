@@ -45,9 +45,13 @@ Check out [project page](https://github.com/abelcheung/types-lxml/projects) for 
 
 ## Goal ② : Support multiple type checkers
 
-Currently the annotations are validated for both `pyright` and `mypy`, with `pyright` recommended because of its greater flexibility and early adoption of newer type checking features.
+Currently the annotations are validated for following type checkers:
 
-In the future, there is plan to bring even more type checker support.
+- [`basedpyright`](https://github.com/DetachHead/basedpyright)
+- [`pyright`](https://github.com/microsoft/pyright)
+- [`mypy`](https://github.com/python/mypy)
+
+`pyright` and `basedpyright` are recommended for their greater flexibility and early adoption of newer type checking features. In the future, there is plan to bring even more type checker support.
 
 ## Goal ③: Review and test suite
 
