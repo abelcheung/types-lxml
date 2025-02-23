@@ -63,7 +63,7 @@ stub-test = [
 rt-test = [
     "beautifulsoup4 == 4.12.3",
     "html5lib == 1.1",
-    "hypothesis[zoneinfo] == 6.122.3",
+    "hypothesis[zoneinfo] == 6.124.9",
     "pytest-revealtype-injector >= 0.3",
     {include-group = "pyright"},
 ]
@@ -81,7 +81,7 @@ dev = [
     'pytest-revealtype-injector >= 0.3',
     'lxml >= 4.9',
     'beautifulsoup4 ~= 4.8',
-    'hypothesis[zoneinfo] ~= 6.0',
+    'hypothesis[zoneinfo] >6.0,<6.125',  # typecheck problem in 6.125
 ]
 
 [tool.pdm.version]
