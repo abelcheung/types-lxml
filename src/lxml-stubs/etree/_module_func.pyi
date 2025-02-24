@@ -470,6 +470,7 @@ class _MemDebug:
             The current size of the global name dictionary used by libxml2
             for the current thread.  Each thread has its own dictionary.
         """
+    @deprecated("Removed since 6.0, due to corresponding removal in libxml2")
     def dump(
         self, output_file: str | bytes | None = None, byte_count: int | None = None
     ) -> None:
@@ -482,6 +483,7 @@ class _MemDebug:
         byte_count : int, optional
             Limits number of bytes in the dump, default is None (unlimited)
         """
+    @deprecated("Removed since 6.0, due to corresponding removal in libxml2")
     def show(
         self, output_file: str | bytes | None = None, block_count: int | None = None
     ) -> None:

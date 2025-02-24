@@ -8,14 +8,16 @@
     - args: filename
     - args: file=path
     - args: fileio
-    - args: external_id=dtd_id
+    - args: external_id=b
+    - args: external_id=s
   main: |
     from pathlib import PosixPath
     from lxml.etree import DTD
     filename: str
     path: PosixPath
     fileio = open('file', 'r')
-    dtd_id: bytes
+    b: bytes
+    s: str
     reveal_type(DTD({{ args }}))  # N: Revealed type is "lxml.etree._dtd.DTD"
 
 - case: constructor_noargs
@@ -24,14 +26,13 @@
     from lxml.etree import DTD
     dtd = DTD()
 
-# str not supported as of lxml 4.8
 - case: constructor_badargs
   expect_fail: true
   parametrized:
     - args: 1
     - args: "None, 1"
     - args: "None, badarg=b"
-    - args: "external_id=s"
+    - args: "external_id=1"
   main: |
     from lxml.etree import DTD
     s: str

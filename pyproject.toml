@@ -72,7 +72,7 @@ lxml49 = ["lxml == 4.9.4"]
 lxml50 = ["lxml == 5.0.2"]
 lxml51 = ["lxml == 5.1.1"]
 lxml52 = ["lxml == 5.2.2"]
-lxml53 = ["lxml == 5.3.0"]
+lxml53 = ["lxml == 5.3.1"]
 dev = [
     'tox ~= 4.22',
     # microsoft/pyright#9286, microsoft/pyright#9296, microsoft/pyright#9412

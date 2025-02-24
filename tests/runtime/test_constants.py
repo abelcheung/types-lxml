@@ -27,6 +27,10 @@ class TestEtreeConstants:
         if hasattr(_e, "ICONV_COMPILED_VERSION"):
             reveal_type(_e.ICONV_COMPILED_VERSION)
 
+        if _e.LXML_VERSION >= (6, 0):
+            reveal_type(_e.LIBXML_COMPILED_FEATURES)
+            reveal_type(_e.LIBXML_FEATURES)
+
     def test_other_const(self) -> None:
         reveal_type(_e.DEBUG)
         _e.DEBUG = 1

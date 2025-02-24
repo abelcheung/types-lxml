@@ -24,7 +24,9 @@ from ._xmlerror import _BaseErrorLog, _ListErrorLog
 DEBUG: int
 ICONV_COMPILED_VERSION: tuple[int, int]
 LIBXML_VERSION: tuple[int, int, int]
+LIBXML_COMPILED_FEATURES: set[str]
 LIBXML_COMPILED_VERSION: tuple[int, int, int]
+LIBXML_FEATURES: set[str]
 LXML_VERSION: tuple[int, int, int, int]
 __version__: LiteralString
 
