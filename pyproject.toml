@@ -52,7 +52,8 @@ basic = [
 ]
 mypy    = ["mypy == 1.11.2"]
 pyright = [
-    "pyright == 1.1.390",
+    # RobertCraigie/pyright-python/#318
+    "pyright == 1.1.394",
     "basedpyright == 1.27.1",
 ]
 format  = ["ruff ~= 0.6"]

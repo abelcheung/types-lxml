@@ -108,14 +108,6 @@ jobs:
         --with tox-uv
         tox@4.23.2
 
-    # Trigger npm install pyright once, otherwise
-    # tox run-parallel would cause multiple concurrent
-    # installation into same location and fail
-    # RobertCraigie/pyright-python#318
-    - name: Prepare test environment
-      run: |
-        uvx tox run -e pyright -- --version
-
     # Glob not supported under default windows env
     - name: Determine wheel file name
       id: wheel-name
@@ -124,23 +116,9 @@ jobs:
         echo "filename=$(echo dist/*.whl)" >> "$GITHUB_OUTPUT"
 
     - name: Test runtime
-      if: runner.os != 'Windows'
       run: >
         uvx
         tox run-parallel
-        --skip-env='.*-stub$'
-        --installpkg ${{ steps.wheel-name.outputs.filename }}
-        --result-json test-${{ inputs.flavor }}-rt-${{ matrix.os }}-py${{ matrix.pyver }}.json
-
-    # Tox-uv wreak havoc on the platform that needs it
-    # most (Windows) under concurrent cache access,
-    # which can potentially occur at every tox setup
-    # steps before pytest. No workaround so far.
-    - name: Test runtime (serially)
-      if: runner.os == 'Windows'
-      run: >
-        uvx
-        tox run
         --skip-env='.*-stub$'
         --installpkg ${{ steps.wheel-name.outputs.filename }}
         --result-json test-${{ inputs.flavor }}-rt-${{ matrix.os }}-py${{ matrix.pyver }}.json
