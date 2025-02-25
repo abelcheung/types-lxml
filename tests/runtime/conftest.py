@@ -251,6 +251,7 @@ def generate_input_file_arguments() -> Callable[..., Iterator[Any]]:
             _get_compressed_fp_from("gz"),
             _get_compressed_fp_from("bz2"),
             _get_compressed_fp_from("xz"),
+            # TODO fake HTTPResponse with content from file
         ]
         for func in include:
             items.append(func)
@@ -259,7 +260,7 @@ def generate_input_file_arguments() -> Callable[..., Iterator[Any]]:
                 continue
             if callable(i):
                 i = i(path)
-            if isinstance(i, AbstractContextManager):
+            if isinstance(i, AbstractContextManager) and not isinstance(i, Path):
                 cm = i
             else:
                 cm = nullcontext(i)
