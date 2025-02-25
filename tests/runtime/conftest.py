@@ -219,6 +219,7 @@ def _get_compressed_fp_from(zmode: str) -> Any:
         with path.open("rb") as f, comp_type(**{param: buffer, "mode": "wb"}) as z:  # pyright: ignore
             z.write(f.read())
 
+        buffer.seek(0, io.SEEK_SET)
         return comp_type(**{param: buffer, "mode": "rb"})  # pyright: ignore
 
     return _wrapped
