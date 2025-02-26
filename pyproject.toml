@@ -177,6 +177,9 @@ addopts = [
 markers = [
     "slow: marks tests as slow",
 ]
+filterwarnings = [
+    'ignore:Truth-testing of elements was .+:FutureWarning',
+]
 
 [tool.tox]
 env_list = [
