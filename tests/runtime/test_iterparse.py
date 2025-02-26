@@ -1,8 +1,9 @@
 from __future__ import annotations
 
+import io
 import sys
 from pathlib import Path
-from typing import Any, cast
+from typing import Any, Callable, Iterator
 
 import pytest
 from lxml.etree import _Element as _Element, _ElementTree, iterparse, iterwalk
@@ -60,6 +61,37 @@ class TestIterwalk:
 
 
 class TestIterparse:
+    def test_input_arg(
+        self,
+        svg_filepath: Path,
+        generate_input_file_arguments: Callable[..., Iterator[Any]],
+    ) -> None:
+        for input in generate_input_file_arguments(svg_filepath):
+            should_support = False
+            if isinstance(input, (str, bytes, Path)):
+                should_support = True
+            elif hasattr(input, "read"):
+                # check SupportsRead[bytes]
+                data = input.read(1)
+                if isinstance(data, bytes):
+                    should_support = True
+                input.seek(0, io.SEEK_SET)
+            else:
+                raise ValueError(f"Unhandled input type: {type(input)}")
+
+            walker = iterparse(input)
+            if should_support:
+                print(f"Good input being tested: {input!r}")
+                reveal_type(walker)
+                for event, elem in walker:
+                    reveal_type(event)
+                    reveal_type(elem)
+            else:  # Exception only after accessing iterator
+                with pytest.raises(
+                    TypeError, match="reading file objects must return bytes objects"
+                ):
+                    _ = next(walker)
+
     def test_xml_default_event(self, svg_filepath: Path) -> None:
         walker = iterparse(svg_filepath)
         reveal_type(walker)
@@ -93,26 +125,3 @@ class TestIterparse:
         for event, elem in walker:
             reveal_type(event)
             reveal_type(elem)
-
-    def test_plain_filename(self, svg_filepath: Path) -> None:
-        walker = iterparse(str(svg_filepath))
-        reveal_type(walker)
-        for event, elem in walker:
-            reveal_type(event)
-            reveal_type(elem)
-
-    def test_binary_io(self, svg_filepath: Path) -> None:
-        with open(svg_filepath, "rb") as f:
-            walker = iterparse(f)
-            reveal_type(walker)
-            for event, elem in walker:
-                reveal_type(event)
-                reveal_type(elem)
-
-    def test_text_io(self, svg_filepath: Path) -> None:
-        with pytest.raises(
-            TypeError, match="reading file objects must return bytes objects"
-        ):
-            with open(svg_filepath, "r") as f:
-                walker = iterparse(cast(Any, f))
-                _ = next(walker)  # Exception only after accessing iterator
