@@ -182,6 +182,20 @@ def list_log() -> _e._ListErrorLog:
     return err
 
 
+@pytest.fixture(scope="class")
+def pylog() -> _e.PyErrorLog:
+    result = _e.PyErrorLog()
+    _e.use_global_python_log(result)
+    bad_data = "<bad><a><b></a>&qwerty;</bad>"
+    try:
+        _ = _e.fromstring(bad_data)
+    except _e.XMLSyntaxError:
+        pass
+    else:
+        raise RuntimeError("Unknown error when creating pylog fixture")
+    return result
+
+
 # For hypothesis tests, parsing valid document spends too much
 # time and raises HealthCheck warning, use simple stuff instead
 @pytest.fixture(scope="class")
