@@ -5,7 +5,12 @@
 from typing import Iterable, Literal, TypeVar, overload
 
 from .. import etree
-from .._types import _AnyStr, _DefEtreeParsers, _FileReadSource
+from .._types import (
+    _AnyStr,
+    _DefEtreeParsers,
+    _FileReadSource,
+    _TextArg,
+)
 from ._element import ObjectifiedDataElement, ObjectifiedElement
 
 _T = TypeVar("_T")
@@ -64,7 +69,7 @@ def set_default_parser(
 # default value is True
 def makeparser(
     *,
-    encoding: str | bytes | bytearray | None = None,
+    encoding: _TextArg | None = None,
     attribute_defaults: bool = False,
     dtd_validation: bool = False,
     load_dtd: bool = False,

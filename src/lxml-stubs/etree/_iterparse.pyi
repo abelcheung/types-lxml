@@ -2,11 +2,6 @@ import sys
 from _typeshed import SupportsRead
 from typing import Collection, Iterable, Iterator, Literal, TypeVar, overload
 
-if sys.version_info >= (3, 11):
-    from typing import LiteralString
-else:
-    from typing_extensions import LiteralString
-
 from .._types import (
     _ElementFactory,
     _ElementOrTree,
@@ -14,12 +9,19 @@ from .._types import (
     _FilePath,
     _SaxEventNames,
     _TagSelector,
+    _TextArg,
 )
 from ._classlookup import ElementClassLookup
 from ._docloader import _ResolverRegistry
 from ._element import _Element
 from ._xmlerror import _ListErrorLog
 from ._xmlschema import XMLSchema
+
+if sys.version_info >= (3, 11):
+    from typing import LiteralString
+else:
+    from typing_extensions import LiteralString
+
 
 _T_co = TypeVar("_T_co", covariant=True)
 
@@ -84,7 +86,7 @@ class iterparse(Iterator[_T_co]):
         remove_comments: bool = False,
         remove_pis: bool = False,
         strip_cdata: bool = True,
-        encoding: str | bytes | bytearray | None = None,
+        encoding: _TextArg | None = None,
         html: Literal[True],
         recover: bool | None = None,
         huge_tree: bool = False,
@@ -108,7 +110,7 @@ class iterparse(Iterator[_T_co]):
         remove_comments: bool = False,
         remove_pis: bool = False,
         strip_cdata: bool = True,
-        encoding: str | bytes | bytearray | None = None,
+        encoding: _TextArg | None = None,
         html: bool = False,
         recover: bool | None = None,
         huge_tree: bool = False,
@@ -132,7 +134,7 @@ class iterparse(Iterator[_T_co]):
         remove_comments: bool = False,
         remove_pis: bool = False,
         strip_cdata: bool = True,
-        encoding: str | bytes | bytearray | None = None,
+        encoding: _TextArg | None = None,
         html: bool = False,
         recover: bool | None = None,
         huge_tree: bool = False,
@@ -158,7 +160,7 @@ class iterparse(Iterator[_T_co]):
         remove_comments: bool = False,
         remove_pis: bool = False,
         strip_cdata: bool = True,
-        encoding: str | bytes | bytearray | None = None,
+        encoding: _TextArg | None = None,
         html: bool = False,
         recover: bool | None = None,
         huge_tree: bool = False,
@@ -185,7 +187,7 @@ class iterparse(Iterator[_T_co]):
         remove_comments: bool = False,
         remove_pis: bool = False,
         strip_cdata: bool = True,
-        encoding: str | bytes | bytearray | None = None,
+        encoding: _TextArg | None = None,
         html: bool = False,
         recover: bool | None = None,
         huge_tree: bool = False,

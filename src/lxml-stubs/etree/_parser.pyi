@@ -10,6 +10,23 @@ from typing import (
     overload,
 )
 
+from .._types import (
+    _AnyStr,
+    _DefEtreeParsers,
+    _ElementFactory,
+    _ET_co,
+    _SaxEventNames,
+    _TagSelector,
+    _TextArg,
+)
+from ._classlookup import ElementClassLookup
+from ._docloader import _ResolverRegistry
+from ._element import _Element
+from ._module_misc import LxmlError, LxmlSyntaxError
+from ._saxparser import ParserTarget
+from ._xmlerror import _ListErrorLog
+from ._xmlschema import XMLSchema
+
 if sys.version_info >= (3, 11):
     from typing import LiteralString, Self
 else:
@@ -19,22 +36,6 @@ if sys.version_info >= (3, 13):
     from warnings import deprecated
 else:
     from typing_extensions import deprecated
-
-from .._types import (
-    _AnyStr,
-    _DefEtreeParsers,
-    _ElementFactory,
-    _ET_co,
-    _SaxEventNames,
-    _TagSelector,
-)
-from ._classlookup import ElementClassLookup
-from ._docloader import _ResolverRegistry
-from ._element import _Element
-from ._module_misc import LxmlError, LxmlSyntaxError
-from ._saxparser import ParserTarget
-from ._xmlerror import _ListErrorLog
-from ._xmlschema import XMLSchema
 
 _T = TypeVar("_T")
 
@@ -129,7 +130,7 @@ class XMLParser(_ParserTargetMixin[Any], _FeedParser[_ET_co]):
     def __init__(
         self,
         *,
-        encoding: str | bytes | bytearray | None = None,
+        encoding: _TextArg | None = None,
         attribute_defaults: bool = False,
         dtd_validation: bool = False,
         load_dtd: bool = False,
@@ -156,7 +157,7 @@ class XMLPullParser(_PullParserMixin, XMLParser[_ET_co]):
         tag: _TagSelector | Collection[_TagSelector] | None = None,
         base_url: str | bytes | None = None,
         # All arguments from XMLParser
-        encoding: str | bytes | bytearray | None = None,
+        encoding: _TextArg | None = None,
         attribute_defaults: bool = False,
         dtd_validation: bool = False,
         load_dtd: bool = False,
@@ -182,7 +183,7 @@ class ETCompatXMLParser(XMLParser[_ET_co]):
     def __init__(
         self,
         *,
-        encoding: str | bytes | bytearray | None = None,
+        encoding: _TextArg | None = None,
         attribute_defaults: bool = False,
         dtd_validation: bool = False,
         load_dtd: bool = False,
@@ -206,7 +207,7 @@ class HTMLParser(_ParserTargetMixin[Any], _FeedParser[_ET_co]):
     def __init__(
         self,
         *,
-        encoding: str | bytes | bytearray | None = None,
+        encoding: _TextArg | None = None,
         remove_blank_text: bool = False,
         remove_comments: bool = False,
         remove_pis: bool = False,
@@ -237,7 +238,7 @@ class HTMLPullParser(_PullParserMixin, HTMLParser[_ET_co]):
         tag: _TagSelector | Collection[_TagSelector] | None = None,
         base_url: str | bytes | None = None,
         # All arguments from HTMLParser
-        encoding: str | bytes | bytearray | None = None,
+        encoding: _TextArg | None = None,
         remove_blank_text: bool = False,
         remove_comments: bool = False,
         remove_pis: bool = False,
