@@ -1,6 +1,5 @@
 from typing import Callable, Iterable, TypeVar
 
-from .._types import _AnyStr
 from ..etree import _Element
 
 _T = TypeVar("_T")
@@ -12,6 +11,6 @@ def html_annotate(
     markup: Callable[[str, _T], str] = ...,  # keep ellipsis
 ) -> str: ...
 def htmldiff(
-    old_html: _Element | _AnyStr,
-    new_html: _Element | _AnyStr,
+    old_html: _Element | str,
+    new_html: _Element | str,
 ) -> str: ...
