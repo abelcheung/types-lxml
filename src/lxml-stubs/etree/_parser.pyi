@@ -154,7 +154,7 @@ class XMLPullParser(_PullParserMixin, XMLParser[_ET_co]):
         events: Iterable[_SaxEventNames] | None = None,
         *,
         tag: _TagSelector | Collection[_TagSelector] | None = None,
-        base_url: _AnyStr | None = None,
+        base_url: str | bytes | None = None,
         # All arguments from XMLParser
         encoding: str | bytes | bytearray | None = None,
         attribute_defaults: bool = False,
@@ -235,7 +235,7 @@ class HTMLPullParser(_PullParserMixin, HTMLParser[_ET_co]):
         events: Iterable[_SaxEventNames] | None = None,
         *,
         tag: _TagSelector | Collection[_TagSelector] | None = None,
-        base_url: _AnyStr | None = None,
+        base_url: str | bytes | None = None,
         # All arguments from HTMLParser
         encoding: str | bytes | bytearray | None = None,
         remove_blank_text: bool = False,

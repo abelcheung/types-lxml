@@ -29,7 +29,7 @@ class Resolver(metaclass=ABCMeta):
         string: _AnyStr,
         context: _ResolverContext,
         *,
-        base_url: _AnyStr | None = None,
+        base_url: str | bytes | None = None,
     ) -> _InputDocument: ...
     def resolve_filename(
         self, filename: _AnyStr, context: _ResolverContext
@@ -39,7 +39,7 @@ class Resolver(metaclass=ABCMeta):
         f: SupportsRead[Any],
         context: _ResolverContext,
         *,
-        base_url: _AnyStr | None,
+        base_url: str | bytes | None,
         close: bool,
     ) -> _InputDocument: ...
 

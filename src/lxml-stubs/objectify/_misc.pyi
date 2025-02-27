@@ -95,7 +95,7 @@ def parse(
     source: _FileReadSource,
     parser: _DefEtreeParsers[ObjectifiedElement] | None = None,
     *,
-    base_url: _AnyStr | None = None,
+    base_url: str | bytes | None = None,
 ) -> etree._ElementTree[ObjectifiedElement]:
     """Parse a file or file-like object with objectify parser
 
@@ -115,7 +115,7 @@ def fromstring(
     xml: _AnyStr,
     parser: _DefEtreeParsers[ObjectifiedElement] | None = None,
     *,
-    base_url: _AnyStr | None = None,
+    base_url: str | bytes | None = None,
 ) -> ObjectifiedElement:
     """Variant of corresponding `lxml.etree` function that uses objectify parser
 
