@@ -64,7 +64,7 @@ def set_default_parser(
 # default value is True
 def makeparser(
     *,
-    encoding: _AnyStr | None = None,
+    encoding: str | bytes | bytearray | None = None,
     attribute_defaults: bool = False,
     dtd_validation: bool = False,
     load_dtd: bool = False,

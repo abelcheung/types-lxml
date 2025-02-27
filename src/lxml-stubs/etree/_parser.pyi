@@ -129,7 +129,7 @@ class XMLParser(_ParserTargetMixin[Any], _FeedParser[_ET_co]):
     def __init__(
         self,
         *,
-        encoding: _AnyStr | None = None,
+        encoding: str | bytes | bytearray | None = None,
         attribute_defaults: bool = False,
         dtd_validation: bool = False,
         load_dtd: bool = False,
@@ -156,7 +156,7 @@ class XMLPullParser(_PullParserMixin, XMLParser[_ET_co]):
         tag: _TagSelector | Collection[_TagSelector] | None = None,
         base_url: _AnyStr | None = None,
         # All arguments from XMLParser
-        encoding: _AnyStr | None = None,
+        encoding: str | bytes | bytearray | None = None,
         attribute_defaults: bool = False,
         dtd_validation: bool = False,
         load_dtd: bool = False,
@@ -182,7 +182,7 @@ class ETCompatXMLParser(XMLParser[_ET_co]):
     def __init__(
         self,
         *,
-        encoding: _AnyStr | None = None,
+        encoding: str | bytes | bytearray | None = None,
         attribute_defaults: bool = False,
         dtd_validation: bool = False,
         load_dtd: bool = False,
@@ -206,7 +206,7 @@ class HTMLParser(_ParserTargetMixin[Any], _FeedParser[_ET_co]):
     def __init__(
         self,
         *,
-        encoding: _AnyStr | None = None,
+        encoding: str | bytes | bytearray | None = None,
         remove_blank_text: bool = False,
         remove_comments: bool = False,
         remove_pis: bool = False,
@@ -237,7 +237,7 @@ class HTMLPullParser(_PullParserMixin, HTMLParser[_ET_co]):
         tag: _TagSelector | Collection[_TagSelector] | None = None,
         base_url: _AnyStr | None = None,
         # All arguments from HTMLParser
-        encoding: _AnyStr | None = None,
+        encoding: str | bytes | bytearray | None = None,
         remove_blank_text: bool = False,
         remove_comments: bool = False,
         remove_pis: bool = False,
