@@ -2,8 +2,9 @@ from __future__ import annotations
 
 import io
 import sys
+from collections.abc import Callable, Iterator
 from pathlib import Path
-from typing import Any, Callable, Iterator
+from typing import Any
 
 import pytest
 from lxml.etree import _Element as _Element, _ElementTree, iterparse, iterwalk

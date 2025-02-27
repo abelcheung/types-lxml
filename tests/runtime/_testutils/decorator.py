@@ -1,6 +1,9 @@
+from __future__ import annotations
+
 import functools
+from collections.abc import Callable, Sequence
 from inspect import Parameter, Signature, _ParameterKind, isclass, signature
-from typing import Any, Callable, ParamSpec, Sequence
+from typing import Any, ParamSpec
 
 from lxml.etree import LXML_VERSION
 

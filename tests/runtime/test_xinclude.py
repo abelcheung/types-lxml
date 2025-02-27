@@ -2,9 +2,10 @@ from __future__ import annotations
 
 import copy
 import sys
+from collections.abc import Callable, Iterator
 from inspect import Parameter
 from pathlib import Path
-from typing import Any, Callable, Iterator, Literal, cast, overload
+from typing import Any, Literal, cast, overload
 
 import lxml.ElementInclude as EI
 import pytest
