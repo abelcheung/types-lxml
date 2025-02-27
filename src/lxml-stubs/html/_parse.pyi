@@ -3,7 +3,6 @@ from typing import Any, Iterable, Literal, MutableMapping, overload
 from .. import etree
 from .._types import (
     Unused,
-    _AnyStr,
     _DefEtreeParsers,
     _ElemClsLookupArg,
     _FileReadSource,
@@ -78,7 +77,7 @@ xhtml_parser: XHTMLParser
 # Calls etree.fromstring(html, parser, **kw) which has signature
 # fromstring(text, parser, *, base_url)
 def document_fromstring(
-    html: _AnyStr,
+    html: str | bytes,
     parser: _HtmlElemParser | None = None,
     ensure_head_body: bool = False,
     *,
@@ -86,26 +85,26 @@ def document_fromstring(
 ) -> HtmlElement: ...
 @overload
 def fragments_fromstring(  # pyright: ignore[reportOverlappingOverload]
-    html: _AnyStr,
+    html: str | bytes,
     no_leading_text: Literal[True],
     base_url: str | None = None,
     parser: _HtmlElemParser | None = None,
 ) -> list[HtmlElement]: ...
 @overload
 def fragments_fromstring(
-    html: _AnyStr,
+    html: str | bytes,
     no_leading_text: bool = False,
     base_url: str | None = None,
     parser: _HtmlElemParser | None = None,
 ) -> list[str | HtmlElement]: ...
 def fragment_fromstring(
-    html: _AnyStr,
+    html: str | bytes,
     create_parent: bool = False,
     base_url: str | None = None,
     parser: _HtmlElemParser | None = None,
 ) -> HtmlElement: ...
 def fromstring(
-    html: _AnyStr,
+    html: str | bytes,
     base_url: str | None = None,
     parser: _HtmlElemParser | None = None,
 ) -> HtmlElement: ...
