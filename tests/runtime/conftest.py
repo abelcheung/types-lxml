@@ -3,6 +3,7 @@ from __future__ import annotations
 import bz2
 import gzip
 import io
+import logging
 import lzma
 from collections.abc import (
     Callable,
@@ -32,6 +33,10 @@ pytest_plugins = [
     "pytest-revealtype-injector",
     "runtime.register_strategy",
 ]
+
+_logger = logging.getLogger(__name__)
+_logger.setLevel(logging.DEBUG)
+
 
 typeguard.config.forward_ref_policy = typeguard.ForwardRefPolicy.ERROR
 typeguard.config.collection_check_strategy = typeguard.CollectionCheckStrategy.ALL_ITEMS
@@ -241,7 +246,7 @@ def _get_compressed_fp_from(zmode: str) -> Any:
 
 # It's too much to create protocol signature just for this thing
 @pytest.fixture
-def generate_input_file_arguments() -> Callable[..., Iterator[Any]]:
+def generate_input_file_arguments(pytestconfig: pytest.Config) -> Callable[..., Iterator[Any]]:
     def _wrapped(
         path: Path,
         *,
@@ -274,6 +279,8 @@ def generate_input_file_arguments() -> Callable[..., Iterator[Any]]:
                 continue
             if callable(i):
                 i = i(path)
+            if pytestconfig.get_verbosity() >= 2:
+                _logger.debug(f"Testing file input {i!r}")
             if isinstance(i, AbstractContextManager) and not isinstance(i, Path):
                 cm = i
             else:
