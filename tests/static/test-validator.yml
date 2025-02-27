@@ -7,44 +7,10 @@
         from lxml.isoschematron import Schematron
         rng: etree.RelaxNG
         dtd: etree.DTD
-        schema: etree.XMLSchema
         tron: Schematron
         tree: etree._ElementTree[etree._Element]
         elem: etree._Element
   main: ""
-
-- case: xmlschema_create
-  main: |
-    from pathlib import PosixPath
-    from io import StringIO
-    from lxml import etree
-    elem: etree._Element
-    tree: etree._ElementTree
-    filename: str
-    fileio: StringIO
-    path: PosixPath
-    result = etree.XMLSchema(elem)
-    reveal_type(result)  # NR: .+ "[\w\.]+\.XMLSchema"$
-    etree.XMLSchema(tree, attribute_defaults=False)
-    etree.XMLSchema(elem, file=None)
-    etree.XMLSchema(file=filename)
-    etree.XMLSchema(file=path)
-    etree.XMLSchema(file=fileio, attribute_defaults=True)
-
-- case: xmlschema_create_badarg
-  expect_fail: true
-  parametrized:
-    - args: null
-    - args: None
-    - args: "None, file=None"
-    - args: "elem, filename"
-    - args: "elem, badarg=1"
-    - args: "file=filename, badarg=1"
-  main: |
-    from lxml import etree
-    elem: etree._Element
-    filename: str
-    result = etree.XMLSchema({{ args }})
 
 - case: relaxng_construct
   main: |
@@ -108,10 +74,9 @@
   parametrized:
     - obj: rng
     - obj: dtd
-    - obj: schema
     - obj: tron
   main: |
-    from inc import rng, dtd, schema, tron, tree, elem
+    from inc import rng, dtd, tron, tree, elem
     reveal_type({{ obj }}(tree))  # NR: .+ "[\w\.]+\.bool"$
     reveal_type({{ obj }}(etree=elem))  # NR: .+ "[\w\.]+\.bool"$
     reveal_type({{ obj }}.validate(elem))  # NR: .+ "[\w\.]+\.bool"$
@@ -126,14 +91,11 @@
     - obj: dtd
       cls: DTD
       is_call: false
-    - obj: schema
-      cls: XMLSchema
-      is_call: true
     - obj: tron
       cls: Schematron
       is_call: false
   main: |
-    from inc import rng, dtd, schema, tron, tree, elem
+    from inc import rng, dtd, tron, tree, elem
     {{ obj }}{%- if not is_call -%}.validate{%- endif -%}()  # E: Missing positional argument "etree" in call to {% if is_call -%}"__call__" of "{{cls}}"{%- else -%}"validate" of "_Validator"{%- endif %}  [call-arg]
     {{ obj }}{%- if not is_call -%}.validate{%- endif -%}(None)  # E: Argument 1 to {% if is_call -%}"__call__" of "{{cls}}"{%- else -%}"validate" of "_Validator"{%- endif %} has incompatible type "None"; expected "_Element | _ElementTree[_Element]"  [arg-type]
     {{ obj }}{%- if not is_call -%}.validate{%- endif -%}(tree, None)  # E: Too many arguments for {% if is_call -%}"__call__" of "{{cls}}"{%- else -%}"validate" of "_Validator"{%- endif %}  [call-arg]
@@ -144,10 +106,9 @@
   parametrized:
     - obj: rng
     - obj: dtd
-    - obj: schema
     - obj: tron
   main: |
-    from inc import rng, dtd, schema, tron, tree, elem
+    from inc import rng, dtd, tron, tree, elem
     reveal_type({{ obj }}.error_log)  # NR: .+ "[\w\.]+\._ListErrorLog"
     _ = {{ obj }}.assertValid(tree)  # E: "assertValid" of "_Validator" does not return a value (it only ever returns None)  [func-returns-value]
     _ = {{ obj }}.assert_(elem)  # E: "assert_" of "_Validator" does not return a value (it only ever returns None)  [func-returns-value]

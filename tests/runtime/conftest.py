@@ -118,6 +118,19 @@ def xml2_filepath() -> Path:
     return Path(__file__).resolve().parent / "_data" / "shiporder.xml"
 
 
+@pytest.fixture(scope="session")
+def xmlschema_path() -> Path:
+    return Path(__file__).resolve().parent / "_data" / "shiporder.xsd"
+
+
+@pytest.fixture(scope="session")
+def xmlschema_root(xmlschema_path: Path) -> _e._Element:
+    return _e.fromstring(xmlschema_path.read_bytes())
+
+@pytest.fixture(scope="session")
+def xmlschema(xmlschema_path: Path) -> _e.XMLSchema:
+    return _e.XMLSchema(file=str(xmlschema_path))
+
 @pytest.fixture
 def bightml_tree(bightml_bin_fp: BinaryIO) -> _e._ElementTree[_h.HtmlElement]:
     with bightml_bin_fp as f:
