@@ -2,11 +2,12 @@ from __future__ import annotations
 
 import copy
 import io
+import sys
 from collections.abc import Callable, Iterator
 from inspect import Parameter
 from pathlib import Path
 from types import NoneType
-from typing import Any, reveal_type
+from typing import Any
 
 import pytest
 from hypothesis import HealthCheck, given, settings
@@ -19,6 +20,11 @@ from lxml.etree import (
 )
 
 from ._testutils import signature_tester, strategy as _st
+
+if sys.version_info >= (3, 11):
+    from typing import reveal_type
+else:
+    from typing_extensions import reveal_type
 
 
 class TestXMLSchemaInput:
