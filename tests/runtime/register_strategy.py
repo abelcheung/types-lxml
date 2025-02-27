@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import hypothesis.strategies as st
 import lxml.etree as _e
+import lxml.html as _h
 import pytest
 
 from ._testutils import strategy as _st
@@ -18,3 +19,5 @@ def pytest_configure(config: pytest.Config) -> None:
     st.register_type_strategy(_e.CDATA, _st.cdata())
     st.register_type_strategy(_e.QName, _st.qname())
     st.register_type_strategy(_e._Element, _st.single_simple_element())
+    st.register_type_strategy(_e._ElementTree, _st.simple_elementtree())
+    st.register_type_strategy(_h.HtmlElement, _st.simple_html_element())

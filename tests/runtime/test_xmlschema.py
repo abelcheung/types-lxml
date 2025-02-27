@@ -110,7 +110,7 @@ class TestXMLSchemaValidate:
         reveal_type(result)
 
     @settings(suppress_health_check=[HealthCheck.too_slow])
-    @given(etree=_st.all_instances_except_of_type(_Element))
+    @given(etree=_st.all_instances_except_of_type(_Element, _ElementTree))
     @pytest.mark.slow
     def test_call_arg_bad(self, xmlschema: XMLSchema, etree: Any) -> None:
         with pytest.raises(TypeError, match=r"Invalid input object"):
@@ -147,7 +147,7 @@ class TestXMLSchemaValidate:
             xmlschema.assert_(faulty_root)
 
     @settings(suppress_health_check=[HealthCheck.too_slow])
-    @given(etree=_st.all_instances_except_of_type(_Element))
+    @given(etree=_st.all_instances_except_of_type(_Element, _ElementTree))
     @pytest.mark.slow
     def test_assert_arg_bad(self, xmlschema: XMLSchema, etree: Any) -> None:
         with pytest.raises(TypeError, match=r"Invalid input object"):

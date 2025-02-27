@@ -7,8 +7,10 @@ from typing import Any, Literal, cast
 import hypothesis.strategies as st
 import hypothesis.strategies._internal.types as st_types
 import lxml.etree as _e
+import lxml.html as _h
 from hypothesis import note
 from lxml.builder import E
+from lxml.html.builder import DIV
 
 
 def all_types_except(
@@ -250,6 +252,18 @@ def single_simple_element(draw: st.DrawFn) -> _e._Element:
     first_child = draw(st.lists(cdata(), max_size=1))
     other_child = draw(st.lists(xml_attr_value(), max_size=1))
     return E(tag_name, *first_child, *other_child, **attrib)
+
+
+@st.composite
+def simple_elementtree(draw: st.DrawFn) -> _e._ElementTree[_e._Element]:
+    elem = draw(single_simple_element())
+    return elem.getroottree()
+
+
+@st.composite
+def simple_html_element(draw: st.DrawFn) -> _h.HtmlElement:
+    class_name = draw(xml_attr_value(variant="ascii"))
+    return DIV(draw(xml_name_nons()), {"class": class_name})
 
 
 # https://www.w3.org/TR/xml/#NT-Comment
