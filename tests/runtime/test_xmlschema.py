@@ -121,7 +121,12 @@ class TestXMLSchemaValidate:
         XMLSchema.assertValid,
         (("etree", Parameter.POSITIONAL_OR_KEYWORD, Parameter.empty),),
     )
-    def test_assert_arg_ok(self, xmlschema: XMLSchema, xml2_root: _Element, xml2_tree: _ElementTree[_Element]) -> None:
+    def test_assert_arg_ok(
+        self,
+        xmlschema: XMLSchema,
+        xml2_root: _Element,
+        xml2_tree: _ElementTree[_Element],
+    ) -> None:
         assert xmlschema.assertValid(xml2_root) is None
         assert xmlschema.assertValid(xml2_tree) is None
         assert xmlschema.assert_(xml2_root) is None

@@ -127,9 +127,11 @@ def xmlschema_path() -> Path:
 def xmlschema_root(xmlschema_path: Path) -> _e._Element:
     return _e.fromstring(xmlschema_path.read_bytes())
 
+
 @pytest.fixture(scope="session")
 def xmlschema(xmlschema_path: Path) -> _e.XMLSchema:
     return _e.XMLSchema(file=str(xmlschema_path))
+
 
 @pytest.fixture
 def bightml_tree(bightml_bin_fp: BinaryIO) -> _e._ElementTree[_h.HtmlElement]:
@@ -259,7 +261,9 @@ def _get_compressed_fp_from(zmode: str) -> Any:
 
 # It's too much to create protocol signature just for this thing
 @pytest.fixture
-def generate_input_file_arguments(pytestconfig: pytest.Config) -> Callable[..., Iterator[Any]]:
+def generate_input_file_arguments(
+    pytestconfig: pytest.Config,
+) -> Callable[..., Iterator[Any]]:
     def _wrapped(
         path: Path,
         *,

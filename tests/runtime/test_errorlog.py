@@ -1,11 +1,11 @@
 from __future__ import annotations
 
-from decimal import Decimal
 import logging
-from numbers import Real
 import sys
 from collections.abc import Iterable
+from decimal import Decimal
 from inspect import Parameter
+from numbers import Real
 from types import NoneType, NotImplementedType
 from typing import Any, cast
 
@@ -135,7 +135,9 @@ class TestListLogMethods:
     ])  # fmt: skip
     @given(domains=_st.all_instances_except_of_type(int, Iterable))
     @pytest.mark.slow
-    def test_filter_domains_arg_bad(self, list_log: _ListErrorLog, domains: Any) -> None:
+    def test_filter_domains_arg_bad(
+        self, list_log: _ListErrorLog, domains: Any
+    ) -> None:
         with pytest.raises(TypeError, match=r"argument .+ is not iterable"):
             _ = list_log.filter_domains(cast(Any, None))
 
