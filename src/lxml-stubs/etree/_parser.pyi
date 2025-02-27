@@ -23,7 +23,6 @@ else:
 from .._types import (
     _AnyStr,
     _DefEtreeParsers,
-    _ElementFactory,
     _ET_co,
     _SaxEventNames,
     _TagSelector,
@@ -65,7 +64,7 @@ class _FeedParser(Generic[_ET_co]):
     @property
     def version(self) -> LiteralString: ...
     def copy(self) -> Self: ...
-    makeelement: _ElementFactory[_ET_co]
+    makeelement: type[_ET_co]
     # In terms of annotation, what setting class_lookup does
     # is change _ET_co (type specialization), which can't be
     # done automatically with current python typing system.

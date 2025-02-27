@@ -26,6 +26,8 @@ from ._dtd import (
     DTDValidateError as DTDValidateError,
 )
 from ._element import (
+    Element as Element,
+    ElementTree as ElementTree,
     _Attrib as _Attrib,
     _Comment as _Comment,
     _Element as _Element,
@@ -36,8 +38,6 @@ from ._element import (
 from ._factory_func import (
     PI as PI,
     Comment as Comment,
-    Element as Element,
-    ElementTree as ElementTree,
     Entity as Entity,
     ProcessingInstruction as ProcessingInstruction,
     SubElement as SubElement,

@@ -5,7 +5,7 @@ from typing import Any, Collection, Iterable, Literal, overload
 from bs4 import BeautifulSoup, PageElement, SoupStrainer
 from bs4.builder import TreeBuilder
 
-from .._types import _ET, _AnyStr, _ElementFactory, _FileReadSource
+from .._types import _ET, _AnyStr, _FileReadSource
 from ..etree import _ElementTree
 from . import HtmlElement
 
@@ -66,7 +66,7 @@ def fromstring(
 def fromstring(
     data: _AnyStr | SupportsRead[str] | SupportsRead[bytes],
     beautifulsoup: type[BeautifulSoup] | None,
-    makeelement: _ElementFactory[_ET],
+    makeelement: type[_ET],
     *,
     features: _Features | Collection[_Features] = "html.parser",
     builder: TreeBuilder | type[TreeBuilder] | None = None,
@@ -80,7 +80,7 @@ def fromstring(
     data: _AnyStr | SupportsRead[str] | SupportsRead[bytes],
     beautifulsoup: type[BeautifulSoup] | None = None,
     *,
-    makeelement: _ElementFactory[_ET],
+    makeelement: type[_ET],
     features: _Features | Collection[_Features] = "html.parser",
     builder: TreeBuilder | type[TreeBuilder] | None = None,
     parse_only: SoupStrainer | None = None,
@@ -128,7 +128,7 @@ def parse(
 def parse(
     file: _FileReadSource,
     beautifulsoup: type[BeautifulSoup] | None,
-    makeelement: _ElementFactory[_ET],
+    makeelement: type[_ET],
     *,
     features: _Features | Collection[_Features] = "html.parser",
     builder: TreeBuilder | type[TreeBuilder] | None = None,
@@ -142,7 +142,7 @@ def parse(  # makeelement is kw
     file: _FileReadSource,
     beautifulsoup: type[BeautifulSoup] | None = None,
     *,
-    makeelement: _ElementFactory[_ET],
+    makeelement: type[_ET],
     features: _Features | Collection[_Features] = "html.parser",
     builder: TreeBuilder | type[TreeBuilder] | None = None,
     parse_only: SoupStrainer | None = None,
@@ -166,7 +166,7 @@ def parse(
 @overload
 def convert_tree(
     beautiful_soup_tree: BeautifulSoup,
-    makeelement: _ElementFactory[_ET],
+    makeelement: type[_ET],
 ) -> list[_ET]:
     """Convert a BeautifulSoup tree to a list of Element trees.
 

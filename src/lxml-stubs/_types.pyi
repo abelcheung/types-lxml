@@ -6,7 +6,6 @@ from typing import (
     Any,
     Callable,
     Collection,
-    Generic,
     Iterable,
     Literal,
     Mapping,
@@ -154,31 +153,6 @@ _SaxEventNames = Literal[
 
 _ET = TypeVar("_ET", bound=_Element, default=_Element)
 _ET_co = TypeVar("_ET_co", bound=_Element, default=_Element, covariant=True)
-
-class _ElementFactory(Protocol, Generic[_ET_co]):
-    """Element factory protocol
-
-    This is callback protocol for `makeelement()` method of
-    various element objects, with following signature (which
-    is identical to `etree.Element()` factory):
-
-    ```python
-    (_tag, attrib=..., nsmap=..., **_extra)
-    ```
-
-    The mapping in `attrib` argument and all `_extra` keyword
-    arguments would be merged together, with `_extra` taking
-    precedence over `attrib`.
-    """
-
-    def __call__(
-        self,
-        _tag: _TagName,
-        /,
-        attrib: _AttrMapping | None = None,
-        nsmap: _NSMapArg | None = None,
-        **_extra: _AttrVal,
-    ) -> _ET_co: ...
 
 # HACK _TagSelector filters element type not by classes,
 # but checks for exact element *factory functions* instead
