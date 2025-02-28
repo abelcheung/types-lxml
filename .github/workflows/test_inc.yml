@@ -15,14 +15,16 @@ jobs:
       fail-fast: false
       matrix:
         pyver:
-          - "3.8"
           - "3.9"
           - "3.10"
           - "3.11"
           - "3.12"
           - "3.13"
         os:
-          - "ubuntu-22.04"
+          - "ubuntu-24.04"
+        include:
+          - pyver: "3.8"
+            os: "ubuntu-22.04"
     runs-on: ${{ matrix.os }}
     steps:
     - uses: actions/download-artifact@v4
@@ -77,9 +79,9 @@ jobs:
           - "3.12"
           - "3.13"
         os:
-          - ubuntu-22.04
-          - windows-2022
-          - macos-13
+          - ubuntu-24.04
+          - windows-2025
+          - macos-14
     runs-on: ${{ matrix.os }}
     steps:
     - uses: actions/download-artifact@v4
@@ -132,7 +134,7 @@ jobs:
   log-aggregation:
     if: success() || failure()
     needs: [test-stub, test-rt]
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     permissions:
       actions: write
     steps:
