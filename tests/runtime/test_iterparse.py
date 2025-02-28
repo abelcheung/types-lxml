@@ -72,11 +72,15 @@ class TestIterparse:
             if isinstance(input, (str, bytes, Path)):
                 should_support = True
             elif hasattr(input, "read"):
-                # check SupportsRead[bytes]
-                data = input.read(1)
-                if isinstance(data, bytes):
+                if hasattr(input, "status"):
+                    # Assume this is HTTP response, which is not seekable
                     should_support = True
-                input.seek(0, io.SEEK_SET)
+                else:
+                    # check SupportsRead[bytes]
+                    data = input.read(1)
+                    if isinstance(data, bytes):
+                        should_support = True
+                    input.seek(0, io.SEEK_SET)
             else:
                 raise ValueError(f"Unhandled input type: {type(input)}")
 

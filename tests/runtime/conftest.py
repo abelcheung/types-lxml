@@ -23,6 +23,9 @@ from typing import (
 from urllib.request import urlopen
 from urllib.response import addinfourl
 
+# http.client is incompatible with lxml
+# (in _FileReaderContext.copyToBuffer())
+import urllib3
 import pytest
 import typeguard
 from lxml import etree as _e, html as _h
@@ -33,6 +36,8 @@ pytest_plugins = [
     "pytest-revealtype-injector",
     "runtime.register_strategy",
 ]
+
+http_pool = urllib3.PoolManager()
 
 _logger = logging.getLogger(__name__)
 _logger.setLevel(logging.DEBUG)
@@ -263,6 +268,7 @@ def _get_compressed_fp_from(zmode: str) -> Any:
 @pytest.fixture
 def generate_input_file_arguments(
     pytestconfig: pytest.Config,
+    pook: Any,
 ) -> Callable[..., Iterator[Any]]:
     def _wrapped(
         path: Path,
@@ -271,6 +277,22 @@ def generate_input_file_arguments(
         include: Collection[Callable[[Path], Any]] = tuple(),
     ) -> Iterator[Any]:
         assert path.is_file()
+
+        match path.suffix.lower():
+            case ".htm" | ".html":
+                content_type = "text/html"
+            case ".svg":
+                content_type = "image/svg+xml",
+            case _:
+                content_type = "application/xml",
+        pook.get(
+            "http://example.com/" + path.name,
+            response_type=content_type,
+            response_body=path.read_text(),
+            persist=True,
+        )
+        mock_http_response = http_pool.request("GET", "http://example.com/" + path.name)
+
         items = [
             path,
             str(path),
@@ -287,8 +309,9 @@ def generate_input_file_arguments(
             _get_compressed_fp_from("gz"),
             _get_compressed_fp_from("bz2"),
             _get_compressed_fp_from("xz"),
-            # TODO fake HTTPResponse with content from file
+            mock_http_response,
         ]
+
         for func in include:
             items.append(func)
         for i in items:
