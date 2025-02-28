@@ -97,6 +97,19 @@ _StrictNSMap = (
 # like what dict() does
 _NSTuples = Iterable[tuple[_AnyStr | None, _AnyStr]]
 
+# Cutting short dict combinations, otherwise we need
+# a union of 9 dicts.
+_XPathNSArg = (
+    Iterable[tuple[str | bytes, str | bytes]]
+    | dict[str, str]
+    | dict[bytes, bytes]
+)  # fmt: skip
+"""XPath specific namespace mapping, with following properties:
+
+- Both prefix and URI can be str or bytes, must be non-empty
+- Either a dict of `{prefix: URI}` (other mapping types not OK), or
+- Iterable of prefix-URI tuple pairs"""
+
 # https://lxml.de/extensions.html#xpath-extension-functions
 # The returned result of extension function itself is not exactly Any,
 # but too complex to list.

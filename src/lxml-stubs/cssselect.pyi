@@ -6,7 +6,7 @@ import cssselect as _csel
 from cssselect.parser import Function
 from cssselect.xpath import XPathExpr
 
-from ._types import _ET, _ElementOrTree, _NonDefaultNSMapArg, _XPathVarArg
+from ._types import _ET, _ElementOrTree, _XPathVarArg, _XPathNSArg
 from .etree import XPath
 from .html import HtmlElement
 from .objectify import ObjectifiedElement
@@ -37,7 +37,7 @@ class CSSSelector(XPath):
     def __init__(
         self,
         css: str,
-        namespaces: _NonDefaultNSMapArg | None = None,
+        namespaces: _XPathNSArg | None = None,
         translator: _CSSTransArg = "xml",
     ) -> None: ...
     # It is safe to assume cssselect always selects element
