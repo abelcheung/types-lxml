@@ -1,9 +1,9 @@
 from __future__ import annotations
 
 import copy
-from io import BytesIO, StringIO
 import sys
 from inspect import Parameter
+from io import BytesIO, StringIO
 from pathlib import Path
 from types import NoneType
 from typing import TYPE_CHECKING, Any, cast
@@ -101,8 +101,8 @@ class TestCSSSelectorArgs:
             return False
         if not bool(obj):
             return False
-        # Some objects can be iterated to yield nothing, they become
-        # false positives here, like enumerate(()), BytesIO(b'')
+        # Some objects can be iterated to yield nothing, like enumerate(()).
+        # They become false positives because no exception is raised.
         if not hasattr(obj, "__next__"):
             return True
         try:
@@ -112,17 +112,24 @@ class TestCSSSelectorArgs:
             return False
         try:
             next(obj_copy)
-        except StopIteration:
+        except (StopIteration, TypeError):
             return False
         else:
             return True
 
     # StringIO and BytesIO can be iterated, and resulting string
     # can be unpacked to treat as prefix/URI pair(!)
-    @settings(suppress_health_check=[HealthCheck.function_scoped_fixture])
+    @settings(
+        suppress_health_check=[
+            HealthCheck.function_scoped_fixture,
+            HealthCheck.too_slow,
+        ],
+        max_examples=500,
+    )
     @given(ns=_st.all_instances_except_of_type(dict, NoneType, StringIO, BytesIO).filter(
         _namespace_aux_filter
     ))  # fmt: skip
+    @pytest.mark.slow
     def test_namespaces_arg_bad(self, svg_root: _Element, ns: Any) -> None:
         with pytest.raises((TypeError, ValueError)):
             _ = CSSSelector("li", namespaces=ns)
