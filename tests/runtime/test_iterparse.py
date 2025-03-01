@@ -119,7 +119,6 @@ class TestIterparse:
             else:
                 reveal_type(item[1])
 
-    @pytest.mark.filterwarnings("ignore:.* 'strip_cdata' option .*:DeprecationWarning")
     def test_html_mode(self, svg_filepath: Path) -> None:
         walker = iterparse(
             source=svg_filepath,

@@ -9,7 +9,7 @@ from collections.abc import (
 from decimal import Decimal
 from fractions import Fraction
 from pathlib import Path
-from types import NoneType
+from types import NoneType, NotImplementedType
 from typing import (
     Any,
     cast,
@@ -69,9 +69,6 @@ def _get_elementtree_from_file(filepath: Path) -> _ElementTree[HtmlElement]:
 
 # COMPLETED
 class TestInputOutputType:
-    @pytest.mark.filterwarnings(
-        r"ignore:.* Path objects as a context manager is a no-op$:DeprecationWarning"
-    )
     def test_bad_input_arg(
         self,
         html2_filepath: Path,
@@ -354,14 +351,8 @@ class TestMakeLinksAbsoluteArg:
 
     # Falsy values got short circuited by urljoin() and never raises
     @settings(suppress_health_check=[HealthCheck.too_slow], max_examples=500)
-    @given(t=_st.all_instances_except_of_type(str, NoneType).filter(bool))
+    @given(t=_st.all_instances_except_of_type(str, NoneType, NotImplementedType).filter(bool))
     @pytest.mark.slow
-    @pytest.mark.filterwarnings(
-        "ignore:NotImplemented should not be used in a boolean context:DeprecationWarning"
-    )
-    @pytest.mark.filterwarnings(
-        "ignore:The behavior of this method will change .+:FutureWarning"
-    )
     def test_base_href(
         self, disposable_html_with_base_href: HtmlElement, t: Any
     ) -> None:
@@ -417,14 +408,8 @@ class TestRewriteLinksArg:
 
     # Falsy values got short circuited by urljoin() and never raises
     @settings(suppress_health_check=[HealthCheck.too_slow], max_examples=500)
-    @given(t=_st.all_instances_except_of_type(str, NoneType).filter(bool))
+    @given(t=_st.all_instances_except_of_type(str, NoneType, NotImplementedType).filter(bool))
     @pytest.mark.slow
-    @pytest.mark.filterwarnings(
-        "ignore:NotImplemented should not be used in a boolean context:DeprecationWarning"
-    )
-    @pytest.mark.filterwarnings(
-        "ignore:The behavior of this method will change .+:FutureWarning"
-    )
     def test_base_href(
         self, disposable_html_with_base_href: HtmlElement, t: Any
     ) -> None:

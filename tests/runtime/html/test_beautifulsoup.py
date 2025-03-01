@@ -44,7 +44,6 @@ class TestFromstring:
         result = _soup.fromstring(str(html2_filepath))
         reveal_type(result)
 
-    @pytest.mark.filterwarnings("ignore:.* 'strip_cdata' option .*:DeprecationWarning")
     def test_input_type(self, html2_filepath: Path, html2_fileuri: str) -> None:
         s = html2_filepath.read_text()
         result = _soup.fromstring(s)
@@ -238,7 +237,6 @@ class TestConvertTree:
     def test_func_sig(self) -> None:
         pass
 
-    @pytest.mark.filterwarnings("ignore:.* 'strip_cdata' option .*:DeprecationWarning")
     def test_input_type(self, html2_filepath: Path) -> None:
         for feat in ("lxml-html", "html.parser"):
             soup = BeautifulSoup(html2_filepath.read_text(), features=feat)
