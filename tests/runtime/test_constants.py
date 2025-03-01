@@ -25,11 +25,11 @@ class TestEtreeConstants:
 
         # >= 5.2.2, and on some archs only
         if hasattr(_e, "ICONV_COMPILED_VERSION"):
-            reveal_type(_e.ICONV_COMPILED_VERSION)
+            reveal_type(_e.ICONV_COMPILED_VERSION)  # type: ignore[attr-defined]
 
         if _e.LXML_VERSION >= (6, 0):
-            reveal_type(_e.LIBXML_COMPILED_FEATURES)
-            reveal_type(_e.LIBXML_FEATURES)
+            reveal_type(_e.LIBXML_COMPILED_FEATURES)  # type: ignore[attr-defined]
+            reveal_type(_e.LIBXML_FEATURES)  # type: ignore[attr-defined]
 
     def test_other_const(self) -> None:
         reveal_type(_e.DEBUG)
