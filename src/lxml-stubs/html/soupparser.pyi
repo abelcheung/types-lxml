@@ -52,13 +52,14 @@ def fromstring(
     """Parse a string of HTML data into an Element tree using the
     BeautifulSoup parser.
 
-    Returns the root ``<html>`` Element of the tree.
+    Annotation
+    ----------
+    This overloaded signature bans the use of a plain string as
+    `exclude_encodings` argument.
 
-    You can pass a different BeautifulSoup parser through the
-    `beautifulsoup` keyword, and a different Element factory function
-    through the `makeelement` keyword.  By default, the standard
-    ``BeautifulSoup`` class and the default factory of `lxml.html` are
-    used.
+    See Also
+    --------
+    [API documentation](https://lxml.de/apidoc/lxml.html.soupparser.html#lxml.html.soupparser.fromstring)
     """
 
 @overload  # makeelement is positional
@@ -73,7 +74,20 @@ def fromstring(
     from_encoding: str | None = None,
     exclude_encodings: Iterable[str] | None = None,
     element_classes: dict[type[PageElement], type[Any]] | None = None,
-) -> _ET: ...
+) -> _ET:
+    """Parse a string of HTML data into an Element tree using the
+    BeautifulSoup parser.
+
+    Annotation
+    ----------
+    This overloaded signature handles the case when `makeelement`
+    is provided as a positional argument.
+
+    See Also
+    --------
+    [API documentation](https://lxml.de/apidoc/lxml.html.soupparser.html#lxml.html.soupparser.fromstring)
+    """
+
 @overload  # makeelement is kw
 def fromstring(
     data: str | bytes | IO[str] | IO[bytes],
@@ -86,7 +100,20 @@ def fromstring(
     from_encoding: str | None = None,
     exclude_encodings: Iterable[str] | None = None,
     element_classes: dict[type[PageElement], type[Any]] | None = None,
-) -> _ET: ...
+) -> _ET:
+    """Parse a string of HTML data into an Element tree using the
+    BeautifulSoup parser.
+
+    Annotation
+    ----------
+    This overloaded signature handles the case when `makeelement`
+    is provided as a keyword argument.
+
+    See Also
+    --------
+    [API documentation](https://lxml.de/apidoc/lxml.html.soupparser.html#lxml.html.soupparser.fromstring)
+    """
+
 @overload  # makeelement not provided or is default
 def fromstring(
     data: str | bytes | IO[str] | IO[bytes],
@@ -99,7 +126,19 @@ def fromstring(
     from_encoding: str | None = None,
     exclude_encodings: Iterable[str] | None = None,
     element_classes: dict[type[PageElement], type[Any]] | None = None,
-) -> HtmlElement: ...
+) -> HtmlElement:
+    """Parse a string of HTML data into an Element tree using the
+    BeautifulSoup parser.
+
+    Annotation
+    ----------
+    This overloaded signature handles the case when `makeelement`
+    is not provided or is the default value.
+
+    See Also
+    --------
+    [API documentation](https://lxml.de/apidoc/lxml.html.soupparser.html#lxml.html.soupparser.fromstring)
+    """
 
 #
 # parse() actually allows supplying file descriptor int
@@ -116,11 +155,14 @@ def parse(
 ) -> Never:
     """Parse a file into an ElementTree using the BeautifulSoup parser.
 
-    You can pass a different BeautifulSoup parser through the
-    `beautifulsoup` keyword, and a different Element factory function
-    through the `makeelement` keyword.  By default, the standard
-    ``BeautifulSoup`` class and the default factory of `lxml.html` are
-    used.
+    Annotation
+    ----------
+    This overloaded signature bans the use of a plain string as
+    `exclude_encodings` argument.
+
+    See Also
+    --------
+    [API documentation](https://lxml.de/apidoc/lxml.html.soupparser.html#lxml.html.soupparser.parse)
     """
 
 @overload  # makeelement is positional
@@ -135,7 +177,19 @@ def parse(
     from_encoding: str | None = None,
     exclude_encodings: Iterable[str] | None = None,
     element_classes: dict[type[PageElement], type[Any]] | None = None,
-) -> _ElementTree[_ET]: ...
+) -> _ElementTree[_ET]:
+    """Parse a file into an ElementTree using the BeautifulSoup parser.
+
+    Annotation
+    ----------
+    This overloaded signature handles the case when `makeelement`
+    is provided as a positional argument.
+
+    See Also
+    --------
+    [API documentation](https://lxml.de/apidoc/lxml.html.soupparser.html#lxml.html.soupparser.parse)
+    """
+
 @overload
 def parse(  # makeelement is kw
     file: _FileReadSource,
@@ -148,7 +202,19 @@ def parse(  # makeelement is kw
     from_encoding: str | None = None,
     exclude_encodings: Iterable[str] | None = None,
     element_classes: dict[type[PageElement], type[Any]] | None = None,
-) -> _ElementTree[_ET]: ...
+) -> _ElementTree[_ET]:
+    """Parse a file into an ElementTree using the BeautifulSoup parser.
+
+    Annotation
+    ----------
+    This overloaded signature handles the case when `makeelement`
+    is provided as a keyword argument.
+
+    See Also
+    --------
+    [API documentation](https://lxml.de/apidoc/lxml.html.soupparser.html#lxml.html.soupparser.parse)
+    """
+
 @overload  # makeelement not provided or is default
 def parse(
     file: _FileReadSource,
@@ -161,7 +227,19 @@ def parse(
     from_encoding: str | None = None,
     exclude_encodings: Iterable[str] | None = None,
     element_classes: dict[type[PageElement], type[Any]] | None = None,
-) -> _ElementTree[HtmlElement]: ...
+) -> _ElementTree[HtmlElement]:
+    """Parse a file into an ElementTree using the BeautifulSoup parser.
+
+    Annotation
+    ----------
+    This overloaded signature handles the case when `makeelement`
+    is not provided or is the default value.
+
+    See Also
+    --------
+    [API documentation](https://lxml.de/apidoc/lxml.html.soupparser.html#lxml.html.soupparser.parse)
+    """
+
 @overload
 def convert_tree(
     beautiful_soup_tree: BeautifulSoup,
@@ -169,15 +247,29 @@ def convert_tree(
 ) -> list[_ET]:
     """Convert a BeautifulSoup tree to a list of Element trees.
 
-    Returns a list instead of a single root Element to support
-    HTML-like soup with more than one root element.
+    Annotation
+    ----------
+    This overloaded signature handles the case when `makeelement`
+    is provided.
 
-    You can pass a different Element factory through the `makeelement`
-    keyword.
+    See Also
+    --------
+    [API documentation](https://lxml.de/apidoc/lxml.html.soupparser.html#lxml.html.soupparser.convert_tree)
     """
 
 @overload
 def convert_tree(
     beautiful_soup_tree: BeautifulSoup,
     makeelement: None = None,
-) -> list[HtmlElement]: ...
+) -> list[HtmlElement]:
+    """Convert a BeautifulSoup tree to a list of Element trees.
+
+    Annotation
+    ----------
+    This overloaded signature handles the case when `makeelement`
+    is not provided or is the default value.
+
+    See Also
+    --------
+    [API documentation](https://lxml.de/apidoc/lxml.html.soupparser.html#lxml.html.soupparser.convert_tree)
+    """
