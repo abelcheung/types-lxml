@@ -7,15 +7,22 @@
 
 ![image showing deprecation warning](https://github.com/user-attachments/assets/6ab30a54-60e7-4e34-932a-2ac2e253c669)
 
+- Upcoming release:
+  `BeautifulSoup4` package is added as dependency to utilise its inline annotation, while `types-beautifulsoup4` would be dropped.
+
+- Since `2025.02.24`:
+  - Incorporates [`basedpyright`](https://github.com/DetachHead/basedpyright) type checker support (an enhanced fork of `pyright`)
+
 - Since `2024.11.08`:
   - `pyright` users will see warning if a single string is supplied where collection of string is expected (`tuple`, `set`, `list` etc). In terms of typing, a single `str` itself is valid as a `Sequence`, so type checkers normally would not raise alarm when using `str` in such function parameters, but can induce unexpected runtime behavior. See [#64](https://github.com/abelcheung/types-lxml/issues/64) for more info. `mypy` does not support this feature (which (ab)uses `@deprecated` warning).
   - It is possible to verify release files indeed come from GitHub and not maliciously altered. See [Release file attestation](#release-file-attestation) for detail.
+
 - Since `2024.08.07`:
   - Each release will contain multiple builds; besides normal version, there is an alternative build suitable for multiple XML element subclass. Please check out [relevant Installation section](#choosing-the-build) for detail (hint: many people don't need to bother with this). Also note that this release requires `mypy 1.11` if one chooses to use `mypy` for type checking. `pyright` version requirement (`1.1.351`) is not changed.
 
 ## Introduction
 
-This repository contains [external type annotations](https://peps.python.org/pep-0561/) for [`lxml`](http://lxml.de/). It can be used by type-checking tools (currently supporting [`pyright`](https://github.com/Microsoft/pyright) and [`mypy`](https://pypi.org/project/mypy/)) to check code that uses `lxml`, or used within IDEs like [VSCode](https://code.visualstudio.com/) to facilitate development.
+This repository contains [external type annotations](https://peps.python.org/pep-0561/) for [`lxml`](http://lxml.de/). It can be used by [type-checking tools](#goal---support-multiple-type-checkers) to check code that uses `lxml`, or used within IDEs like [VSCode](https://code.visualstudio.com/) to facilitate development.
 
 ## Goal ① : Completion
 
