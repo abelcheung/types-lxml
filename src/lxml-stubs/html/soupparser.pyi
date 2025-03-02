@@ -1,11 +1,10 @@
 import sys
-from _typeshed import SupportsRead
-from typing import Any, Collection, Iterable, Literal, overload
+from typing import IO, Any, Collection, Iterable, Literal, overload
 
 from bs4 import BeautifulSoup, PageElement, SoupStrainer
 from bs4.builder import TreeBuilder
 
-from .._types import _ET, _AnyStr, _ElementFactory, _FileReadSource
+from .._types import _ET, _ElementFactory, _FileReadSource
 from ..etree import _ElementTree
 from . import HtmlElement
 
@@ -64,7 +63,7 @@ def fromstring(
 
 @overload  # makeelement is positional
 def fromstring(
-    data: _AnyStr | SupportsRead[str] | SupportsRead[bytes],
+    data: str | bytes | IO[str] | IO[bytes],
     beautifulsoup: type[BeautifulSoup] | None,
     makeelement: _ElementFactory[_ET],
     *,
@@ -77,7 +76,7 @@ def fromstring(
 ) -> _ET: ...
 @overload  # makeelement is kw
 def fromstring(
-    data: _AnyStr | SupportsRead[str] | SupportsRead[bytes],
+    data: str | bytes | IO[str] | IO[bytes],
     beautifulsoup: type[BeautifulSoup] | None = None,
     *,
     makeelement: _ElementFactory[_ET],
@@ -90,7 +89,7 @@ def fromstring(
 ) -> _ET: ...
 @overload  # makeelement not provided or is default
 def fromstring(
-    data: _AnyStr | SupportsRead[str] | SupportsRead[bytes],
+    data: str | bytes | IO[str] | IO[bytes],
     beautifulsoup: type[BeautifulSoup] | None = None,
     makeelement: None = None,
     *,
