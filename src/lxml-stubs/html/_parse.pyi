@@ -99,7 +99,7 @@ def fragments_fromstring(
 ) -> list[str | HtmlElement]: ...
 def fragment_fromstring(
     html: str | bytes,
-    create_parent: bool = False,
+    create_parent: bool | str = False,
     base_url: str | None = None,
     parser: _HtmlElemParser | None = None,
 ) -> HtmlElement: ...
