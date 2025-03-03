@@ -84,7 +84,7 @@ def document_fromstring(
     base_url: str | None = None,
 ) -> HtmlElement: ...
 @overload
-def fragments_fromstring(  # pyright: ignore[reportOverlappingOverload]
+def fragments_fromstring(  # type: ignore[overload-overlap]  # pyright: ignore[reportOverlappingOverload]_parse
     html: str | bytes,
     no_leading_text: Literal[True],
     base_url: str | None = None,

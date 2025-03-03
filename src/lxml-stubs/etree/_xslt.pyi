@@ -217,7 +217,7 @@ class XSLTExtension(metaclass=abc.ABCMeta):
         remove_blank_text: bool = False,
     ) -> None: ...
     @overload
-    def apply_templates(  # pyright: ignore[reportOverlappingOverload]
+    def apply_templates(  # type: ignore[overload-overlap]  # pyright: ignore[reportOverlappingOverload]
         self,
         context: Any,
         node: Any,
@@ -266,7 +266,7 @@ class XSLTExtension(metaclass=abc.ABCMeta):
         remove_blank_text: bool = False,
     ) -> None: ...
     @overload
-    def process_children(  # pyright: ignore[reportOverlappingOverload]
+    def process_children(  # type: ignore[overload-overlap]  # pyright: ignore[reportOverlappingOverload]
         self,
         context: Any,
         output_parent: None = None,
