@@ -16,6 +16,7 @@ dependencies = [
     'typing_extensions ~= 4.10; python_version < "3.13"',
     'cssselect ~= 1.2',  # inline annotation
     'beautifulsoup4 ~= 4.13',  # inline annotation
+    'types-html5lib ~= 1.1.11.20241018',
 ]
 keywords = ['lxml', 'typing', 'stubs', 'annotation']
 authors = [
