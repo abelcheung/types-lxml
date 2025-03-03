@@ -33,14 +33,13 @@ jobs:
 
       - name: Install prerequisites
         run: |
-          uv venv --python-preference only-system
+          uv venv -p 3.12 --python-preference only-managed
           uv pip install -r pyproject.toml
           uv pip install 'mypy == ${{ matrix.myver }}'
 
       - name: Perform type check
-        run: |
-          source .venv/bin/activate
-          mypy
+        run: >
+          .venv/bin/mypy src
 
   pyright_compat:
     strategy:
@@ -107,7 +106,7 @@ jobs:
 
       - name: Install prerequisites
         run: |
-          uv venv -p 3.10 --python-preference only-system
+          uv venv -p 3.12 --python-preference only-managed
           uv pip install -r pyproject.toml
 
       # HACK Only pyright 1.1.386+ is capable of parsing
@@ -228,6 +227,5 @@ jobs:
       - name: Run basedpyright
         run: >
           .venv/bin/basedpyright
-          --config pyrightconfig.json
           --level error
           src
