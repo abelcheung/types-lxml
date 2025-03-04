@@ -5,13 +5,14 @@
 
 ## Important note
 
-![image showing deprecation warning](https://github.com/user-attachments/assets/6ab30a54-60e7-4e34-932a-2ac2e253c669)
-
-- Upcoming release:
-  `BeautifulSoup4` package is added as dependency to utilise its inline annotation, while `types-beautifulsoup4` would be dropped.
+- Since `2025.03.04`:
+  - `BeautifulSoup4` package is added as dependency to utilise its inline annotation, thus dropping `types-beautifulsoup4` dependency.
+  - Fixes compatibility with older versions of type checkers, as well as `mypy` 1.14+.
 
 - Since `2025.02.24`:
   - Incorporates [`basedpyright`](https://github.com/DetachHead/basedpyright) type checker support (an enhanced fork of `pyright`)
+
+![image showing deprecation warning](https://github.com/user-attachments/assets/6ab30a54-60e7-4e34-932a-2ac2e253c669)
 
 - Since `2024.11.08`:
   - `pyright` users will see warning if a single string is supplied where collection of string is expected (`tuple`, `set`, `list` etc). In terms of typing, a single `str` itself is valid as a `Sequence`, so type checkers normally would not raise alarm when using `str` in such function parameters, but can induce unexpected runtime behavior. See [#64](https://github.com/abelcheung/types-lxml/issues/64) for more info. `mypy` does not support this feature (which (ab)uses `@deprecated` warning).
@@ -54,9 +55,9 @@ Check out [project page](https://github.com/abelcheung/types-lxml/projects) for 
 
 Currently the annotations are validated for following type checkers:
 
-- [`basedpyright`](https://github.com/DetachHead/basedpyright)
-- [`pyright`](https://github.com/microsoft/pyright)
-- [`mypy`](https://github.com/python/mypy)
+- [`basedpyright`](https://github.com/DetachHead/basedpyright), version 1.4.0 or above
+- [`pyright`](https://github.com/microsoft/pyright), version 1.1.351 or above
+- [`mypy`](https://github.com/python/mypy), version 1.10.0 or above
 
 `pyright` and `basedpyright` are recommended for their greater flexibility and early adoption of newer type checking features. In the future, there is plan to bring even more type checker support.
 
