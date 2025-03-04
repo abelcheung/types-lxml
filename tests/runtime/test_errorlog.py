@@ -98,8 +98,7 @@ class TestListLog:
         # encourage symbolic comparisons, not whether they are int
         assert e0.domain == ErrorDomains.PARSER
         assert e0.level == ErrorLevels.FATAL
-        # TODO ErrorTypes enum implementation in stub
-        assert e0.type == ErrorTypes.ERR_TAG_NAME_MISMATCH  # type: ignore  # pyright: ignore
+        assert e0.type == ErrorTypes.ERR_TAG_NAME_MISMATCH
 
     def test_container_behavior(self, list_log: _ListErrorLog) -> None:
         e0 = list_log[0]
@@ -146,13 +145,12 @@ class TestListLogMethods:
         (("types", Parameter.POSITIONAL_OR_KEYWORD, Parameter.empty),),
     )
     def test_filter_types_arg_ok(self, list_log: _ListErrorLog) -> None:
-        # TODO ErrorTypes enum implementation in stub
-        new_log = list_log.filter_types(ErrorTypes.ERR_TAG_NAME_MISMATCH)  # type: ignore  # pyright: ignore
+        new_log = list_log.filter_types(ErrorTypes.ERR_TAG_NAME_MISMATCH)
         reveal_type(new_log)
         assert len(new_log) > 0
         del new_log
 
-        new_log = list_log.filter_types([ErrorTypes.ERR_TAG_NAME_MISMATCH])  # type: ignore  # pyright: ignore
+        new_log = list_log.filter_types([ErrorTypes.ERR_TAG_NAME_MISMATCH])
         reveal_type(new_log)
         assert len(new_log) > 0
 
