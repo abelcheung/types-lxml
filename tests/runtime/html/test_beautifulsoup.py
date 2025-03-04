@@ -1,22 +1,28 @@
 from __future__ import annotations
 
 import sys
+from collections.abc import Callable, Iterator
 from inspect import Parameter
-from io import BytesIO, StringIO
 from pathlib import Path
-from typing import Any, cast
+from types import NoneType
+from typing import Any
 from urllib.request import urlopen
 
 import pytest
 from bs4 import BeautifulSoup
-from lxml import (
-    etree as _e,
-    html as _h,
+from hypothesis import given
+from lxml.etree import (
+    Element,
+    _Element as _Element,
+    _ElementTree as _ElementTree,
 )
-from lxml.etree import _Element as _Element, _ElementTree as _ElementTree
-from lxml.html import HtmlElement as HtmlElement, soupparser as _soup
+from lxml.html import (
+    HtmlElement as HtmlElement,
+    soupparser as _soup,
+    xhtml_parser,
+)
 
-from .._testutils import signature_tester
+from .._testutils import signature_tester, strategy as _st
 
 if sys.version_info >= (3, 11):
     from typing import reveal_type
@@ -31,82 +37,77 @@ class TestFromstring:
         ("makeelement"  , Parameter.POSITIONAL_OR_KEYWORD, None           ),
         ("bsargs"       , Parameter.VAR_KEYWORD          , Parameter.empty),
     ))  # fmt: skip
+    @signature_tester(BeautifulSoup.__init__, (
+        ("markup"           , Parameter.POSITIONAL_OR_KEYWORD, ""             ),
+        ("features"         , Parameter.POSITIONAL_OR_KEYWORD, None           ),
+        ("builder"          , Parameter.POSITIONAL_OR_KEYWORD, None           ),
+        ("parse_only"       , Parameter.POSITIONAL_OR_KEYWORD, None           ),
+        ("from_encoding"    , Parameter.POSITIONAL_OR_KEYWORD, None           ),
+        ("exclude_encodings", Parameter.POSITIONAL_OR_KEYWORD, None           ),
+        ("element_classes"  , Parameter.POSITIONAL_OR_KEYWORD, None           ),
+        ("kwargs"           , Parameter.VAR_KEYWORD          , Parameter.empty),
+    ))  # fmt: skip
     def test_func_sig(self) -> None:
         pass
 
     # Even though input content could be invalid, it is still correct
     # with respect to typing (str)
     @pytest.mark.filterwarnings(
-        "ignore:The input passed in on this line .*:"
-        "bs4.MarkupResemblesLocatorWarning"
+        "ignore:The input passed in on this line .*:bs4.MarkupResemblesLocatorWarning"
     )
     def test_dubious_input(self, html2_filepath: Path) -> None:
         result = _soup.fromstring(str(html2_filepath))
         reveal_type(result)
 
-    def test_input_type(self, html2_filepath: Path, html2_fileuri: str) -> None:
-        s = html2_filepath.read_text()
-        result = _soup.fromstring(s)
+    def test_input_arg_ok(
+        self,
+        html2_filepath: Path,
+        generate_input_file_arguments: Callable[..., Iterator[Any]],
+    ) -> None:
+        for input in generate_input_file_arguments(
+            html2_filepath, exclude_type=(str, bytes, Path)
+        ):
+            result = _soup.fromstring(input)
+            reveal_type(result)
+            del result
+
+        result = _soup.fromstring(html2_filepath.read_bytes())
         reveal_type(result)
         del result
 
-        b = html2_filepath.read_bytes()
-        result = _soup.fromstring(b)
+        result = _soup.fromstring(html2_filepath.read_text())
         reveal_type(result)
         del result
 
-        s_io = StringIO(s)
-        result = _soup.fromstring(s_io)
-        reveal_type(result)
-        del result
-
-        b_io = BytesIO(b)
-        result = _soup.fromstring(b_io)
-        reveal_type(result)
-        del result
-
-        with open(html2_filepath, "r") as f:
-            result = _soup.fromstring(f)
-        reveal_type(result)
-        del result
-
-        with open(html2_filepath, "rb") as f:
-            result = _soup.fromstring(f)
-        reveal_type(result)
-        del result
-
-        with urlopen(html2_fileuri) as f:
-            result = _soup.fromstring(f)
-        reveal_type(result)
-        del result
-
-        for arg in (1, None, html2_filepath):
-            with pytest.raises(TypeError, match=r"Incoming markup is of an invalid type"):
-                _ = _soup.fromstring(cast(Any, arg))
-
-            with pytest.raises(TypeError, match=r"object is not subscriptable"):
-                _ = _soup.fromstring(cast(Any, {s}))
-
-        for arg2 in ([s, b], (s, b)):
-            with pytest.raises(
-                TypeError, match=r"expected string or bytes-like object"
-            ):
-                _ = _soup.fromstring(cast(Any, arg2))
-
-    def test_makeelement(self, html2_str: str) -> None:
-        result1 = _soup.fromstring(html2_str, makeelement=_h.xhtml_parser.makeelement)
+    def test_beautifulsoup_arg_ok(self, html2_str: str) -> None:
+        result1 = _soup.fromstring(html2_str, BeautifulSoup)
         reveal_type(result1)
         del result1
 
-        result2 = _soup.fromstring(html2_str, None, _e.Element)
+        result2 = _soup.fromstring(html2_str, None)
         reveal_type(result2)
         del result2
 
-        with pytest.raises(TypeError, match="object is not callable"):
-            _ = _soup.fromstring(html2_str, makeelement=cast(Any, 1))
+    @given(bs=_st.all_instances_except_of_type(NoneType))
+    def test_beautifulsoup_arg_bad(self, html2_str: str, bs: Any) -> None:
+        with pytest.raises((TypeError, AttributeError, ValueError)):
+            _ = _soup.fromstring(html2_str, bs)
 
-        with pytest.raises(TypeError, match="unexpected keyword argument 'attrib"):
-            _ = _soup.fromstring(html2_str, makeelement=cast(Any, _e.CommentBase))
+    def test_makeelement_arg_ok(self, html2_str: str) -> None:
+        result1 = _soup.fromstring(
+            html2_str, makeelement=xhtml_parser.makeelement
+        )
+        reveal_type(result1)
+        del result1
+
+        result2 = _soup.fromstring(html2_str, None, Element)
+        reveal_type(result2)
+        del result2
+
+    @given(factory=_st.all_instances_except_of_type(NoneType))
+    def test_makeelement_arg_bad(self, html2_str: str, factory: Any) -> None:
+        with pytest.raises(TypeError):
+            _ = _soup.fromstring(html2_str, makeelement=factory)
 
     # Just test capability to pass extra keywords to beautifulsoup
     # no intention to cover all keyword arguments supported by bs
@@ -133,80 +134,51 @@ class TestParse:
     def test_func_sig(self) -> None:
         pass
 
-    def test_input_type(
+    def test_input_arg_ok(
         self,
         html2_filepath: Path,
-        html2_fileuri: str,
+        generate_input_file_arguments: Callable[..., Iterator[Any]],
     ) -> None:
         # expects filename/io, not html data
-        s = html2_filepath.read_text()
         with pytest.raises(OSError):
-            _ = _soup.parse(s)
-
-        b = html2_filepath.read_bytes()
+            _ = _soup.parse(html2_filepath.read_text())
         with pytest.raises(OSError):
-            _ = _soup.parse(b)
+            _ = _soup.parse(html2_filepath.read_bytes())
 
-        result = _soup.parse(str(html2_filepath))
-        reveal_type(result)
-        root = result.getroot()
-        reveal_type(root)
-        del result
+        for input in generate_input_file_arguments(html2_filepath):
+            reveal_type(_soup.parse(input))
 
-        result = _soup.parse(html2_filepath)
-        reveal_type(result)
-        root2 = result.getroot()
-        assert root.tag == root2.tag
-        assert root.attrib == root2.attrib
-        del root, root2, result
+    def test_beautifulsoup_arg_ok(self, html2_filepath: Path) -> None:
+        result1 = _soup.parse(html2_filepath, BeautifulSoup)
+        reveal_type(result1)
+        del result1
 
-        s_io = StringIO(s)
-        result = _soup.parse(s_io)
-        reveal_type(result)
-        del result
+        result2 = _soup.parse(html2_filepath, None)
+        reveal_type(result2)
+        del result2
 
-        b_io = BytesIO(b)
-        result = _soup.parse(b_io)
-        reveal_type(result)
-        del result
+    @given(bs=_st.all_instances_except_of_type(NoneType))
+    def test_beautifulsoup_arg_bad(self, html2_filepath: Path, bs: Any) -> None:
+        with pytest.raises((TypeError, AttributeError, ValueError)):
+            _ = _soup.parse(html2_filepath, bs)
 
-        with open(html2_filepath, "r") as f:
-            result = _soup.parse(f)
-        reveal_type(result)
-        del result
-
-        with open(html2_filepath, "rb") as f:
-            result = _soup.parse(f)
-        reveal_type(result)
-        del result
-
-        with urlopen(html2_fileuri) as f:
-            result = _soup.parse(f)
-        reveal_type(result)
-        del result
-
-        # Don't test integers, which are treated as file descriptor int
-
-        for arg in (None, [html2_filepath, html2_filepath]):
-            with pytest.raises(
-                TypeError, match=r"expected str, bytes or os\.PathLike object"
-            ):
-                _ = _soup.parse(cast(Any, arg))
-
-    def test_makeelement(self, html2_filepath: Path) -> None:
-        result1 = _soup.parse(html2_filepath, makeelement=_h.xhtml_parser.makeelement)
+    def test_makeelement_arg_ok(self, html2_filepath: Path) -> None:
+        result1 = _soup.parse(
+            html2_filepath, makeelement=xhtml_parser.makeelement
+        )
+        reveal_type(result1)
         reveal_type(result1.getroot())
         del result1
 
-        result2 = _soup.parse(html2_filepath, None, _e.Element)
+        result2 = _soup.parse(html2_filepath, None, Element)
+        reveal_type(result2)
         reveal_type(result2.getroot())
         del result2
 
-        with pytest.raises(TypeError, match="object is not callable"):
-            _ = _soup.parse(html2_filepath, makeelement=cast(Any, 1))
-
-        with pytest.raises(TypeError, match="unexpected keyword argument 'attrib"):
-            _ = _soup.parse(html2_filepath, makeelement=cast(Any, _e.CommentBase))
+    @given(factory=_st.all_instances_except_of_type(NoneType))
+    def test_makeelement_arg_bad(self, html2_filepath: Path, factory: Any) -> None:
+        with pytest.raises(TypeError):
+            _ = _soup.parse(html2_filepath, makeelement=factory)
 
     # Just test capability to pass extra keywords to beautifulsoup
     # no intention to cover all keyword arguments supported by bs
@@ -227,52 +199,43 @@ class TestParse:
 
 
 class TestConvertTree:
-    @signature_tester(
-        _soup.convert_tree,
-        (
-            ("beautiful_soup_tree", Parameter.POSITIONAL_OR_KEYWORD, Parameter.empty),
-            ("makeelement"        , Parameter.POSITIONAL_OR_KEYWORD, None           ),
-        ),
-    )  # fmt: skip
+    @signature_tester(_soup.convert_tree, (
+        ("beautiful_soup_tree", Parameter.POSITIONAL_OR_KEYWORD, Parameter.empty),
+        ("makeelement"        , Parameter.POSITIONAL_OR_KEYWORD, None           ),
+    ))  # fmt: skip
     def test_func_sig(self) -> None:
         pass
 
-    def test_input_type(self, html2_filepath: Path) -> None:
+    def test_input_arg_ok(self, html2_filepath: Path) -> None:
         for feat in ("lxml-html", "html.parser"):
             soup = BeautifulSoup(html2_filepath.read_text(), features=feat)
-            result = _soup.convert_tree(soup)
-            reveal_type(result)
-            del soup, result
+            reveal_type(_soup.convert_tree(soup))
 
-        tree = _h.parse(html2_filepath)
-        s_io = StringIO(html2_filepath.read_text())
+    def test_input_arg_bad(
+        self,
+        html2_filepath: Path,
+        generate_input_file_arguments: Callable[..., Iterator[Any]],
+    ) -> None:
+        # Using lxml _Element/_ElementTree as input has very bad effect;
+        # it generates TypeError uncatchable by pytest.raises.
+        # Thus not included in the test.
+        for input in generate_input_file_arguments(html2_filepath):
+            with pytest.raises((TypeError, AttributeError)):
+                _ = _soup.convert_tree(input)
 
-        for src1 in (tree, html2_filepath):
-            with pytest.raises(TypeError, match="object is not iterable"):
-                _ = _soup.convert_tree(cast(Any, src1))
-
-        for src2 in (tree.getroot(), s_io):
-            with pytest.raises(
-                AttributeError, match="object has no attribute 'contents'"
-            ):
-                _ = _soup.convert_tree(cast(Any, src2))
-
-        s_io.close()
-        del tree
-
-    def test_makeelement(self, html2_str: str) -> None:
+    def test_makeelement_arg_ok(self, html2_str: str) -> None:
         soup = BeautifulSoup(html2_str, features="html.parser")
 
-        result1 = _soup.convert_tree(soup, makeelement=_h.xhtml_parser.makeelement)
+        result1 = _soup.convert_tree(soup, makeelement=xhtml_parser.makeelement)
         reveal_type(result1)
         del result1
 
-        result2 = _soup.convert_tree(soup, makeelement=_e.Element)
+        result2 = _soup.convert_tree(soup, makeelement=Element)
         reveal_type(result2)
         del result2
 
-        with pytest.raises(TypeError, match="object is not callable"):
-            _ = _soup.convert_tree(soup, makeelement=cast(Any, 1))
-
-        with pytest.raises(TypeError, match="unexpected keyword argument 'attrib"):
-            _ = _soup.convert_tree(soup, makeelement=cast(Any, _e.CommentBase))
+    @given(factory=_st.all_instances_except_of_type(NoneType))
+    def test_makeelement_arg_bad(self, html2_str: str, factory: Any) -> None:
+        soup = BeautifulSoup(html2_str, features="html.parser")
+        with pytest.raises((TypeError, ValueError)):
+            _ = _soup.convert_tree(soup, makeelement=factory)
