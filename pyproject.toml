@@ -183,7 +183,8 @@ markers = [
     "slow: marks tests as slow",
 ]
 filterwarnings = [
-    'ignore:Truth-testing of elements was .+:FutureWarning',
+    "ignore:Truth-testing of elements was .+:FutureWarning",
+    "ignore:The behavior of this method will change .+:FutureWarning",
     "ignore:NotImplemented should not be used in a boolean context:DeprecationWarning",
     "ignore:The 'strip_cdata' option of HTMLParser.+:DeprecationWarning",
 ]
