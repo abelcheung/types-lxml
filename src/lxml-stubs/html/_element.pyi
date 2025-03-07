@@ -132,36 +132,81 @@ class HtmlElement(etree.ElementBase):
     # while children of HtmlElement are mostly HtmlElement, FormElement never
     # contains FormElement as child.
     @overload
-    def __getitem__(self, __x: int) -> HtmlElement: ...
+    def __getitem__(
+        self,
+        __x: int,
+    ) -> HtmlElement: ...
     @overload
-    def __getitem__(self, __x: slice) -> list[HtmlElement]: ...
+    def __getitem__(
+        self,
+        __x: slice,
+    ) -> list[HtmlElement]: ...
     @overload
-    def __setitem__(self, __x: int, __v: HtmlElement) -> None: ...
+    def __setitem__(
+        self,
+        __x: int,
+        __v: HtmlElement,
+    ) -> None: ...
     @overload
-    def __setitem__(self, __x: slice, __v: Iterable[HtmlElement]) -> None: ...
+    def __setitem__(
+        self,
+        __x: slice,
+        __v: Iterable[HtmlElement],
+    ) -> None: ...
     def __iter__(self) -> Iterator[HtmlElement]: ...
     def __reversed__(self) -> Iterator[HtmlElement]: ...
-    def append(self, element: HtmlElement) -> None: ...
+    def append(
+        self,
+        element: HtmlElement,
+    ) -> None: ...
     @overload
     @deprecated("Expects iterable of elements as value, not single element")
-    def extend(self, elements: etree._Element) -> Never: ...
+    def extend(
+        self,
+        elements: etree._Element,
+    ) -> Never: ...
     @overload
-    def extend(self, elements: Iterable[HtmlElement]) -> None: ...
-    def insert(self, index: int, element: HtmlElement) -> None: ...
-    def remove(self, element: HtmlElement) -> None: ...
+    def extend(
+        self,
+        elements: Iterable[HtmlElement],
+    ) -> None: ...
+    def insert(
+        self,
+        index: int,
+        element: HtmlElement,
+    ) -> None: ...
+    def remove(
+        self,
+        element: HtmlElement,
+    ) -> None: ...
     def index(
-        self, child: HtmlElement, start: int | None = None, stop: int | None = None
+        self,
+        child: HtmlElement,
+        start: int | None = None,
+        stop: int | None = None,
     ) -> int: ...
-    def addnext(self, element: HtmlElement) -> None: ...
-    def addprevious(self, element: HtmlElement) -> None: ...
-    def replace(self, old_element: HtmlElement, new_element: HtmlElement) -> None: ...
+    def addnext(
+        self,
+        element: HtmlElement,
+    ) -> None: ...
+    def addprevious(
+        self,
+        element: HtmlElement,
+    ) -> None: ...
+    def replace(
+        self,
+        old_element: HtmlElement,
+        new_element: HtmlElement,
+    ) -> None: ...
     def getparent(self) -> HtmlElement | None: ...
     def getnext(self) -> HtmlElement | None: ...
     def getprevious(self) -> HtmlElement | None: ...
     def getroottree(self) -> etree._ElementTree[HtmlElement]: ...
     @overload
     def itersiblings(
-        self, *tags: _TagSelector, preceding: bool = False
+        self,
+        *tags: _TagSelector,
+        preceding: bool = False,
     ) -> Iterator[HtmlElement]: ...
     @overload
     def itersiblings(
@@ -171,20 +216,30 @@ class HtmlElement(etree.ElementBase):
         preceding: bool = False,
     ) -> Iterator[HtmlElement]: ...
     @overload
-    def iterancestors(self, *tags: _TagSelector) -> Iterator[HtmlElement]: ...
-    @overload
     def iterancestors(
-        self, tag: _TagSelector | Collection[_TagSelector] | None = None
+        self,
+        *tags: _TagSelector,
     ) -> Iterator[HtmlElement]: ...
     @overload
-    def iterdescendants(self, *tags: _TagSelector) -> Iterator[HtmlElement]: ...
+    def iterancestors(
+        self,
+        tag: _TagSelector | Collection[_TagSelector] | None = None,
+    ) -> Iterator[HtmlElement]: ...
     @overload
     def iterdescendants(
-        self, tag: _TagSelector | Collection[_TagSelector] | None = None
+        self,
+        *tags: _TagSelector,
+    ) -> Iterator[HtmlElement]: ...
+    @overload
+    def iterdescendants(
+        self,
+        tag: _TagSelector | Collection[_TagSelector] | None = None,
     ) -> Iterator[HtmlElement]: ...
     @overload
     def iterchildren(
-        self, *tags: _TagSelector, reversed: bool = False
+        self,
+        *tags: _TagSelector,
+        reversed: bool = False,
     ) -> Iterator[HtmlElement]: ...
     @overload
     def iterchildren(
@@ -194,14 +249,20 @@ class HtmlElement(etree.ElementBase):
         reversed: bool = False,
     ) -> Iterator[HtmlElement]: ...
     @overload
-    def iter(self, *tags: _TagSelector) -> Iterator[HtmlElement]: ...
+    def iter(
+        self,
+        *tags: _TagSelector,
+    ) -> Iterator[HtmlElement]: ...
     @overload
     def iter(
-        self, tag: _TagSelector | Collection[_TagSelector] | None = None
+        self,
+        tag: _TagSelector | Collection[_TagSelector] | None = None,
     ) -> Iterator[HtmlElement]: ...
     @overload
     def itertext(
-        self, *tags: _TagSelector, with_tail: bool = True
+        self,
+        *tags: _TagSelector,
+        with_tail: bool = True,
     ) -> Iterator[str]: ...
     @overload
     def itertext(
@@ -212,13 +273,19 @@ class HtmlElement(etree.ElementBase):
     ) -> Iterator[str]: ...
     makeelement: _ElementFactory[HtmlElement]
     def find(
-        self, path: _ElemPathArg, namespaces: _StrictNSMap | None = None
+        self,
+        path: _ElemPathArg,
+        namespaces: _StrictNSMap | None = None,
     ) -> HtmlElement | None: ...
     def findall(
-        self, path: _ElemPathArg, namespaces: _StrictNSMap | None = None
+        self,
+        path: _ElemPathArg,
+        namespaces: _StrictNSMap | None = None,
     ) -> list[HtmlElement]: ...
     def iterfind(
-        self, path: _ElemPathArg, namespaces: _StrictNSMap | None = None
+        self,
+        path: _ElemPathArg,
+        namespaces: _StrictNSMap | None = None,
     ) -> Iterator[HtmlElement]: ...
     def cssselect(
         self,
