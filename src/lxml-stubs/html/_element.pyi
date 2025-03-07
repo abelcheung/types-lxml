@@ -6,15 +6,10 @@ from typing import (
     Iterator,
     Literal,
     MutableSet,
-    Sequence,
+    Never,
     TypeVar,
     overload,
 )
-
-if sys.version_info >= (3, 11):
-    from typing import Self
-else:
-    from typing_extensions import Self
 
 from .. import etree
 from .._types import (
@@ -28,6 +23,16 @@ from .._types import (
 )
 from ..cssselect import _CSSTransArg
 from ._form import FormElement, LabelElement
+
+if sys.version_info >= (3, 11):
+    from typing import Self
+else:
+    from typing_extensions import Self
+
+if sys.version_info >= (3, 13):
+    from warnings import deprecated
+else:
+    from typing_extensions import deprecated
 
 _T = TypeVar("_T")
 
@@ -133,15 +138,19 @@ class HtmlElement(etree.ElementBase):
     @overload
     def __setitem__(self, __x: int, __v: HtmlElement) -> None: ...
     @overload
-    def __setitem__(self, __x: slice, __v: Sequence[HtmlElement]) -> None: ...
+    def __setitem__(self, __x: slice, __v: Iterable[HtmlElement]) -> None: ...
     def __iter__(self) -> Iterator[HtmlElement]: ...
     def __reversed__(self) -> Iterator[HtmlElement]: ...
     def append(self, element: HtmlElement) -> None: ...
-    def extend(self, elements: Sequence[HtmlElement]) -> None: ...
+    @overload
+    @deprecated("Expects iterable of elements as value, not single element")
+    def extend(self, elements: etree._Element) -> Never: ...
+    @overload
+    def extend(self, elements: Iterable[HtmlElement]) -> None: ...
     def insert(self, index: int, element: HtmlElement) -> None: ...
     def remove(self, element: HtmlElement) -> None: ...
     def index(
-        self, child: HtmlElement, start: int | None = None, end: int | None = None
+        self, child: HtmlElement, start: int | None = None, stop: int | None = None
     ) -> int: ...
     def addnext(self, element: HtmlElement) -> None: ...
     def addprevious(self, element: HtmlElement) -> None: ...
