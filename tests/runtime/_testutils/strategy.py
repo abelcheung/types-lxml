@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from collections.abc import Iterable
 import inspect
 import operator
 from typing import Any, Literal, cast
@@ -316,6 +317,21 @@ def entity(
     return st.builds(
         _e.Entity,
         ref.map(lambda x: x[1:-1]),
+    )
+
+
+def iterable_of_elements(
+    variant: Literal["unicode", "ascii"] = "unicode",
+) -> st.SearchStrategy[Iterable[_e._Element]]:
+    return st.iterables(
+        st.one_of(
+            single_simple_element(variant),
+            comment(variant),
+            processing_instruction(variant),
+            entity(variant),
+        ),
+        max_size=5,
+        min_size=1,
     )
 
 
