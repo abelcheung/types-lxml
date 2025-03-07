@@ -1,14 +1,14 @@
  pyproject.toml                         |  2 +-
  src/lxml-stubs/cssselect.pyi           | 10 ++---
- src/lxml-stubs/etree/_element.pyi      | 76 +++++++++++++++++-----------------
+ src/lxml-stubs/etree/_element.pyi      | 74 +++++++++++++++++-----------------
  src/lxml-stubs/etree/_factory_func.pyi |  6 +--
- src/lxml-stubs/html/_element.pyi       | 35 +++++++++-------
+ src/lxml-stubs/html/_element.pyi       | 35 ++++++++--------
  src/lxml-stubs/objectify/_element.pyi  | 10 +++--
  tests/runtime/conftest.py              |  2 +-
- 7 files changed, 73 insertions(+), 68 deletions(-)
+ 7 files changed, 72 insertions(+), 67 deletions(-)
 
 diff --git a/pyproject.toml b/pyproject.toml
-index d2262de..7155b68 100644
+index 7227625..a71b4c9 100644
 --- a/pyproject.toml
 +++ b/pyproject.toml
 @@ -5,7 +5,7 @@ requires = ['pdm-backend ~= 2.4']
@@ -55,10 +55,10 @@ index f4c601b..29132ee 100644
 -    ) -> list[_ET]: ...
 +    ) -> list[_Element]: ...
 diff --git a/src/lxml-stubs/etree/_element.pyi b/src/lxml-stubs/etree/_element.pyi
-index 9d36a97..f9e4a84 100644
+index 27ca610..9d79434 100644
 --- a/src/lxml-stubs/etree/_element.pyi
 +++ b/src/lxml-stubs/etree/_element.pyi
-@@ -14,9 +14,9 @@ from typing import (
+@@ -13,9 +13,9 @@ from typing import (
  )
  
  if sys.version_info >= (3, 11):
@@ -70,7 +70,7 @@ index 9d36a97..f9e4a84 100644
  
  if sys.version_info >= (3, 13):
      from warnings import deprecated
-@@ -76,34 +76,34 @@ class _Element:
+@@ -75,11 +75,11 @@ class _Element:
      #
      def __delitem__(self, __k: int | slice) -> None: ...
      @overload
@@ -81,17 +81,16 @@ index 9d36a97..f9e4a84 100644
 +    def __getitem__(self, __x: slice) -> list[_Element]: ...
      @overload
 -    def __setitem__(self, __x: int, __v: Self) -> None: ...
--    # Not using Iterable[Self] here. Note that an element itself
 +    def __setitem__(self, __x: int, __v: _Element) -> None: ...
-+    # Not using Iterable here. Note that an element itself
-     # is considered an Iterable; when used with __setitem__()
-     # like elem[:] = new_elem, only subelements within new_elem
-     # will be inserted, but not new_elem itself. If there is none,
-     # the whole slice would be silently deleted. Though permitted
-     # in runtime, this is not an expected behavior.
+     # An element itself can be treated as container of other elements. When used
+     # like elem[:] = new_elem, only subelements within new_elem will be
+     # inserted, but not new_elem itself. If there is none, the whole slice would
+@@ -89,25 +89,25 @@ class _Element:
+     # doesn't apply to magic methods, at least for Pylance. Thus we create
+     # additional overload for extend() but not here.
      @overload
--    def __setitem__(self, __x: slice, __v: Sequence[Self]) -> None: ...
-+    def __setitem__(self, __x: slice, __v: Sequence[_Element]) -> None: ...
+-    def __setitem__(self, __x: slice, __v: Iterable[Self]) -> None: ...
++    def __setitem__(self, __x: slice, __v: Iterable[_Element]) -> None: ...
      def __contains__(self, __o: object) -> bool: ...
      def __len__(self) -> int: ...
      # There are a hoard of element iterators used in lxml, but
@@ -103,21 +102,24 @@ index 9d36a97..f9e4a84 100644
      def set(self, key: _t._AttrName, value: _t._AttrVal) -> None: ...
 -    def append(self, element: Self) -> None: ...
 +    def append(self, element: _Element) -> None: ...
-     # for extend() argument, see __setitem__() for explanation
--    def extend(self, elements: Sequence[Self]) -> None: ...
-+    def extend(self, elements: Sequence[_Element]) -> None: ...
+     @overload  # see __setitem__ for explanation
+     @deprecated("Expects iterable of elements as value, not single element")
+     def extend(self, elements: _Element) -> Never: ...
+     @overload
+-    def extend(self, elements: Iterable[Self]) -> None: ...
++    def extend(self, elements: Iterable[_Element]) -> None: ...
      def clear(self, keep_tail: bool = False) -> None: ...
 -    def insert(self, index: int, element: Self) -> None: ...
 -    def remove(self, element: Self) -> None: ...
 +    def insert(self, index: int, element: _Element) -> None: ...
 +    def remove(self, element: _Element) -> None: ...
      def index(
--        self, child: Self, start: int | None = None, end: int | None = None
-+        self, child: _Element, start: int | None = None, end: int | None = None
+-        self, child: Self, start: int | None = None, stop: int | None = None
++        self, child: _Element, start: int | None = None, stop: int | None = None
      ) -> int: ...
      @overload
      def get(self, key: _t._AttrName) -> str | None: ...
-@@ -115,53 +115,53 @@ class _Element:
+@@ -119,53 +119,53 @@ class _Element:
      #
      # extra Element / ET methods
      #
@@ -188,7 +190,7 @@ index 9d36a97..f9e4a84 100644
      @overload
      def itertext(
          self, *tags: _t._TagSelector, with_tail: bool = True
-@@ -173,10 +173,10 @@ class _Element:
+@@ -177,10 +177,10 @@ class _Element:
          *,
          with_tail: bool = True,
      ) -> Iterator[str]: ...
@@ -201,7 +203,7 @@ index 9d36a97..f9e4a84 100644
      # Original method has no star. If somebody only supplies
      # 'path' and 'default' argument as positional one, it
      # would be misinterpreted as namespaces argument in first
-@@ -197,10 +197,10 @@ class _Element:
+@@ -201,10 +201,10 @@ class _Element:
      ) -> str | _T: ...
      def findall(
          self, path: _t._ElemPathArg, namespaces: _t._StrictNSMap | None = None
@@ -214,7 +216,7 @@ index 9d36a97..f9e4a84 100644
      def xpath(
          self,
          _path: _t._AnyStr,
-@@ -216,15 +216,15 @@ class _Element:
+@@ -220,15 +220,15 @@ class _Element:
          expr: str,
          *,
          translator: _CSSTransArg = "xml",
@@ -234,7 +236,7 @@ index 9d36a97..f9e4a84 100644
  # ET class notation is specialized, indicating the type of element
  # it is holding (e.g. XML element, HTML element or Objectified
 diff --git a/src/lxml-stubs/etree/_factory_func.pyi b/src/lxml-stubs/etree/_factory_func.pyi
-index 407eda6..3f6c237 100644
+index c76d234..a30daff 100644
 --- a/src/lxml-stubs/etree/_factory_func.pyi
 +++ b/src/lxml-stubs/etree/_factory_func.pyi
 @@ -14,7 +14,7 @@ from .._types import (
