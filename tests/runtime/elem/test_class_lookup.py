@@ -14,6 +14,7 @@ from lxml.etree import (
 )
 from lxml.objectify import ObjectifiedElement, ObjectifyElementClassLookup
 from typeguard import TypeCheckError
+from .._testutils import is_multi_subclass_build
 
 if sys.version_info >= (3, 11):
     from typing import reveal_type
@@ -81,9 +82,7 @@ class TestNamespaceLookup:
                 count += 1
         assert count == 7
 
-    def test_single_ns_all_tag_2(
-        self, svg_filepath: pathlib.Path, request: pytest.FixtureRequest
-    ) -> None:
+    def test_single_ns_all_tag_2(self, svg_filepath: pathlib.Path) -> None:
         """Class lookup that creates my single element type
         for all nodes under specific namespace, while proving
         that parser subscript type can't be modified"""
@@ -106,9 +105,7 @@ class TestNamespaceLookup:
         tree = _e.parse(svg_filepath, parser=parser)
         root = tree.getroot()
 
-        from .conftest import is_multi_subclass_build
-
-        if request.config.stash[is_multi_subclass_build]:
+        if is_multi_subclass_build:
             # For multiclass build, .iter() is hardcoded to return _Element,
             # and author is expected to do method / annotation overrides
             # in their classes
@@ -191,9 +188,7 @@ class TestNamespaceLookup:
                 count += 1
         assert count == 3
 
-    def test_default_ns(
-        self, svg_filepath: pathlib.Path, request: pytest.FixtureRequest
-    ) -> None:
+    def test_default_ns(self, svg_filepath: pathlib.Path) -> None:
         """Class lookup that creates my single element type
         for all nodes under all namespaces, behaving like
         ElementDefaultClassLookup"""
@@ -216,9 +211,7 @@ class TestNamespaceLookup:
         root = tree.getroot()
         reveal_type(root)
 
-        from .conftest import is_multi_subclass_build
-
-        if request.config.stash[is_multi_subclass_build]:
+        if is_multi_subclass_build:
             # See test_single_ns_all_tag_2 test
             for e in root.iter():
                 reveal_type(e)

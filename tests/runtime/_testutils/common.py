@@ -9,6 +9,8 @@ from typing import (
 
 from . import strategy as _st
 
+is_multi_subclass_build = False
+
 
 class FuncSignatureError(Exception):
     def __init__(self, message: str, funcname: str) -> None:

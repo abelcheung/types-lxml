@@ -46,12 +46,6 @@ _logger.setLevel(logging.DEBUG)
 typeguard.config.forward_ref_policy = typeguard.ForwardRefPolicy.ERROR
 typeguard.config.collection_check_strategy = typeguard.CollectionCheckStrategy.ALL_ITEMS
 
-is_multi_subclass_build = pytest.StashKey[bool]()
-
-
-def pytest_configure(config: pytest.Config) -> None:
-    config.stash[is_multi_subclass_build] = False
-
 
 def _bightml_filepath() -> Path:
     return Path(__file__).resolve().parent / "_data" / "sample.html.xz"

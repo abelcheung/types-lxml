@@ -4,7 +4,7 @@
  src/lxml-stubs/etree/_factory_func.pyi |  6 +--
  src/lxml-stubs/html/_element.pyi       | 48 +++++++++++-----------
  src/lxml-stubs/objectify/_element.pyi  | 10 +++--
- tests/runtime/conftest.py              |  2 +-
+ tests/runtime/_testutils/common.py     |  2 +-
  7 files changed, 77 insertions(+), 75 deletions(-)
 
 diff --git a/pyproject.toml b/pyproject.toml
@@ -424,16 +424,16 @@ index 8ef012e..d8948d2 100644
          self,
          expr: str,
          *,
-diff --git a/tests/runtime/conftest.py b/tests/runtime/conftest.py
-index 06f66ec..e236db9 100644
---- a/tests/runtime/conftest.py
-+++ b/tests/runtime/conftest.py
-@@ -50,7 +50,7 @@ is_multi_subclass_build = pytest.StashKey[bool]()
+diff --git a/tests/runtime/_testutils/common.py b/tests/runtime/_testutils/common.py
+index f2be510..56622b3 100644
+--- a/tests/runtime/_testutils/common.py
++++ b/tests/runtime/_testutils/common.py
+@@ -9,7 +9,7 @@ from typing import (
+ 
+ from . import strategy as _st
+ 
+-is_multi_subclass_build = False
++is_multi_subclass_build = True
  
  
- def pytest_configure(config: pytest.Config) -> None:
--    config.stash[is_multi_subclass_build] = False
-+    config.stash[is_multi_subclass_build] = True
- 
- 
- def _bightml_filepath() -> Path:
+ class FuncSignatureError(Exception):

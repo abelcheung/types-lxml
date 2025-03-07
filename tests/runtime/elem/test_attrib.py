@@ -22,17 +22,17 @@ from hypothesis import (
 )
 from lxml.etree import Element, QName, _Attrib, _Element
 
-from ._testutils import (
+from .._testutils import (
     empty_signature_tester,
     signature_tester,
     strategy as _st,
 )
+from .._testutils.common import attr_name_types, attr_value_types
 
 if sys.version_info >= (3, 11):
     from typing import reveal_type
 else:
     from typing_extensions import reveal_type
-from ._testutils.common import attr_name_types, attr_value_types
 
 if TYPE_CHECKING:
     from lxml._types import (  # pyright: ignore[reportMissingModuleSource]
