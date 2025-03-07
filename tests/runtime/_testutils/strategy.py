@@ -241,16 +241,21 @@ def xml_attr_value_arg() -> st.SearchStrategy[str | bytes | bytearray | _e.QName
 
 
 @st.composite
-def single_simple_element(draw: st.DrawFn) -> _e._Element:
-    tag_name = draw(xml_name_nons())
-    attrib = draw(st.dictionaries(xml_name_nons(), xml_attr_value(), max_size=3))
+def single_simple_element(
+    draw: st.DrawFn,
+    variant: Literal["unicode", "ascii"] = "unicode",
+) -> _e._Element:
+    tag_name = draw(xml_name_nons(variant))
+    attrib = draw(
+        st.dictionaries(xml_name_nons(variant), xml_attr_value(variant), max_size=3)
+    )
     # After discarding value quoting issue, attribute value is equivalent to
     # chardata sans child elements, so use it instead of recreating chardata
     # strategy.
     # HACK: Lxml builder doesn't allow adding cdata if element text is present.
     #   Seems to disagree with XML spec.
-    first_child = draw(st.lists(cdata(), max_size=1))
-    other_child = draw(st.lists(xml_attr_value(), max_size=1))
+    first_child = draw(st.lists(cdata(variant), max_size=1))
+    other_child = draw(st.lists(xml_attr_value(variant), max_size=1))
     return E(tag_name, *first_child, *other_child, **attrib)
 
 
