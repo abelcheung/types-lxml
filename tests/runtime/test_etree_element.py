@@ -3,8 +3,9 @@ from __future__ import annotations
 import sys
 from copy import deepcopy
 from inspect import Parameter
-from random import randrange
-from types import MappingProxyType
+from types import (
+    MappingProxyType,
+)
 from typing import Any, BinaryIO, cast
 
 import pytest
@@ -20,7 +21,7 @@ from lxml.etree import (
 )
 from lxml.html import Element as h_Element
 
-from . import _testutils
+from ._testutils import empty_signature_tester, signature_tester
 
 if sys.version_info >= (3, 11):
     from typing import reveal_type
@@ -32,321 +33,8 @@ else:
 TC_HONORS_REVERSED = True
 
 
-class TestBasicBehavior:
-    def test_sequence_read(self, xml2_root: _Element) -> None:
-        elem = deepcopy(xml2_root)
-
-        reveal_type(len(elem))
-        length = len(elem)
-        reveal_type(elem[randrange(length)])
-        reveal_type(elem[: 2])  # fmt: skip  # ast: why the space???
-
-        itr = iter(elem)
-        reveal_type(itr)
-        item = next(itr)
-        reveal_type(item)
-        assert elem.index(item) == 0
-        del itr, item
-
-        if TC_HONORS_REVERSED:
-            rev = reversed(elem)
-        else:
-            rev = elem.__reversed__()
-        reveal_type(rev)
-        item = next(rev)
-        reveal_type(item)
-        assert elem.index(item) == length - 1
-        del rev, item
-
-        for sub in elem:
-            reveal_type(sub)
-
-        subelem = elem[3]
-        reveal_type(subelem in elem)
-        o = object()
-        reveal_type(o in elem)
-
-        with pytest.raises(TypeError, match="cannot be interpreted as an integer"):
-            _ = elem[cast(int, "0")]
-
-        del elem, subelem
-
-    def test_sequence_modify(self, xml2_root: _Element) -> None:
-        elem = deepcopy(xml2_root)
-
-        subelem = elem[3]
-        del elem[0]
-        assert elem.index(subelem) == 2
-        del elem[0:2]
-        assert elem.index(subelem) == 0
-
-        comment = etree.Comment("comment")
-        comment2 = etree.Comment("foo")
-        entity = etree.Entity("foo")
-        pi = etree.ProcessingInstruction("target", "text")
-        div = h_Element("div")
-
-        elem[1] = comment
-        assert len(elem) == 2
-        elem[2:4] = (entity, pi)
-        assert len(elem) == 4
-        # Actually permitted, just that elements are
-        # added in random order. This is undesirable so
-        # not supported in stub.
-        elem[4:] = {div, comment2}  # type: ignore[call-overload]  # pyright: ignore[reportCallIssue,reportArgumentType]
-        assert len(elem) == 6
-
-        for obj in (object(), 0, "", (subelem,), {subelem}):
-            with pytest.raises(TypeError, match=r"Cannot convert \w+ to .+\._Element"):
-                elem[0] = cast(Any, obj)
-        with pytest.raises(ValueError, match="cannot assign None"):
-            elem[0] = cast(Any, None)
-        with pytest.raises(ValueError, match="cannot assign None"):
-            elem[:] = cast(Any, None)
-
-        # test broken behavior: elem[slice] = single_elem
-        # It returns successfully, just that elements are
-        # silently discarded without adding new ones
-        elem[:] = comment  # type: ignore[call-overload]  # pyright: ignore[reportCallIssue,reportArgumentType]
-        assert len(elem) == 0
-
-        del subelem, comment, comment2, entity, pi, div, elem
-
-    @_testutils.signature_tester(_Element.index, (
-        ("child", Parameter.POSITIONAL_OR_KEYWORD, Parameter.empty),
-        ("start", Parameter.POSITIONAL_OR_KEYWORD, None           ),
-        ("stop" , Parameter.POSITIONAL_OR_KEYWORD, None           ),
-    ))  # fmt: skip
-    def test_method_index(self, xml2_root: _Element) -> None:
-        elem = deepcopy(xml2_root)
-        subelem = elem[3]
-
-        pos = elem.index(subelem)
-        reveal_type(pos)
-        del pos
-        with pytest.raises(ValueError, match="x not in slice"):
-            _ = elem.index(subelem, len(elem) - 1, len(elem) - 1)
-
-        for obj in (0, None, "", object(), (elem[-1],)):
-            with pytest.raises(TypeError, match="Argument 'child' has incorrect type"):
-                _ = elem.index(cast(Any, obj))
-
-        for obj in ("1", (0,), object()):
-            if etree.LXML_VERSION >= (5, 1):
-                match_re = "Argument 'start' has incorrect type"
-            else:
-                match_re = "cannot be interpreted as an integer"
-            with pytest.raises(TypeError, match=match_re):
-                _ = elem.index(subelem, cast(Any, obj))
-
-            if etree.LXML_VERSION >= (5, 1):
-                match_re = "Argument 'stop' has incorrect type"
-            else:
-                match_re = "cannot be interpreted as an integer"
-            with pytest.raises(TypeError, match=match_re):
-                _ = elem.index(subelem, None, cast(Any, obj))
-
-        del elem, subelem
-
-    @_testutils.signature_tester(_Element.append, (
-        ("element", Parameter.POSITIONAL_OR_KEYWORD, Parameter.empty),
-    ))  # fmt: skip
-    def test_method_append(self, xml2_root: _Element) -> None:
-        elem = deepcopy(xml2_root)
-        subelem = deepcopy(elem[-1])
-        length = len(elem)
-
-        assert elem.append(subelem) is None
-        assert len(elem) == length + 1
-
-        for obj in (0, None, "", object(), (elem[-1],)):
-            with pytest.raises(
-                TypeError, match="Argument 'element' has incorrect type"
-            ):
-                elem.append(cast(Any, obj))
-
-        del elem, subelem
-
-    @_testutils.signature_tester(_Element.insert, (
-        ("index"  , Parameter.POSITIONAL_OR_KEYWORD, Parameter.empty),
-        ("element", Parameter.POSITIONAL_OR_KEYWORD, Parameter.empty),
-    ))  # fmt: skip
-    def test_method_insert(self, xml2_root: _Element) -> None:
-        elem = deepcopy(xml2_root)
-        comment = etree.Comment("comment")
-        pos = randrange(len(elem))
-        assert elem.insert(pos, comment) is None
-        assert elem.index(comment) == pos
-
-        for obj in (0, None, "", object(), (elem[-1],)):
-            with pytest.raises(
-                TypeError, match="Argument 'element' has incorrect type"
-            ):
-                elem.insert(pos, cast(Any, obj))
-
-        for obj in (None, "1", (0,), object()):
-            if etree.LXML_VERSION >= (5, 1):
-                match_re = "Argument 'index' has incorrect type"
-            else:
-                match_re = "cannot be interpreted as an integer"
-            with pytest.raises(TypeError, match=match_re):
-                elem.insert(cast(Any, obj), comment)
-
-        del elem, comment
-
-    @_testutils.signature_tester(_Element.remove, (
-        ("element", Parameter.POSITIONAL_OR_KEYWORD, Parameter.empty),
-    ))  # fmt: skip
-    def test_method_remove(self, xml2_root: _Element) -> None:
-        elem = deepcopy(xml2_root)
-        assert elem.remove(elem[-1]) is None
-
-        # Can construct a new node and fail removing it, but that is
-        # pure runtime behavior and doesn't violate method annotation
-        for obj in (0, None, "", object(), (elem[-1],)):
-            with pytest.raises(
-                TypeError, match="Argument 'element' has incorrect type"
-            ):
-                elem.remove(cast(Any, obj))
-
-        del elem
-
-    @_testutils.signature_tester(_Element.replace, (
-        ("old_element", Parameter.POSITIONAL_OR_KEYWORD, Parameter.empty),
-        ("new_element", Parameter.POSITIONAL_OR_KEYWORD, Parameter.empty),
-    ))  # fmt: skip
-    def test_method_replace(self, xml2_root: _Element) -> None:
-        elem = deepcopy(xml2_root)
-        subelem = elem[-1]
-        new_elem = deepcopy(subelem)
-        new_elem.tag = "foo"
-        assert elem.replace(subelem, new_elem) is None
-
-        for obj in (0, None, "", object(), (elem[-1],)):
-            with pytest.raises(
-                TypeError, match="Argument 'old_element' has incorrect type"
-            ):
-                elem.replace(cast(Any, obj), elem[-1])
-            with pytest.raises(
-                TypeError, match="Argument 'new_element' has incorrect type"
-            ):
-                elem.replace(elem[-1], cast(Any, obj))
-
-        del new_elem, subelem, elem
-
-    @_testutils.signature_tester(_Element.extend, (
-        ("elements", Parameter.POSITIONAL_OR_KEYWORD, Parameter.empty),
-    ))  # fmt: skip
-    def test_method_extend(self, xml2_root: _Element) -> None:
-        elem = deepcopy(xml2_root)
-        new_elem1 = etree.Comment("foo")
-        new_elem2 = etree.Entity("foo")
-        assert elem.extend([new_elem1]) is None
-
-        elem.extend([new_elem1, new_elem2])
-        elem.extend((new_elem1, new_elem2))
-
-        # test broken behavior (but no exception though)
-        elem.extend(elem[0])  # type: ignore[arg-type]  # pyright: ignore[reportArgumentType]
-
-        for obj in (None, 0):
-            with pytest.raises(TypeError, match="is not iterable"):
-                elem.extend(cast(Any, obj))
-
-        for obj2 in ("abc", (0,)):
-            with pytest.raises(TypeError, match=r"Cannot convert \w+ to .+\._Element"):
-                elem.extend(cast(Any, obj2))
-
-    @_testutils.signature_tester(_Element.clear, (
-        ("keep_tail", Parameter.POSITIONAL_OR_KEYWORD, False),
-    ))  # fmt: skip
-    def test_method_clear(self, xml2_root: _Element) -> None:
-        elem = deepcopy(xml2_root)
-        elem.clear()
-        assert len(elem) == 0
-        del elem
-
-        elem = deepcopy(xml2_root)
-        elem.tail = "junk"
-        elem.clear(keep_tail=True)
-        assert len(elem) == 0
-
-
-class TestProperties:
-    def test_ro_properties(self, xml2_root: _Element) -> None:
-        elem = deepcopy(xml2_root)
-
-        for subelem in elem:
-            if type(subelem) is not _Element:
-                continue
-            reveal_type(subelem.attrib)
-            reveal_type(subelem.prefix)
-            reveal_type(subelem.nsmap)
-            reveal_type(subelem.sourceline)
-
-        with pytest.raises(AttributeError, match="objects is not writable"):
-            elem.attrib = cast(Any, elem.attrib)  # type: ignore[misc]  # pyright: ignore[reportAttributeAccessIssue]
-
-        with pytest.raises(AttributeError, match="objects is not writable"):
-            elem.prefix = cast(Any, elem.prefix)  # type: ignore[misc]  # pyright: ignore[reportAttributeAccessIssue]
-
-        with pytest.raises(AttributeError, match="objects is not writable"):
-            elem.nsmap = cast(Any, elem.nsmap)  # type: ignore[misc]  # pyright: ignore[reportAttributeAccessIssue]
-
-        # Not performing test for .sourceline ! We pretend it is not
-        # changeable in stub, but actually it is read-write
-
-        del elem
-
-    def test_rw_properties(self, xml2_root: _Element) -> None:
-        elem = deepcopy(xml2_root)
-
-        for subelem in elem:
-            if type(subelem) is not _Element:
-                continue
-            reveal_type(subelem.base)
-            reveal_type(subelem.tag)
-            reveal_type(subelem.text)
-            reveal_type(subelem.tail)
-
-        cdata = etree.CDATA("foo")
-        qname = QName("dummyns", "dummytext")
-
-        elem.base = "http://dummy.site/"
-        elem.base = None
-        elem.base = b"http://dummy.site/"
-        for data1 in (1, cdata, qname):
-            with pytest.raises(TypeError, match="must be string or unicode"):
-                elem.base = cast(Any, data1)
-
-        elem.tag = "foo"
-        elem.tag = b"foo"
-        elem.tag = qname
-        for data2 in (None, 1, cdata):
-            with pytest.raises(TypeError, match="must be bytes or unicode"):
-                elem.tag = cast(Any, data2)
-
-        elem.text = "sometext"
-        elem.text = None
-        elem.text = b"sometext"
-        elem.text = cdata
-        elem.text = qname
-        with pytest.raises(TypeError, match="must be bytes or unicode"):
-            elem.text = cast(Any, 1)
-
-        elem.tail = "sometail"
-        elem.tail = None
-        elem.tail = b"sometail"
-        elem.tail = cdata
-        for data in (1, qname):
-            with pytest.raises(TypeError, match="must be bytes or unicode"):
-                elem.tail = cast(Any, data)
-
-        del elem
-
-
 class TestContentOnlyElement:
-    @_testutils.signature_tester(etree.Comment, (
+    @signature_tester(etree.Comment, (
         ("text", Parameter.POSITIONAL_OR_KEYWORD, None),
     ))  # fmt: skip
     def test_construct_comment(self) -> None:
@@ -363,7 +51,7 @@ class TestContentOnlyElement:
             with pytest.raises(TypeError, match="must be bytes or unicode"):
                 _ = etree.Comment(cast(Any, data))
 
-    @_testutils.signature_tester(etree.Entity, (
+    @signature_tester(etree.Entity, (
         ("name", Parameter.POSITIONAL_OR_KEYWORD, Parameter.empty),
     ))  # fmt: skip
     def test_construct_entity(self) -> None:
@@ -376,7 +64,7 @@ class TestContentOnlyElement:
             with pytest.raises(TypeError, match="must be bytes or unicode"):
                 _ = etree.Entity(cast(Any, data))
 
-    @_testutils.signature_tester(etree.ProcessingInstruction, (
+    @signature_tester(etree.ProcessingInstruction, (
         ("target", Parameter.POSITIONAL_OR_KEYWORD, Parameter.empty),
         ("text"  , Parameter.POSITIONAL_OR_KEYWORD, None           ),
     ))  # fmt: skip
@@ -401,7 +89,7 @@ class TestContentOnlyElement:
 
 
 class TestAttribAccessMethods:
-    @_testutils.empty_signature_tester(
+    @empty_signature_tester(
         _Element.keys,
         _Element.values,
         _Element.items,
@@ -417,7 +105,7 @@ class TestAttribAccessMethods:
             reveal_type(elem.values())
             reveal_type(elem.items())
 
-    @_testutils.signature_tester(_Element.get, (
+    @signature_tester(_Element.get, (
         ("key"    , Parameter.POSITIONAL_OR_KEYWORD, Parameter.empty),
         ("default", Parameter.POSITIONAL_OR_KEYWORD, None           ),
     ))  # fmt: skip
@@ -438,7 +126,7 @@ class TestAttribAccessMethods:
         reveal_type(root.get("width", 0))
         reveal_type(root.get("somejunk", (0, "foo")))
 
-    @_testutils.signature_tester(_Element.set, (
+    @signature_tester(_Element.set, (
         ("key"  , Parameter.POSITIONAL_OR_KEYWORD, Parameter.empty),
         ("value", Parameter.POSITIONAL_OR_KEYWORD, Parameter.empty),
     ))  # fmt: skip
@@ -466,7 +154,7 @@ class TestAttribAccessMethods:
 # iterfind(). So they almost have same arguments, and even
 # the other test contents look very similar.
 class TestFindMethods:
-    @_testutils.signature_tester(_Element.iterfind, (
+    @signature_tester(_Element.iterfind, (
         ("path"      , Parameter.POSITIONAL_OR_KEYWORD, Parameter.empty),
         ("namespaces", Parameter.POSITIONAL_OR_KEYWORD, None           ),
     ))  # fmt: skip
@@ -547,7 +235,7 @@ class TestFindMethods:
             assert 0 == len(tuple(elem for elem in iterator))
             del iterator
 
-    @_testutils.signature_tester(_Element.find, (
+    @signature_tester(_Element.find, (
         ("path"      , Parameter.POSITIONAL_OR_KEYWORD, Parameter.empty),
         ("namespaces", Parameter.POSITIONAL_OR_KEYWORD, None           ),
     ))  # fmt: skip
@@ -595,7 +283,7 @@ class TestFindMethods:
         with pytest.raises(AttributeError, match="has no attribute 'items'"):
             _ = defs.find("m:piechart", cast(Any, [("m", url)]))
 
-    @_testutils.signature_tester(_Element.findall, (
+    @signature_tester(_Element.findall, (
         ("path"      , Parameter.POSITIONAL_OR_KEYWORD, Parameter.empty),
         ("namespaces", Parameter.POSITIONAL_OR_KEYWORD, None           ),
     ))  # fmt: skip
@@ -648,7 +336,7 @@ class TestFindMethods:
         with pytest.raises(AttributeError, match="has no attribute 'items'"):
             _ = defs.findall("m:piechart", cast(Any, [("m", url)]))
 
-    @_testutils.signature_tester(_Element.findtext, (
+    @signature_tester(_Element.findtext, (
         ("path"      , Parameter.POSITIONAL_OR_KEYWORD, Parameter.empty),
         ("default"   , Parameter.POSITIONAL_OR_KEYWORD, None           ),
         ("namespaces", Parameter.POSITIONAL_OR_KEYWORD, None           ),
@@ -726,7 +414,7 @@ class TestFindMethods:
 
 
 class TestAddMethods:
-    @_testutils.signature_tester(
+    @signature_tester(
         _Element.addnext,
         (("element", Parameter.POSITIONAL_OR_KEYWORD, Parameter.empty),),
     )
@@ -745,7 +433,7 @@ class TestAddMethods:
         h_elem = h_Element("bar")
         root[1].addnext(h_elem)
 
-    @_testutils.signature_tester(
+    @signature_tester(
         _Element.addprevious,
         (("element", Parameter.POSITIONAL_OR_KEYWORD, Parameter.empty),),
     )
@@ -766,7 +454,7 @@ class TestAddMethods:
 
 
 class TestGetMethods:
-    @_testutils.empty_signature_tester(
+    @empty_signature_tester(
         _Element.getparent,
         _Element.getprevious,
         _Element.getnext,
@@ -814,7 +502,7 @@ class TestGetMethods:
 
 
 class TestIterMethods:
-    @_testutils.signature_tester(_Element.iter, (
+    @signature_tester(_Element.iter, (
         ("tag" , Parameter.POSITIONAL_OR_KEYWORD, None           ),
         ("tags", Parameter.VAR_POSITIONAL       , Parameter.empty),
     ))  # fmt: skip
@@ -864,7 +552,7 @@ class TestIterMethods:
             with pytest.raises(TypeError, match=r"object is not iterable"):
                 _ = root.iter(cast(Any, arg))
 
-    @_testutils.signature_tester(_Element.iterancestors, (
+    @signature_tester(_Element.iterancestors, (
         ("tag" , Parameter.POSITIONAL_OR_KEYWORD, None           ),
         ("tags", Parameter.VAR_POSITIONAL       , Parameter.empty),
     ))  # fmt: skip
@@ -917,7 +605,7 @@ class TestIterMethods:
 
     # iterdescendants() is iter() sans root node, so the
     # test is identical
-    @_testutils.signature_tester(_Element.iterdescendants, (
+    @signature_tester(_Element.iterdescendants, (
         ("tag" , Parameter.POSITIONAL_OR_KEYWORD, None           ),
         ("tags", Parameter.VAR_POSITIONAL       , Parameter.empty),
     ))  # fmt: skip
@@ -967,7 +655,7 @@ class TestIterMethods:
             with pytest.raises(TypeError, match=r"object is not iterable"):
                 _ = root.iterdescendants(cast(Any, arg))
 
-    @_testutils.signature_tester(_Element.itersiblings, (
+    @signature_tester(_Element.itersiblings, (
         ("tag"      , Parameter.POSITIONAL_OR_KEYWORD, None           ),
         ("tags"     , Parameter.VAR_POSITIONAL       , Parameter.empty),
         ("preceding", Parameter.KEYWORD_ONLY         , False          ),
@@ -1038,7 +726,7 @@ class TestIterMethods:
             with pytest.raises(TypeError, match=r"object is not iterable"):
                 _ = child.itersiblings(cast(Any, arg))
 
-    @_testutils.signature_tester(_Element.iterchildren, (
+    @signature_tester(_Element.iterchildren, (
         ("tag"     , Parameter.POSITIONAL_OR_KEYWORD, None           ),
         ("tags"    , Parameter.VAR_POSITIONAL       , Parameter.empty),
         ("reversed", Parameter.KEYWORD_ONLY         , False          ),
@@ -1099,7 +787,7 @@ class TestIterMethods:
             with pytest.raises(TypeError, match=r"object is not iterable"):
                 _ = root.iterchildren(cast(Any, arg))
 
-    @_testutils.signature_tester(_Element.itertext, (
+    @signature_tester(_Element.itertext, (
         ("tag"      , Parameter.POSITIONAL_OR_KEYWORD, None           ),
         ("tags"     , Parameter.VAR_POSITIONAL       , Parameter.empty),
         ("with_tail", Parameter.KEYWORD_ONLY         , True           ),
