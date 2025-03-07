@@ -4,11 +4,16 @@
 #
 import sys
 from _typeshed import SupportsRead
-from typing import Any, Literal, Never, overload
+from typing import Any, Literal, overload
 
 import html5lib as _html5lib
 
 from ..etree import _Element, _ElementTree
+
+if sys.version_info >= (3, 11):
+    from typing import Never
+else:
+    from typing_extensions import Never
 
 if sys.version_info >= (3, 13):
     from warnings import deprecated
