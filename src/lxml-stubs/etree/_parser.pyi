@@ -40,11 +40,11 @@ else:
 _T = TypeVar("_T")
 
 class ParseError(LxmlSyntaxError):
-    lineno: int  # pyright: ignore[reportIncompatibleVariableOverride]
-    offset: int  # pyright: ignore[reportIncompatibleVariableOverride]
     code: int
-    filename: str | None
-    position: tuple[int, int]
+    @property
+    def position(self) -> tuple[int, int]: ...
+    @position.setter
+    def position(self, value: tuple[int, int]) -> None: ...
     def __init__(
         self,
         message: object,
