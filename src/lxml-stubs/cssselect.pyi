@@ -6,7 +6,7 @@ import cssselect as _csel
 from cssselect.parser import Function
 from cssselect.xpath import XPathExpr
 
-from ._types import _ET, _ElementOrTree, _XPathVarArg, _XPathNSArg
+from ._types import _ET, _ElementOrTree, _XPathNSArg, _XPathVarArg
 from .etree import XPath
 from .html import HtmlElement
 from .objectify import ObjectifiedElement

@@ -1,9 +1,5 @@
 import sys
-
-if sys.version_info >= (3, 11):
-    from typing import LiteralString
-else:
-    from typing_extensions import LiteralString
+from typing import Final
 
 from ._annotate import (
     PyType as PyType,
@@ -43,6 +39,11 @@ from ._misc import (
     set_default_parser as set_default_parser,
 )
 
+if sys.version_info >= (3, 11):
+    from typing import LiteralString
+else:
+    from typing_extensions import LiteralString
+
 # Exported constants
-__version__: LiteralString
-PYTYPE_ATTRIBUTE: LiteralString
+__version__: Final[LiteralString]
+PYTYPE_ATTRIBUTE: Final[LiteralString]

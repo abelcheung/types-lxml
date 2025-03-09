@@ -18,13 +18,13 @@ from typing import (
 
 from .._types import (
     _ET,
+    SupportsLaxItems,
     _AnyStr,
     _ElementOrTree,
     _XPathExtFuncArg,
+    _XPathNSArg,
     _XPathObject,
     _XPathVarArg,
-    _XPathNSArg,
-    SupportsLaxItems,
 )
 from ._element import _Element, _ElementTree
 from ._module_misc import LxmlError, LxmlSyntaxError

@@ -6,7 +6,15 @@ from __future__ import annotations
 
 import abc
 import sys
-from typing import Any, ClassVar, Literal, TypedDict, final, overload
+from typing import (
+    Any,
+    ClassVar,
+    Final,
+    Literal,
+    TypedDict,
+    final,
+    overload,
+)
 
 if sys.version_info >= (3, 13):
     from warnings import deprecated
@@ -30,8 +38,8 @@ from ._xpath import XPath
 _Stylesheet_Param = _XSLTQuotedStringParam | XPath | str  # noqa: F821
 
 # exported constants
-LIBXSLT_VERSION: tuple[int, int, int]
-LIBXSLT_COMPILED_VERSION: tuple[int, int, int]
+LIBXSLT_VERSION: Final[tuple[int, int, int]]
+LIBXSLT_COMPILED_VERSION: Final[tuple[int, int, int]]
 
 class XSLTError(LxmlError):
     """Base class of all XSLT errors"""

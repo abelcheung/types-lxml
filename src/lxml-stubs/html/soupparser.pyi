@@ -2,8 +2,8 @@ import sys
 from typing import IO, Any, Collection, Iterable, Literal, overload
 
 from bs4 import BeautifulSoup
-from bs4.element import PageElement
 from bs4.builder import TreeBuilder
+from bs4.element import PageElement
 from bs4.filter import SoupStrainer
 
 from .._types import _ET, _ElementFactory, _FileReadSource

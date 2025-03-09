@@ -23,13 +23,13 @@ class TestEtreeConstants:
         reveal_type(_e.LXML_VERSION)
         reveal_type(_e.__version__)
 
-        # >= 5.2.2, and on some archs only
-        if hasattr(_e, "ICONV_COMPILED_VERSION"):
-            reveal_type(_e.ICONV_COMPILED_VERSION)  # type: ignore[attr-defined]
+        if _e.LXML_VERSION >= (5, 2, 2):
+            reveal_type(_e.ICONV_COMPILED_VERSION)
 
         if _e.LXML_VERSION >= (6, 0):
-            reveal_type(_e.LIBXML_COMPILED_FEATURES)  # type: ignore[attr-defined]
-            reveal_type(_e.LIBXML_FEATURES)  # type: ignore[attr-defined]
+            reveal_type(_e.LIBXML_FEATURES)
+
+        # no read-write test, they are actually writable
 
     def test_other_const(self) -> None:
         reveal_type(_e.DEBUG)

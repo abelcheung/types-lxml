@@ -4,12 +4,7 @@
 
 import sys
 from abc import ABCMeta, abstractmethod
-from typing import overload
-
-if sys.version_info >= (3, 11):
-    from typing import LiteralString
-else:
-    from typing_extensions import LiteralString
+from typing import Final, overload
 
 from .._types import (
     _AnyStr,
@@ -21,14 +16,18 @@ from ._dtd import DTD
 from ._element import _Element
 from ._xmlerror import _BaseErrorLog, _ListErrorLog
 
+if sys.version_info >= (3, 11):
+    from typing import LiteralString
+else:
+    from typing_extensions import LiteralString
+
 DEBUG: int
-ICONV_COMPILED_VERSION: tuple[int, int]
-LIBXML_VERSION: tuple[int, int, int]
-LIBXML_COMPILED_FEATURES: set[str]
-LIBXML_COMPILED_VERSION: tuple[int, int, int]
-LIBXML_FEATURES: set[str]
-LXML_VERSION: tuple[int, int, int, int]
-__version__: LiteralString
+ICONV_COMPILED_VERSION: Final[tuple[int, int]]
+LIBXML_VERSION: Final[tuple[int, int, int]]
+LIBXML_COMPILED_VERSION: Final[tuple[int, int, int]]
+LIBXML_FEATURES: Final[set[str]]
+LXML_VERSION: Final[tuple[int, int, int, int]]
+__version__: Final[LiteralString]
 
 class DocInfo:
     """Document information provided by parser and DTD"""

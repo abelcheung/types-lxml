@@ -1,14 +1,14 @@
 import sys
-from typing import Any, ClassVar, overload
+from typing import Any, ClassVar, Final, overload
+
+from . import etree as _e
+from ._types import _ElementOrTree, _FileReadSource
+from .etree._xslt import _Stylesheet_Param
 
 if sys.version_info >= (3, 11):
     from typing import LiteralString
 else:
     from typing_extensions import LiteralString
-
-from . import etree as _e
-from ._types import _ElementOrTree, _FileReadSource
-from .etree._xslt import _Stylesheet_Param
 
 __all__ = (
     # Official exports
@@ -29,10 +29,10 @@ __all__ = (
     "SVRL_NS",
 )
 
-XML_SCHEMA_NS: LiteralString
-RELAXNG_NS: LiteralString
-SCHEMATRON_NS: LiteralString
-SVRL_NS: LiteralString
+XML_SCHEMA_NS: Final[LiteralString]
+RELAXNG_NS: Final[LiteralString]
+SCHEMATRON_NS: Final[LiteralString]
+SVRL_NS: Final[LiteralString]
 
 extract_xsd: _e.XSLT
 extract_rng: _e.XSLT
@@ -49,8 +49,8 @@ class Schematron(_e._Validator):
     _domain: ClassVar[_e.ErrorDomains]
     _level: ClassVar[_e.ErrorLevels]
     _error_type: ClassVar[_e.ErrorTypes]
-    ASSERTS_ONLY: ClassVar[_e.XPath]
-    ASSERTS_AND_REPORTS: ClassVar[_e.XPath]
+    ASSERTS_ONLY: Final[_e.XPath]
+    ASSERTS_AND_REPORTS: Final[_e.XPath]
     _extract_xsd: ClassVar[_e.XSLT]
     _extract_rng: ClassVar[_e.XSLT]
     _include: ClassVar[_e.XSLT]
