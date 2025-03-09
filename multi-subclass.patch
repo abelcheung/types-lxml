@@ -21,16 +21,16 @@ index 7227625..a71b4c9 100644
  description = 'Complete lxml external type annotation'
  readme = 'README.md'
 diff --git a/src/lxml-stubs/cssselect.pyi b/src/lxml-stubs/cssselect.pyi
-index f4c601b..29132ee 100644
+index 1ccf715..24f914b 100644
 --- a/src/lxml-stubs/cssselect.pyi
 +++ b/src/lxml-stubs/cssselect.pyi
 @@ -6,8 +6,8 @@ import cssselect as _csel
  from cssselect.parser import Function
  from cssselect.xpath import XPathExpr
  
--from ._types import _ET, _ElementOrTree, _XPathVarArg, _XPathNSArg
+-from ._types import _ET, _ElementOrTree, _XPathNSArg, _XPathVarArg
 -from .etree import XPath
-+from ._types import _ElementOrTree, _XPathVarArg, _XPathNSArg
++from ._types import _ElementOrTree, _XPathNSArg, _XPathVarArg
 +from .etree import XPath, _Element
  from .html import HtmlElement
  from .objectify import ObjectifiedElement
