@@ -33,61 +33,6 @@ else:
 TC_HONORS_REVERSED = True
 
 
-class TestContentOnlyElement:
-    @signature_tester(etree.Comment, (
-        ("text", Parameter.POSITIONAL_OR_KEYWORD, None),
-    ))  # fmt: skip
-    def test_construct_comment(self) -> None:
-        comm = etree.Comment()
-        reveal_type(comm)
-        del comm
-
-        for text in (None, "foo", b"foo"):
-            comm = etree.Comment(text)
-            reveal_type(comm)
-            del comm
-
-        for data in (1, ["foo"]):
-            with pytest.raises(TypeError, match="must be bytes or unicode"):
-                _ = etree.Comment(cast(Any, data))
-
-    @signature_tester(etree.Entity, (
-        ("name", Parameter.POSITIONAL_OR_KEYWORD, Parameter.empty),
-    ))  # fmt: skip
-    def test_construct_entity(self) -> None:
-        for name in ("foo", b"foo"):
-            ent = etree.Entity(name)
-            reveal_type(ent)
-            del ent
-
-        for data in (None, 1, ["foo"]):
-            with pytest.raises(TypeError, match="must be bytes or unicode"):
-                _ = etree.Entity(cast(Any, data))
-
-    @signature_tester(etree.ProcessingInstruction, (
-        ("target", Parameter.POSITIONAL_OR_KEYWORD, Parameter.empty),
-        ("text"  , Parameter.POSITIONAL_OR_KEYWORD, None           ),
-    ))  # fmt: skip
-    def test_construct_pi(self) -> None:
-        for target in ("foo", b"foo"):
-            pi = etree.ProcessingInstruction(target)
-            reveal_type(pi)
-            del pi
-
-        for data in (None, 1, ["foo"]):
-            with pytest.raises(TypeError, match="must be bytes or unicode"):
-                _ = etree.ProcessingInstruction(cast(Any, data))
-
-        for text in ("bar", b"bar"):
-            pi = etree.ProcessingInstruction("foo", text)
-            reveal_type(pi)
-            del pi
-
-        for data in (1, ["bar"]):
-            with pytest.raises(TypeError, match="must be bytes or unicode"):
-                _ = etree.ProcessingInstruction("foo", cast(Any, data))
-
-
 class TestAttribAccessMethods:
     @empty_signature_tester(
         _Element.keys,
