@@ -29,6 +29,7 @@ class HTMLParser(_html5lib.HTMLParser):
     def __init__(
         self,
         strict: bool = False,
+        *,
         namespaceHTMLElements: bool = True,
         debug: bool = False,
     ) -> None: ...
