@@ -468,8 +468,8 @@ class __ContentOnlyElement(_Element):
     def append(self, element: Never) -> Never: ...  # type: ignore[override]  # pyright: ignore[reportIncompatibleMethodOverride]
     def insert(self, index: Never, value: Never) -> Never: ...  # type: ignore[override]  # pyright: ignore[reportIncompatibleMethodOverride]
     def __setitem__(self, __k: Never, __v: Never) -> Never: ...  # type: ignore[override]  # pyright: ignore[reportIncompatibleMethodOverride]
-    # The intention is to forbid elem.__getitem__, allowing slice
-    # doesn't make any sense
+    # The intention is to discourage elem.__getitem__, allowing slice
+    # argument in runtime doesn't make any sense
     def __getitem__(self, __k: Never) -> Never: ...  # type: ignore[override]  # pyright: ignore[reportIncompatibleMethodOverride]
     # Methods above are explicitly defined in source, while those below aren't
     def __delitem__(self, __k: Never) -> Never: ...  # type: ignore[override]  # pyright: ignore[reportIncompatibleMethodOverride]
@@ -491,7 +491,7 @@ class _Comment(__ContentOnlyElement):
     def text(self) -> str: ...
     @text.setter
     def text(  # pyright: ignore[reportIncompatibleMethodOverride]
-        self, value: _t._AnyStr | None
+        self, value: _t._TextArg | None
     ) -> None: ...
 
 # signature of .get() for _PI and _Element are the same
@@ -502,12 +502,12 @@ class _ProcessingInstruction(__ContentOnlyElement):
     def text(self) -> str: ...
     @text.setter
     def text(  # pyright: ignore[reportIncompatibleMethodOverride]
-        self, value: _t._AnyStr | None
+        self, value: _t._TextArg | None
     ) -> None: ...
     @property
     def target(self) -> str: ...
     @target.setter
-    def target(self, value: _t._AnyStr) -> None: ...
+    def target(self, value: _t._TextArg) -> None: ...
     @property
     def attrib(self) -> dict[str, str]: ...  # type: ignore[override]
 
@@ -519,4 +519,4 @@ class _Entity(__ContentOnlyElement):
     @property
     def name(self) -> str: ...
     @name.setter
-    def name(self, value: _t._AnyStr) -> None: ...
+    def name(self, value: _t._TextArg) -> None: ...
