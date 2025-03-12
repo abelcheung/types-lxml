@@ -119,7 +119,8 @@ class TestListLogMethods:
         assert len(new_log) > 0
         del new_log
 
-        new_log = list_log.filter_domains([ErrorDomains.XINCLUDE, ErrorDomains.PARSER])
+        domains = iter([ErrorDomains.PARSER, ErrorDomains.BUFFER])
+        new_log = list_log.filter_domains(domains)
         reveal_type(new_log)
         assert len(new_log) > 0
 
@@ -150,7 +151,11 @@ class TestListLogMethods:
         assert len(new_log) > 0
         del new_log
 
-        new_log = list_log.filter_types([ErrorTypes.ERR_TAG_NAME_MISMATCH])
+        types = iter([
+            ErrorTypes.ERR_TAG_NAME_MISMATCH,
+            ErrorTypes.ERR_UNKNOWN_ENCODING,
+        ])
+        new_log = list_log.filter_types(types)
         reveal_type(new_log)
         assert len(new_log) > 0
 
@@ -174,12 +179,11 @@ class TestListLogMethods:
         assert len(new_log) > 0
         del new_log
 
+        levels = iter([ErrorLevels.ERROR, ErrorLevels.FATAL])
         if _method_no_kwarg():
-            new_log = list_log.filter_levels([ErrorLevels.ERROR, ErrorLevels.FATAL])
+            new_log = list_log.filter_levels(levels)
         else:
-            new_log = list_log.filter_levels(
-                levels=[ErrorLevels.ERROR, ErrorLevels.FATAL]
-            )
+            new_log = list_log.filter_levels(levels=levels)
         reveal_type(new_log)
         assert len(new_log) > 0
 
