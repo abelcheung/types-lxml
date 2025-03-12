@@ -23,9 +23,10 @@ else:
 
 DEBUG: int
 ICONV_COMPILED_VERSION: Final[tuple[int, int]]
-LIBXML_VERSION: Final[tuple[int, int, int]]
 LIBXML_COMPILED_VERSION: Final[tuple[int, int, int]]
+LIBXML_COMPILED_FEATURES: Final[set[str]]
 LIBXML_FEATURES: Final[set[str]]
+LIBXML_VERSION: Final[tuple[int, int, int]]
 LXML_VERSION: Final[tuple[int, int, int, int]]
 __version__: Final[LiteralString]
 
