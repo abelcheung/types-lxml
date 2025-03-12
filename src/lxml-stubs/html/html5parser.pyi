@@ -4,7 +4,7 @@
 #
 import sys
 from _typeshed import SupportsRead
-from typing import Any, Literal, overload
+from typing import Literal, overload
 
 import html5lib as _html5lib
 
@@ -39,27 +39,27 @@ class HTMLParser(_html5lib.HTMLParser):
 html_parser: HTMLParser
 
 # Notes:
-# - Exception raised when html=<str> and guess_charset=True
+# - Exception raised when html=<str> and guess_charset
 #   are used together. This is due to flawed argument passing
-#   into html5lib. We cover it up with @overload's
+#   into html5lib. We cover the situation with @overload
 # - Although other types of parser _might_ be usable (after implementing
 #   parse() method, that is), such usage completely defeats the purpose of
 #   creating this submodule. It is intended for subclassing or
 #   init argument tweaking instead.
 
 @overload
-@deprecated("`str` input data and `guess_charset=True` together results in exception")
+@deprecated("`str` input and `guess_charset` argument together results in exception")
 def document_fromstring(
     html: str,
-    guess_charset: Literal[True],
+    guess_charset: bool,
     parser: HTMLParser | None = None,
 ) -> Never:
     """Parse a whole document into a string.
 
     Annotation
     ----------
-    This overload signature guards against using `str` input data and `guess_charset=True`
-    together, which results in an exception.
+    This overload signature guards against using `str` input data and
+    `guess_charset` argument together, which results in an exception.
 
     See Also
     --------
@@ -81,41 +81,41 @@ def document_fromstring(
     [API documentation](https://lxml.de/apidoc/lxml.html.html5parser.html#lxml.html.html5parser.document_fromstring)
     """
 
-@overload  # str html + kw guess_charset=true
-@deprecated("`str` input data and `guess_charset=True` together results in exception")
+@overload  # str html + kw guess_charset
+@deprecated("`str` input and `guess_charset` argument together results in exception")
 def fragments_fromstring(
     html: str,
     no_leading_text: bool = False,
     *,
-    guess_charset: Literal["True"],
-    **kw: Any,
+    guess_charset: bool,
+    parser: HTMLParser | None = None,
 ) -> Never:
     """Parses several HTML elements, returning a list of elements.
 
     Annotation
     ----------
-    This overload signature guards against using `str` input data and `guess_charset=True`
-    together, which results in an exception.
+    This overload signature guards against using `str` input data and
+    `guess_charset` argument together, which results in an exception.
 
     See Also
     --------
     [API documentation](https://lxml.de/apidoc/lxml.html.html5parser.html#lxml.html.html5parser.fragments_fromstring)
     """
 
-@overload  # str html + positional guess_charset=true
-@deprecated("`str` input data and `guess_charset=True` together results in exception")
+@overload  # str html + positional guess_charset
+@deprecated("`str` input and `guess_charset` argument together results in exception")
 def fragments_fromstring(
     html: str,
     no_leading_text: bool,
-    guess_charset: Literal["True"],
-    *arg: Any,
+    guess_charset: bool,
+    parser: HTMLParser | None = None,
 ) -> Never:
     """Parses several HTML elements, returning a list of elements.
 
     Annotation
     ----------
-    This overload signature guards against using `str` input data and `guess_charset=True`
-    together, which results in an exception.
+    This overload signature guards against using `str` input data and
+    `guess_charset` argument together, which results in an exception.
 
     See Also
     --------
@@ -133,8 +133,8 @@ def fragments_fromstring(  # type: ignore[overload-overlap]  # pyright: ignore[r
 
     Annotation
     ----------
-    This overload signature handles the case where `no_leading_text` is set to `True`,
-    which means no leading text is present in output.
+    This overload signature handles the case where `no_leading_text` is set to
+    `True`, which means no leading text is present in output.
 
     See Also
     --------
@@ -152,43 +152,21 @@ def fragments_fromstring(
 
     Annotation
     ----------
-    This overload signature handles the case where `no_leading_text` is not `True`,
-    which means the first item of output list may be the leading text.
+    This overload signature handles the case where `no_leading_text` is not
+    `True`, which means the first item of output list may be the leading text.
 
     See Also
     --------
     [API documentation](https://lxml.de/apidoc/lxml.html.html5parser.html#lxml.html.html5parser.fragments_fromstring)
     """
 
-@overload  # str html + kw guess_charset=true
-@deprecated("`str` input data and `guess_charset=True` together results in exception")
+@overload  # str html + kw guess_charset
+@deprecated("`str` input and `guess_charset` argument together results in exception")
 def fragment_fromstring(
     html: str,
     create_parent: bool | str | bytes = False,
     *,
-    guess_charset: Literal[True],
-    **kw: Any,
-) -> Never:
-    """Parses a single HTML element; it is an error if there is more than
-    one element, or if anything but whitespace precedes or follows the
-    element.
-
-    Annotation
-    ----------
-    This overload signature guards against using `str` input data and `guess_charset=True`
-    together, which results in an exception.
-
-    See Also
-    --------
-    [API documentation](https://lxml.de/apidoc/lxml.html.html5parser.html#lxml.html.html5parser.fragment_fromstring)
-    """
-
-@overload  # str html + positional guess_charset=true
-@deprecated("`str` input data and `guess_charset=True` together results in exception")
-def fragment_fromstring(
-    html: str,
-    create_parent: bool | str | bytes,
-    guess_charset: Literal[True],
+    guess_charset: bool,
     parser: HTMLParser | None = None,
 ) -> Never:
     """Parses a single HTML element; it is an error if there is more than
@@ -197,8 +175,30 @@ def fragment_fromstring(
 
     Annotation
     ----------
-    This overload signature guards against using `str` input data and `guess_charset=True`
-    together, which results in an exception.
+    This overload signature guards against using `str` input data and
+    `guess_charset` argument together, which results in an exception.
+
+    See Also
+    --------
+    [API documentation](https://lxml.de/apidoc/lxml.html.html5parser.html#lxml.html.html5parser.fragment_fromstring)
+    """
+
+@overload  # str html + positional guess_charset
+@deprecated("`str` input and `guess_charset` argument together results in exception")
+def fragment_fromstring(
+    html: str,
+    create_parent: bool | str | bytes,
+    guess_charset: bool,
+    parser: HTMLParser | None = None,
+) -> Never:
+    """Parses a single HTML element; it is an error if there is more than
+    one element, or if anything but whitespace precedes or follows the
+    element.
+
+    Annotation
+    ----------
+    This overload signature guards against using `str` input data and
+    `guess_charset` argument together, which results in an exception.
 
     See Also
     --------
@@ -226,18 +226,18 @@ def fragment_fromstring(
     """
 
 @overload
-@deprecated("`str` input data and `guess_charset=True` together results in exception")
+@deprecated("`str` input and `guess_charset` argument together results in exception")
 def fromstring(
     html: str,
-    guess_charset: Literal[True],
+    guess_charset: bool,
     parser: HTMLParser | None = None,
 ) -> Never:
     """Parse the html, returning a single element/document.
 
     Annotation
     ----------
-    This overload signature guards against using `str` input data and `guess_charset=True`
-    together, which results in an exception.
+    This overload signature guards against using `str` input data and
+    `guess_charset` argument together, which results in an exception.
 
     See Also
     --------
@@ -263,9 +263,11 @@ def fromstring(
 
 # html5lib doesn't support pathlib
 @overload
-@deprecated("`str` input data and `guess_charset=True` together results in exception")
+@deprecated(
+    "guess_charset=True with file object that generate str content causes exception"
+)
 def parse(
-    filename_url_or_file: str | SupportsRead[str],
+    filename_url_or_file: SupportsRead[str],
     guess_charset: Literal[True],
     parser: HTMLParser | None = None,
 ) -> Never:
@@ -273,8 +275,9 @@ def parse(
 
     Annotation
     ----------
-    This overload signature guards against using `str` input data and `guess_charset=True`
-    together, which results in an exception.
+    This overload signature guards against using `guess_charset=True` together
+    with file object that generate `str` content (like `io.StringIO` or
+    `open(mode="rt")`, which results in an exception.
 
     See Also
     --------
@@ -291,7 +294,9 @@ def parse(
 
     Annotation
     ----------
-    This overload signature covers generic usage of `parse()`.
+    This overload signature covers generic usage of `parse()`. But it has a bug
+    of its own: if supplied input is a bytes URL (e.g.
+    `b'http://example.com/some.html'`), it will raise exception under Windows.
 
     See Also
     --------
