@@ -325,7 +325,10 @@ class TestPyErrorLog:
         pylog = PyErrorLog(logger=logger)
         use_global_python_log(pylog)
 
-    @settings(suppress_health_check=[HealthCheck.too_slow])
+        new_logger = logging.LoggerAdapter(logger, {})
+        pylog = PyErrorLog(logger=new_logger)
+        use_global_python_log(pylog)
+
     @given(logger=_st.all_instances_except_of_type(NoneType))
     @pytest.mark.slow
     def test_init_logger_arg_bad(self, logger: Any) -> None:

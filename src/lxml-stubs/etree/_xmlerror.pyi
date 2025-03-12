@@ -7,7 +7,7 @@ from abc import ABCMeta, abstractmethod
 from decimal import Decimal
 from logging import Logger, LoggerAdapter
 from numbers import Real
-from typing import Any, Collection, Iterable, Iterator, final, overload
+from typing import Collection, Iterable, Iterator, final, overload
 
 @final
 class _LogEntry:
@@ -161,7 +161,7 @@ class PyErrorLog(_BaseErrorLog):
     def __init__(
         self,
         *,
-        logger: Logger | LoggerAdapter[Any] | None = None,
+        logger: Logger | LoggerAdapter[Logger] | None = None,
     ) -> None: ...
     # copy() is disallowed, implementation chooses to fail in a
     # silent way by returning dummy _ListErrorLog. We skip it altogether.
