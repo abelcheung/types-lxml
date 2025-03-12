@@ -1,39 +1,58 @@
 from __future__ import annotations
 
+import io
 import sys
+from collections.abc import Callable, Iterable
 from inspect import Parameter
-from io import BytesIO, StringIO
+from itertools import product
 from pathlib import Path
 from typing import Any, cast
 
+import html5lib.html5parser
+from hypothesis import HealthCheck, given, settings
+import lxml.etree as _e
 import lxml.html.html5parser as h5
 import pytest
 from lxml.etree import (
-    HTMLParser as WrongParser,
     _Element as _Element,
     _ElementTree as _ElementTree,
 )
-from lxml.html.html5parser import HTMLParser
+from lxml.html.html5parser import HTMLParser as HTMLParser
 
-from .._testutils import signature_tester
+from .._testutils import signature_tester, strategy as _st
 
 if sys.version_info >= (3, 11):
     from typing import reveal_type
 else:
     from typing_extensions import reveal_type
 
+if sys.version_info >= (3, 12):
+    from collections.abc import Buffer
+else:
+    from typing_extensions import Buffer
+
 
 class TestParserConstruct:
     def test_default_parser(self) -> None:
         reveal_type(h5.html_parser)
 
-    @signature_tester(HTMLParser.__init__, (
+    # `tree` param is dropped in stub
+    @signature_tester(h5.HTMLParser.__init__, (
         ("strict", Parameter.POSITIONAL_OR_KEYWORD, False          ),
         ("kwargs", Parameter.VAR_KEYWORD          , Parameter.empty),
+    ))  # fmt: skip
+    @signature_tester(html5lib.html5parser.HTMLParser.__init__, (
+        ("tree"                 , Parameter.POSITIONAL_OR_KEYWORD, None ),
+        ("strict"               , Parameter.POSITIONAL_OR_KEYWORD, False),
+        ("namespaceHTMLElements", Parameter.POSITIONAL_OR_KEYWORD, True ),
+        ("debug"                , Parameter.POSITIONAL_OR_KEYWORD, False),
     ))  # fmt: skip
     def test_func_sig(self) -> None:
         pass
 
+    # Stub signature is pretty strict in order to promote cleaner code; but the
+    # params are just truthy/falsy values in runtime. No hypothesis testing is
+    # imposed on the parameters.
     @pytest.mark.parametrize(
         ("args", "kw"),
         [
@@ -44,41 +63,20 @@ class TestParserConstruct:
         ],
     )
     def test_good_args(self, args: tuple[Any], kw: dict[str, Any]) -> None:
-        p = HTMLParser(*args, **kw)
-        reveal_type(p)
-
-    # Stub signature is pretty strict in order to promote cleaner code;
-    # but the params are just truthy/falsy values in runtime, so no test
-    # is imposed on them
-    @pytest.mark.parametrize(
-        ("args", "kw"),
-        [
-            pytest.param((True, True), {}),
-            pytest.param((), {"badarg": 1}),
-        ],
-    )
-    def test_bad_args(self, args: tuple[Any], kw: dict[str, Any]) -> None:
-        with pytest.raises(TypeError):
-            _ = HTMLParser(*args, **kw)
+        reveal_type(h5.HTMLParser(*args, **kw))
 
 
-class TestFromstringFamily:
+# Misc arguments are not tested, they are just truthy/falsy values
+# - no_leading_text from fragments_fromstring()
+# - create_parent from fragment_fromstring()
+class TestSignature:
     @signature_tester(h5.document_fromstring, (
         ("html"         , Parameter.POSITIONAL_OR_KEYWORD, Parameter.empty),
         ("guess_charset", Parameter.POSITIONAL_OR_KEYWORD, None           ),
         ("parser"       , Parameter.POSITIONAL_OR_KEYWORD, None           ),
     ))  # fmt: skip
-    def test_d_fs_sig(self) -> None:
+    def test_document_fromstring(self) -> None:
         pass
-
-    def test_d_fs_src(self, html2_str: str, html2_bytes: bytes) -> None:
-        elem = h5.document_fromstring(html2_str)
-        reveal_type(elem)
-        del elem
-
-        elem = h5.document_fromstring(html2_bytes)
-        reveal_type(elem)
-        del elem
 
     @signature_tester(h5.fragments_fromstring, (
         ("html"           , Parameter.POSITIONAL_OR_KEYWORD, Parameter.empty),
@@ -86,15 +84,8 @@ class TestFromstringFamily:
         ("guess_charset"  , Parameter.POSITIONAL_OR_KEYWORD, None           ),
         ("parser"         , Parameter.POSITIONAL_OR_KEYWORD, None           ),
     ))  # fmt: skip
-    def test_fs_fs_sig(self) -> None:
+    def test_fragments_fromstring(self) -> None:
         pass
-
-    def test_fs_fs_src(self) -> None:
-        src_s: str = '<div><img src=""/></div><span>nothing</span>'
-        src_b: bytes = src_s.encode()
-        reveal_type(h5.fragments_fromstring(src_s))
-        reveal_type(h5.fragments_fromstring(src_b))
-        reveal_type(h5.fragments_fromstring(src_b, no_leading_text=True))
 
     @signature_tester(h5.fragment_fromstring, (
         ("html"         , Parameter.POSITIONAL_OR_KEYWORD, Parameter.empty),
@@ -102,31 +93,45 @@ class TestFromstringFamily:
         ("guess_charset", Parameter.POSITIONAL_OR_KEYWORD, None           ),
         ("parser"       , Parameter.POSITIONAL_OR_KEYWORD, None           ),
     ))  # fmt: skip
-    def test_f_fs_sig(self) -> None:
+    def test_fragment_fromstring(self) -> None:
         pass
-
-    def test_f_fs_src(self) -> None:
-        src_s: str = "<span>nothing</span>"
-        src_b: bytes = src_s.encode()
-        reveal_type(h5.fragment_fromstring(src_s))
-        reveal_type(h5.fragment_fromstring(src_b))
 
     @signature_tester(h5.fromstring, (
         ("html"         , Parameter.POSITIONAL_OR_KEYWORD, Parameter.empty),
         ("guess_charset", Parameter.POSITIONAL_OR_KEYWORD, None           ),
         ("parser"       , Parameter.POSITIONAL_OR_KEYWORD, None           ),
     ))  # fmt: skip
-    def test_fs_sig(self) -> None:
+    def test_fromstring(self) -> None:
         pass
 
-    def test_fs_src(self, html2_str: str, html2_bytes: bytes) -> None:
-        elem = h5.fromstring(html2_str)
-        reveal_type(elem)
-        del elem
+    @signature_tester(h5.parse, (
+        ("filename_url_or_file", Parameter.POSITIONAL_OR_KEYWORD, Parameter.empty),
+        ("guess_charset"       , Parameter.POSITIONAL_OR_KEYWORD, None           ),
+        ("parser"              , Parameter.POSITIONAL_OR_KEYWORD, None           ),
+    ))  # fmt: skip
+    def test_parse(self) -> None:
+        pass
 
-        elem = h5.fromstring(html2_bytes)
-        reveal_type(elem)
-        del elem
+
+class TestInputArg:
+    def test_document_fromstring(self, html2_str: str, html2_bytes: bytes) -> None:
+        reveal_type(h5.document_fromstring(html2_str))
+        reveal_type(h5.document_fromstring(html=html2_bytes))
+
+    def test_fragments_fromstring(self) -> None:
+        src = '<div><img src=""/></div><span>nothing</span>'
+        reveal_type(h5.fragments_fromstring(src))
+        reveal_type(h5.fragments_fromstring(html=src.encode()))
+        reveal_type(h5.fragments_fromstring(src, no_leading_text=True))
+
+    def test_fragment_fromstring(self) -> None:
+        src: str = "<span>nothing</span>"
+        reveal_type(h5.fragment_fromstring(src))
+        reveal_type(h5.fragment_fromstring(src.encode()))
+
+    def test_fromstring(self, html2_str: str, html2_bytes: bytes) -> None:
+        reveal_type(h5.fromstring(html2_str))
+        reveal_type(h5.fromstring(html2_bytes))
 
     @pytest.mark.parametrize(
         ("funcname",),
@@ -137,118 +142,166 @@ class TestFromstringFamily:
             ("fromstring",),
         ],
     )
-    def test_invalid_src(
-        self, html2_str: str, html2_filepath: Path, funcname: str
+    def test_invalid_src_1(
+        self,
+        funcname: str,
+        html2_filepath: Path,
+        generate_input_file_arguments: Callable[..., Iterable[Any]],
     ) -> None:
-        sio = StringIO(html2_str)
-        fh = open(html2_filepath, "rb")
-        for src in (None, sio, fh):
+        for src in generate_input_file_arguments(
+            html2_filepath, exclude_type=(str, bytes)
+        ):
             with pytest.raises(TypeError, match="string required"):
                 func = getattr(h5, funcname)
-                _ = func(cast(Any, src))
-        fh.close()
+                _ = func(html=src)
 
-    @signature_tester(h5.parse, (
-        ("filename_url_or_file", Parameter.POSITIONAL_OR_KEYWORD, Parameter.empty),
-        ("guess_charset"       , Parameter.POSITIONAL_OR_KEYWORD, None           ),
-        ("parser"              , Parameter.POSITIONAL_OR_KEYWORD, None           ),
-    ))  # fmt: skip
-    def test_parse_sig(self) -> None:
-        pass
+    @pytest.mark.parametrize(
+        ("funcname",),
+        [
+            ("document_fromstring",),
+            ("fragments_fromstring",),
+            ("fragment_fromstring",),
+            ("fromstring",),
+        ],
+    )
+    @given(src=_st.all_instances_except_of_type(str, bytes))
+    def test_invalid_src_2(self, funcname: str, src: Any) -> None:
+        func = getattr(h5, funcname)
+        with pytest.raises(TypeError, match="string required"):
+            _ = func(src)
 
-    def test_parse_src(self, html2_filepath: Path) -> None:
-        with open(html2_filepath, "rb") as fh:
-            tree = h5.parse(fh)
-        reveal_type(tree)
-        reveal_type(tree.getroot())
-        del tree
-
-        b_io = BytesIO(html2_filepath.read_bytes())
-        tree = h5.parse(b_io)
-        reveal_type(tree)
-        del tree
-
-        s_io = StringIO(html2_filepath.read_text())
-        tree = h5.parse(s_io)
-        reveal_type(tree)
-        del tree
+    def test_parse_src_ok(
+        self,
+        html2_filepath: Path,
+        generate_input_file_arguments: Callable[..., Iterable[Any]],
+    ) -> None:
+        if sys.platform == "win32":
+            # Bug in html.html5parser _looks_like_uri() util func
+            excluded = (Path, bytes)
+        else:
+            excluded = (Path,)
+        for src in generate_input_file_arguments(html2_filepath, exclude_type=excluded):
+            tree = h5.parse(src)
+            reveal_type(tree)
+            reveal_type(tree.getroot())
+            del tree
 
         with pytest.raises(TypeError, match="bytes-like object is required"):
             _ = h5.parse(cast(Any, html2_filepath))
 
-        tree = h5.parse(str(html2_filepath))
-        reveal_type(tree)
-        del tree
-
-
-class MyParser(h5.HTMLParser):
-    pass
+    # `parse()` has some very odd quirks in that it unexpectedly accepts:
+    # - None or other structs that evaluate to None, which results in
+    #   empty html document (<html><body/></html>)
+    # - buffer-like objects, in which html content is directly taken from
+    @settings(suppress_health_check=[HealthCheck.too_slow])
+    @given(src=_st
+        .all_instances_except_of_type(str, io.BytesIO, io.StringIO, Buffer)
+        .filter(bool))  # fmt: skip
+    @pytest.mark.slow
+    def test_parse_src_bad(self, src: Any) -> None:
+        with pytest.raises((TypeError, AssertionError)):
+            _ = h5.parse(src)
 
 
 class TestParserArg:
+    class MyParser(h5.HTMLParser):
+        pass
+
     # Not just any html5lib parser, requires those
     # using etree_lxml as treebuilder
-    def test_subclass(self, html2_str: str) -> None:
-        parser = MyParser()
+    def test_subclass(self, html2_str: str, html2_filepath: Path) -> None:
+        parser = self.MyParser()
 
         reveal_type(h5.document_fromstring(html2_str, parser=parser))
         reveal_type(h5.fragments_fromstring(html2_str, parser=parser))
         reveal_type(h5.fragment_fromstring(html2_str, parser=parser, create_parent=True))  # fmt: skip  # noqa: E501
         reveal_type(h5.fromstring(html2_str, parser=parser))
 
-        s_io = StringIO(html2_str)
-        tree = h5.parse(s_io, parser=parser)
+        tree = h5.parse(str(html2_filepath), parser=parser)
         reveal_type(tree)
-        del tree
 
-    def test_incompatible(self, html2_str: str) -> None:
-        parser = WrongParser()
-
-        with pytest.raises(AttributeError, match="has no attribute 'parse'"):
-            _ = h5.document_fromstring(html2_str, parser=cast(Any, parser))
-
-        with pytest.raises(AttributeError, match="has no attribute 'parseFragment'"):
-            _ = h5.fragments_fromstring(html2_str, parser=cast(Any, parser))
-
-        with pytest.raises(AttributeError, match="has no attribute 'parseFragment'"):
-            _ = h5.fragment_fromstring(
-                html2_str, parser=cast(Any, parser), create_parent=True
-            )
-
-        with pytest.raises(AttributeError, match="has no attribute 'parse'"):
-            _ = h5.fromstring(html2_str, parser=cast(Any, parser))
-
-        s_io = StringIO(html2_str)
-        with pytest.raises(AttributeError, match="has no attribute 'parse'"):
-            _ = h5.parse(s_io, parser=cast(Any, parser))
+    @pytest.mark.parametrize(
+        ("funcname",),
+        [
+            ("document_fromstring",),
+            ("fragments_fromstring",),
+            ("fragment_fromstring",),
+            ("fromstring",),
+            ("parse",),
+        ],
+    )
+    def test_incompatible(
+        self, html2_str: str, html2_filepath: Path, funcname: str
+    ) -> None:
+        src = str(html2_filepath) if funcname == "parse" else html2_str
+        func = getattr(h5, funcname)
+        keywords: dict[str, Any] = {"parser": _e.HTMLParser()}
+        if funcname == "fragment_fromstring":
+            keywords["create_parent"] = True
+        with pytest.raises(
+            AttributeError, match=r"has no attribute 'parse(Fragment)?'"
+        ):
+            _ = func(src, **keywords)
 
 
 # guess_charset is a truthy/falsy value, thus no arg type test
 class TestCharsetArg:
-    def test_bool(self, html2_bytes: bytes) -> None:
-        reveal_type(h5.document_fromstring(html2_bytes, True))
-        reveal_type(h5.fragments_fromstring(html2_bytes, guess_charset=True))
-        reveal_type(h5.fragment_fromstring(html2_bytes, create_parent=b"article", guess_charset=False))  # fmt: skip  # noqa: E501
-        reveal_type(h5.fromstring(html2_bytes, guess_charset=False))
+    @pytest.mark.parametrize(("chardet",), [(True,), (False,)])
+    def test_bytes_input_ok(self, html2_bytes: bytes, chardet: bool) -> None:
+        reveal_type(h5.document_fromstring(html2_bytes, chardet))
+        reveal_type(h5.fragments_fromstring(html2_bytes, guess_charset=chardet))
+        reveal_type(h5.fragment_fromstring(html2_bytes, create_parent=True, guess_charset=chardet))  # fmt: skip
+        reveal_type(h5.fromstring(html2_bytes, guess_charset=chardet))
 
-        b_io = BytesIO(html2_bytes)
-        tree = h5.parse(b_io, guess_charset=False)
-        reveal_type(tree)
-        del tree
-
-    def test_conflict(self, html2_str: str) -> None:
+    @pytest.mark.parametrize(
+        ("funcname", "chardet"),
+        product(
+            [
+                "document_fromstring",
+                "fragments_fromstring",
+                "fragment_fromstring",
+                "fromstring",
+            ],
+            [True, False],
+        ),
+    )
+    def test_str_input_conflict(
+        self, html2_str: str, funcname: str, chardet: bool
+    ) -> None:
+        func = getattr(h5, funcname)
         with pytest.raises(TypeError, match="unexpected keyword argument"):
-            _ = h5.document_fromstring(html2_str, guess_charset=cast(Any, True))
+            _ = func(html2_str, guess_charset=chardet)
 
-        with pytest.raises(TypeError, match="unexpected keyword argument"):
-            _ = h5.fragments_fromstring(html2_str, guess_charset=cast(Any, False))
+    @pytest.mark.parametrize(("chardet",), [(True,), (False,)])
+    def test_parse_bytes_input_ok(
+        self,
+        html2_filepath: Path,
+        chardet: bool,
+        generate_input_file_arguments: Callable[..., Iterable[Any]],
+    ) -> None:
+        if sys.platform == "win32":
+            # Bug in html.html5parser _looks_like_uri() util func
+            excluded = (Path, bytes)
+        else:
+            excluded = (Path,)
 
-        with pytest.raises(TypeError, match="unexpected keyword argument"):
-            _ = h5.fragment_fromstring(html2_str, guess_charset=cast(Any, False))
+        for input in generate_input_file_arguments(
+            html2_filepath, exclude_type=excluded
+        ):
+            has_conflict = False
+            # local file object
+            if hasattr(input, "read") and not hasattr(input, "status"):
+                data = input.read(1)
+                # SupportsRead[str] + guess_charset = boom
+                if isinstance(data, str) and chardet:
+                    has_conflict = True
+                input.seek(0, io.SEEK_SET)
 
-        with pytest.raises(TypeError, match="unexpected keyword argument"):
-            _ = h5.fromstring(html2_str, cast(Any, False))
-
-        s_io = StringIO(html2_str)
-        with pytest.raises(TypeError, match="unexpected keyword argument"):
-            _ = h5.parse(s_io, cast(Any, True))
+            if has_conflict:
+                with pytest.raises(TypeError, match=r"unexpected keyword argument"):
+                    _ = h5.parse(input, guess_charset=chardet)
+            else:
+                tree = h5.parse(input, guess_charset=chardet)
+                reveal_type(tree)
+                reveal_type(tree.getroot())
+                del tree
