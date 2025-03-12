@@ -12,7 +12,7 @@ if sys.version_info >= (3, 11):
 else:
     from typing_extensions import LiteralString, Self
 
-from .._types import _AnyStr, _TagName
+from .._types import _TagName, _TextArg
 from ..cssselect import _CSSTransArg
 from ..etree import CDATA, ElementBase
 
@@ -94,7 +94,7 @@ class ObjectifiedDataElement(ObjectifiedElement):
     @property
     @abc.abstractmethod
     def pyval(self) -> Any: ...
-    def _setText(self, s: _AnyStr | CDATA | None) -> None:
+    def _setText(self, s: _TextArg | CDATA | None) -> None:
         """Modify text content of objectified element directly.
 
         Original Docstring

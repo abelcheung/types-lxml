@@ -13,7 +13,6 @@ from typing import (
 
 from .. import etree
 from .._types import (
-    _AnyStr,
     _AttrName,
     _AttrVal,
     _ElementFactory,
@@ -90,15 +89,15 @@ class HtmlElement(etree.ElementBase):
     ) -> list[HtmlElement]: ...
     def find_class(
         self,
-        class_name: _AnyStr,  # needs check
+        class_name: str | bytes,
     ) -> list[HtmlElement]: ...
     # Signature is actually (self, id, *default), but situation is
     # similar to _Attrib.pop(); all defaults except the first
     # is discarded. No point to honor such useless signature.
     @overload
-    def get_element_by_id(self, id: _AnyStr) -> HtmlElement: ...
+    def get_element_by_id(self, id: str | bytes) -> HtmlElement: ...
     @overload
-    def get_element_by_id(self, id: _AnyStr, default: _T) -> HtmlElement | _T: ...
+    def get_element_by_id(self, id: str | bytes, default: _T) -> HtmlElement | _T: ...
     # text_content() uses XPath behind the scene, and smart string
     # subscript should point to original element type.
     # But unfortunately, the getparent() result of HtmlElement.text_content()

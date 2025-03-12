@@ -6,7 +6,6 @@ from typing import Iterable, Literal, TypeVar, overload
 
 from .. import etree
 from .._types import (
-    _AnyStr,
     _DefEtreeParsers,
     _FileReadSource,
     _TextArg,
@@ -117,7 +116,7 @@ def parse(
     """
 
 def fromstring(
-    xml: _AnyStr,
+    xml: str | bytes,
     parser: _DefEtreeParsers[ObjectifiedElement] | None = None,
     *,
     base_url: str | bytes | None = None,

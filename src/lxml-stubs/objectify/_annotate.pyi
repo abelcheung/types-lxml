@@ -4,7 +4,7 @@
 
 from typing import Any, Callable, Iterable
 
-from .._types import _AnyStr, _ElementOrTree
+from .._types import _ElementOrTree
 from ._element import ObjectifiedDataElement
 
 class PyType:
@@ -47,7 +47,7 @@ class PyType:
     def stringify(self) -> Callable[[Any], str]: ...
     def __init__(
         self,
-        name: _AnyStr,
+        name: str | bytes,
         type_check: Callable[[Any], None] | None,
         type_class: type[ObjectifiedDataElement],
         stringify: Callable[[Any], str] | None = None,
@@ -99,7 +99,7 @@ def pyannotate(
     *,
     ignore_old: bool = False,
     ignore_xsi: bool = False,
-    empty_pytype: _AnyStr | None = None,
+    empty_pytype: str | bytes | None = None,
 ) -> None:
     """Recursively annotates elements of an XML tree with `py:pytype` attributes
 
@@ -125,7 +125,7 @@ def xsiannotate(
     *,
     ignore_old: bool = False,
     ignore_pytype: bool = False,
-    empty_type: _AnyStr | None = None,
+    empty_type: str | bytes | None = None,
 ) -> None:
     """Recursively annotates elements of an XML tree with `xsi:type` attributes
 
@@ -157,8 +157,8 @@ def annotate(
     *,
     ignore_old: bool = True,
     ignore_xsi: bool = False,
-    empty_pytype: _AnyStr | None = None,
-    empty_type: _AnyStr | None = None,
+    empty_pytype: str | bytes | None = None,
+    empty_type: str | bytes | None = None,
     # following arguments are typed 'bint' in source
     annotate_xsi: bool = False,
     annotate_pytype: bool = True,

@@ -5,7 +5,6 @@
 from typing import Any, Literal, Protocol, TypeVar, overload
 
 from .._types import (
-    _AnyStr,
     _AttrMapping,
     _AttrTuples,
     _AttrVal,
@@ -272,7 +271,8 @@ class _OEMakerCallProtocol(Protocol):
     def __call__(
         self,
         *_children: _Element
-        | _AnyStr
+        | str
+        | bytes
         | bool
         | int
         | float
@@ -336,7 +336,8 @@ class ElementMaker:
         self,
         tag: str,  # bytes or namespaced QName object unsupported
         *_children: _Element  # See _OEMakerCallProtocol above
-        | _AnyStr
+        | str
+        | bytes
         | bool
         | int
         | float
