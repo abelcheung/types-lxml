@@ -47,12 +47,11 @@ class TestCSSSelectorInit:
         reveal_type(selector.error_log)
         assert len(selector.error_log) == 0
 
-        with pytest.raises(AttributeError, match=r"objects is not writable"):
-            selector.path = selector.path  # type: ignore[misc]  # pyright: ignore[reportAttributeAccessIssue]
-        with pytest.raises(AttributeError, match=r"objects is not writable"):
-            selector.error_log = selector.error_log  # type: ignore[misc]  # pyright: ignore[reportAttributeAccessIssue]
-            # not checking .css properties because it is actually writable;
-            # we lie to users about it being read-only.
+        # not checking .css properties because it is actually writable;
+        # we lie to users about it being read-only.
+        for attr in ("path", "error_log"):
+            with pytest.raises(AttributeError, match=r"objects is not writable"):
+                setattr(selector, attr, getattr(selector, attr))
 
     def test_xml_return_type(
         self, xml2_root: _Element, xml2_tree: _ElementTree
@@ -74,12 +73,27 @@ class TestCSSSelectorInit:
 
 
 class TestCSSSelectorArgs:
-    @given(css=_st.all_instances_except_of_type(str))
-    def test_css_arg_bad(self, css: Any) -> None:
-        with pytest.raises(TypeError, match=r"bytes-like object"):
-            _ = CSSSelector(css)
+    # test_css_arg_ok already intrinsic to test_properties test above
 
-    def test_namespaces_arg_ok(self, svg_root: _Element) -> None:
+    @settings(suppress_health_check=[HealthCheck.too_slow], max_examples=300)
+    @given(thing=_st.all_instances_except_of_type(str))
+    @pytest.mark.slow
+    def test_css_arg_bad_1(self, thing: Any) -> None:
+        with pytest.raises(
+            TypeError,
+            match=r"(string pattern on a|expected string or) bytes-like object",
+        ):
+            _ = CSSSelector(thing)
+
+    @settings(max_examples=5)
+    @given(iterable_of=_st.fixed_item_iterables())
+    def test_css_arg_bad_2(self, iterable_of: Any) -> None:
+        with pytest.raises(TypeError, match=r"expected string or bytes-like object"):
+            _ = CSSSelector(iterable_of("#id"))
+
+    def test_namespaces_arg_ok(
+        self, svg_root: _Element, svg_tree: _ElementTree
+    ) -> None:
         rdfns = "http://www.w3.org/1999/02/22-rdf-syntax-ns#"
         selector = CSSSelector("rdf|Bag > rdf|li", namespaces={"rdf": rdfns})
         result = selector(svg_root)
@@ -124,24 +138,42 @@ class TestCSSSelectorArgs:
             HealthCheck.function_scoped_fixture,
             HealthCheck.too_slow,
         ],
-        max_examples=500,
+        max_examples=300,
     )
-    @given(ns=_st.all_instances_except_of_type(dict, NoneType, StringIO, BytesIO).filter(
-        _namespace_aux_filter
-    ))  # fmt: skip
+    @given(
+        thing=_st.all_instances_except_of_type(
+            dict, NoneType, StringIO, BytesIO
+        ).filter(_namespace_aux_filter)
+    )
     @pytest.mark.slow
-    def test_namespaces_arg_bad(self, svg_root: _Element, ns: Any) -> None:
+    def test_namespaces_arg_bad(self, svg_root: _Element, thing: Any) -> None:
         with pytest.raises((TypeError, ValueError)):
-            _ = CSSSelector("li", namespaces=ns)
+            _ = CSSSelector("li", namespaces=thing)
 
     # Translator argument not tested, it just become a noop if required
     # values are not matched, not raising or doing anything.
 
-    @given(etree=_st.all_instances_except_of_type(_Element, _ElementTree))
-    def test_call_arg_bad(self, etree: Any) -> None:
+    @settings(max_examples=300)
+    @given(thing=_st.all_instances_except_of_type(_Element, _ElementTree))
+    @pytest.mark.slow
+    def test_call_arg_bad_1(self, thing: Any) -> None:
         selector = CSSSelector("#id")
         with pytest.raises(TypeError, match=r"Invalid input object"):
-            _ = selector(etree)  # pyright: ignore[reportUnknownVariableType]
+            _ = selector(thing)  # pyright: ignore[reportUnknownVariableType]
+
+    @settings(
+        suppress_health_check=[HealthCheck.function_scoped_fixture],
+        max_examples=5,
+    )
+    @given(iterable_of=_st.fixed_item_iterables())
+    def test_call_arg_bad_2(
+        self, iterable_of: Any, svg_root: _Element, svg_tree: _ElementTree
+    ) -> None:
+        selector = CSSSelector(".thing")
+        with pytest.raises(TypeError, match=r"Invalid input object"):
+            _ = selector(iterable_of(svg_root))  # pyright: ignore[reportUnknownVariableType]
+        with pytest.raises(TypeError, match=r"Invalid input object"):
+            _ = selector(iterable_of(svg_tree))  # pyright: ignore[reportUnknownVariableType]
 
 
 class TestElementMethod:

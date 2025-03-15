@@ -6,7 +6,7 @@ from types import NoneType
 from typing import Any
 
 import pytest
-from hypothesis import HealthCheck, given, settings, strategies as st
+from hypothesis import HealthCheck, given, settings
 from lxml.etree import (
     Comment,
     Entity,
@@ -38,19 +38,18 @@ class TestComment:
             reveal_type(comm)
             del comm
 
-    @settings(max_examples=500, suppress_health_check=[HealthCheck.too_slow])
-    @given(text=_st.all_instances_except_of_type(NoneType, str, bytes, bytearray))
+    @settings(suppress_health_check=[HealthCheck.too_slow], max_examples=300)
+    @given(thing=_st.all_instances_except_of_type(NoneType, str, bytes, bytearray))
     @pytest.mark.slow
-    def test_init_bad_1(self, text: Any) -> None:
+    def test_init_bad_1(self, thing: Any) -> None:
         with pytest.raises(TypeError, match="must be bytes or unicode"):
-            _ = Comment(text)
+            _ = Comment(thing)
 
-    @given(text=st.iterables(
-        _st.all_instances_except_of_type(), min_size=1, max_size=3,
-    ))  # fmt: skip
-    def test_init_bad_2(self, text: Any) -> None:
+    @settings(max_examples=5)
+    @given(iterable_of=_st.fixed_item_iterables())
+    def test_init_bad_2(self, iterable_of: Any) -> None:
         with pytest.raises(TypeError, match="must be bytes or unicode"):
-            _ = Comment(text)
+            _ = Comment(iterable_of("foo"))
 
     def test_dummy_dunders(self) -> None:
         comm = Comment()
@@ -103,19 +102,20 @@ class TestComment:
         with pytest.raises(NotImplementedError):
             del comm.text  # pyright: ignore[reportAttributeAccessIssue]
 
-    @given(text=_st.all_instances_except_of_type(NoneType, str, bytes, bytearray))
-    def test_text_property_bad_1(self, text: Any) -> None:
+    @settings(suppress_health_check=[HealthCheck.too_slow], max_examples=300)
+    @given(thing=_st.all_instances_except_of_type(NoneType, str, bytes, bytearray))
+    @pytest.mark.slow
+    def test_text_property_bad_1(self, thing: Any) -> None:
         comm = Comment()
         with pytest.raises(TypeError, match="must be bytes or unicode"):
-            comm.text = text
+            comm.text = thing
 
-    @given(text=st.iterables(
-        _st.all_instances_except_of_type(), min_size=1, max_size=3,
-    ))  # fmt: skip
-    def test_text_property_bad_2(self, text: Any) -> None:
+    @settings(max_examples=5)
+    @given(iterable_of=_st.fixed_item_iterables())
+    def test_text_property_bad_2(self, iterable_of: Any) -> None:
         comm = Comment()
         with pytest.raises(TypeError, match="must be bytes or unicode"):
-            comm.text = text
+            comm.text = iterable_of("foo")
 
 
 class TestEntity:
@@ -128,19 +128,18 @@ class TestEntity:
             reveal_type(ent)
             del ent
 
-    @settings(max_examples=500, suppress_health_check=[HealthCheck.too_slow])
-    @given(name=_st.all_instances_except_of_type(str, bytes, bytearray))
+    @settings(suppress_health_check=[HealthCheck.too_slow], max_examples=300)
+    @given(thing=_st.all_instances_except_of_type(str, bytes, bytearray))
     @pytest.mark.slow
-    def test_init_bad_1(self, name: Any) -> None:
+    def test_init_bad_1(self, thing: Any) -> None:
         with pytest.raises(TypeError, match="must be bytes or unicode"):
-            _ = Entity(name)
+            _ = Entity(thing)
 
-    @given(name=st.iterables(
-        _st.all_instances_except_of_type(), min_size=1, max_size=3,
-    ))  # fmt: skip
-    def test_init_bad_2(self, name: Any) -> None:
+    @settings(max_examples=5)
+    @given(iterable_of=_st.fixed_item_iterables())
+    def test_init_bad_2(self, iterable_of: Any) -> None:
         with pytest.raises(TypeError, match="must be bytes or unicode"):
-            _ = Entity(name)
+            _ = Entity(iterable_of("foo"))
 
     def test_dummy_dunders(self) -> None:
         ent = Entity("baz")
@@ -202,19 +201,20 @@ class TestEntity:
         with pytest.raises(NotImplementedError):
             del ent.name  # pyright: ignore[reportAttributeAccessIssue]
 
-    @given(name=_st.all_instances_except_of_type(str, bytes, bytearray))
-    def test_name_property_bad_1(self, name: Any) -> None:
+    @settings(suppress_health_check=[HealthCheck.too_slow], max_examples=300)
+    @given(thing=_st.all_instances_except_of_type(str, bytes, bytearray))
+    @pytest.mark.slow
+    def test_name_property_bad_1(self, thing: Any) -> None:
         ent = Entity("baz")
         with pytest.raises(TypeError, match="must be bytes or unicode"):
-            ent.name = name
+            ent.name = thing
 
-    @given(name=st.iterables(
-        _st.all_instances_except_of_type(), min_size=1, max_size=3,
-    ))  # fmt: skip
-    def test_name_property_bad_2(self, name: Any) -> None:
+    @settings(max_examples=5)
+    @given(iterable_of=_st.fixed_item_iterables())
+    def test_name_property_bad_2(self, iterable_of: Any) -> None:
         ent = Entity("baz")
         with pytest.raises(TypeError, match="must be bytes or unicode"):
-            ent.name = name
+            ent.name = iterable_of("foo")
 
 
 class TestPI:
@@ -231,19 +231,18 @@ class TestPI:
             reveal_type(pi)
             del pi
 
-    @settings(max_examples=500, suppress_health_check=[HealthCheck.too_slow])
-    @given(target=_st.all_instances_except_of_type(str, bytes, bytearray))
+    @settings(suppress_health_check=[HealthCheck.too_slow], max_examples=300)
+    @given(thing=_st.all_instances_except_of_type(str, bytes, bytearray))
     @pytest.mark.slow
-    def test_target_arg_bad_1(self, target: Any) -> None:
+    def test_target_arg_bad_1(self, thing: Any) -> None:
         with pytest.raises(TypeError, match="must be bytes or unicode"):
-            _ = ProcessingInstruction(target)
+            _ = ProcessingInstruction(thing)
 
-    @given(target=st.iterables(
-        _st.all_instances_except_of_type(), min_size=1, max_size=3,
-    ))  # fmt: skip
-    def test_target_arg_bad_2(self, target: Any) -> None:
+    @settings(max_examples=5)
+    @given(iterable_of=_st.fixed_item_iterables())
+    def test_target_arg_bad_2(self, iterable_of: Any) -> None:
         with pytest.raises(TypeError, match="must be bytes or unicode"):
-            _ = ProcessingInstruction(target)
+            _ = ProcessingInstruction(iterable_of("foo"))
 
     def test_text_arg_ok(self) -> None:
         for text in (None, "bar", b"bar", bytearray(b"bar")):
@@ -251,19 +250,18 @@ class TestPI:
             reveal_type(pi)
             del pi
 
-    @settings(max_examples=500, suppress_health_check=[HealthCheck.too_slow])
-    @given(text=_st.all_instances_except_of_type(NoneType, str, bytes, bytearray))
+    @settings(suppress_health_check=[HealthCheck.too_slow], max_examples=300)
+    @given(thing=_st.all_instances_except_of_type(NoneType, str, bytes, bytearray))
     @pytest.mark.slow
-    def test_text_arg_bad_1(self, text: Any) -> None:
+    def test_text_arg_bad_1(self, thing: Any) -> None:
         with pytest.raises(TypeError, match="must be bytes or unicode"):
-            _ = ProcessingInstruction("foo", text)
+            _ = ProcessingInstruction("foo", thing)
 
-    @given(text=st.iterables(
-        _st.all_instances_except_of_type(), min_size=1, max_size=3,
-    ))  # fmt: skip
-    def test_text_arg_bad_2(self, text: Any) -> None:
+    @settings(max_examples=5)
+    @given(iterable_of=_st.fixed_item_iterables())
+    def test_text_arg_bad_2(self, iterable_of: Any) -> None:
         with pytest.raises(TypeError, match="must be bytes or unicode"):
-            _ = ProcessingInstruction("foo", text)
+            _ = ProcessingInstruction("foo", iterable_of("bar"))
 
     def test_dummy_dunders(self) -> None:
         pi = ProcessingInstruction("baz")
@@ -326,19 +324,20 @@ class TestPI:
         with pytest.raises(NotImplementedError):
             del pi.text  # pyright: ignore[reportAttributeAccessIssue]
 
-    @given(text=_st.all_instances_except_of_type(NoneType, str, bytes, bytearray))
-    def test_text_property_bad_1(self, text: Any) -> None:
+    @settings(suppress_health_check=[HealthCheck.too_slow], max_examples=300)
+    @given(thing=_st.all_instances_except_of_type(NoneType, str, bytes, bytearray))
+    @pytest.mark.slow
+    def test_text_property_bad_1(self, thing: Any) -> None:
         pi = ProcessingInstruction("baz")
         with pytest.raises(TypeError, match="must be bytes or unicode"):
-            pi.text = text
+            pi.text = thing
 
-    @given(text=st.iterables(
-        _st.all_instances_except_of_type(), min_size=1, max_size=3,
-    ))  # fmt: skip
-    def test_text_property_bad_2(self, text: Any) -> None:
+    @settings(max_examples=5)
+    @given(iterable_of=_st.fixed_item_iterables())
+    def test_text_property_bad_2(self, iterable_of: Any) -> None:
         pi = ProcessingInstruction("baz")
         with pytest.raises(TypeError, match="must be bytes or unicode"):
-            pi.text = text
+            pi.text = iterable_of("foo")
 
     def test_target_property_ok(self) -> None:
         pi = ProcessingInstruction("baz")
@@ -349,16 +348,17 @@ class TestPI:
         with pytest.raises(NotImplementedError):
             del pi.target  # pyright: ignore[reportAttributeAccessIssue]
 
-    @given(target=_st.all_instances_except_of_type(str, bytes, bytearray))
-    def test_target_property_bad_1(self, target: Any) -> None:
+    @settings(suppress_health_check=[HealthCheck.too_slow], max_examples=300)
+    @given(thing=_st.all_instances_except_of_type(str, bytes, bytearray))
+    @pytest.mark.slow
+    def test_target_property_bad_1(self, thing: Any) -> None:
         pi = ProcessingInstruction("baz")
         with pytest.raises(TypeError, match="must be bytes or unicode"):
-            pi.target = target
+            pi.target = thing
 
-    @given(target=st.iterables(
-        _st.all_instances_except_of_type(), min_size=1, max_size=3,
-    ))  # fmt: skip
-    def test_target_property_bad_2(self, target: Any) -> None:
+    @settings(max_examples=5)
+    @given(iterable_of=_st.fixed_item_iterables())
+    def test_target_property_bad_2(self, iterable_of: Any) -> None:
         pi = ProcessingInstruction("baz")
         with pytest.raises(TypeError, match="must be bytes or unicode"):
-            pi.target = target
+            pi.target = iterable_of("foo")

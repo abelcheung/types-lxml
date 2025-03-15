@@ -25,6 +25,7 @@ from lxml.etree import (
 from lxml.html import Element as h_Element
 
 from .._testutils import strategy as _st
+from .._testutils.common import tag_name_types
 
 if sys.version_info >= (3, 11):
     from typing import reveal_type
@@ -108,15 +109,22 @@ class TestBasicBehavior:
         elem[:] = comment
         assert len(elem) == 0
 
-    @settings(suppress_health_check=[HealthCheck.too_slow])
-    @given(obj=_st.all_instances_except_of_type(NoneType, _Element))
+    @settings(suppress_health_check=[HealthCheck.too_slow], max_examples=300)
+    @given(thing=_st.all_instances_except_of_type(NoneType, _Element))
     @pytest.mark.slow
-    def test_insert_bad_elem(self, disposable_element: _Element, obj: Any) -> None:
+    def test_insert_bad_elem_1(self, disposable_element: _Element, thing: Any) -> None:
         with pytest.raises(
             TypeError, match=r"Cannot convert \w+(\.\w+)* to .+\._Element"
         ):
-            disposable_element[0] = obj
+            disposable_element[0] = thing
 
+    @settings(max_examples=5)
+    @given(iterable_of=_st.fixed_item_iterables())
+    def test_insert_bad_elem_2(self, disposable_element: _Element, iterable_of: Any) -> None:
+        with pytest.raises(
+            TypeError, match=r"Cannot convert \w+(\.\w+)* to .+\._Element"
+        ):
+            disposable_element[0] = iterable_of(disposable_element)
 
 class TestProperties:
     def test_basic_stuff(self, xml2_root: _Element) -> None:
@@ -146,17 +154,11 @@ class TestProperties:
                 delattr(xml2_root, attr)
 
     def test_ro_properties(self, xml2_root: _Element) -> None:
-        with pytest.raises(AttributeError, match="objects is not writable"):
-            xml2_root.attrib = xml2_root.attrib  # type: ignore[misc]  # pyright: ignore[reportAttributeAccessIssue]
-
-        with pytest.raises(AttributeError, match="objects is not writable"):
-            xml2_root.prefix = xml2_root.prefix  # type: ignore[misc]  # pyright: ignore[reportAttributeAccessIssue]
-
-        with pytest.raises(AttributeError, match="objects is not writable"):
-            xml2_root.nsmap = xml2_root.nsmap  # type: ignore[misc]  # pyright: ignore[reportAttributeAccessIssue]
-
         # Not performing test for .sourceline ! We pretend it is not
         # changeable in stub, but actually it is read-write
+        for attr in ("attrib", "prefix", "nsmap"):
+            with pytest.raises(AttributeError, match="objects is not writable"):
+                setattr(xml2_root, attr, getattr(xml2_root, attr))
 
     def test_base_rw_ok(self, disposable_element: _Element) -> None:
         for v in (
@@ -168,10 +170,18 @@ class TestProperties:
             # None is transformed to empty string, so no assert test
             reveal_type(disposable_element.base)
 
-    @given(value=_st.all_instances_except_of_type(str, bytes, NoneType))
-    def test_base_rw_bad(self, disposable_element: _Element, value: Any) -> None:
+    @settings(suppress_health_check=[HealthCheck.too_slow], max_examples=300)
+    @given(thing=_st.all_instances_except_of_type(str, bytes, NoneType))
+    @pytest.mark.slow
+    def test_base_rw_bad_1(self, disposable_element: _Element, thing: Any) -> None:
         with pytest.raises(TypeError, match="must be string or unicode"):
-            disposable_element.base = value
+            disposable_element.base = thing
+
+    @settings(max_examples=5)
+    @given(iterable_of=_st.fixed_item_iterables())
+    def test_base_rw_bad_2(self, disposable_element: _Element, iterable_of: Any) -> None:
+        with pytest.raises(TypeError, match="must be string or unicode"):
+            disposable_element.base = iterable_of("foo")
 
     def test_tag_rw_ok(self, disposable_element: _Element) -> None:
         for v in (
@@ -183,10 +193,18 @@ class TestProperties:
             disposable_element.tag = v
             reveal_type(disposable_element.tag)
 
-    @given(value=_st.all_instances_except_of_type(str, bytes, bytearray, QName))
-    def test_tag_rw_bad(self, disposable_element: _Element, value: Any) -> None:
+    @settings(suppress_health_check=[HealthCheck.too_slow], max_examples=300)
+    @given(value=_st.all_instances_except_of_type(*tag_name_types.allow))
+    @pytest.mark.slow
+    def test_tag_rw_bad_1(self, disposable_element: _Element, value: Any) -> None:
         with pytest.raises(TypeError, match="must be bytes or unicode"):
             disposable_element.tag = value
+
+    @settings(max_examples=5)
+    @given(iterable_of=_st.fixed_item_iterables())
+    def test_tag_rw_bad_2(self, disposable_element: _Element, iterable_of: Any) -> None:
+        with pytest.raises(TypeError, match="must be bytes or unicode"):
+            disposable_element.tag = iterable_of("foo")
 
     def test_text_rw_ok(self, disposable_element: _Element) -> None:
         for v in (
@@ -200,12 +218,20 @@ class TestProperties:
             disposable_element.text = v
             reveal_type(disposable_element.text)
 
-    @given(value=_st.all_instances_except_of_type(
+    @settings(suppress_health_check=[HealthCheck.too_slow], max_examples=300)
+    @given(thing=_st.all_instances_except_of_type(
         str, bytes, bytearray, etree.CDATA, QName, NoneType
     ))  # fmt: skip
-    def test_text_rw_bad(self, disposable_element: _Element, value: Any) -> None:
+    @pytest.mark.slow
+    def test_text_rw_bad(self, disposable_element: _Element, thing: Any) -> None:
         with pytest.raises(TypeError, match="must be bytes or unicode"):
-            disposable_element.text = value
+            disposable_element.text = thing
+
+    @settings(max_examples=5)
+    @given(iterable_of=_st.fixed_item_iterables())
+    def test_text_rw_bad_2(self, disposable_element: _Element, iterable_of: Any) -> None:
+        with pytest.raises(TypeError, match="must be bytes or unicode"):
+            disposable_element.text = iterable_of("foo")
 
     def test_tail_rw_ok(self, disposable_element: _Element) -> None:
         for v in (
@@ -218,9 +244,17 @@ class TestProperties:
             disposable_element.tail = v
             reveal_type(disposable_element.tail)
 
-    @given(value=_st.all_instances_except_of_type(
+    @settings(suppress_health_check=[HealthCheck.too_slow], max_examples=300)
+    @given(thing=_st.all_instances_except_of_type(
         str, bytes, bytearray, etree.CDATA, NoneType
     ))  # fmt: skip
-    def test_tail_rw_bad(self, disposable_element: _Element, value: Any) -> None:
+    @pytest.mark.slow
+    def test_tail_rw_bad_1(self, disposable_element: _Element, thing: Any) -> None:
         with pytest.raises(TypeError, match="must be bytes or unicode"):
-            disposable_element.tail = value
+            disposable_element.tail = thing
+
+    @settings(max_examples=5)
+    @given(iterable_of=_st.fixed_item_iterables())
+    def test_tail_rw_bad_2(self, disposable_element: _Element, iterable_of: Any) -> None:
+        with pytest.raises(TypeError, match="must be bytes or unicode"):
+            disposable_element.tail = iterable_of("foo")

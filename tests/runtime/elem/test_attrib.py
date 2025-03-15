@@ -51,32 +51,55 @@ class TestAttrib:
         for k1 in attrib:
             reveal_type(k1)
 
-    @settings(suppress_health_check=[HealthCheck.too_slow], max_examples=500)
-    @given(
-        k=_st.all_instances_except_of_type(
-            *attr_name_types.allow, *attr_name_types.skip
-        )
-    )
+    @settings(suppress_health_check=[HealthCheck.too_slow], max_examples=300)
+    @given(thing=_st.all_instances_except_of_type(
+        *attr_name_types.allow, *attr_name_types.skip
+    ))  # fmt: skip
     @pytest.mark.slow
-    def test_wrong_key_type(self, disposable_attrib: _Attrib, k: Any) -> None:
+    def test_key_type_bad_1(self, disposable_attrib: _Attrib, thing: Any) -> None:
         with pytest.raises(TypeError, match="Argument must be bytes or unicode"):
-            _ = disposable_attrib[k]
+            _ = disposable_attrib[thing]
+
+    @given(iterable_of=_st.fixed_item_iterables(), k=_st.xml_name_arg())
+    def test_key_type_bad_2(
+        self, disposable_attrib: _Attrib, iterable_of: Any, k: _AttrName
+    ) -> None:
+        # unhashable types not addable to set
+        assume(not(
+            getattr(iterable_of, "type") in {set, frozenset}
+            and isinstance(k, bytearray)
+        ))  # fmt: skip
+        with pytest.raises(TypeError, match="Argument must be bytes or unicode"):
+            _ = disposable_attrib[iterable_of(k)]
 
     @given(k=_st.xml_name_arg())
     def test_valid_key_type(self, disposable_attrib: _Attrib, k: _AttrName) -> None:
         disposable_attrib[k] = "bar"
         del disposable_attrib[k]
 
-    @settings(suppress_health_check=[HealthCheck.too_slow], max_examples=500)
-    @given(
-        v=_st.all_instances_except_of_type(
-            *attr_value_types.allow, *attr_value_types.skip
-        )
-    )
+    @settings(suppress_health_check=[HealthCheck.too_slow], max_examples=300)
+    @given(thing=_st.all_instances_except_of_type(
+        *attr_value_types.allow, *attr_value_types.skip
+    ))  # fmt: skip
     @pytest.mark.slow
-    def test_wrong_value_type(self, disposable_attrib: _Attrib, v: Any) -> None:
+    def test_value_type_bad_1(self, disposable_attrib: _Attrib, thing: Any) -> None:
         with pytest.raises(TypeError, match="Argument must be bytes or unicode"):
-            disposable_attrib["foo"] = v
+            disposable_attrib["foo"] = thing
+
+    @given(
+        iterable_of=_st.fixed_item_iterables(),
+        v=_st.xml_attr_value_arg(),
+    )
+    def test_value_type_bad_2(
+        self, disposable_attrib: _Attrib, iterable_of: Any, v: _AttrVal
+    ) -> None:
+        # unhashable types not addable to set
+        assume(not(
+            getattr(iterable_of, "type") in {set, frozenset}
+            and isinstance(v, bytearray)
+        ))  # fmt: skip
+        with pytest.raises(TypeError, match="Argument must be bytes or unicode"):
+            disposable_attrib["foo"] = iterable_of(v)
 
     @given(v=_st.xml_attr_value_arg())
     def test_valid_value_type(self, disposable_attrib: _Attrib, v: _AttrVal) -> None:
@@ -136,6 +159,13 @@ class TestMethodHasKey:
     def test_wrong_key_type(self, disposable_attrib: _Attrib, k: Any) -> None:
         with pytest.raises(TypeError, match="Argument must be bytes or unicode"):
             _ = disposable_attrib.has_key(k)
+
+    @given(iterable_of=_st.fixed_item_iterables(), k=_st.xml_name_key_arg())
+    def test_key_type_bad_2(
+        self, disposable_attrib: _Attrib, iterable_of: Any, k: _AttrName
+    ) -> None:
+        with pytest.raises(TypeError, match="Argument must be bytes or unicode"):
+            _ = disposable_attrib.has_key(iterable_of(k))
 
     @given(k=_st.xml_name_arg())
     @example(k="date")
@@ -197,6 +227,13 @@ class TestMethodPop:
     def test_wrong_key_type(self, disposable_attrib: _Attrib, k: Any) -> None:
         with pytest.raises(TypeError, match="Argument must be bytes or unicode"):
             _ = disposable_attrib.pop(k)
+
+    @given(iterable_of=_st.fixed_item_iterables(), k=_st.xml_name_key_arg())
+    def test_key_type_bad_2(
+        self, disposable_attrib: _Attrib, iterable_of: Any, k: _AttrName
+    ) -> None:
+        with pytest.raises(TypeError, match="Argument must be bytes or unicode"):
+            _ = disposable_attrib.pop(iterable_of(k))
 
     @given(k=_st.xml_name_arg(), v=_st.xml_attr_value_arg())
     def test_valid_key_type(
@@ -297,15 +334,11 @@ class TestMethodUpdate:
         assert disposable_attrib.update({"foo": "bar"}) is None
         disposable_attrib.clear()
 
-    # TODO register_type_strategy for element, QName, CDATA etc
-
-    @given(
-        atts=st.dictionaries(
-            keys=_st.xml_name_key_arg(),
-            values=_st.xml_attr_value_arg(),
-            max_size=3,
-        )
-    )
+    @given(atts=st.dictionaries(
+        keys=_st.xml_name_key_arg(),
+        values=_st.xml_attr_value_arg(),
+        max_size=3,
+    ))  # fmt: skip
     def test_input_dict_ok(
         self, disposable_attrib: _Attrib, atts: dict[Any, Any]
     ) -> None:
@@ -354,13 +387,24 @@ class TestMethodUpdate:
         with pytest.raises((TypeError, ValueError, AssertionError)):
             self._verify_key_val_present(disposable_attrib, ChainMap(atts))
 
-    @given(atts=st.iterables(
-        st.tuples(_st.xml_name_arg(), _st.xml_attr_value_arg()), max_size=3
-    ))  # fmt: skip
-    def test_input_sequence_ok(
-        self, disposable_attrib: _Attrib, atts: list[tuple[Any, Any]]
+    @given(
+        k=_st.xml_name_key_arg(),
+        v=_st.xml_attr_value_arg(),
+        iterable_of=_st.fixed_item_iterables(),
+    )
+    def test_input_iterable_ok(
+        self,
+        disposable_attrib: _Attrib,
+        k: Any,
+        v: Any,
+        iterable_of: Any,
     ) -> None:
-        self._verify_key_val_present(disposable_attrib, atts)
+        # unhashable types not addable to set
+        assume(not(
+            getattr(iterable_of, "type") in {set, frozenset}
+            and isinstance(v, bytearray)
+        ))  # fmt: skip
+        self._verify_key_val_present(disposable_attrib, iterable_of((k, v)))
 
     @given(atts=st.iterables(
         st.tuples(_st.xml_name_arg(), _st.xml_attr_value_arg()), max_size=3

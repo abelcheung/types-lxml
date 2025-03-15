@@ -125,9 +125,14 @@ class TestListLogMethods:
         assert len(new_log) > 0
 
     # list_log is function-scoped and causes HealthCheck warning;
-    # should be fine as log is supposedly unmodified
-    # TODO: negative test only proves arg is of type
-    # int | Iterable[Any], and we want int | Iterable[int]
+    # should be fine as log is supposedly unmodified.
+    #
+    # FIXME: negative test only proves arg is of type
+    # int | Iterable[Any], and we want int | Iterable[int].
+    #
+    # Whole slew of types and classes don't cause any exception if placed
+    # insider iterable, like NotImplementedType, enumerate, map, lambda etc.
+    #
     # Issues apply to filter_levels below as well
     @settings(suppress_health_check=[
         HealthCheck.too_slow,
@@ -268,12 +273,19 @@ class TestEmptyLog:
 
 
 class TestModuleFunc:
-    @settings(suppress_health_check=[HealthCheck.too_slow])
-    @given(log=_st.all_instances_except_of_type())
+    @settings(suppress_health_check=[HealthCheck.too_slow], max_examples=300)
+    @given(thing=_st.all_instances_except_of_type())
     @pytest.mark.slow
-    def test_global_log_arg_bad(self, log: Any) -> None:
+    def test_global_log_arg_bad_1(self, thing: Any) -> None:
         with pytest.raises(TypeError, match=r"expected .+\.PyErrorLog, got .+"):
-            use_global_python_log(log)
+            use_global_python_log(thing)
+
+    @settings(max_examples=5)
+    @given(iterable_of=_st.fixed_item_iterables())
+    def test_global_log_arg_bad_2(self, iterable_of: Any) -> None:
+        pylog = PyErrorLog()
+        with pytest.raises(TypeError, match=r"expected .+\.PyErrorLog, got .+"):
+            use_global_python_log(iterable_of(pylog))
 
     @empty_signature_tester(clear_error_log)
     @signature_tester(
@@ -297,6 +309,12 @@ class TestPyErrorLog:
         reveal_type(pylog.last_error)  # None initially
         reveal_type(pylog.level_map)
 
+        for attr_ in ("last_error", "level_map"):
+            with pytest.raises(AttributeError, match="is not writable"):
+                delattr(pylog, attr_)
+            with pytest.raises(AttributeError, match="is not writable"):
+                setattr(pylog, attr_, getattr(pylog, attr_))
+
         broken_xml = "<doc><a><b></a>&bar;</doc>"
         with pytest.raises(XMLSyntaxError):
             _ = fromstring(broken_xml)
@@ -313,12 +331,18 @@ class TestPyErrorLog:
         use_global_python_log(pylog)
 
     # NotImplemented + bool = warning
-    @settings(suppress_health_check=[HealthCheck.too_slow])
-    @given(name=_st.all_instances_except_of_type(str, NotImplementedType).filter(bool))
+    @settings(suppress_health_check=[HealthCheck.too_slow], max_examples=300)
+    @given(thing=_st.all_instances_except_of_type(str, NotImplementedType).filter(bool))
     @pytest.mark.slow
-    def test_init_name_arg_bad(self, name: Any) -> None:
+    def test_init_name_arg_bad_1(self, thing: Any) -> None:
         with pytest.raises(TypeError, match="logger name must be a string"):
-            _ = PyErrorLog(logger_name=name)
+            _ = PyErrorLog(logger_name=thing)
+
+    @settings(max_examples=5)
+    @given(iterable_of=_st.fixed_item_iterables())
+    def test_init_name_arg_bad_2(self, iterable_of: Any) -> None:
+        with pytest.raises(TypeError, match="logger name must be a string"):
+            _ = PyErrorLog(logger_name=iterable_of("foobar"))
 
     def test_init_logger_arg_ok(self) -> None:
         logger = logging.Logger("foobar")
@@ -329,11 +353,19 @@ class TestPyErrorLog:
         pylog = PyErrorLog(logger=new_logger)
         use_global_python_log(pylog)
 
-    @given(logger=_st.all_instances_except_of_type(NoneType))
+    @settings(suppress_health_check=[HealthCheck.too_slow], max_examples=300)
+    @given(thing=_st.all_instances_except_of_type(NoneType))
     @pytest.mark.slow
-    def test_init_logger_arg_bad(self, logger: Any) -> None:
+    def test_init_logger_arg_bad_1(self, thing: Any) -> None:
         with pytest.raises(AttributeError, match="has no attribute 'log'"):
-            _ = PyErrorLog(logger=logger)
+            _ = PyErrorLog(logger=thing)
+
+    @settings(max_examples=5)
+    @given(iterable_of=_st.fixed_item_iterables())
+    def test_init_logger_arg_bad_2(self, iterable_of: Any) -> None:
+        logger = logging.Logger("foobar")
+        with pytest.raises(AttributeError, match="has no attribute 'log'"):
+            _ = PyErrorLog(logger=iterable_of(logger))
 
 
 class TestPyErrorLogMethods:
@@ -345,12 +377,18 @@ class TestPyErrorLogMethods:
     def test_log_method_sig(self) -> None:
         pass
 
-    @settings(suppress_health_check=[HealthCheck.too_slow])
-    @given(entry=_st.all_instances_except_of_type())
+    @settings(suppress_health_check=[HealthCheck.too_slow], max_examples=300)
+    @given(thing=_st.all_instances_except_of_type())
     @pytest.mark.slow
-    def test_log_arg1_bad(self, pylog: PyErrorLog, entry: Any) -> None:
+    def test_log_arg1_bad(self, pylog: PyErrorLog, thing: Any) -> None:
         with pytest.raises(AttributeError, match="has no attribute 'level'"):
-            pylog.log(log_entry=entry, message="dummy message")
+            pylog.log(log_entry=thing, message="dummy message")
+
+    @settings(max_examples=5)
+    @given(iterable_of=_st.fixed_item_iterables())
+    def test_log_arg1_bad_2(self, pylog: PyErrorLog, iterable_of: Any) -> None:
+        with pytest.raises(AttributeError, match="has no attribute 'level'"):
+            pylog.log(log_entry=iterable_of(pylog.last_error), message="dummy message")
 
     def test_log_arg1_ok(self, pylog: PyErrorLog) -> None:
         assert pylog.last_error is not None
@@ -370,12 +408,17 @@ class TestPyErrorLogMethods:
     def test_receive_sig(self) -> None:
         pass
 
-    @settings(suppress_health_check=[HealthCheck.too_slow])
-    @given(entry=_st.all_instances_except_of_type())
+    @settings(suppress_health_check=[HealthCheck.too_slow], max_examples=300)
+    @given(thing=_st.all_instances_except_of_type())
     @pytest.mark.slow
-    def test_receive_arg_bad(self, pylog: PyErrorLog, entry: Any) -> None:
+    def test_receive_arg_bad_1(self, pylog: PyErrorLog, thing: Any) -> None:
         with pytest.raises((TypeError, AttributeError)):
-            pylog.receive(entry)
+            pylog.receive(thing)
+
+    @given(iterable_of=_st.fixed_item_iterables())
+    def test_receive_arg_bad_2(self, pylog: PyErrorLog, iterable_of: Any) -> None:
+        with pytest.raises((TypeError, AttributeError)):
+            pylog.receive(iterable_of(pylog.last_error))
 
     def test_receive_arg_ok(self, pylog: PyErrorLog) -> None:
         assert pylog.last_error is not None

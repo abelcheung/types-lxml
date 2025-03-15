@@ -164,11 +164,33 @@ class TestInputArg:
             ("fromstring",),
         ],
     )
+    @settings(suppress_health_check=[HealthCheck.too_slow], max_examples=300)
     @given(src=_st.all_instances_except_of_type(str, bytes))
     def test_invalid_src_2(self, funcname: str, src: Any) -> None:
         func = getattr(h5, funcname)
         with pytest.raises(TypeError, match="string required"):
             _ = func(src)
+
+    @pytest.mark.parametrize(
+        ("funcname",),
+        [
+            ("document_fromstring",),
+            ("fragments_fromstring",),
+            ("fragment_fromstring",),
+            ("fromstring",),
+        ],
+    )
+    @settings(max_examples=5)
+    @given(iterable_of=_st.fixed_item_iterables())
+    def test_invalid_src_3(
+        self,
+        funcname: str,
+        html2_str: str,
+        iterable_of: Any,
+    ) -> None:
+        func = getattr(h5, funcname)
+        with pytest.raises(TypeError, match="string required"):
+            _ = func(iterable_of(html2_str))
 
     def test_parse_src_ok(
         self,
@@ -193,7 +215,7 @@ class TestInputArg:
     # - None or other structs that evaluate to None, which results in
     #   empty html document (<html><body/></html>)
     # - buffer-like objects, in which html content is directly taken from
-    @settings(suppress_health_check=[HealthCheck.too_slow])
+    @settings(suppress_health_check=[HealthCheck.too_slow], max_examples=300)
     @given(src=_st
         .all_instances_except_of_type(str, io.BytesIO, io.StringIO, Buffer)
         .filter(bool))  # fmt: skip
@@ -201,6 +223,15 @@ class TestInputArg:
     def test_parse_src_bad(self, src: Any) -> None:
         with pytest.raises((TypeError, AssertionError)):
             _ = h5.parse(src)
+
+    @settings(
+        suppress_health_check=[HealthCheck.function_scoped_fixture],
+        max_examples=5,
+    )
+    @given(iterable_of=_st.fixed_item_iterables())
+    def test_parse_src_bad_2(self, html2_filepath: Path, iterable_of: Any) -> None:
+        with pytest.raises(TypeError, match="bytes-like object is required"):
+            _ = h5.parse(iterable_of(str(html2_filepath)))
 
 
 class TestParserArg:

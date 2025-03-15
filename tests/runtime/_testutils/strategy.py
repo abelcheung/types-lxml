@@ -1,9 +1,10 @@
 from __future__ import annotations
 
-from collections.abc import Iterable
 import inspect
 import operator
-from typing import Any, Literal, cast
+from collections import deque
+from collections.abc import Callable, Iterable, Iterator
+from typing import Any, Literal, TypeVar, cast
 
 import hypothesis.strategies as st
 import hypothesis.strategies._internal.types as st_types
@@ -12,6 +13,8 @@ import lxml.html as _h
 from hypothesis import note
 from lxml.builder import E
 from lxml.html.builder import DIV
+
+_T = TypeVar("_T")
 
 
 def all_types_except(
@@ -45,6 +48,48 @@ def all_instances_except_of_type(*excluded: type[Any]) -> st.SearchStrategy[Any]
         st.SearchStrategy[Any],
         all_types_except(*excluded).filter(_aux_filter).flatmap(st.from_type),
     ).filter(lambda x: not isinstance(x, excluded))
+
+
+def fixed_item_iterables() -> st.SearchStrategy[Callable[..., Iterable[Any]]]:
+    # Delay evaluation so that we can supply fixtures as arguments
+    def _gen_list(*element: _T) -> Iterable[_T]:
+        return list(element)
+
+    def _gen_tuple(*element: _T) -> Iterable[_T]:
+        return tuple(element)
+
+    def _gen_set(*element: _T) -> Iterable[_T]:
+        return set(element)
+
+    def _gen_frozenset(*element: _T) -> Iterable[_T]:
+        return frozenset(element)
+
+    def _gen_deque(*element: _T) -> Iterable[_T]:
+        return deque(element)
+
+    def _gen_iter(*element: _T) -> Iterable[_T]:
+        return iter(element)
+
+    setattr(_gen_list, "type", list)
+    setattr(_gen_tuple, "type", tuple)
+    setattr(_gen_set, "type", set)
+    setattr(_gen_frozenset, "type", frozenset)
+    setattr(_gen_deque, "type", deque)
+    setattr(_gen_iter, "type", Iterator)
+
+    return st.sampled_from([
+        _gen_list,
+        _gen_tuple,
+        _gen_set,
+        _gen_frozenset,
+        _gen_deque,
+        _gen_iter,
+    ])
+
+
+#
+# Below are generator of XML text or arguments
+#
 
 
 # Although stringified XML names use colon (:) character,

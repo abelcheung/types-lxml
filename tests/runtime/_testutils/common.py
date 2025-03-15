@@ -36,3 +36,5 @@ attr_value_types = ArgumentTypes(
     get_args(get_args(get_type_hints(_st.xml_attr_value_arg)["return"])[0]),
     (),
 )
+
+tag_name_types = attr_name_types

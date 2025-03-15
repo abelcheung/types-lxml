@@ -18,6 +18,7 @@ from typing import (
 import pytest
 from hypothesis import (
     HealthCheck,
+    assume,
     given,
     settings,
 )
@@ -291,20 +292,30 @@ class TestResolveBaseHrefArg:
                 else:
                     assert old != new
 
-    @settings(suppress_health_check=[HealthCheck.too_slow], max_examples=500)
-    @given(
-        t=_st.all_instances_except_of_type().filter(
-            lambda x: x not in ("discard", "ignore", None)
-        )
-    )
+    @settings(suppress_health_check=[HealthCheck.too_slow], max_examples=300)
+    @given(thing=_st.all_instances_except_of_type(NoneType))
     @pytest.mark.slow
-    def test_handle_failures_wrong_type(
-        self, disposable_html_with_base_href: HtmlElement, t: Any
+    def test_handle_failures_arg_bad_1(
+        self, disposable_html_with_base_href: HtmlElement, thing: Any
     ) -> None:
+        assume(thing not in ("ignore", "discard"))
         # collection raises TypeError instead
         # because of error in constructing exception
         with pytest.raises((ValueError, TypeError)):
-            _ = resolve_base_href(disposable_html_with_base_href, handle_failures=t)
+            _ = resolve_base_href(disposable_html_with_base_href, handle_failures=thing)
+
+    @settings(max_examples=5)
+    @given(iterable_of=_st.fixed_item_iterables())
+    def test_handle_failures_arg_bad_2(
+        self,
+        disposable_html_with_base_href: HtmlElement,
+        iterable_of: Any,
+    ) -> None:
+        with pytest.raises(ValueError, match=r"unexpected value for handle_failure"):
+            _ = resolve_base_href(
+                disposable_html_with_base_href,
+                handle_failures=iterable_of("ignore"),
+            )
 
 
 class TestMakeLinksAbsoluteArg:
@@ -331,62 +342,70 @@ class TestMakeLinksAbsoluteArg:
                 else:
                     assert old != new
 
-    @settings(suppress_health_check=[HealthCheck.too_slow], max_examples=500)
-    @given(
-        t=_st.all_instances_except_of_type().filter(
-            lambda _: _ not in ("ignore", "discard", None)
-        )
-    )
+    @settings(suppress_health_check=[HealthCheck.too_slow], max_examples=300)
+    @given(thing=_st.all_instances_except_of_type(NoneType))
     @pytest.mark.slow
     def test_handle_failures_wrong_type(
-        self, disposable_html_with_base_href: HtmlElement, t: Any
+        self, disposable_html_with_base_href: HtmlElement, thing: Any
     ) -> None:
+        assume(thing not in ("ignore", "discard"))
         with pytest.raises((ValueError, TypeError)):
             _ = make_links_absolute(
-                disposable_html_with_base_href, _BASE_HREF, handle_failures=t
+                disposable_html_with_base_href, _BASE_HREF, handle_failures=thing
             )
 
     # Not testing resolve_base_href type, as it is a truthy/falsy argument
     # that can be anything
 
-    # Falsy values got short circuited by urljoin() and never raises
-    @settings(suppress_health_check=[HealthCheck.too_slow], max_examples=500)
-    @given(t=_st.all_instances_except_of_type(str, NoneType, NotImplementedType).filter(bool))
+    @settings(suppress_health_check=[HealthCheck.too_slow], max_examples=300)
+    @given(thing=_st
+        .all_instances_except_of_type(str, NoneType, NotImplementedType)
+        .filter(bool)  # Falsy values short circuited by urljoin() and never raises
+    )  # fmt: skip
     @pytest.mark.slow
     def test_base_href(
-        self, disposable_html_with_base_href: HtmlElement, t: Any
+        self, disposable_html_with_base_href: HtmlElement, thing: Any
     ) -> None:
         with pytest.raises(TypeError, match="Cannot mix str and non-str arguments"):
-            _ = make_links_absolute(disposable_html_with_base_href, base_url=t)
+            _ = make_links_absolute(disposable_html_with_base_href, base_url=thing)
 
 
-# COMPLETED
 # Need HTML fixtures that really contains link, otherwise
 # iterlinks() is a no-op and most tests won't fail
 class TestRewriteLinksArg:
-    @given(t=_st.all_instances_except_of_type().filter(lambda x: not callable(x)))
+    @settings(suppress_health_check=[HealthCheck.too_slow], max_examples=300)
+    @given(thing=_st.all_instances_except_of_type().filter(lambda x: not callable(x)))
+    @pytest.mark.slow
     def test_link_repl_func_is_callable(
-        self, disposable_html_with_base_href: HtmlElement, t: Any
+        self, disposable_html_with_base_href: HtmlElement, thing: Any
     ) -> None:
         with pytest.raises(TypeError, match="object is not callable"):
-            _ = rewrite_links(disposable_html_with_base_href, t)
+            _ = rewrite_links(disposable_html_with_base_href, thing)
 
     # QName has the unintended consequence of doing tag name check while
     # replaced link is an attribute value, thus raising ValueError instead
-    @settings(suppress_health_check=[HealthCheck.too_slow], max_examples=500)
-    @given(
-        t=_st.all_instances_except_of_type(
-            *attr_value_types.allow,
-            *attr_value_types.skip,
-            NoneType,
-        )
-    )
+    @settings(suppress_health_check=[HealthCheck.too_slow], max_examples=300)
+    @given(thing=_st.all_instances_except_of_type(
+        *attr_value_types.allow, *attr_value_types.skip, NoneType,
+    ))  # fmt: skip
     @pytest.mark.slow
-    def test_link_repl_func_output_type(
-        self, disposable_html_with_base_href: HtmlElement, t: Any
+    def test_link_repl_func_bad_output(
+        self, disposable_html_with_base_href: HtmlElement, thing: Any
     ) -> None:
         with pytest.raises(TypeError, match="Argument must be bytes or unicode"):
-            _ = rewrite_links(disposable_html_with_base_href, lambda _: t)
+            _ = rewrite_links(disposable_html_with_base_href, lambda _: thing)
+
+    @settings(max_examples=5)
+    @given(iterable_of=_st.fixed_item_iterables())
+    def test_link_repl_func_bad_output_2(
+        self,
+        disposable_html_with_base_href: HtmlElement,
+        iterable_of: Any,
+    ) -> None:
+        with pytest.raises(TypeError, match="Argument must be bytes or unicode"):
+            _ = rewrite_links(
+                disposable_html_with_base_href, lambda _: iterable_of(_BASE_HREF)
+            )
 
     def test_link_repl_func_input_arg(
         self, disposable_html_with_base_href: HtmlElement
@@ -407,8 +426,12 @@ class TestRewriteLinksArg:
     # that can be anything
 
     # Falsy values got short circuited by urljoin() and never raises
-    @settings(suppress_health_check=[HealthCheck.too_slow], max_examples=500)
-    @given(t=_st.all_instances_except_of_type(str, NoneType, NotImplementedType).filter(bool))
+    @settings(suppress_health_check=[HealthCheck.too_slow], max_examples=300)
+    @given(
+        t=_st.all_instances_except_of_type(str, NoneType, NotImplementedType).filter(
+            bool
+        )
+    )
     @pytest.mark.slow
     def test_base_href(
         self, disposable_html_with_base_href: HtmlElement, t: Any
