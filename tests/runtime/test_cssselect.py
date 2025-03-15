@@ -99,6 +99,7 @@ class TestCSSSelectorArgs:
         result = selector(svg_root)
         reveal_type(result)
         assert len(result) > 0
+        assert result == selector(svg_tree)
 
         foons = b"http://example.org/myfoo"
         appns = "http://example.org/myapp"
@@ -107,6 +108,7 @@ class TestCSSSelectorArgs:
         result = selector(svg_root)
         reveal_type(result)
         assert len(result) > 0
+        assert result == selector(svg_tree)
 
     # regret diving into this rabbit hole
     @staticmethod

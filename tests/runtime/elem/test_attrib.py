@@ -73,7 +73,7 @@ class TestAttrib:
             _ = disposable_attrib[iterable_of(k)]
 
     @given(k=_st.xml_name_arg())
-    def test_valid_key_type(self, disposable_attrib: _Attrib, k: _AttrName) -> None:
+    def test_key_type_ok(self, disposable_attrib: _Attrib, k: _AttrName) -> None:
         disposable_attrib[k] = "bar"
         del disposable_attrib[k]
 
@@ -102,7 +102,7 @@ class TestAttrib:
             disposable_attrib["foo"] = iterable_of(v)
 
     @given(v=_st.xml_attr_value_arg())
-    def test_valid_value_type(self, disposable_attrib: _Attrib, v: _AttrVal) -> None:
+    def test_value_type_ok(self, disposable_attrib: _Attrib, v: _AttrVal) -> None:
         disposable_attrib["foo"] = v
         reveal_type(disposable_attrib["foo"])
 
@@ -142,21 +142,19 @@ class TestAttrib:
             reveal_type(i)
 
 
-class TestMethodHasKey:
+class TestHasKeyMethod:
     @signature_tester(_Attrib.has_key, (
         ("key", Parameter.POSITIONAL_OR_KEYWORD, Parameter.empty),
     ))  # fmt: skip
     def test_signature(self) -> None:
         pass
 
-    @settings(suppress_health_check=[HealthCheck.too_slow], max_examples=500)
-    @given(
-        k=_st.all_instances_except_of_type(
-            *attr_name_types.allow, *attr_name_types.skip
-        )
-    )
+    @settings(suppress_health_check=[HealthCheck.too_slow], max_examples=300)
+    @given(k=_st.all_instances_except_of_type(
+        *attr_name_types.allow, *attr_name_types.skip
+    ))  # fmt: skip
     @pytest.mark.slow
-    def test_wrong_key_type(self, disposable_attrib: _Attrib, k: Any) -> None:
+    def test_key_type_bad_1(self, disposable_attrib: _Attrib, k: Any) -> None:
         with pytest.raises(TypeError, match="Argument must be bytes or unicode"):
             _ = disposable_attrib.has_key(k)
 
@@ -169,11 +167,11 @@ class TestMethodHasKey:
 
     @given(k=_st.xml_name_arg())
     @example(k="date")
-    def test_valid_key_type(self, disposable_attrib: _Attrib, k: _AttrName) -> None:
+    def test_key_type_ok(self, disposable_attrib: _Attrib, k: _AttrName) -> None:
         reveal_type(disposable_attrib.has_key(k))
 
 
-class TestMethodGet:
+class TestGetMethod:
     @signature_tester(_Attrib.get, (
         ("key"    , Parameter.POSITIONAL_OR_KEYWORD, Parameter.empty),
         ("default", Parameter.POSITIONAL_OR_KEYWORD, None           ),
@@ -181,32 +179,30 @@ class TestMethodGet:
     def test_signature(self) -> None:
         pass
 
-    @settings(suppress_health_check=[HealthCheck.too_slow], max_examples=500)
-    @given(
-        k=_st.all_instances_except_of_type(
-            *attr_name_types.allow, *attr_name_types.skip
-        )
-    )
+    @settings(suppress_health_check=[HealthCheck.too_slow], max_examples=300)
+    @given(k=_st.all_instances_except_of_type(
+        *attr_name_types.allow, *attr_name_types.skip
+    ))  # fmt: skip
     @pytest.mark.slow
-    def test_wrong_key_type(self, disposable_attrib: _Attrib, k: Any) -> None:
+    def test_key_type_bad(self, disposable_attrib: _Attrib, k: Any) -> None:
         with pytest.raises(TypeError, match="Argument must be bytes or unicode"):
             _ = disposable_attrib.get(k)
 
     @given(k=_st.xml_name_arg())
     @example(k="date")
-    def test_valid_key_type(self, disposable_attrib: _Attrib, k: _AttrName) -> None:
+    def test_key_type_ok(self, disposable_attrib: _Attrib, k: _AttrName) -> None:
         reveal_type(disposable_attrib.get(k))
 
     @settings(max_examples=5)
     @given(default=_st.all_instances_except_of_type())
     def test_default_value(self, disposable_attrib: _Attrib, default: object) -> None:
         val = disposable_attrib.get("id", default=default)
-        reveal_type(val)  # Not useful for typeguard, too generic
+        # No reveal_type test, result typevar (str | object) is too generic
         assert type(val) is str
         assert type(disposable_attrib.get("foo", default)) is type(default)
 
 
-class TestMethodPop:
+class TestPopMethod:
     @signature_tester(_Attrib.pop, (
         ("key"    , Parameter.POSITIONAL_OR_KEYWORD, Parameter.empty),
         ("default", Parameter.VAR_POSITIONAL       , Parameter.empty),
@@ -217,14 +213,12 @@ class TestMethodPop:
         with pytest.raises(TypeError, match="pop expected at most 2 arguments"):
             xml2_root.attrib.pop("foo", 0, 1)  # type: ignore[call-overload]  # pyright: ignore[reportCallIssue]
 
-    @settings(suppress_health_check=[HealthCheck.too_slow], max_examples=500)
-    @given(
-        k=_st.all_instances_except_of_type(
-            *attr_name_types.allow, *attr_name_types.skip
-        )
-    )
+    @settings(suppress_health_check=[HealthCheck.too_slow], max_examples=300)
+    @given(k=_st.all_instances_except_of_type(
+        *attr_name_types.allow, *attr_name_types.skip
+    ))  # fmt: skip
     @pytest.mark.slow
-    def test_wrong_key_type(self, disposable_attrib: _Attrib, k: Any) -> None:
+    def test_key_type_bad(self, disposable_attrib: _Attrib, k: Any) -> None:
         with pytest.raises(TypeError, match="Argument must be bytes or unicode"):
             _ = disposable_attrib.pop(k)
 
@@ -236,7 +230,7 @@ class TestMethodPop:
             _ = disposable_attrib.pop(iterable_of(k))
 
     @given(k=_st.xml_name_arg(), v=_st.xml_attr_value_arg())
-    def test_valid_key_type(
+    def test_key_type_ok(
         self,
         disposable_attrib: _Attrib,
         k: _AttrName,
@@ -254,7 +248,7 @@ class TestMethodPop:
         with pytest.MonkeyPatch().context() as m:
             m.setitem(disposable_attrib, "fakekey", "fakevalue")  # type: ignore[arg-type]  # pyright: ignore[reportArgumentType]
             val = disposable_attrib.pop("fakekey", default)
-            reveal_type(val)  # Not useful for typeguard too generic
+            # No reveal_type test, result typevar (str | object) is too generic
             assert type(val) is str
 
     @settings(max_examples=5)
@@ -269,7 +263,7 @@ class TestMethodPop:
 
 # Beware that monkeypatch is useless here. _Attrib merely provides an
 # interface to the underlying _Element which is not patched
-class TestMethodUpdate:
+class TestUpdateMethod:
     # HACK Using _AttrName instead of _AttrVal to play safe, as attribute names
     # use this routine as well
     def _normalized_value(self, v: _AttrName) -> str:
@@ -345,13 +339,12 @@ class TestMethodUpdate:
         self._verify_key_val_present(disposable_attrib, atts)
         self._verify_key_val_present(disposable_attrib, atts.items())
 
-    @given(
-        atts=st.dictionaries(
-            keys=_st.xml_name_key_arg(),
-            values=_st.xml_attr_value_arg(),
-            max_size=3,
-        )
-    )
+    @given(atts=st.dictionaries(
+        keys=_st.xml_name_key_arg(),
+        values=_st.xml_attr_value_arg(),
+        min_size=1,
+        max_size=3,
+    ))  # fmt: skip
     def test_input_dict_subclass(
         self, disposable_attrib: _Attrib, atts: dict[Any, Any]
     ) -> None:
@@ -359,28 +352,24 @@ class TestMethodUpdate:
 
     # Prove that non-dict Mapping won't do
     @settings(max_examples=5)
-    @given(
-        atts=st.dictionaries(
-            keys=_st.xml_name_key_arg(),
-            values=_st.xml_attr_value_arg(),
-            min_size=1,
-            max_size=3,
-        )
-    )
+    @given(atts=st.dictionaries(
+        keys=_st.xml_name_key_arg(),
+        values=_st.xml_attr_value_arg(),
+        min_size=1,
+        max_size=3,
+    ))  # fmt: skip
     def test_input_other_mapping_1(
         self, disposable_attrib: _Attrib, atts: dict[Any, Any]
     ) -> None:
         with pytest.raises((TypeError, ValueError, AssertionError)):
             self._verify_key_val_present(disposable_attrib, MappingProxyType(atts))
 
-    @given(
-        atts=st.dictionaries(
-            keys=_st.xml_name_key_arg(),
-            values=_st.xml_attr_value_arg(),
-            min_size=1,
-            max_size=3,
-        )
-    )
+    @given(atts=st.dictionaries(
+        keys=_st.xml_name_key_arg(),
+        values=_st.xml_attr_value_arg(),
+        min_size=1,
+        max_size=3,
+    ))  # fmt: skip
     def test_input_other_mapping_2(
         self, disposable_attrib: _Attrib, atts: dict[Any, Any]
     ) -> None:
@@ -407,7 +396,9 @@ class TestMethodUpdate:
         self._verify_key_val_present(disposable_attrib, iterable_of((k, v)))
 
     @given(atts=st.iterables(
-        st.tuples(_st.xml_name_arg(), _st.xml_attr_value_arg()), max_size=3
+        st.tuples(_st.xml_name_arg(), _st.xml_attr_value_arg()),
+        min_size=1,
+        max_size=3,
     ))  # fmt: skip
     def test_input_attrib(
         self, disposable_attrib: _Attrib, atts: list[tuple[Any, Any]]

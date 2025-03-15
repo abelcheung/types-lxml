@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import copy
 import sys
-from collections.abc import Callable, Iterator
+from collections.abc import Callable, Iterable
 from inspect import Parameter
 from pathlib import Path
 from typing import Any, Literal, cast, overload
@@ -39,6 +39,8 @@ class TestXInclude:
         xinc = XInclude()
         reveal_type(xinc)
         reveal_type(xinc.error_log)
+        with pytest.raises(AttributeError, match="objects is not writable"):
+            xinc.error_log = xinc.error_log  # type: ignore[misc]  # pyright: ignore[reportAttributeAccessIssue]
 
     def test_xinclude_as_method(self, xinc_sample_data: str) -> None:
         elem = fromstring(xinc_sample_data)
@@ -49,7 +51,7 @@ class TestXInclude:
         self,
         xinc_sample_data: str,
         tmp_path: Path,
-        generate_input_file_arguments: Callable[..., Iterator[Any]],
+        generate_input_file_arguments: Callable[..., Iterable[Any]],
     ) -> None:
         tmp_file = tmp_path / "xinc_sample_data.xml"
         tmp_file.write_text(xinc_sample_data)
@@ -110,7 +112,7 @@ class TestElementInclude:
         self,
         xinc_sample_data: str,
         tmp_path: Path,
-        generate_input_file_arguments: Callable[..., Iterator[Any]],
+        generate_input_file_arguments: Callable[..., Iterable[Any]],
     ) -> None:
         tmp_file = tmp_path / "xinc_sample_data.xml"
         tmp_file.write_text(xinc_sample_data)

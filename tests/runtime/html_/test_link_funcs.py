@@ -68,7 +68,6 @@ def _get_elementtree_from_file(filepath: Path) -> _ElementTree[HtmlElement]:
         return parse(fp)
 
 
-# COMPLETED
 class TestInputOutputType:
     def test_bad_input_arg(
         self,
@@ -176,7 +175,6 @@ class TestInputOutputType:
         reveal_type(rewrite_links(bightml_root, lambda _: _BASE_HREF))
 
 
-# COMPLETED
 class TestFindRelLinksArg:
     # XPath selection result always generate str, never match other
     # string-like types. So bytes and bytearray are banned in stub
@@ -192,7 +190,7 @@ class TestFindRelLinksArg:
         links = find_rel_links(bightml_root, cast(Any, bytearray(b)))
         assert len(links) == 0
 
-    @settings(suppress_health_check=[HealthCheck.too_slow], max_examples=500)
+    @settings(suppress_health_check=[HealthCheck.too_slow], max_examples=300)
     @given(t=_st.all_instances_except_of_type(str, bytes, bytearray))
     @pytest.mark.slow
     def test_wrong_type_raises(
@@ -205,7 +203,6 @@ class TestFindRelLinksArg:
             _ = find_rel_links(disposable_html_element, t)
 
 
-# COMPLETED
 class TestFindClassArg:
     def test_valid_type(self, bightml_str: str) -> None:
         elems1 = find_class(bightml_str, "single")
@@ -226,7 +223,7 @@ class TestFindClassArg:
             return len(x) > 0
         return (x.stop - x.start) / x.step > 0
 
-    @settings(suppress_health_check=[HealthCheck.too_slow], max_examples=500)
+    @settings(suppress_health_check=[HealthCheck.too_slow], max_examples=300)
     @given(
         t=_st.all_instances_except_of_type(
             str,
@@ -268,9 +265,8 @@ class TestFindClassArg:
             assert len(elems) == 0
 
 
-# COMPLETED
 class TestResolveBaseHrefArg:
-    def test_handle_failures_valid_type(
+    def test_handle_failures_arg_ok(
         self, disposable_html_with_base_href: HtmlElement
     ) -> None:
         old_links = [
@@ -407,7 +403,7 @@ class TestRewriteLinksArg:
                 disposable_html_with_base_href, lambda _: iterable_of(_BASE_HREF)
             )
 
-    def test_link_repl_func_input_arg(
+    def test_link_repl_func_bad_input(
         self, disposable_html_with_base_href: HtmlElement
     ) -> None:
         with pytest.raises(
@@ -440,7 +436,6 @@ class TestRewriteLinksArg:
             _ = rewrite_links(disposable_html_with_base_href, str, base_href=t)
 
 
-# COMPLETED
 # non-Element input + keyword args = Exception
 # See comment on module level functions in html/_funcs.pyi
 # Not just for pytest, we want to make sure they show

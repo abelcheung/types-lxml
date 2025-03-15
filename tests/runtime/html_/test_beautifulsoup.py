@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import sys
-from collections.abc import Callable, Iterator
+from collections.abc import Callable, Iterable
 from inspect import Parameter
 from pathlib import Path
 from types import NoneType
@@ -62,7 +62,7 @@ class TestFromstring:
     def test_input_arg_ok(
         self,
         html2_filepath: Path,
-        generate_input_file_arguments: Callable[..., Iterator[Any]],
+        generate_input_file_arguments: Callable[..., Iterable[Any]],
     ) -> None:
         for input in generate_input_file_arguments(
             html2_filepath, exclude_type=(str, bytes, Path)
@@ -153,7 +153,7 @@ class TestParse:
     def test_input_arg_ok(
         self,
         html2_filepath: Path,
-        generate_input_file_arguments: Callable[..., Iterator[Any]],
+        generate_input_file_arguments: Callable[..., Iterable[Any]],
     ) -> None:
         # expects filename/io, not html data
         with pytest.raises(OSError):
@@ -246,7 +246,7 @@ class TestConvertTree:
     def test_input_arg_bad(
         self,
         html2_filepath: Path,
-        generate_input_file_arguments: Callable[..., Iterator[Any]],
+        generate_input_file_arguments: Callable[..., Iterable[Any]],
     ) -> None:
         # Using lxml _Element/_ElementTree as input has very bad effect;
         # it generates TypeError uncatchable by pytest.raises.
