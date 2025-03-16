@@ -6,6 +6,11 @@ if sys.version_info >= (3, 11):
 else:
     from typing_extensions import Self
 
+if sys.version_info >= (3, 12):
+    from collections.abc import Buffer
+else:
+    from typing_extensions import Buffer
+
 from .._types import _ET, _AnyStr, _DefEtreeParsers, _FileReadSource
 from ._element import _Element, _ElementTree
 
@@ -13,14 +18,14 @@ from ._element import _Element, _ElementTree
 
 @overload
 def XMLID(
-    text: _AnyStr,
+    text: str | Buffer,
     parser: _DefEtreeParsers[_ET],
     *,
     base_url: str | bytes | None = None,
 ) -> tuple[_ET, dict[str, _ET]]: ...
 @overload
 def XMLID(
-    text: _AnyStr,
+    text: str | Buffer,
     parser: None = None,
     *,
     base_url: str | bytes | None = None,
@@ -30,14 +35,14 @@ def XMLID(
 
 @overload
 def XMLDTDID(
-    text: _AnyStr,
+    text: str | Buffer,
     parser: _DefEtreeParsers[_ET],
     *,
     base_url: str | bytes | None = None,
 ) -> tuple[_ET, _IDDict[_ET]]: ...
 @overload
 def XMLDTDID(
-    text: _AnyStr,
+    text: str | Buffer,
     parser: None = None,
     *,
     base_url: str | bytes | None = None,
