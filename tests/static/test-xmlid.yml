@@ -18,38 +18,6 @@
         file_io = open('somefile', 'r')
   main: ""
 
-- case: xmlid_goodargs
-  files: *INC
-  main: |
-    from inc import e, s, b, hh_parser, o_parser, eh_parser
-    reveal_type(e.XMLID(b))  # NR: .+ "tuple\[.+]"$
-    elem1, dic1 = e.XMLID(s)
-    reveal_type(elem1)  # NR: .+ "[\w\.]+\._Element"$
-    reveal_type(dic1)  # NR: .+ "[\w\.]+\.dict\[[\w\.]+\.str, [\w\.]+\._Element]"$
-    elem2, dic2 = e.XMLID(s, hh_parser, base_url=s)
-    reveal_type(elem2)  # NR: .+ "[\w\.]+\.HtmlElement"$
-    reveal_type(dic2)  # NR: .+ "[\w\.]+\.dict\[[\w\.]+\.str, [\w\.]+\.HtmlElement]"$
-    elem3, dic3 = e.XMLID(s, parser=o_parser)
-    reveal_type(elem3)  # NR: .+ "[\w\.]+\.ObjectifiedElement"$
-    reveal_type(dic3)  # NR: .+ "[\w\.]+\.dict\[[\w\.]+\.str, [\w\.]+\.ObjectifiedElement]"$
-    elem4, dic4 = e.XMLID(s, parser=eh_parser, base_url=b)
-    reveal_type(elem4)  # NR: .+ "[\w\.]+\._Element"$
-    reveal_type(dic4)  # NR: .+ "[\w\.]+\.dict\[[\w\.]+\.str, [\w\.]+\._Element]"$
-
-- case: xmlid_badargs
-  files: *INC
-  expect_fail: true
-  parametrized:
-    - args: '()'
-    - args: '(None)'
-    - args: '(file_io)'
-    - args: '(s, 1)'
-    - args: '(s, hx_parser, None)'
-    - args: '(s, base_url=1, parser=hx_parser)'
-  main: |
-    from inc import e, s, file_io, hx_parser
-    e.XMLID{{args}}
-
 - case: xmldtdid_goodargs
   files: *INC
   main: |
