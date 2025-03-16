@@ -6,7 +6,7 @@ from inspect import Parameter
 from types import (
     MappingProxyType,
 )
-from typing import Any, BinaryIO, cast
+from typing import Any, cast
 
 import pytest
 from lxml import etree
@@ -31,68 +31,6 @@ else:
 
 # See mypy.ini in testsuite for explanation
 TC_HONORS_REVERSED = True
-
-
-class TestAttribAccessMethods:
-    @empty_signature_tester(
-        _Element.keys,
-        _Element.values,
-        _Element.items,
-    )
-    def test_method_keyval(self, bightml_bin_fp: BinaryIO) -> None:
-        parser = etree.HTMLParser()
-        with bightml_bin_fp as f:
-            doc = etree.parse(f, parser=parser)
-        for elem in doc.iter():
-            if type(elem) is not _Element:
-                continue
-            reveal_type(elem.keys())
-            reveal_type(elem.values())
-            reveal_type(elem.items())
-
-    @signature_tester(_Element.get, (
-        ("key"    , Parameter.POSITIONAL_OR_KEYWORD, Parameter.empty),
-        ("default", Parameter.POSITIONAL_OR_KEYWORD, None           ),
-    ))  # fmt: skip
-    def test_method_get(self, svg_root: _Element) -> None:
-        root = svg_root
-
-        reveal_type(root.get("width"))
-        reveal_type(root.get("somejunk"))
-        reveal_type(root.get(b"width"))
-        # Not meaningful to use QName here, but still
-        qname = QName(None, "width")
-        reveal_type(root.get(qname))
-
-        for arg in (1, object(), ["width"]):
-            with pytest.raises(TypeError, match="must be bytes or unicode"):
-                _ = root.get(cast(Any, arg))
-
-        reveal_type(root.get("width", 0))
-        reveal_type(root.get("somejunk", (0, "foo")))
-
-    @signature_tester(_Element.set, (
-        ("key"  , Parameter.POSITIONAL_OR_KEYWORD, Parameter.empty),
-        ("value", Parameter.POSITIONAL_OR_KEYWORD, Parameter.empty),
-    ))  # fmt: skip
-    def test_method_set(self, xml2_root: _Element) -> None:
-        root = deepcopy(xml2_root)
-
-        assert root.set("foo", "bar") is None
-
-        qname = QName("foo")
-        for arg1 in ("foo", b"foo", qname):
-            root.set(arg1, "bar")
-        for arg2 in (None, 1, object(), ["foo"]):
-            with pytest.raises(TypeError, match="must be bytes or unicode"):
-                root.set(cast(Any, arg2), "bar")
-
-        qname = QName("bar")
-        for arg3 in ("bar", b"bar", qname):
-            root.set("foo", arg3)
-        for arg4 in (None, 1, object(), ["bar"]):
-            with pytest.raises(TypeError, match="must be bytes or unicode"):
-                root.set("foo", cast(Any, arg4))
 
 
 # The find*() methods of _Element are all derivations of

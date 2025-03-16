@@ -8,6 +8,7 @@ from types import MappingProxyType
 from typing import (
     TYPE_CHECKING,
     Any,
+    BinaryIO,
     cast,
 )
 
@@ -20,7 +21,7 @@ from hypothesis import (
     settings,
     strategies as st,
 )
-from lxml.etree import Element, QName, _Attrib, _Element
+from lxml.etree import Element, HTMLParser, QName, _Attrib, _Element, parse
 
 from .._testutils import (
     empty_signature_tester,
@@ -410,3 +411,108 @@ class TestUpdateMethod:
         self._verify_key_val_present(disposable_attrib, new_elem.attrib)
 
     # TODO Need negative tests for _Attrib.update()
+
+
+class TestElementKeyValMethods:
+    @empty_signature_tester(
+        _Element.keys,
+        _Element.values,
+        _Element.items,
+    )
+    @pytest.mark.slow
+    def test_basic(self, bightml_bin_fp: BinaryIO) -> None:
+        parser = HTMLParser()
+        with bightml_bin_fp as f:
+            doc = parse(f, parser=parser)
+        for elem in doc.iter():
+            if type(elem) is not _Element:
+                continue
+            reveal_type(elem.keys())
+            reveal_type(elem.values())
+            reveal_type(elem.items())
+
+
+class TestElementGetMethod:
+    @signature_tester(_Element.get, (
+        ("key"    , Parameter.POSITIONAL_OR_KEYWORD, Parameter.empty),
+        ("default", Parameter.POSITIONAL_OR_KEYWORD, None           ),
+    ))  # fmt: skip
+    def test_signature(self) -> None:
+        pass
+
+    def test_key_arg_ok(self, svg_root: _Element) -> None:
+        result = reveal_type(svg_root.get("width"))
+        assert result == reveal_type(svg_root.get(b"width"))
+        assert result == reveal_type(svg_root.get(bytearray(b"width")))
+        qname = QName(None, "width")
+        assert result == reveal_type(svg_root.get(qname))
+        assert reveal_type(svg_root.get("somejunk")) is None
+
+    @settings(suppress_health_check=[HealthCheck.too_slow], max_examples=300)
+    @given(thing=_st.all_instances_except_of_type(*attr_name_types.allow))
+    @pytest.mark.slow
+    def test_key_arg_bad_1(self, disposable_element: _Element, thing: Any) -> None:
+        with pytest.raises(TypeError, match="must be bytes or unicode"):
+            _ = disposable_element.get(thing)
+
+    @settings(max_examples=5)
+    @given(iterable_of=_st.fixed_item_iterables())
+    def test_key_arg_bad_2(
+        self, disposable_element: _Element, iterable_of: Any
+    ) -> None:
+        with pytest.raises(TypeError, match="must be bytes or unicode"):
+            _ = disposable_element.get(iterable_of("foo"))
+
+    def test_default_arg(self, svg_root: _Element) -> None:
+        assert reveal_type(svg_root.get("width", 0)) != 0
+        assert reveal_type(svg_root.get("junk", "foo")) == "foo"
+        assert reveal_type(svg_root.get("junk", (0, "bar"))) == (0, "bar")
+
+
+class TestElementSetMethod:
+    @signature_tester(_Element.set, (
+        ("key"  , Parameter.POSITIONAL_OR_KEYWORD, Parameter.empty),
+        ("value", Parameter.POSITIONAL_OR_KEYWORD, Parameter.empty),
+    ))  # fmt: skip
+    def test_signature(self) -> None:
+        pass
+
+    def test_basic_usage(self, disposable_element: _Element) -> None:
+        qname = QName(None, "foo")
+        for key in ("foo", b"foo", bytearray(b"foo"), qname):
+            disposable_element.set(key, "bar")
+        # QName for attribute value is meaningless, we only
+        # do this for completeness
+        qname = QName(None, "bar")
+        for val in ("bar", b"bar", bytearray(b"bar"), qname):
+            disposable_element.set("foo", val)
+
+    @settings(suppress_health_check=[HealthCheck.too_slow], max_examples=300)
+    @given(thing=_st.all_instances_except_of_type(*attr_name_types.allow))
+    @pytest.mark.slow
+    def test_key_arg_bad_1(self, disposable_element: _Element, thing: Any) -> None:
+        with pytest.raises(TypeError, match="must be bytes or unicode"):
+            disposable_element.set(thing, "bar")
+
+    @settings(max_examples=5)
+    @given(iterable_of=_st.fixed_item_iterables())
+    def test_key_arg_bad_2(
+        self, disposable_element: _Element, iterable_of: Any
+    ) -> None:
+        with pytest.raises(TypeError, match="must be bytes or unicode"):
+            disposable_element.set(iterable_of("foo"), "bar")
+
+    @settings(suppress_health_check=[HealthCheck.too_slow], max_examples=300)
+    @given(thing=_st.all_instances_except_of_type(*attr_value_types.allow))
+    @pytest.mark.slow
+    def test_val_arg_bad_1(self, disposable_element: _Element, thing: Any) -> None:
+        with pytest.raises(TypeError, match="must be bytes or unicode"):
+            disposable_element.set("foo", thing)
+
+    @settings(max_examples=5)
+    @given(iterable_of=_st.fixed_item_iterables())
+    def test_val_arg_bad_2(
+        self, disposable_element: _Element, iterable_of: Any
+    ) -> None:
+        with pytest.raises(TypeError, match="must be bytes or unicode"):
+            disposable_element.set("foo", iterable_of("bar"))
