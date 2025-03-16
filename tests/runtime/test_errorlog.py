@@ -6,11 +6,11 @@ from collections.abc import Iterable
 from decimal import Decimal
 from inspect import Parameter
 from numbers import Real
-from types import NoneType, NotImplementedType
+from types import NoneType
 from typing import Any, cast
 
 import pytest
-from hypothesis import HealthCheck, given, settings
+from hypothesis import HealthCheck, assume, given, settings
 from lxml.etree import (
     LXML_VERSION,
     ErrorDomains,
@@ -330,11 +330,11 @@ class TestPyErrorLog:
         pylog = PyErrorLog(logger_name="foobar")
         use_global_python_log(pylog)
 
-    # NotImplemented + bool = warning
     @settings(suppress_health_check=[HealthCheck.too_slow], max_examples=300)
-    @given(thing=_st.all_instances_except_of_type(str, NotImplementedType).filter(bool))
+    @given(thing=_st.all_instances_except_of_type(str))
     @pytest.mark.slow
     def test_init_name_arg_bad_1(self, thing: Any) -> None:
+        assume(thing is NotImplemented or bool(thing))
         with pytest.raises(TypeError, match="logger name must be a string"):
             _ = PyErrorLog(logger_name=thing)
 

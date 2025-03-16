@@ -9,7 +9,7 @@ from pathlib import Path
 from typing import Any, cast
 
 import html5lib.html5parser
-from hypothesis import HealthCheck, given, settings
+from hypothesis import HealthCheck, assume, given, settings
 import lxml.etree as _e
 import lxml.html.html5parser as h5
 import pytest
@@ -216,13 +216,12 @@ class TestInputArg:
     #   empty html document (<html><body/></html>)
     # - buffer-like objects, in which html content is directly taken from
     @settings(suppress_health_check=[HealthCheck.too_slow], max_examples=300)
-    @given(src=_st
-        .all_instances_except_of_type(str, io.BytesIO, io.StringIO, Buffer)
-        .filter(bool))  # fmt: skip
+    @given(thing=_st.all_instances_except_of_type(str, io.BytesIO, io.StringIO, Buffer))
     @pytest.mark.slow
-    def test_parse_src_bad(self, src: Any) -> None:
+    def test_parse_src_bad(self, thing: Any) -> None:
+        assume(thing is NotImplemented or bool(thing))
         with pytest.raises((TypeError, AssertionError)):
-            _ = h5.parse(src)
+            _ = h5.parse(thing)
 
     @settings(
         suppress_health_check=[HealthCheck.function_scoped_fixture],

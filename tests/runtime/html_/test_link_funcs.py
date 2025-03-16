@@ -9,7 +9,7 @@ from collections.abc import (
 from decimal import Decimal
 from fractions import Fraction
 from pathlib import Path
-from types import NoneType, NotImplementedType
+from types import NoneType
 from typing import (
     Any,
     cast,
@@ -354,14 +354,13 @@ class TestMakeLinksAbsoluteArg:
     # that can be anything
 
     @settings(suppress_health_check=[HealthCheck.too_slow], max_examples=300)
-    @given(thing=_st
-        .all_instances_except_of_type(str, NoneType, NotImplementedType)
-        .filter(bool)  # Falsy values short circuited by urljoin() and never raises
-    )  # fmt: skip
+    @given(thing=_st.all_instances_except_of_type(str, NoneType))
     @pytest.mark.slow
     def test_base_href(
         self, disposable_html_with_base_href: HtmlElement, thing: Any
     ) -> None:
+        # Falsy values short circuited by urljoin() and never raises
+        assume(thing is NotImplemented or bool(thing))
         with pytest.raises(TypeError, match="Cannot mix str and non-str arguments"):
             _ = make_links_absolute(disposable_html_with_base_href, base_url=thing)
 
@@ -421,19 +420,16 @@ class TestRewriteLinksArg:
     # Not testing resolve_base_href type, as it is a truthy/falsy argument
     # that can be anything
 
-    # Falsy values got short circuited by urljoin() and never raises
     @settings(suppress_health_check=[HealthCheck.too_slow], max_examples=300)
-    @given(
-        t=_st.all_instances_except_of_type(str, NoneType, NotImplementedType).filter(
-            bool
-        )
-    )
+    @given(thing=_st.all_instances_except_of_type(str, NoneType))
     @pytest.mark.slow
     def test_base_href(
-        self, disposable_html_with_base_href: HtmlElement, t: Any
+        self, disposable_html_with_base_href: HtmlElement, thing: Any
     ) -> None:
+        # Falsy values got short circuited by urljoin() and never raises
+        assume(thing is NotImplemented or bool(thing))
         with pytest.raises(TypeError, match="Cannot mix str and non-str arguments"):
-            _ = rewrite_links(disposable_html_with_base_href, str, base_href=t)
+            _ = rewrite_links(disposable_html_with_base_href, str, base_href=thing)
 
 
 # non-Element input + keyword args = Exception
