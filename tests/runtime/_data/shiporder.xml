@@ -11,15 +11,25 @@ xsi:noNamespaceSchemaLocation="shiporder.xsd">
     <city>4000 Stavanger</city>
     <country>Norway</country>
   </shipto>
-  <item>
+  <item id="b-001">
     <title>Empire Burlesque</title>
+    <author>Bob Dylan</author>
     <note>Special Edition</note>
+    <bundled>cd-001</bundled>
     <quantity>1</quantity>
-    <price>10.90</price>
+    <price>29.90</price>
   </item>
-  <item>
+  <item id="b-002">
     <title>Hide your heart</title>
+    <author>Bonnie Tyler</author>
     <quantity>1</quantity>
     <price>9.90</price>
   </item>
-</shiporder> 
+  <item id="cd-001">
+    <title>Greatest Hits</title>
+    <author>Dolly Parton</author>
+    <note>Double CD</note>
+    <quantity>1</quantity>
+    <price>0.00</price>
+  </item>
+</shiporder>
