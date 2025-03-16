@@ -118,6 +118,16 @@ def xml2_filepath() -> Path:
 
 
 @pytest.fixture(scope="session")
+def xml2_str(xml2_filepath: Path) -> str:
+    return xml2_filepath.read_text()
+
+
+@pytest.fixture(scope="session")
+def xml2_bytes(xml2_filepath: Path) -> bytes:
+    return xml2_filepath.read_bytes()
+
+
+@pytest.fixture(scope="session")
 def xmlschema_path() -> Path:
     return Path(__file__).resolve().parent / "_data" / "shiporder.xsd"
 
