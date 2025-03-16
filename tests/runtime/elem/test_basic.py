@@ -90,13 +90,15 @@ class TestBasicBehavior:
         pi = etree.ProcessingInstruction("target", "text")
         div = h_Element("div")
 
+        length = len(elem)
         elem[1] = comment
-        assert len(elem) == 2
-        elem[2:4] = (entity, pi)
-        assert len(elem) == 4
+        assert len(elem) == length
+        elem[length-1:] = (entity, pi)
+        assert len(elem) == length + 1
+        length = length + 1
         # Actually permitted, just that elements are added in random order
-        elem[4:] = {div, comment2}
-        assert len(elem) == 6
+        elem[length:] = {div, comment2}
+        assert len(elem) == length + 2
 
         with pytest.raises(ValueError, match="cannot assign None"):
             elem[0] = cast(Any, None)
