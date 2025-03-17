@@ -8,7 +8,7 @@
  7 files changed, 77 insertions(+), 75 deletions(-)
 
 diff --git a/pyproject.toml b/pyproject.toml
-index 7227625..a71b4c9 100644
+index 42a8ae9..98b272e 100644
 --- a/pyproject.toml
 +++ b/pyproject.toml
 @@ -5,7 +5,7 @@ requires = ['pdm-backend ~= 2.4']
@@ -55,7 +55,7 @@ index 1ccf715..24f914b 100644
 -    ) -> list[_ET]: ...
 +    ) -> list[_Element]: ...
 diff --git a/src/lxml-stubs/etree/_element.pyi b/src/lxml-stubs/etree/_element.pyi
-index 27ca610..9d79434 100644
+index 7133529..f5c996d 100644
 --- a/src/lxml-stubs/etree/_element.pyi
 +++ b/src/lxml-stubs/etree/_element.pyi
 @@ -13,9 +13,9 @@ from typing import (
@@ -265,10 +265,10 @@ index c76d234..a30daff 100644
  def ElementTree(element: _ET) -> _ElementTree[_ET]: ...
  @overload  # from file source, custom parser
 diff --git a/src/lxml-stubs/html/_element.pyi b/src/lxml-stubs/html/_element.pyi
-index ca2a0f8..17f05fb 100644
+index 12e65eb..4817578 100644
 --- a/src/lxml-stubs/html/_element.pyi
 +++ b/src/lxml-stubs/html/_element.pyi
-@@ -131,72 +131,72 @@ class HtmlElement(etree.ElementBase):
+@@ -130,72 +130,72 @@ class HtmlElement(etree.ElementBase):
      # Subclassing of _Element should not go beyond HtmlElement. For example,
      # while children of HtmlElement are mostly HtmlElement, FormElement never
      # contains FormElement as child.
@@ -362,7 +362,7 @@ index ca2a0f8..17f05fb 100644
      ) -> None: ...
      def getparent(self) -> HtmlElement | None: ...
      def getnext(self) -> HtmlElement | None: ...
-@@ -271,13 +271,13 @@ class HtmlElement(etree.ElementBase):
+@@ -270,13 +270,13 @@ class HtmlElement(etree.ElementBase):
          *,
          with_tail: bool = True,
      ) -> Iterator[str]: ...
@@ -378,7 +378,7 @@ index ca2a0f8..17f05fb 100644
          self,
          path: _ElemPathArg,
          namespaces: _StrictNSMap | None = None,
-@@ -287,7 +287,7 @@ class HtmlElement(etree.ElementBase):
+@@ -286,7 +286,7 @@ class HtmlElement(etree.ElementBase):
          path: _ElemPathArg,
          namespaces: _StrictNSMap | None = None,
      ) -> Iterator[HtmlElement]: ...
@@ -388,7 +388,7 @@ index ca2a0f8..17f05fb 100644
          expr: str,
          *,
 diff --git a/src/lxml-stubs/objectify/_element.pyi b/src/lxml-stubs/objectify/_element.pyi
-index 8ef012e..d8948d2 100644
+index fbf91ab..694caee 100644
 --- a/src/lxml-stubs/objectify/_element.pyi
 +++ b/src/lxml-stubs/objectify/_element.pyi
 @@ -50,7 +50,7 @@ class ObjectifiedElement(ElementBase):
@@ -425,13 +425,13 @@ index 8ef012e..d8948d2 100644
          expr: str,
          *,
 diff --git a/tests/runtime/_testutils/common.py b/tests/runtime/_testutils/common.py
-index f2be510..56622b3 100644
+index 196546c..690d5c5 100644
 --- a/tests/runtime/_testutils/common.py
 +++ b/tests/runtime/_testutils/common.py
-@@ -9,7 +9,7 @@ from typing import (
+@@ -16,7 +16,7 @@ else:
+     from typing_extensions import Buffer
  
- from . import strategy as _st
- 
+ # Intended for multi subclass patch
 -is_multi_subclass_build = False
 +is_multi_subclass_build = True
  
