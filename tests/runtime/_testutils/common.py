@@ -1,14 +1,21 @@
 from __future__ import annotations
 
+import sys
 from dataclasses import dataclass
 from typing import (
     Any,
     get_args,
     get_type_hints,
 )
-
+from lxml.etree import LXML_VERSION
 from . import strategy as _st
 
+if sys.version_info >= (3, 12):
+    from collections.abc import Buffer
+else:
+    from typing_extensions import Buffer
+
+# Intended for multi subclass patch
 is_multi_subclass_build = False
 
 
@@ -38,3 +45,8 @@ attr_value_types = ArgumentTypes(
 )
 
 tag_name_types = attr_name_types
+
+text_document_types = ArgumentTypes(
+    (str, Buffer) if LXML_VERSION >= (6, 0) else (str, bytes),
+    (),
+)

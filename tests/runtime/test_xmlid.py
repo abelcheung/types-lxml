@@ -14,6 +14,7 @@ from lxml.html import HtmlElement as HtmlElement, xhtml_parser
 from lxml.objectify import ObjectifiedElement as ObjectifiedElement, makeparser
 
 from ._testutils import signature_tester, strategy as _st
+from ._testutils.common import text_document_types
 
 if sys.version_info >= (3, 11):
     from typing import reveal_type
@@ -35,13 +36,9 @@ class TestXmlId:
 
     def test_text_arg_ok(self) -> None:
         content = b'<root id="1"/>'
-        src: list[Any] = [
-            content.decode(),
-            content,
-            bytearray(content),
-        ]
+        src: list[Any] = [content.decode(), content]
         if LXML_VERSION >= (6, 0):
-            src.append(memoryview(content))
+            src.extend([bytearray(content), memoryview(content)])
         for text in src:
             _, xmlids = XMLID(text)
             assert len(xmlids) == 1
@@ -51,10 +48,18 @@ class TestXmlId:
         xml2_filepath: Path,
         generate_input_file_arguments: Callable[..., Iterable[Any]],
     ) -> None:
+        if LXML_VERSION >= (6, 0):
+            exc, match = TypeError, r"bytes-like object is required"
+        else:
+            exc, match = ValueError, r"can only parse strings"
         for input in generate_input_file_arguments(
-            xml2_filepath, exclude_type=(str, bytes)
+            xml2_filepath,
+            exclude_type=(
+                *text_document_types.allow,
+                *text_document_types.skip,
+            ),
         ):
-            with pytest.raises(TypeError, match=r"bytes-like object is required"):
+            with pytest.raises(exc, match=match):
                 _ = XMLID(input)
 
     def test_parser_basic(self, xml2_bytes: bytes) -> None:
