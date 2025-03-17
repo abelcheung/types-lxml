@@ -1,3 +1,4 @@
+import sys
 from typing import Any, Iterable, Literal, MutableMapping, overload
 
 from .. import etree
@@ -8,6 +9,11 @@ from .._types import (
     _FileReadSource,
 )
 from ._element import HtmlElement
+
+if sys.version_info >= (3, 12):
+    from collections.abc import Buffer
+else:
+    from typing_extensions import Buffer
 
 _HtmlElemParser = _DefEtreeParsers[HtmlElement]
 
@@ -77,7 +83,7 @@ xhtml_parser: XHTMLParser
 # Calls etree.fromstring(html, parser, **kw) which has signature
 # fromstring(text, parser, *, base_url)
 def document_fromstring(
-    html: str | bytes,
+    html: str | Buffer,
     parser: _HtmlElemParser | None = None,
     ensure_head_body: bool = False,
     *,

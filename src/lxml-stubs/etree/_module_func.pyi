@@ -6,6 +6,11 @@ if sys.version_info >= (3, 11):
 else:
     from typing_extensions import Never
 
+if sys.version_info >= (3, 12):
+    from collections.abc import Buffer
+else:
+    from typing_extensions import Buffer
+
 if sys.version_info >= (3, 13):
     from typing import TypeIs
     from warnings import deprecated
@@ -26,7 +31,7 @@ from ._parser import HTMLParser, XMLParser
 
 @overload
 def HTML(
-    text: str | bytes,
+    text: str | Buffer,
     parser: HTMLParser[_ET_co],
     *,
     base_url: str | bytes | None = None,
@@ -52,7 +57,7 @@ def HTML(
 
 @overload
 def HTML(
-    text: str | bytes,
+    text: str | Buffer,
     parser: None = None,
     *,
     base_url: str | bytes | None = None,
@@ -67,7 +72,7 @@ def HTML(
 
 @overload
 def XML(
-    text: str | bytes,
+    text: str | Buffer,
     parser: XMLParser[_ET_co],
     *,
     base_url: str | bytes | None = None,
@@ -93,7 +98,7 @@ def XML(
 
 @overload
 def XML(
-    text: str | bytes,
+    text: str | Buffer,
     parser: None = None,
     *,
     base_url: str | bytes | None = None,
@@ -148,7 +153,7 @@ def parse(
 
 @overload
 def fromstring(
-    text: str | bytes,
+    text: str | Buffer,
     parser: _DefEtreeParsers[_ET_co],
     *,
     base_url: str | bytes | None = None,
@@ -175,7 +180,7 @@ def fromstring(
 
 @overload
 def fromstring(
-    text: str | bytes,
+    text: str | Buffer,
     parser: None = None,
     *,
     base_url: str | bytes | None = None,
