@@ -1,0 +1,56 @@
+<?xml version="1.0"?>
+<grammar ns="" xmlns="http://relaxng.org/ns/structure/1.0" datatypeLibrary="http://www.w3.org/2001/XMLSchema-datatypes">
+    <start>
+        <element name="shiporder">
+            <attribute name="orderid">
+                <data type="positiveInteger"/>
+            </attribute>
+            <element name="orderperson">
+                <text/>
+            </element>
+            <element name="shipto">
+                <element name="name">
+                    <text/>
+                </element>
+                <element name="address">
+                    <text/>
+                </element>
+                <element name="city">
+                    <text/>
+                </element>
+                <element name="country">
+                    <text/>
+                </element>
+            </element>
+            <oneOrMore>
+                <element name="item">
+                    <attribute name="id">
+                        <data type="string"/>
+                    </attribute>
+                    <element name="title">
+                        <text/>
+                    </element>
+                    <element name="author">
+                        <text/>
+                    </element>
+                    <optional>
+                        <element name="note">
+                            <text/>
+                        </element>
+                    </optional>
+                    <optional>
+                        <element name="bundled">
+                            <text/>
+                        </element>
+                    </optional>
+                    <element name="quantity">
+                        <data type="positiveInteger"/>
+                    </element>
+                    <element name="price">
+                        <data type="decimal"/>
+                    </element>
+                </element>
+            </oneOrMore>
+        </element>
+    </start>
+</grammar>

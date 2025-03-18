@@ -5,65 +5,11 @@
       content: |
         from lxml import etree
         from lxml.isoschematron import Schematron
-        rng: etree.RelaxNG
         dtd: etree.DTD
         tron: Schematron
         tree: etree._ElementTree[etree._Element]
         elem: etree._Element
   main: ""
-
-- case: relaxng_construct
-  main: |
-    import gzip, io, pathlib
-    from lxml import etree
-    s: str
-    b: bytes
-    tree: etree._ElementTree[etree._Element]
-    rng = etree.RelaxNG(tree)
-    reveal_type(rng)  # NR: .+ "[\w\.]+\.RelaxNG"$
-    etree.RelaxNG(tree.getroot())
-    etree.RelaxNG(file=s)
-    etree.RelaxNG(file=b)
-    etree.RelaxNG(file=io.FileIO(s))
-    etree.RelaxNG(file=gzip.GzipFile(s))
-    etree.RelaxNG(file=open(s, 'r'))
-    etree.RelaxNG(file=open(s, 'rb'))
-    etree.RelaxNG(file=pathlib.Path(s))
-
-- case: relaxng_construct_classmethod
-  parametrized:
-    - args: s
-    - args: "src=s, base_url=s"
-  main: |
-    from lxml.etree import RelaxNG
-    s: str
-    rng = RelaxNG.from_rnc_string({{ args }})
-    reveal_type(rng)  # NR: .+ "[\w\.]+\.RelaxNG"$
-
-- case: relaxng_construct_badargs
-  expect_fail: true
-  parametrized:
-    - args: ""
-    - args: s
-    - args: file=None
-    - args: file=root
-    - args: badarg=s
-  main: |
-    from lxml.etree import RelaxNG, _Element
-    s: str
-    root: _Element
-    rng = RelaxNG({{ args }})
-
-- case: relaxng_construct_from_string_badargs
-  main: |
-    from lxml.etree import RelaxNG, _Element
-    s: str
-    root: _Element
-    RelaxNG.from_rnc_string()  # ER: Missing positional argument .+  \[call-arg]$
-    RelaxNG.from_rnc_string(1)  # ER: Argument 1 .+; expected ".+"  \[arg-type]$
-    RelaxNG.from_rnc_string(None)  # ER: Argument 1 .+; expected ".+"  \[arg-type]$
-    RelaxNG.from_rnc_string(s, base_url=1)  # ER: Argument "base_url" .+; expected ".+"  \[arg-type]$
-    RelaxNG.from_rnc_string(badarg=s)  # ER: Unexpected keyword argument "badarg".*  \[call-arg]$
 
 #
 # Tests below are generic tests of etree._Validator class inheritance
@@ -72,11 +18,10 @@
 - case: superclass_validate_method
   files: *INC
   parametrized:
-    - obj: rng
     - obj: dtd
     - obj: tron
   main: |
-    from inc import rng, dtd, tron, tree, elem
+    from inc import dtd, tron, tree, elem
     reveal_type({{ obj }}(tree))  # NR: .+ "[\w\.]+\.bool"$
     reveal_type({{ obj }}(etree=elem))  # NR: .+ "[\w\.]+\.bool"$
     reveal_type({{ obj }}.validate(elem))  # NR: .+ "[\w\.]+\.bool"$
@@ -85,9 +30,6 @@
 - case: superclass_validate_method_badarg
   files: *INC
   parametrized:
-    - obj: rng
-      cls: RelaxNG
-      is_call: true
     - obj: dtd
       cls: DTD
       is_call: false
@@ -95,7 +37,7 @@
       cls: Schematron
       is_call: false
   main: |
-    from inc import rng, dtd, tron, tree, elem
+    from inc import dtd, tron, tree, elem
     {{ obj }}{%- if not is_call -%}.validate{%- endif -%}()  # E: Missing positional argument "etree" in call to {% if is_call -%}"__call__" of "{{cls}}"{%- else -%}"validate" of "_Validator"{%- endif %}  [call-arg]
     {{ obj }}{%- if not is_call -%}.validate{%- endif -%}(None)  # E: Argument 1 to {% if is_call -%}"__call__" of "{{cls}}"{%- else -%}"validate" of "_Validator"{%- endif %} has incompatible type "None"; expected "_Element | _ElementTree[_Element]"  [arg-type]
     {{ obj }}{%- if not is_call -%}.validate{%- endif -%}(tree, None)  # E: Too many arguments for {% if is_call -%}"__call__" of "{{cls}}"{%- else -%}"validate" of "_Validator"{%- endif %}  [call-arg]
@@ -104,11 +46,10 @@
 - case: superclass_other_methods
   files: *INC
   parametrized:
-    - obj: rng
     - obj: dtd
     - obj: tron
   main: |
-    from inc import rng, dtd, tron, tree, elem
+    from inc import dtd, tron, tree, elem
     reveal_type({{ obj }}.error_log)  # NR: .+ "[\w\.]+\._ListErrorLog"
     _ = {{ obj }}.assertValid(tree)  # E: "assertValid" of "_Validator" does not return a value (it only ever returns None)  [func-returns-value]
     _ = {{ obj }}.assert_(elem)  # E: "assert_" of "_Validator" does not return a value (it only ever returns None)  [func-returns-value]

@@ -197,6 +197,31 @@ def xinc_sample_data(xml2_filepath: Path) -> str:
         <foo/><xi:include href="{}" /></doc>""".format(inc_href)
 
 
+@pytest.fixture(scope="session")
+def rnc_path() -> Path:
+    return Path(__file__).resolve().parent / "_data" / "shiporder.rnc"
+
+
+@pytest.fixture(scope="session")
+def rnc_str(rnc_path: Path) -> str:
+    return rnc_path.read_text()
+
+
+@pytest.fixture(scope="session")
+def relaxng_path() -> Path:
+    return Path(__file__).resolve().parent / "_data" / "shiporder.rng"
+
+
+@pytest.fixture(scope="session")
+def relaxng_root(relaxng_path: Path) -> _e._Element:
+    return _e.fromstring(relaxng_path.read_bytes())
+
+
+@pytest.fixture(scope="session")
+def relaxng(relaxng_path: Path) -> _e.RelaxNG:
+    return _e.RelaxNG(file=relaxng_path)
+
+
 @pytest.fixture
 def list_log() -> _e._ListErrorLog:
     bad_data = "<bad><a><b></a>&qwerty;</bad>"

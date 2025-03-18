@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<shiporder orderid="889923"
-xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-xsi:noNamespaceSchemaLocation="shiporder.xsd">
+<shiporder orderid="889923">
   <orderperson>John Smith</orderperson>
   <!--Comment before first order-->
   <shipto>
