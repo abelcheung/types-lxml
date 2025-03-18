@@ -26,6 +26,12 @@ from lxml.html import Element as h_Element
 
 from .._testutils import strategy as _st
 from .._testutils.common import tag_name_types
+from .._testutils.errors import (
+    raise_attr_not_writable,
+    raise_invalid_filename_type,
+    raise_invalid_utf8_type,
+    raise_non_integer,
+)
 
 if sys.version_info >= (3, 11):
     from typing import reveal_type
@@ -70,7 +76,7 @@ class TestBasicBehavior:
         o = object()
         reveal_type(o in elem)
 
-        with pytest.raises(TypeError, match="cannot be interpreted as an integer"):
+        with raise_non_integer:
             _ = elem[cast(int, "0")]
 
         del elem, subelem
@@ -143,24 +149,23 @@ class TestProperties:
             reveal_type(subelem.tail)
 
         for attr in (
-            "attrib",
-            "prefix",
-            "nsmap",
             "sourceline",
             "base",
             "tag",
             "text",
             "tail",
         ):
-            with pytest.raises((AttributeError, NotImplementedError)):
+            with pytest.raises(NotImplementedError, match=r"__del__"):
                 delattr(xml2_root, attr)
 
     def test_ro_properties(self, xml2_root: _Element) -> None:
         # Not performing test for .sourceline ! We pretend it is not
         # changeable in stub, but actually it is read-write
         for attr in ("attrib", "prefix", "nsmap"):
-            with pytest.raises(AttributeError, match="objects is not writable"):
+            with raise_attr_not_writable:
                 setattr(xml2_root, attr, getattr(xml2_root, attr))
+            with raise_attr_not_writable:
+                delattr(xml2_root, attr)
 
     def test_base_rw_ok(self, disposable_element: _Element) -> None:
         for v in (
@@ -176,13 +181,13 @@ class TestProperties:
     @given(thing=_st.all_instances_except_of_type(str, bytes, NoneType))
     @pytest.mark.slow
     def test_base_rw_bad_1(self, disposable_element: _Element, thing: Any) -> None:
-        with pytest.raises(TypeError, match="must be string or unicode"):
+        with raise_invalid_filename_type:
             disposable_element.base = thing
 
     @settings(max_examples=5)
     @given(iterable_of=_st.fixed_item_iterables())
     def test_base_rw_bad_2(self, disposable_element: _Element, iterable_of: Any) -> None:
-        with pytest.raises(TypeError, match="must be string or unicode"):
+        with raise_invalid_filename_type:
             disposable_element.base = iterable_of("foo")
 
     def test_tag_rw_ok(self, disposable_element: _Element) -> None:
@@ -199,13 +204,13 @@ class TestProperties:
     @given(value=_st.all_instances_except_of_type(*tag_name_types.allow))
     @pytest.mark.slow
     def test_tag_rw_bad_1(self, disposable_element: _Element, value: Any) -> None:
-        with pytest.raises(TypeError, match="must be bytes or unicode"):
+        with raise_invalid_utf8_type:
             disposable_element.tag = value
 
     @settings(max_examples=5)
     @given(iterable_of=_st.fixed_item_iterables())
     def test_tag_rw_bad_2(self, disposable_element: _Element, iterable_of: Any) -> None:
-        with pytest.raises(TypeError, match="must be bytes or unicode"):
+        with raise_invalid_utf8_type:
             disposable_element.tag = iterable_of("foo")
 
     def test_text_rw_ok(self, disposable_element: _Element) -> None:
@@ -226,13 +231,13 @@ class TestProperties:
     ))  # fmt: skip
     @pytest.mark.slow
     def test_text_rw_bad(self, disposable_element: _Element, thing: Any) -> None:
-        with pytest.raises(TypeError, match="must be bytes or unicode"):
+        with raise_invalid_utf8_type:
             disposable_element.text = thing
 
     @settings(max_examples=5)
     @given(iterable_of=_st.fixed_item_iterables())
     def test_text_rw_bad_2(self, disposable_element: _Element, iterable_of: Any) -> None:
-        with pytest.raises(TypeError, match="must be bytes or unicode"):
+        with raise_invalid_utf8_type:
             disposable_element.text = iterable_of("foo")
 
     def test_tail_rw_ok(self, disposable_element: _Element) -> None:
@@ -252,11 +257,11 @@ class TestProperties:
     ))  # fmt: skip
     @pytest.mark.slow
     def test_tail_rw_bad_1(self, disposable_element: _Element, thing: Any) -> None:
-        with pytest.raises(TypeError, match="must be bytes or unicode"):
+        with raise_invalid_utf8_type:
             disposable_element.tail = thing
 
     @settings(max_examples=5)
     @given(iterable_of=_st.fixed_item_iterables())
     def test_tail_rw_bad_2(self, disposable_element: _Element, iterable_of: Any) -> None:
-        with pytest.raises(TypeError, match="must be bytes or unicode"):
+        with raise_invalid_utf8_type:
             disposable_element.tail = iterable_of("foo")

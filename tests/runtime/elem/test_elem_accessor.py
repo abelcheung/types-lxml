@@ -1,9 +1,9 @@
 from __future__ import annotations
 
-from decimal import Decimal
 import sys
 from collections.abc import Iterable
 from copy import deepcopy
+from decimal import Decimal
 from inspect import Parameter
 from random import randrange
 from types import NoneType
@@ -28,18 +28,20 @@ from lxml.etree import (
 )
 
 from .._testutils import signature_tester, strategy as _st
+from .._testutils.errors import (
+    raise_non_integer,
+    raise_non_iterable,
+    raise_wrong_arg_type,
+)
 
 if sys.version_info >= (3, 11):
     from typing import reveal_type
 else:
     from typing_extensions import reveal_type
 
-
-def wrong_type_str(is_integer: bool = False) -> str:
-    if etree.LXML_VERSION < (5, 1) and is_integer:
-        return r"cannot be interpreted as an integer"
-    else:
-        return r"Argument '\w+' has incorrect type"
+raise_lxml_non_integer = (
+    raise_non_integer if etree.LXML_VERSION < (5, 1) else raise_wrong_arg_type
+)
 
 
 class TestIndexMethod:
@@ -58,14 +60,14 @@ class TestIndexMethod:
 
     @given(thing=_st.all_instances_except_of_type(_Element))
     def test_child_arg_bad_1(self, disposable_element: _Element, thing: Any) -> None:
-        with pytest.raises(TypeError, match=wrong_type_str()):
+        with raise_lxml_non_integer:
             _ = disposable_element.index(thing)
 
     @given(iterable_of=_st.fixed_item_iterables())
     def test_child_arg_bad_2(
         self, disposable_element: _Element, iterable_of: Any
     ) -> None:
-        with pytest.raises(TypeError, match=wrong_type_str()):
+        with raise_lxml_non_integer:
             _ = disposable_element.index(iterable_of(disposable_element))
 
     @settings(
@@ -76,7 +78,7 @@ class TestIndexMethod:
     @pytest.mark.slow
     def test_start_arg_bad_1(self, xml2_root: _Element, thing: Any) -> None:
         assume(thing is NotImplemented or bool(thing))
-        with pytest.raises(TypeError, match=wrong_type_str(True)):
+        with raise_lxml_non_integer:
             _ = xml2_root.index(xml2_root[0], start=thing)
 
     @settings(
@@ -85,7 +87,7 @@ class TestIndexMethod:
     )
     @given(iterable_of=_st.fixed_item_iterables())
     def test_start_arg_bad_2(self, xml2_root: _Element, iterable_of: Any) -> None:
-        with pytest.raises(TypeError, match=wrong_type_str(True)):
+        with raise_lxml_non_integer:
             _ = xml2_root.index(xml2_root[0], start=iterable_of(0))
 
     @settings(
@@ -96,7 +98,7 @@ class TestIndexMethod:
     @pytest.mark.slow
     def test_stop_arg_bad_1(self, xml2_root: _Element, thing: Any) -> None:
         assume(thing is NotImplemented or bool(thing))
-        with pytest.raises(TypeError, match=wrong_type_str(True)):
+        with raise_lxml_non_integer:
             _ = xml2_root.index(xml2_root[0], stop=thing)
 
     @settings(
@@ -105,7 +107,7 @@ class TestIndexMethod:
     )
     @given(iterable_of=_st.fixed_item_iterables())
     def test_stop_arg_bad_2(self, xml2_root: _Element, iterable_of: Any) -> None:
-        with pytest.raises(TypeError, match=wrong_type_str(True)):
+        with raise_lxml_non_integer:
             _ = xml2_root.index(xml2_root[0], stop=iterable_of(len(xml2_root)))
 
 
@@ -125,7 +127,7 @@ class TestAppendMethod:
     @given(thing=_st.all_instances_except_of_type(_Element))
     @pytest.mark.slow
     def test_element_arg_bad(self, disposable_element: _Element, thing: Any) -> None:
-        with pytest.raises(TypeError, match=wrong_type_str()):
+        with raise_lxml_non_integer:
             disposable_element.append(thing)
 
     @settings(max_examples=5)
@@ -133,7 +135,7 @@ class TestAppendMethod:
     def test_element_arg_bad_2(
         self, disposable_element: _Element, iterable_of: Any
     ) -> None:
-        with pytest.raises(TypeError, match=wrong_type_str()):
+        with raise_lxml_non_integer:
             disposable_element.append(iterable_of(disposable_element))
 
 
@@ -154,7 +156,7 @@ class TestInsertMethod:
     @pytest.mark.slow
     def test_index_arg_bad_1(self, disposable_element: _Element, thing: Any) -> None:
         comment = etree.Comment("comment")
-        with pytest.raises(TypeError, match=wrong_type_str(True)):
+        with raise_lxml_non_integer:
             disposable_element.insert(thing, comment)
 
     @settings(
@@ -166,14 +168,14 @@ class TestInsertMethod:
         self, disposable_element: _Element, iterable_of: Any
     ) -> None:
         comment = etree.Comment("comment")
-        with pytest.raises(TypeError, match=wrong_type_str(True)):
+        with raise_lxml_non_integer:
             disposable_element.insert(iterable_of(0), comment)
 
     @settings(suppress_health_check=[HealthCheck.too_slow], max_examples=300)
     @given(thing=_st.all_instances_except_of_type(_Element))
     @pytest.mark.slow
     def test_element_arg_bad(self, disposable_element: _Element, thing: Any) -> None:
-        with pytest.raises(TypeError, match=wrong_type_str()):
+        with raise_lxml_non_integer:
             disposable_element.insert(index=0, element=thing)
 
     @settings(max_examples=5)
@@ -181,7 +183,7 @@ class TestInsertMethod:
     def test_element_arg_bad_2(
         self, disposable_element: _Element, iterable_of: Any
     ) -> None:
-        with pytest.raises(TypeError, match=wrong_type_str()):
+        with raise_lxml_non_integer:
             disposable_element.insert(index=0, element=iterable_of(disposable_element))
 
 
@@ -199,7 +201,7 @@ class TestRemoveMethod:
     @given(thing=_st.all_instances_except_of_type(_Element))
     @pytest.mark.slow
     def test_element_arg_bad_1(self, disposable_element: _Element, thing: Any) -> None:
-        with pytest.raises(TypeError, match=wrong_type_str()):
+        with raise_lxml_non_integer:
             disposable_element.remove(thing)
 
     @settings(max_examples=5)
@@ -207,7 +209,7 @@ class TestRemoveMethod:
     def test_element_arg_bad_2(
         self, disposable_element: _Element, iterable_of: Any
     ) -> None:
-        with pytest.raises(TypeError, match=wrong_type_str()):
+        with raise_lxml_non_integer:
             disposable_element.remove(iterable_of(disposable_element))
 
 
@@ -228,9 +230,7 @@ class TestReplaceMethod:
     def test_old_element_arg_bad_1(
         self, disposable_element: _Element, thing: Any
     ) -> None:
-        with pytest.raises(
-            TypeError, match=wrong_type_str()
-        ):
+        with raise_lxml_non_integer:
             disposable_element.replace(
                 old_element=thing, new_element=disposable_element
             )
@@ -240,9 +240,7 @@ class TestReplaceMethod:
     def test_old_element_arg_bad_2(
         self, disposable_element: _Element, iterable_of: Any
     ) -> None:
-        with pytest.raises(
-            TypeError, match=wrong_type_str()
-        ):
+        with raise_lxml_non_integer:
             disposable_element.replace(
                 old_element=iterable_of(disposable_element),
                 new_element=disposable_element,
@@ -254,9 +252,7 @@ class TestReplaceMethod:
     def test_new_element_arg_bad_1(
         self, disposable_element: _Element, thing: Any
     ) -> None:
-        with pytest.raises(
-            TypeError, match=wrong_type_str()
-        ):
+        with raise_lxml_non_integer:
             disposable_element.replace(disposable_element, thing)
 
     @settings(max_examples=5)
@@ -264,9 +260,7 @@ class TestReplaceMethod:
     def test_new_element_arg_bad_2(
         self, disposable_element: _Element, iterable_of: Any
     ) -> None:
-        with pytest.raises(
-            TypeError, match=wrong_type_str()
-        ):
+        with raise_lxml_non_integer:
             disposable_element.replace(
                 disposable_element, iterable_of(disposable_element)
             )
@@ -294,7 +288,7 @@ class TestExtendMethod:
     def test_bad_element_1(
         self, disposable_element: _Element, value: Iterable[Any]
     ) -> None:
-        with pytest.raises(TypeError, match="is not iterable"):
+        with raise_non_iterable:
             disposable_element.extend(value)
 
     @given(value=st.iterables(

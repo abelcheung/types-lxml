@@ -22,6 +22,11 @@ from lxml.etree import (
 from lxml.html import Element as h_Element
 
 from ._testutils import empty_signature_tester, signature_tester
+from ._testutils.errors import (
+    raise_no_attribute,
+    raise_non_iterable,
+    raise_wrong_arg_type,
+)
 
 if sys.version_info >= (3, 11):
     from typing import reveal_type
@@ -97,11 +102,11 @@ class TestFindMethods:
         )
 
         for arg in (1, object()):
-            with pytest.raises(TypeError, match="is not iterable"):
+            with raise_non_iterable:
                 _ = defs.iterfind("m:piechart", cast(Any, arg))
         with pytest.raises(TypeError, match="requires string as left operand"):
             _ = defs.iterfind("m:piechart", cast(Any, "foo"))
-        with pytest.raises(AttributeError, match="has no attribute 'items'"):
+        with raise_no_attribute:
             _ = defs.iterfind("m:piechart", cast(Any, [("m", url)]))
 
         # NS dict with wrong val type won't raise exception, they just fail
@@ -159,11 +164,11 @@ class TestFindMethods:
         assert result == defs.find("m:piechart", MappingProxyType(nsdict))
 
         for arg in (1, object()):
-            with pytest.raises(TypeError, match="is not iterable"):
+            with raise_non_iterable:
                 _ = defs.find("m:piechart", cast(Any, arg))
         with pytest.raises(TypeError, match="requires string as left operand"):
             _ = defs.find("m:piechart", cast(Any, "foo"))
-        with pytest.raises(AttributeError, match="has no attribute 'items'"):
+        with raise_no_attribute:
             _ = defs.find("m:piechart", cast(Any, [("m", url)]))
 
     @signature_tester(_Element.findall, (
@@ -212,11 +217,11 @@ class TestFindMethods:
         assert result == defs.findall("m:piechart", MappingProxyType(nsdict))
 
         for arg in (1, object()):
-            with pytest.raises(TypeError, match="is not iterable"):
+            with raise_non_iterable:
                 _ = defs.findall("m:piechart", cast(Any, arg))
         with pytest.raises(TypeError, match="requires string as left operand"):
             _ = defs.findall("m:piechart", cast(Any, "foo"))
-        with pytest.raises(AttributeError, match="has no attribute 'items'"):
+        with raise_no_attribute:
             _ = defs.findall("m:piechart", cast(Any, [("m", url)]))
 
     @signature_tester(_Element.findtext, (
@@ -288,11 +293,11 @@ class TestFindMethods:
         assert result == parent.findtext("m:title", namespaces=MappingProxyType(nsdict))
 
         for arg in (1, object()):
-            with pytest.raises(TypeError, match="is not iterable"):
+            with raise_non_iterable:
                 _ = parent.findtext("m:title", namespaces=cast(Any, arg))
         with pytest.raises(TypeError, match="requires string as left operand"):
             _ = parent.findtext("m:title", namespaces=cast(Any, "foo"))
-        with pytest.raises(AttributeError, match="has no attribute 'items'"):
+        with raise_no_attribute:
             _ = parent.findtext("m:title", namespaces=cast(Any, [("m", url)]))
 
 
@@ -308,9 +313,7 @@ class TestAddMethods:
         assert root[0].addnext(comm) is None
 
         for arg in ("junk", 1, object(), ("a", 0), [comm, comm]):
-            with pytest.raises(
-                TypeError, match=r"Argument 'element' has incorrect type"
-            ):
+            with raise_wrong_arg_type:
                 root[0].addnext(cast(Any, arg))
 
         h_elem = h_Element("bar")
@@ -327,9 +330,7 @@ class TestAddMethods:
         assert root[0].addprevious(comm) is None
 
         for arg in ("junk", 1, object(), ("a", 0), [comm, comm]):
-            with pytest.raises(
-                TypeError, match=r"Argument 'element' has incorrect type"
-            ):
+            with raise_wrong_arg_type:
                 root[0].addprevious(cast(Any, arg))
 
         h_elem = h_Element("bar")
@@ -419,7 +420,7 @@ class TestIterMethods:
         del itr, result
 
         for arg in (1, object(), etree.iselement, ["foo", 1]):
-            with pytest.raises(TypeError, match=r"object is not iterable"):
+            with raise_non_iterable:
                 _ = xml2_root.iter(cast(Any, arg))
 
     @signature_tester(_Element.iterancestors, (
@@ -470,7 +471,7 @@ class TestIterMethods:
         del itr, result
 
         for arg in (1, object(), etree.iselement, ["foo", 1]):
-            with pytest.raises(TypeError, match=r"object is not iterable"):
+            with raise_non_iterable:
                 _ = child.iterancestors(cast(Any, arg))
 
     # iterdescendants() is iter() sans root node, so the
@@ -516,7 +517,7 @@ class TestIterMethods:
         del itr, result
 
         for arg in (1, object(), etree.iselement, ["foo", 1]):
-            with pytest.raises(TypeError, match=r"object is not iterable"):
+            with raise_non_iterable:
                 _ = xml2_root.iterdescendants(cast(Any, arg))
 
     @signature_tester(_Element.itersiblings, (
@@ -587,7 +588,7 @@ class TestIterMethods:
         del itr
 
         for arg in (1, object(), etree.iselement, ["foo", 1]):
-            with pytest.raises(TypeError, match=r"object is not iterable"):
+            with raise_non_iterable:
                 _ = child.itersiblings(cast(Any, arg))
 
     @signature_tester(_Element.iterchildren, (
@@ -648,7 +649,7 @@ class TestIterMethods:
         del itr, result
 
         for arg in (1, object(), etree.iselement, ["foo", 1]):
-            with pytest.raises(TypeError, match=r"object is not iterable"):
+            with raise_non_iterable:
                 _ = root.iterchildren(cast(Any, arg))
 
     @signature_tester(_Element.itertext, (
@@ -716,5 +717,5 @@ class TestIterMethods:
         del itr
 
         for arg in (1, object(), etree.iselement, ["foo", 1]):
-            with pytest.raises(TypeError, match=r"object is not iterable"):
+            with raise_non_iterable:
                 _ = root.itertext(cast(Any, arg))

@@ -20,6 +20,7 @@ from lxml.etree import (
 )
 
 from ._testutils import signature_tester, strategy as _st
+from ._testutils.errors import raise_wrong_pos_arg_count
 
 if sys.version_info >= (3, 11):
     from typing import reveal_type
@@ -43,10 +44,10 @@ class TestXMLSchemaInput:
     )
     def test_none_input_arg(self, args: Any, kw: Any) -> None:
         if len(args) < 2:
-            exc, match = XMLSchemaParseError, "No tree or file given"
+            raise_cm = pytest.raises(XMLSchemaParseError, match=r"No tree or file given")
         else:
-            exc, match = TypeError, r"at most 1 positional argument"
-        with pytest.raises(exc, match=match):
+            raise_cm = raise_wrong_pos_arg_count
+        with raise_cm:
             _ = XMLSchema(*args, **kw)
 
     @settings(suppress_health_check=[HealthCheck.too_slow], max_examples=300)

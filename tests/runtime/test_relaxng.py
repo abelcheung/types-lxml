@@ -19,13 +19,17 @@ from lxml.etree import (
 )
 
 from ._testutils import signature_tester, strategy as _st
+from ._testutils.errors import (
+    raise_invalid_filename_type,
+    raise_invalid_lxml_type,
+    raise_no_attribute,
+    raise_wrong_pos_arg_count,
+)
 
 if sys.version_info >= (3, 11):
     from typing import reveal_type
 else:
     from typing_extensions import reveal_type
-
-exc_wrong_obj = pytest.raises(TypeError, match=r"Invalid input object:")
 
 
 class TestRelaxNGInput:
@@ -42,17 +46,17 @@ class TestRelaxNGInput:
     )
     def test_none_input_arg(self, args: Any, kw: Any) -> None:
         if len(args) < 2:
-            exc, match = RelaxNGParseError, "No tree or file given"
+            raise_cm = pytest.raises(RelaxNGParseError, match=r"No tree or file given")
         else:
-            exc, match = TypeError, r"at most 1 positional argument"
-        with pytest.raises(exc, match=match):
+            raise_cm = raise_wrong_pos_arg_count
+        with raise_cm:
             _ = RelaxNG(*args, **kw)
 
     @settings(suppress_health_check=[HealthCheck.too_slow], max_examples=300)
     @given(thing=_st.all_instances_except_of_type(NoneType, _Element, _ElementTree))
     @pytest.mark.slow
     def test_etree_arg_bad_1(self, thing: Any) -> None:
-        with exc_wrong_obj:
+        with raise_invalid_lxml_type:
             _ = RelaxNG(thing)
 
     @settings(
@@ -61,7 +65,7 @@ class TestRelaxNGInput:
     )
     @given(iterable_of=_st.fixed_item_iterables())
     def test_etree_arg_bad_2(self, relaxng_root: _Element, iterable_of: Any) -> None:
-        with exc_wrong_obj:
+        with raise_invalid_lxml_type:
             _ = RelaxNG(iterable_of(relaxng_root))
 
     def test_etree_arg_ok(self, relaxng_root: _Element) -> None:
@@ -116,18 +120,18 @@ class TestRelaxNGInput:
     def test_from_rnc_input_bad_1(self, thing: Any) -> None:
         if isinstance(thing, (bytes, bytearray)):
             if thing:
-                exc, match = TypeError, r"string pattern on a bytes-like object"
+                raise_cm = pytest.raises(TypeError, match=r"string pattern on a bytes-like object")
             else:
-                exc, match = RelaxNGParseError, r"grammar has no children"
+                raise_cm = pytest.raises(RelaxNGParseError, match=r"grammar has no children")  # type: ignore[arg-type]
         else:
-            exc, match = AttributeError, r"has no attribute 'splitlines'"
-        with pytest.raises(exc, match=match):
+            raise_cm = raise_no_attribute
+        with raise_cm:
             _ = RelaxNG.from_rnc_string(src=cast(Any, thing))
 
     @settings(max_examples=5)
     @given(iterable_of=_st.fixed_item_iterables())
     def test_from_rnc_input_bad_2(self, rnc_str: str, iterable_of: Any) -> None:
-        with pytest.raises(AttributeError, match=r"has no attribute 'splitlines'"):
+        with raise_no_attribute:
             _ = RelaxNG.from_rnc_string(src=iterable_of(rnc_str))
 
     def test_from_rnc_baseurl_ok(self, rnc_str: str, xml2_root: _Element) -> None:
@@ -142,13 +146,13 @@ class TestRelaxNGInput:
     def test_from_rnc_baseurl_bad_1(self, rnc_str: str, thing: Any) -> None:
         # Falsy values evaluated as None in _parseDocFromFileLike
         assume(thing is NotImplemented or bool(thing))
-        with pytest.raises(TypeError, match=r"must be string or unicode"):
+        with raise_invalid_filename_type:
             _ = RelaxNG.from_rnc_string(rnc_str, base_url=thing)
 
     @settings(max_examples=5)
     @given(iterable_of=_st.fixed_item_iterables())
     def test_from_rnc_baseurl_bad_2(self, rnc_str: str, iterable_of: Any) -> None:
-        with pytest.raises(TypeError, match=r"must be string or unicode"):
+        with raise_invalid_filename_type:
             _ = RelaxNG.from_rnc_string(
                 rnc_str, base_url=iterable_of("foo")
             )
@@ -178,9 +182,9 @@ class TestRelaxNGValidate:
     @given(thing=_st.all_instances_except_of_type(_Element, _ElementTree))
     @pytest.mark.slow
     def test_call_arg_bad_1(self, relaxng: RelaxNG, thing: Any) -> None:
-        with exc_wrong_obj:
+        with raise_invalid_lxml_type:
             _ = relaxng.validate(thing)
-        with exc_wrong_obj:
+        with raise_invalid_lxml_type:
             _ = relaxng(thing)
 
     @pytest.mark.parametrize(["funcname"], (["validate"], ["__call__"]))
@@ -198,9 +202,9 @@ class TestRelaxNGValidate:
         xml2_tree: _ElementTree[_Element],
     ) -> None:
         func = getattr(relaxng, funcname)
-        with exc_wrong_obj:
+        with raise_invalid_lxml_type:
             _ = func(iterable_of(xml2_root))
-        with exc_wrong_obj:
+        with raise_invalid_lxml_type:
             _ = func(iterable_of(xml2_tree))
 
     @signature_tester(
@@ -234,9 +238,9 @@ class TestRelaxNGValidate:
     @given(thing=_st.all_instances_except_of_type(_Element, _ElementTree))
     @pytest.mark.slow
     def test_assert_arg_bad_1(self, relaxng: RelaxNG, thing: Any) -> None:
-        with exc_wrong_obj:
+        with raise_invalid_lxml_type:
             _ = relaxng.assertValid(thing)
-        with exc_wrong_obj:
+        with raise_invalid_lxml_type:
             _ = relaxng.assert_(thing)
 
     @pytest.mark.parametrize(["funcname"], (["assertValid"], ["assert_"]))
@@ -254,7 +258,7 @@ class TestRelaxNGValidate:
         xml2_tree: _ElementTree[_Element],
     ) -> None:
         func = getattr(relaxng, funcname)
-        with exc_wrong_obj:
+        with raise_invalid_lxml_type:
             _ = func(iterable_of(xml2_root))
-        with exc_wrong_obj:
+        with raise_invalid_lxml_type:
             _ = func(iterable_of(xml2_tree))

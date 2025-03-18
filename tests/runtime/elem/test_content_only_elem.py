@@ -17,6 +17,10 @@ from lxml.etree import (
 )
 
 from .._testutils import signature_tester, strategy as _st
+from .._testutils.errors import (
+    raise_attr_not_writable,
+    raise_invalid_utf8_type,
+)
 
 if sys.version_info >= (3, 11):
     from typing import reveal_type
@@ -42,13 +46,13 @@ class TestComment:
     @given(thing=_st.all_instances_except_of_type(NoneType, str, bytes, bytearray))
     @pytest.mark.slow
     def test_init_bad_1(self, thing: Any) -> None:
-        with pytest.raises(TypeError, match="must be bytes or unicode"):
+        with raise_invalid_utf8_type:
             _ = Comment(thing)
 
     @settings(max_examples=5)
     @given(iterable_of=_st.fixed_item_iterables())
     def test_init_bad_2(self, iterable_of: Any) -> None:
-        with pytest.raises(TypeError, match="must be bytes or unicode"):
+        with raise_invalid_utf8_type:
             _ = Comment(iterable_of("foo"))
 
     def test_dummy_dunders(self) -> None:
@@ -87,10 +91,9 @@ class TestComment:
         comm = Comment()
         # TODO: reveal_type on function object not supported yet
         assert comm.tag == Comment
-        mesg = r"objects is not writable"
-        with pytest.raises(AttributeError, match=mesg):
+        with raise_attr_not_writable:
             comm.tag = comm.tag  # type: ignore[misc]  # pyright: ignore[reportAttributeAccessIssue]
-        with pytest.raises(AttributeError, match=mesg):
+        with raise_attr_not_writable:
             del comm.tag  # pyright: ignore[reportAttributeAccessIssue]
 
     def test_text_property_ok(self) -> None:
@@ -107,14 +110,14 @@ class TestComment:
     @pytest.mark.slow
     def test_text_property_bad_1(self, thing: Any) -> None:
         comm = Comment()
-        with pytest.raises(TypeError, match="must be bytes or unicode"):
+        with raise_invalid_utf8_type:
             comm.text = thing
 
     @settings(max_examples=5)
     @given(iterable_of=_st.fixed_item_iterables())
     def test_text_property_bad_2(self, iterable_of: Any) -> None:
         comm = Comment()
-        with pytest.raises(TypeError, match="must be bytes or unicode"):
+        with raise_invalid_utf8_type:
             comm.text = iterable_of("foo")
 
 
@@ -132,13 +135,13 @@ class TestEntity:
     @given(thing=_st.all_instances_except_of_type(str, bytes, bytearray))
     @pytest.mark.slow
     def test_init_bad_1(self, thing: Any) -> None:
-        with pytest.raises(TypeError, match="must be bytes or unicode"):
+        with raise_invalid_utf8_type:
             _ = Entity(thing)
 
     @settings(max_examples=5)
     @given(iterable_of=_st.fixed_item_iterables())
     def test_init_bad_2(self, iterable_of: Any) -> None:
-        with pytest.raises(TypeError, match="must be bytes or unicode"):
+        with raise_invalid_utf8_type:
             _ = Entity(iterable_of("foo"))
 
     def test_dummy_dunders(self) -> None:
@@ -175,21 +178,19 @@ class TestEntity:
 
     def test_tag_property(self) -> None:
         ent = Entity("baz")
-        mesg = r"objects is not writable"
         # TODO: reveal_type on function object not supported yet
         assert ent.tag == Entity
-        with pytest.raises(AttributeError, match=mesg):
+        with raise_attr_not_writable:
             ent.tag = ent.tag  # type: ignore[misc]  # pyright: ignore[reportAttributeAccessIssue]
-        with pytest.raises(AttributeError, match=mesg):
+        with raise_attr_not_writable:
             del ent.tag  # pyright: ignore[reportAttributeAccessIssue]
 
     def test_text_property(self) -> None:
         ent = Entity("baz")
         reveal_type(ent.text)
-        mesg = r"objects is not writable"
-        with pytest.raises(AttributeError, match=mesg):
+        with raise_attr_not_writable:
             ent.text = ent.text  # type: ignore[misc]  # pyright: ignore[reportAttributeAccessIssue]
-        with pytest.raises(AttributeError, match=mesg):
+        with raise_attr_not_writable:
             del ent.text  # pyright: ignore[reportAttributeAccessIssue]
 
     def test_name_property_ok(self) -> None:
@@ -206,14 +207,14 @@ class TestEntity:
     @pytest.mark.slow
     def test_name_property_bad_1(self, thing: Any) -> None:
         ent = Entity("baz")
-        with pytest.raises(TypeError, match="must be bytes or unicode"):
+        with raise_invalid_utf8_type:
             ent.name = thing
 
     @settings(max_examples=5)
     @given(iterable_of=_st.fixed_item_iterables())
     def test_name_property_bad_2(self, iterable_of: Any) -> None:
         ent = Entity("baz")
-        with pytest.raises(TypeError, match="must be bytes or unicode"):
+        with raise_invalid_utf8_type:
             ent.name = iterable_of("foo")
 
 
@@ -235,13 +236,13 @@ class TestPI:
     @given(thing=_st.all_instances_except_of_type(str, bytes, bytearray))
     @pytest.mark.slow
     def test_target_arg_bad_1(self, thing: Any) -> None:
-        with pytest.raises(TypeError, match="must be bytes or unicode"):
+        with raise_invalid_utf8_type:
             _ = ProcessingInstruction(thing)
 
     @settings(max_examples=5)
     @given(iterable_of=_st.fixed_item_iterables())
     def test_target_arg_bad_2(self, iterable_of: Any) -> None:
-        with pytest.raises(TypeError, match="must be bytes or unicode"):
+        with raise_invalid_utf8_type:
             _ = ProcessingInstruction(iterable_of("foo"))
 
     def test_text_arg_ok(self) -> None:
@@ -254,13 +255,13 @@ class TestPI:
     @given(thing=_st.all_instances_except_of_type(NoneType, str, bytes, bytearray))
     @pytest.mark.slow
     def test_text_arg_bad_1(self, thing: Any) -> None:
-        with pytest.raises(TypeError, match="must be bytes or unicode"):
+        with raise_invalid_utf8_type:
             _ = ProcessingInstruction("foo", thing)
 
     @settings(max_examples=5)
     @given(iterable_of=_st.fixed_item_iterables())
     def test_text_arg_bad_2(self, iterable_of: Any) -> None:
-        with pytest.raises(TypeError, match="must be bytes or unicode"):
+        with raise_invalid_utf8_type:
             _ = ProcessingInstruction("foo", iterable_of("bar"))
 
     def test_dummy_dunders(self) -> None:
@@ -299,20 +300,18 @@ class TestPI:
         assert len(pi.attrib) == 2
         reveal_type(pi.attrib.get("type"))
         reveal_type(pi.attrib["href"])
-        set_exc_mesg = r"objects is not writable"
-        with pytest.raises(AttributeError, match=set_exc_mesg):
+        with raise_attr_not_writable:
             pi.attrib = {"foo": "bar"}  # type: ignore[misc]  # pyright: ignore[reportAttributeAccessIssue]
-        with pytest.raises(AttributeError, match=set_exc_mesg):
+        with raise_attr_not_writable:
             del pi.attrib  # pyright: ignore[reportAttributeAccessIssue]
 
     def test_tag_property(self) -> None:
         pi = ProcessingInstruction("baz")
-        mesg = r"objects is not writable"
         # TODO: reveal_type on function object not supported yet
         assert pi.tag == ProcessingInstruction
-        with pytest.raises(AttributeError, match=mesg):
+        with raise_attr_not_writable:
             pi.tag = pi.tag  # type: ignore[misc]  # pyright: ignore[reportAttributeAccessIssue]
-        with pytest.raises(AttributeError, match=mesg):
+        with raise_attr_not_writable:
             del pi.tag  # pyright: ignore[reportAttributeAccessIssue]
 
     def test_text_property_ok(self) -> None:
@@ -329,14 +328,14 @@ class TestPI:
     @pytest.mark.slow
     def test_text_property_bad_1(self, thing: Any) -> None:
         pi = ProcessingInstruction("baz")
-        with pytest.raises(TypeError, match="must be bytes or unicode"):
+        with raise_invalid_utf8_type:
             pi.text = thing
 
     @settings(max_examples=5)
     @given(iterable_of=_st.fixed_item_iterables())
     def test_text_property_bad_2(self, iterable_of: Any) -> None:
         pi = ProcessingInstruction("baz")
-        with pytest.raises(TypeError, match="must be bytes or unicode"):
+        with raise_invalid_utf8_type:
             pi.text = iterable_of("foo")
 
     def test_target_property_ok(self) -> None:
@@ -353,12 +352,12 @@ class TestPI:
     @pytest.mark.slow
     def test_target_property_bad_1(self, thing: Any) -> None:
         pi = ProcessingInstruction("baz")
-        with pytest.raises(TypeError, match="must be bytes or unicode"):
+        with raise_invalid_utf8_type:
             pi.target = thing
 
     @settings(max_examples=5)
     @given(iterable_of=_st.fixed_item_iterables())
     def test_target_property_bad_2(self, iterable_of: Any) -> None:
         pi = ProcessingInstruction("baz")
-        with pytest.raises(TypeError, match="must be bytes or unicode"):
+        with raise_invalid_utf8_type:
             pi.target = iterable_of("foo")

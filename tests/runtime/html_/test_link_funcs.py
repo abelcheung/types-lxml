@@ -44,6 +44,12 @@ from lxml.html import (
 
 from .._testutils import strategy as _st
 from .._testutils.common import attr_value_types
+from .._testutils.errors import (
+    raise_invalid_utf8_type,
+    raise_non_integer,
+    raise_unexpected_kwarg,
+    raise_wrong_pos_arg_count,
+)
 
 if sys.version_info >= (3, 11):
     from typing import reveal_type
@@ -387,7 +393,7 @@ class TestRewriteLinksArg:
     def test_link_repl_func_bad_output(
         self, disposable_html_with_base_href: HtmlElement, thing: Any
     ) -> None:
-        with pytest.raises(TypeError, match="Argument must be bytes or unicode"):
+        with raise_invalid_utf8_type:
             _ = rewrite_links(disposable_html_with_base_href, lambda _: thing)
 
     @settings(max_examples=5)
@@ -397,7 +403,7 @@ class TestRewriteLinksArg:
         disposable_html_with_base_href: HtmlElement,
         iterable_of: Any,
     ) -> None:
-        with pytest.raises(TypeError, match="Argument must be bytes or unicode"):
+        with raise_invalid_utf8_type:
             _ = rewrite_links(
                 disposable_html_with_base_href, lambda _: iterable_of(_BASE_HREF)
             )
@@ -405,16 +411,12 @@ class TestRewriteLinksArg:
     def test_link_repl_func_bad_input(
         self, disposable_html_with_base_href: HtmlElement
     ) -> None:
-        with pytest.raises(
-            TypeError, match="takes 0 positional arguments but 1 was given"
-        ):
+        with raise_wrong_pos_arg_count:
             _ = rewrite_links(
                 disposable_html_with_base_href, cast(Any, lambda: _BASE_HREF)
             )
         # Induce it into revealing feeded data type by supplying wrong function
-        with pytest.raises(
-            TypeError, match="'str' object cannot be interpreted as an integer"
-        ):
+        with raise_non_integer:
             _ = rewrite_links(disposable_html_with_base_href, cast(Any, range))
 
     # Not testing resolve_base_href type, as it is a truthy/falsy argument
@@ -441,14 +443,14 @@ class TestMethodFuncBug:
     def test_find_rel_links(self, disposable_html_with_base_href: HtmlElement) -> None:
         for encoding in ("utf-8", str):
             content = tostring(disposable_html_with_base_href, encoding=encoding)
-            with pytest.raises(TypeError, match="got an unexpected keyword argument"):
+            with raise_unexpected_kwarg:
                 _ = find_rel_links(content, rel="nofollow")
         _ = find_rel_links(disposable_html_with_base_href, rel="nofollow")
 
     def test_find_class(self, disposable_html_with_base_href: HtmlElement) -> None:
         for encoding in ("utf-8", str):
             content = tostring(disposable_html_with_base_href, encoding=encoding)
-            with pytest.raises(TypeError, match="got an unexpected keyword argument"):
+            with raise_unexpected_kwarg:
                 _ = find_class(content, class_name="single")
         _ = find_class(disposable_html_with_base_href, class_name="single")
 
@@ -462,7 +464,7 @@ class TestMethodFuncBug:
         _ = make_links_absolute(bytes_content, base_url=_BASE_HREF)
 
         for input in (str_content, bytes_content):
-            with pytest.raises(TypeError, match="got an unexpected keyword argument"):
+            with raise_unexpected_kwarg:
                 _ = make_links_absolute(  # type: ignore[call-overload]
                     input, _BASE_HREF, resolve_base_href=True
                 )
@@ -471,7 +473,7 @@ class TestMethodFuncBug:
         )
 
         for input in (str_content, bytes_content):
-            with pytest.raises(TypeError, match="got an unexpected keyword argument"):
+            with raise_unexpected_kwarg:
                 _ = make_links_absolute(  # type: ignore[call-overload]
                     input, _BASE_HREF, handle_failures=None
                 )
@@ -485,7 +487,7 @@ class TestMethodFuncBug:
     ) -> None:
         for encoding in ("utf-8", str):
             content = tostring(disposable_html_with_base_href, encoding=encoding)
-            with pytest.raises(TypeError, match="got an unexpected keyword argument"):
+            with raise_unexpected_kwarg:
                 _ = resolve_base_href(  # type: ignore[call-overload]
                     content, handle_failures=None
                 )
@@ -499,21 +501,21 @@ class TestMethodFuncBug:
         byte_content = tostring(disposable_html_with_base_href, encoding="utf-8")
 
         for input in (str_content, byte_content):
-            with pytest.raises(TypeError, match="got an unexpected keyword argument"):
+            with raise_unexpected_kwarg:
                 _ = rewrite_links(  # type: ignore[call-overload]
                     input, link_repl_func=str
                 )
         _ = rewrite_links(disposable_html_with_base_href, link_repl_func=str)
 
         for input in (str_content, byte_content):
-            with pytest.raises(TypeError, match="got an unexpected keyword argument"):
+            with raise_unexpected_kwarg:
                 _ = rewrite_links(  # type: ignore[call-overload]
                     input, str, resolve_base_href=False
                 )
         _ = rewrite_links(disposable_html_with_base_href, str, resolve_base_href=False)
 
         for input in (str_content, byte_content):
-            with pytest.raises(TypeError, match="got an unexpected keyword argument"):
+            with raise_unexpected_kwarg:
                 _ = rewrite_links(  # type: ignore[call-overload]
                     input, str, base_href=_BASE_HREF
                 )

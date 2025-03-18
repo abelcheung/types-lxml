@@ -27,6 +27,12 @@ from lxml.etree import (
 )
 
 from ._testutils import empty_signature_tester, signature_tester, strategy as _st
+from ._testutils.errors import (
+    raise_attr_not_writable,
+    raise_no_attribute,
+    raise_non_iterable,
+    raise_wrong_arg_type,
+)
 
 if sys.version_info >= (3, 11):
     from typing import reveal_type
@@ -88,7 +94,7 @@ class TestListLog:
             "filename",
             "path",
         ):
-            with pytest.raises(AttributeError, match="is not writable"):
+            with raise_attr_not_writable:
                 setattr(e0, attr, getattr(e0, attr))
 
         reveal_type(list_log.last_error)
@@ -143,7 +149,7 @@ class TestListLogMethods:
     def test_filter_domains_arg_bad(
         self, list_log: _ListErrorLog, domains: Any
     ) -> None:
-        with pytest.raises(TypeError, match=r"argument .+ is not iterable"):
+        with raise_non_iterable:
             _ = list_log.filter_domains(cast(Any, None))
 
     @signature_tester(
@@ -171,7 +177,7 @@ class TestListLogMethods:
     @given(types=_st.all_instances_except_of_type(int, Iterable))
     @pytest.mark.slow
     def test_filter_types_arg_bad(self, list_log: _ListErrorLog, types: Any) -> None:
-        with pytest.raises(TypeError, match=r"argument .+ is not iterable"):
+        with raise_non_iterable:
             _ = list_log.filter_types(types)
 
     @signature_tester(
@@ -199,7 +205,7 @@ class TestListLogMethods:
     @given(levels=_st.all_instances_except_of_type(int, Iterable))
     @pytest.mark.slow
     def test_filter_levels_arg_bad(self, list_log: _ListErrorLog, levels: Any) -> None:
-        with pytest.raises(TypeError, match=r"argument .+ is not iterable"):
+        with raise_non_iterable:
             _ = list_log.filter_levels(levels)
 
     @signature_tester(
@@ -310,9 +316,9 @@ class TestPyErrorLog:
         reveal_type(pylog.level_map)
 
         for attr_ in ("last_error", "level_map"):
-            with pytest.raises(AttributeError, match="is not writable"):
+            with raise_attr_not_writable:
                 delattr(pylog, attr_)
-            with pytest.raises(AttributeError, match="is not writable"):
+            with raise_attr_not_writable:
                 setattr(pylog, attr_, getattr(pylog, attr_))
 
         broken_xml = "<doc><a><b></a>&bar;</doc>"
@@ -357,14 +363,14 @@ class TestPyErrorLog:
     @given(thing=_st.all_instances_except_of_type(NoneType))
     @pytest.mark.slow
     def test_init_logger_arg_bad_1(self, thing: Any) -> None:
-        with pytest.raises(AttributeError, match="has no attribute 'log'"):
+        with raise_no_attribute:
             _ = PyErrorLog(logger=thing)
 
     @settings(max_examples=5)
     @given(iterable_of=_st.fixed_item_iterables())
     def test_init_logger_arg_bad_2(self, iterable_of: Any) -> None:
         logger = logging.Logger("foobar")
-        with pytest.raises(AttributeError, match="has no attribute 'log'"):
+        with raise_no_attribute:
             _ = PyErrorLog(logger=iterable_of(logger))
 
 
@@ -381,13 +387,13 @@ class TestPyErrorLogMethods:
     @given(thing=_st.all_instances_except_of_type())
     @pytest.mark.slow
     def test_log_arg1_bad(self, pylog: PyErrorLog, thing: Any) -> None:
-        with pytest.raises(AttributeError, match="has no attribute 'level'"):
+        with raise_no_attribute:
             pylog.log(log_entry=thing, message="dummy message")
 
     @settings(max_examples=5)
     @given(iterable_of=_st.fixed_item_iterables())
     def test_log_arg1_bad_2(self, pylog: PyErrorLog, iterable_of: Any) -> None:
-        with pytest.raises(AttributeError, match="has no attribute 'level'"):
+        with raise_no_attribute:
             pylog.log(log_entry=iterable_of(pylog.last_error), message="dummy message")
 
     def test_log_arg1_ok(self, pylog: PyErrorLog) -> None:
@@ -412,12 +418,13 @@ class TestPyErrorLogMethods:
     @given(thing=_st.all_instances_except_of_type())
     @pytest.mark.slow
     def test_receive_arg_bad_1(self, pylog: PyErrorLog, thing: Any) -> None:
-        with pytest.raises((TypeError, AttributeError)):
+        raise_cm = raise_no_attribute if thing is None else raise_wrong_arg_type
+        with raise_cm:  # type: ignore[attr-defined]
             pylog.receive(thing)
 
     @given(iterable_of=_st.fixed_item_iterables())
     def test_receive_arg_bad_2(self, pylog: PyErrorLog, iterable_of: Any) -> None:
-        with pytest.raises((TypeError, AttributeError)):
+        with raise_wrong_arg_type:
             pylog.receive(iterable_of(pylog.last_error))
 
     def test_receive_arg_ok(self, pylog: PyErrorLog) -> None:

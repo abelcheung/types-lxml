@@ -19,6 +19,12 @@ from lxml.etree import (
 )
 
 from ._testutils import signature_tester
+from ._testutils.errors import (
+    raise_attr_not_writable,
+    raise_no_attribute,
+    raise_wrong_arg_type,
+    raise_wrong_pos_arg_count,
+)
 
 if sys.version_info >= (3, 11):
     from typing import reveal_type
@@ -34,12 +40,12 @@ else:
 class TestXInclude:
     def test_init_and_prop(self) -> None:
         # Cython generic signature
-        with pytest.raises(TypeError, match="takes exactly 0 positional arguments"):
+        with raise_wrong_pos_arg_count:
             xinc = XInclude(None)  # type: ignore[call-arg]  # pyright: ignore[reportCallIssue]
         xinc = XInclude()
         reveal_type(xinc)
         reveal_type(xinc.error_log)
-        with pytest.raises(AttributeError, match="objects is not writable"):
+        with raise_attr_not_writable:
             xinc.error_log = xinc.error_log  # type: ignore[misc]  # pyright: ignore[reportAttributeAccessIssue]
 
     def test_xinclude_as_method(self, xinc_sample_data: str) -> None:
@@ -59,7 +65,7 @@ class TestXInclude:
 
         xinc = XInclude()
         for input in generate_input_file_arguments(tmp_file, include=(tree,)):
-            with pytest.raises(TypeError, match="Argument 'node' has incorrect type"):
+            with raise_wrong_arg_type:
                 xinc(input)
 
         elem = fromstring(xinc_sample_data)
@@ -118,7 +124,7 @@ class TestElementInclude:
         tmp_file.write_text(xinc_sample_data)
 
         for input in generate_input_file_arguments(tmp_file):
-            with pytest.raises(AttributeError, match="no attribute 'getroottree'"):
+            with raise_no_attribute:
                 EI.include(input)
 
         elem = fromstring(xinc_sample_data)
@@ -140,14 +146,12 @@ class TestElementInclude:
         del temp_el
 
         temp_el = copy.deepcopy(elem)
-        with pytest.raises(AttributeError, match="no attribute 'getroottree'"):
+        with raise_no_attribute:
             EI.include(temp_el, cast(Any, bad_loader_1))
         del temp_el
 
         temp_el = copy.deepcopy(elem)
-        with pytest.raises(
-            TypeError, match="takes 1 positional argument but 3 were given"
-        ):
+        with raise_wrong_pos_arg_count:
             EI.include(temp_el, cast(Any, bad_loader_2))
         del temp_el
 

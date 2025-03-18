@@ -9,10 +9,10 @@ from pathlib import Path
 from typing import Any, cast
 
 import html5lib.html5parser
-from hypothesis import HealthCheck, assume, given, settings
 import lxml.etree as _e
 import lxml.html.html5parser as h5
 import pytest
+from hypothesis import HealthCheck, assume, given, settings
 from lxml.etree import (
     _Element as _Element,
     _ElementTree as _ElementTree,
@@ -20,6 +20,10 @@ from lxml.etree import (
 from lxml.html.html5parser import HTMLParser as HTMLParser
 
 from .._testutils import signature_tester, strategy as _st
+from .._testutils.errors import (
+    raise_no_attribute,
+    raise_unexpected_kwarg,
+)
 
 if sys.version_info >= (3, 11):
     from typing import reveal_type
@@ -268,9 +272,7 @@ class TestParserArg:
         keywords: dict[str, Any] = {"parser": _e.HTMLParser()}
         if funcname == "fragment_fromstring":
             keywords["create_parent"] = True
-        with pytest.raises(
-            AttributeError, match=r"has no attribute 'parse(Fragment)?'"
-        ):
+        with raise_no_attribute:
             _ = func(src, **keywords)
 
 
@@ -299,7 +301,7 @@ class TestCharsetArg:
         self, html2_str: str, funcname: str, chardet: bool
     ) -> None:
         func = getattr(h5, funcname)
-        with pytest.raises(TypeError, match="unexpected keyword argument"):
+        with raise_unexpected_kwarg:
             _ = func(html2_str, guess_charset=chardet)
 
     @pytest.mark.parametrize(("chardet",), [(True,), (False,)])
@@ -328,7 +330,7 @@ class TestCharsetArg:
                 input.seek(0, io.SEEK_SET)
 
             if has_conflict:
-                with pytest.raises(TypeError, match=r"unexpected keyword argument"):
+                with raise_unexpected_kwarg:
                     _ = h5.parse(input, guess_charset=chardet)
             else:
                 tree = h5.parse(input, guess_charset=chardet)

@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import copy
 import sys
+from collections.abc import Iterable
 from inspect import Parameter
 from io import BytesIO, StringIO
 from pathlib import Path
@@ -23,6 +24,11 @@ from lxml.etree import (
 from lxml.html import HtmlElement
 
 from ._testutils import signature_tester, strategy as _st
+from ._testutils.errors import (
+    raise_attr_not_writable,
+    raise_invalid_lxml_type,
+    raise_non_iterable,
+)
 
 if sys.version_info >= (3, 11):
     from typing import reveal_type
@@ -50,7 +56,7 @@ class TestCSSSelectorInit:
         # not checking .css properties because it is actually writable;
         # we lie to users about it being read-only.
         for attr in ("path", "error_log"):
-            with pytest.raises(AttributeError, match=r"objects is not writable"):
+            with raise_attr_not_writable:
                 setattr(selector, attr, getattr(selector, attr))
 
     def test_xml_return_type(
@@ -149,8 +155,12 @@ class TestCSSSelectorArgs:
     )
     @pytest.mark.slow
     def test_namespaces_arg_bad(self, svg_root: _Element, thing: Any) -> None:
-        with pytest.raises((TypeError, ValueError)):
-            _ = CSSSelector("li", namespaces=thing)
+        if not isinstance(thing, Iterable):
+            raise_cm = raise_non_iterable
+        else:
+            raise_cm = pytest.raises((TypeError, ValueError))  # type: ignore[arg-type]
+        with raise_cm:
+            _ = CSSSelector("li", namespaces=thing)  # pyright: ignore[reportUnknownArgumentType]
 
     # Translator argument not tested, it just become a noop if required
     # values are not matched, not raising or doing anything.
@@ -160,7 +170,7 @@ class TestCSSSelectorArgs:
     @pytest.mark.slow
     def test_call_arg_bad_1(self, thing: Any) -> None:
         selector = CSSSelector("#id")
-        with pytest.raises(TypeError, match=r"Invalid input object"):
+        with raise_invalid_lxml_type:
             _ = selector(thing)  # pyright: ignore[reportUnknownVariableType]
 
     @settings(
@@ -172,9 +182,9 @@ class TestCSSSelectorArgs:
         self, iterable_of: Any, svg_root: _Element, svg_tree: _ElementTree
     ) -> None:
         selector = CSSSelector(".thing")
-        with pytest.raises(TypeError, match=r"Invalid input object"):
+        with raise_invalid_lxml_type:
             _ = selector(iterable_of(svg_root))  # pyright: ignore[reportUnknownVariableType]
-        with pytest.raises(TypeError, match=r"Invalid input object"):
+        with raise_invalid_lxml_type:
             _ = selector(iterable_of(svg_tree))  # pyright: ignore[reportUnknownVariableType]
 
 

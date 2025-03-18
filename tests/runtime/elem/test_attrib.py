@@ -29,6 +29,7 @@ from .._testutils import (
     strategy as _st,
 )
 from .._testutils.common import attr_name_types, attr_value_types
+from .._testutils.errors import raise_invalid_utf8_type
 
 if sys.version_info >= (3, 11):
     from typing import reveal_type
@@ -58,7 +59,7 @@ class TestAttrib:
     ))  # fmt: skip
     @pytest.mark.slow
     def test_key_type_bad_1(self, disposable_attrib: _Attrib, thing: Any) -> None:
-        with pytest.raises(TypeError, match="Argument must be bytes or unicode"):
+        with raise_invalid_utf8_type:
             _ = disposable_attrib[thing]
 
     @given(iterable_of=_st.fixed_item_iterables(), k=_st.xml_name_arg())
@@ -70,7 +71,7 @@ class TestAttrib:
             getattr(iterable_of, "type") in {set, frozenset}
             and isinstance(k, bytearray)
         ))  # fmt: skip
-        with pytest.raises(TypeError, match="Argument must be bytes or unicode"):
+        with raise_invalid_utf8_type:
             _ = disposable_attrib[iterable_of(k)]
 
     @given(k=_st.xml_name_arg())
@@ -84,7 +85,7 @@ class TestAttrib:
     ))  # fmt: skip
     @pytest.mark.slow
     def test_value_type_bad_1(self, disposable_attrib: _Attrib, thing: Any) -> None:
-        with pytest.raises(TypeError, match="Argument must be bytes or unicode"):
+        with raise_invalid_utf8_type:
             disposable_attrib["foo"] = thing
 
     @given(
@@ -99,7 +100,7 @@ class TestAttrib:
             getattr(iterable_of, "type") in {set, frozenset}
             and isinstance(v, bytearray)
         ))  # fmt: skip
-        with pytest.raises(TypeError, match="Argument must be bytes or unicode"):
+        with raise_invalid_utf8_type:
             disposable_attrib["foo"] = iterable_of(v)
 
     @given(v=_st.xml_attr_value_arg())
@@ -156,14 +157,14 @@ class TestHasKeyMethod:
     ))  # fmt: skip
     @pytest.mark.slow
     def test_key_type_bad_1(self, disposable_attrib: _Attrib, k: Any) -> None:
-        with pytest.raises(TypeError, match="Argument must be bytes or unicode"):
+        with raise_invalid_utf8_type:
             _ = disposable_attrib.has_key(k)
 
     @given(iterable_of=_st.fixed_item_iterables(), k=_st.xml_name_key_arg())
     def test_key_type_bad_2(
         self, disposable_attrib: _Attrib, iterable_of: Any, k: _AttrName
     ) -> None:
-        with pytest.raises(TypeError, match="Argument must be bytes or unicode"):
+        with raise_invalid_utf8_type:
             _ = disposable_attrib.has_key(iterable_of(k))
 
     @given(k=_st.xml_name_arg())
@@ -186,7 +187,7 @@ class TestGetMethod:
     ))  # fmt: skip
     @pytest.mark.slow
     def test_key_type_bad(self, disposable_attrib: _Attrib, k: Any) -> None:
-        with pytest.raises(TypeError, match="Argument must be bytes or unicode"):
+        with raise_invalid_utf8_type:
             _ = disposable_attrib.get(k)
 
     @given(k=_st.xml_name_arg())
@@ -220,14 +221,14 @@ class TestPopMethod:
     ))  # fmt: skip
     @pytest.mark.slow
     def test_key_type_bad(self, disposable_attrib: _Attrib, k: Any) -> None:
-        with pytest.raises(TypeError, match="Argument must be bytes or unicode"):
+        with raise_invalid_utf8_type:
             _ = disposable_attrib.pop(k)
 
     @given(iterable_of=_st.fixed_item_iterables(), k=_st.xml_name_key_arg())
     def test_key_type_bad_2(
         self, disposable_attrib: _Attrib, iterable_of: Any, k: _AttrName
     ) -> None:
-        with pytest.raises(TypeError, match="Argument must be bytes or unicode"):
+        with raise_invalid_utf8_type:
             _ = disposable_attrib.pop(iterable_of(k))
 
     @given(k=_st.xml_name_arg(), v=_st.xml_attr_value_arg())
@@ -452,7 +453,7 @@ class TestElementGetMethod:
     @given(thing=_st.all_instances_except_of_type(*attr_name_types.allow))
     @pytest.mark.slow
     def test_key_arg_bad_1(self, disposable_element: _Element, thing: Any) -> None:
-        with pytest.raises(TypeError, match="must be bytes or unicode"):
+        with raise_invalid_utf8_type:
             _ = disposable_element.get(thing)
 
     @settings(max_examples=5)
@@ -460,7 +461,7 @@ class TestElementGetMethod:
     def test_key_arg_bad_2(
         self, disposable_element: _Element, iterable_of: Any
     ) -> None:
-        with pytest.raises(TypeError, match="must be bytes or unicode"):
+        with raise_invalid_utf8_type:
             _ = disposable_element.get(iterable_of("foo"))
 
     def test_default_arg(self, svg_root: _Element) -> None:
@@ -491,7 +492,7 @@ class TestElementSetMethod:
     @given(thing=_st.all_instances_except_of_type(*attr_name_types.allow))
     @pytest.mark.slow
     def test_key_arg_bad_1(self, disposable_element: _Element, thing: Any) -> None:
-        with pytest.raises(TypeError, match="must be bytes or unicode"):
+        with raise_invalid_utf8_type:
             disposable_element.set(thing, "bar")
 
     @settings(max_examples=5)
@@ -499,14 +500,14 @@ class TestElementSetMethod:
     def test_key_arg_bad_2(
         self, disposable_element: _Element, iterable_of: Any
     ) -> None:
-        with pytest.raises(TypeError, match="must be bytes or unicode"):
+        with raise_invalid_utf8_type:
             disposable_element.set(iterable_of("foo"), "bar")
 
     @settings(suppress_health_check=[HealthCheck.too_slow], max_examples=300)
     @given(thing=_st.all_instances_except_of_type(*attr_value_types.allow))
     @pytest.mark.slow
     def test_val_arg_bad_1(self, disposable_element: _Element, thing: Any) -> None:
-        with pytest.raises(TypeError, match="must be bytes or unicode"):
+        with raise_invalid_utf8_type:
             disposable_element.set("foo", thing)
 
     @settings(max_examples=5)
@@ -514,5 +515,5 @@ class TestElementSetMethod:
     def test_val_arg_bad_2(
         self, disposable_element: _Element, iterable_of: Any
     ) -> None:
-        with pytest.raises(TypeError, match="must be bytes or unicode"):
+        with raise_invalid_utf8_type:
             disposable_element.set("foo", iterable_of("bar"))

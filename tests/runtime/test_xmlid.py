@@ -15,6 +15,10 @@ from lxml.objectify import ObjectifiedElement as ObjectifiedElement, makeparser
 
 from ._testutils import signature_tester, strategy as _st
 from ._testutils.common import text_document_types
+from ._testutils.errors import (
+    raise_invalid_filename_type,
+    raise_wrong_arg_type,
+)
 
 if sys.version_info >= (3, 11):
     from typing import reveal_type
@@ -90,13 +94,13 @@ class TestXmlId:
     @given(thing=_st.all_instances_except_of_type(NoneType))
     @pytest.mark.slow
     def test_parser_arg_bad_1(self, xml2_bytes: bytes, thing: Any) -> None:
-        with pytest.raises(TypeError, match=r"Argument '.+' has incorrect type"):
+        with raise_wrong_arg_type:
             _ = XMLID(xml2_bytes, parser=thing)
 
     @settings(max_examples=5)
     @given(iterable_of=_st.fixed_item_iterables())
     def test_parser_arg_bad_2(self, xml2_bytes: bytes, iterable_of: Any) -> None:
-        with pytest.raises(TypeError, match=r"Argument '.+' has incorrect type"):
+        with raise_wrong_arg_type:
             _ = XMLID(xml2_bytes, parser=iterable_of(XMLParser()))
 
     def test_baseurl_arg_ok(self, xml2_bytes: bytes) -> None:
@@ -112,11 +116,11 @@ class TestXmlId:
     @pytest.mark.slow
     def test_baseurl_arg_bad_1(self, xml2_bytes: bytes, thing: Any) -> None:
         assume(thing is NotImplemented or bool(thing))
-        with pytest.raises(TypeError, match=r"Argument must be string or unicode"):
+        with raise_invalid_filename_type:
             _ = XMLID(xml2_bytes, base_url=thing)
 
     @settings(max_examples=5)
     @given(iterable_of=_st.fixed_item_iterables())
     def test_baseurl_arg_bad_2(self, xml2_bytes: bytes, iterable_of: Any) -> None:
-        with pytest.raises(TypeError, match=r"Argument must be string or unicode"):
+        with raise_invalid_filename_type:
             _ = XMLID(xml2_bytes, base_url=iterable_of("http://example.com"))
