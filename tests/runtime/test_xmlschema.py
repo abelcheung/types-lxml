@@ -26,6 +26,8 @@ if sys.version_info >= (3, 11):
 else:
     from typing_extensions import reveal_type
 
+exc_wrong_obj = pytest.raises(TypeError, match=r"Invalid input object:")
+
 
 class TestXMLSchemaInput:
     # Generic Cython signature
@@ -48,10 +50,10 @@ class TestXMLSchemaInput:
             _ = XMLSchema(*args, **kw)
 
     @settings(suppress_health_check=[HealthCheck.too_slow], max_examples=300)
-    @given(thing=_st.all_instances_except_of_type(NoneType))
+    @given(thing=_st.all_instances_except_of_type(NoneType, _Element, _ElementTree))
     @pytest.mark.slow
     def test_etree_arg_bad_1(self, thing: Any) -> None:
-        with pytest.raises((XMLSchemaParseError, ValueError, TypeError)):
+        with exc_wrong_obj:
             _ = XMLSchema(thing)
 
     @settings(
@@ -60,7 +62,7 @@ class TestXMLSchemaInput:
     )
     @given(iterable_of=_st.fixed_item_iterables())
     def test_etree_arg_bad_2(self, xmlschema_root: _Element, iterable_of: Any) -> None:
-        with pytest.raises(TypeError, match="Invalid input object"):
+        with exc_wrong_obj:
             _ = XMLSchema(iterable_of(xmlschema_root))
 
     def test_etree_arg_ok(self, xmlschema_root: _Element) -> None:
@@ -133,11 +135,12 @@ class TestXMLSchemaValidate:
     @given(thing=_st.all_instances_except_of_type(_Element, _ElementTree))
     @pytest.mark.slow
     def test_call_arg_bad_1(self, xmlschema: XMLSchema, thing: Any) -> None:
-        with pytest.raises(TypeError, match=r"Invalid input object"):
+        with exc_wrong_obj:
             _ = xmlschema.validate(thing)
-        with pytest.raises(TypeError, match=r"Invalid input object"):
+        with exc_wrong_obj:
             _ = xmlschema(thing)
 
+    @pytest.mark.parametrize(["funcname"], (["validate"], ["__call__"]))
     @settings(
         suppress_health_check=[HealthCheck.function_scoped_fixture],
         max_examples=5,
@@ -147,17 +150,15 @@ class TestXMLSchemaValidate:
         self,
         xmlschema: XMLSchema,
         iterable_of: Any,
+        funcname: str,
         xml2_root: _Element,
         xml2_tree: _ElementTree[_Element],
     ) -> None:
-        with pytest.raises(TypeError, match=r"Invalid input object"):
-            _ = xmlschema.validate(iterable_of(xml2_root))
-        with pytest.raises(TypeError, match=r"Invalid input object"):
-            _ = xmlschema.validate(iterable_of(xml2_tree))
-        with pytest.raises(TypeError, match=r"Invalid input object"):
-            _ = xmlschema(iterable_of(xml2_root))
-        with pytest.raises(TypeError, match=r"Invalid input object"):
-            _ = xmlschema(iterable_of(xml2_tree))
+        func = getattr(xmlschema, funcname)
+        with exc_wrong_obj:
+            _ = func(iterable_of(xml2_root))
+        with exc_wrong_obj:
+            _ = func(iterable_of(xml2_tree))
 
     @signature_tester(
         XMLSchema.assert_,
@@ -190,11 +191,12 @@ class TestXMLSchemaValidate:
     @given(thing=_st.all_instances_except_of_type(_Element, _ElementTree))
     @pytest.mark.slow
     def test_assert_arg_bad_1(self, xmlschema: XMLSchema, thing: Any) -> None:
-        with pytest.raises(TypeError, match=r"Invalid input object"):
+        with exc_wrong_obj:
             _ = xmlschema.assertValid(thing)
-        with pytest.raises(TypeError, match=r"Invalid input object"):
+        with exc_wrong_obj:
             _ = xmlschema.assert_(thing)
 
+    @pytest.mark.parametrize(["funcname"], (["assertValid"], ["assert_"]))
     @settings(
         suppress_health_check=[HealthCheck.function_scoped_fixture],
         max_examples=5,
@@ -204,14 +206,12 @@ class TestXMLSchemaValidate:
         self,
         xmlschema: XMLSchema,
         iterable_of: Any,
+        funcname: str,
         xml2_root: _Element,
         xml2_tree: _ElementTree[_Element],
     ) -> None:
-        with pytest.raises(TypeError, match=r"Invalid input object"):
-            _ = xmlschema.assertValid(iterable_of(xml2_root))
-        with pytest.raises(TypeError, match=r"Invalid input object"):
-            _ = xmlschema.assertValid(iterable_of(xml2_tree))
-        with pytest.raises(TypeError, match=r"Invalid input object"):
-            _ = xmlschema.assert_(iterable_of(xml2_root))
-        with pytest.raises(TypeError, match=r"Invalid input object"):
-            _ = xmlschema.assert_(iterable_of(xml2_tree))
+        func = getattr(xmlschema, funcname)
+        with exc_wrong_obj:
+            _ = func(iterable_of(xml2_root))
+        with exc_wrong_obj:
+            _ = func(iterable_of(xml2_tree))
