@@ -123,6 +123,8 @@ class TestRelaxNGInput:
                 raise_cm = pytest.raises(TypeError, match=r"string pattern on a bytes-like object")
             else:
                 raise_cm = pytest.raises(RelaxNGParseError, match=r"grammar has no children")  # type: ignore[arg-type]
+        elif thing in {bytes, bytearray}:  # type: ignore[arg-type]
+            raise_cm = pytest.raises(TypeError, match=r"unbound method .+ needs an argument")
         else:
             raise_cm = raise_no_attribute
         with raise_cm:
