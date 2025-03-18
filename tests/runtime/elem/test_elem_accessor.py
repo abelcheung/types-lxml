@@ -60,14 +60,14 @@ class TestIndexMethod:
 
     @given(thing=_st.all_instances_except_of_type(_Element))
     def test_child_arg_bad_1(self, disposable_element: _Element, thing: Any) -> None:
-        with raise_lxml_non_integer:
+        with raise_wrong_arg_type:
             _ = disposable_element.index(thing)
 
     @given(iterable_of=_st.fixed_item_iterables())
     def test_child_arg_bad_2(
         self, disposable_element: _Element, iterable_of: Any
     ) -> None:
-        with raise_lxml_non_integer:
+        with raise_wrong_arg_type:
             _ = disposable_element.index(iterable_of(disposable_element))
 
     @settings(
@@ -126,8 +126,8 @@ class TestAppendMethod:
     @settings(suppress_health_check=[HealthCheck.too_slow], max_examples=300)
     @given(thing=_st.all_instances_except_of_type(_Element))
     @pytest.mark.slow
-    def test_element_arg_bad(self, disposable_element: _Element, thing: Any) -> None:
-        with raise_lxml_non_integer:
+    def test_element_arg_bad_1(self, disposable_element: _Element, thing: Any) -> None:
+        with raise_wrong_arg_type:
             disposable_element.append(thing)
 
     @settings(max_examples=5)
@@ -135,7 +135,7 @@ class TestAppendMethod:
     def test_element_arg_bad_2(
         self, disposable_element: _Element, iterable_of: Any
     ) -> None:
-        with raise_lxml_non_integer:
+        with raise_wrong_arg_type:
             disposable_element.append(iterable_of(disposable_element))
 
 
@@ -175,7 +175,7 @@ class TestInsertMethod:
     @given(thing=_st.all_instances_except_of_type(_Element))
     @pytest.mark.slow
     def test_element_arg_bad(self, disposable_element: _Element, thing: Any) -> None:
-        with raise_lxml_non_integer:
+        with raise_wrong_arg_type:
             disposable_element.insert(index=0, element=thing)
 
     @settings(max_examples=5)
@@ -183,7 +183,7 @@ class TestInsertMethod:
     def test_element_arg_bad_2(
         self, disposable_element: _Element, iterable_of: Any
     ) -> None:
-        with raise_lxml_non_integer:
+        with raise_wrong_arg_type:
             disposable_element.insert(index=0, element=iterable_of(disposable_element))
 
 
@@ -201,7 +201,7 @@ class TestRemoveMethod:
     @given(thing=_st.all_instances_except_of_type(_Element))
     @pytest.mark.slow
     def test_element_arg_bad_1(self, disposable_element: _Element, thing: Any) -> None:
-        with raise_lxml_non_integer:
+        with raise_wrong_arg_type:
             disposable_element.remove(thing)
 
     @settings(max_examples=5)
@@ -209,7 +209,7 @@ class TestRemoveMethod:
     def test_element_arg_bad_2(
         self, disposable_element: _Element, iterable_of: Any
     ) -> None:
-        with raise_lxml_non_integer:
+        with raise_wrong_arg_type:
             disposable_element.remove(iterable_of(disposable_element))
 
 
@@ -230,7 +230,7 @@ class TestReplaceMethod:
     def test_old_element_arg_bad_1(
         self, disposable_element: _Element, thing: Any
     ) -> None:
-        with raise_lxml_non_integer:
+        with raise_wrong_arg_type:
             disposable_element.replace(
                 old_element=thing, new_element=disposable_element
             )
@@ -240,7 +240,7 @@ class TestReplaceMethod:
     def test_old_element_arg_bad_2(
         self, disposable_element: _Element, iterable_of: Any
     ) -> None:
-        with raise_lxml_non_integer:
+        with raise_wrong_arg_type:
             disposable_element.replace(
                 old_element=iterable_of(disposable_element),
                 new_element=disposable_element,
@@ -252,7 +252,7 @@ class TestReplaceMethod:
     def test_new_element_arg_bad_1(
         self, disposable_element: _Element, thing: Any
     ) -> None:
-        with raise_lxml_non_integer:
+        with raise_wrong_arg_type:
             disposable_element.replace(disposable_element, thing)
 
     @settings(max_examples=5)
@@ -260,7 +260,7 @@ class TestReplaceMethod:
     def test_new_element_arg_bad_2(
         self, disposable_element: _Element, iterable_of: Any
     ) -> None:
-        with raise_lxml_non_integer:
+        with raise_wrong_arg_type:
             disposable_element.replace(
                 disposable_element, iterable_of(disposable_element)
             )
