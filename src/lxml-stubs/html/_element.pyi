@@ -6,7 +6,6 @@ from typing import (
     Iterator,
     Literal,
     MutableSet,
-    Never,
     TypeVar,
     overload,
 )
@@ -24,9 +23,9 @@ from ..cssselect import _CSSTransArg
 from ._form import FormElement, LabelElement
 
 if sys.version_info >= (3, 11):
-    from typing import Self
+    from typing import Never, Self
 else:
-    from typing_extensions import Self
+    from typing_extensions import Never, Self
 
 if sys.version_info >= (3, 13):
     from warnings import deprecated
