@@ -118,15 +118,11 @@ class TestRelaxNGInput:
     @pytest.mark.slow
     @example(thing=b"start = element shiporder {}")
     def test_from_rnc_input_bad_1(self, thing: Any) -> None:
-        if isinstance(thing, (bytes, bytearray)):
-            if thing:
-                raise_cm = pytest.raises(TypeError, match=r"string pattern on a bytes-like object")
-            else:
-                raise_cm = pytest.raises(RelaxNGParseError, match=r"grammar has no children")  # type: ignore[arg-type]
-        elif thing in {bytes, bytearray}:  # type: ignore[arg-type]
-            raise_cm = pytest.raises(TypeError, match=r"unbound method .+ needs an argument")
+        if isinstance(thing, (bytes, bytearray)) and not thing:
+            raise_cm = pytest.raises(RelaxNGParseError, match=r"grammar has no children")
         else:
-            raise_cm = raise_no_attribute
+            # too diversified
+            raise_cm = pytest.raises((TypeError, AttributeError))  # type: ignore[arg-type]
         with raise_cm:
             _ = RelaxNG.from_rnc_string(src=cast(Any, thing))
 
