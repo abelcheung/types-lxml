@@ -236,6 +236,21 @@ def schematron(schematron_path: Path) -> Schematron:
     return Schematron(file=schematron_path)
 
 
+@pytest.fixture(scope="session")
+def dtd_path() -> Path:
+    return Path(__file__).resolve().parent / "_data" / "shiporder.dtd"
+
+
+@pytest.fixture(scope="session")
+def dtd_root(dtd_path: Path) -> _e._Element:
+    return _e.fromstring(dtd_path.read_bytes())
+
+
+@pytest.fixture(scope="session")
+def dtd(dtd_path: Path) -> _e.DTD:
+    return _e.DTD(file=dtd_path)
+
+
 @pytest.fixture
 def list_log() -> _e._ListErrorLog:
     bad_data = "<bad><a><b></a>&qwerty;</bad>"

@@ -1,0 +1,18 @@
+<!ELEMENT shiporder (orderperson,shipto,item+)>
+<!ATTLIST shiporder
+    orderid CDATA #REQUIRED>
+<!ELEMENT orderperson (#PCDATA)>
+<!ELEMENT shipto (name,address,city,country)>
+    <!ELEMENT name (#PCDATA)>
+    <!ELEMENT address (#PCDATA)>
+    <!ELEMENT city (#PCDATA)>
+    <!ELEMENT country (#PCDATA)>
+<!ELEMENT item (title,author,note?,bundled?,quantity,price)>
+    <!ELEMENT title (#PCDATA)>
+    <!ELEMENT author (#PCDATA)>
+    <!ELEMENT note (#PCDATA)>
+    <!ELEMENT bundled (#PCDATA)>
+    <!ELEMENT quantity (#PCDATA)>
+    <!ELEMENT price (#PCDATA)>
+    <!ATTLIST item
+        id ID #REQUIRED>
