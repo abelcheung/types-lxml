@@ -4,9 +4,7 @@
     - path: inc.py
       content: |
         from lxml import etree
-        from lxml.isoschematron import Schematron
         dtd: etree.DTD
-        tron: Schematron
         tree: etree._ElementTree[etree._Element]
         elem: etree._Element
   main: ""
@@ -19,9 +17,8 @@
   files: *INC
   parametrized:
     - obj: dtd
-    - obj: tron
   main: |
-    from inc import dtd, tron, tree, elem
+    from inc import dtd, tree, elem
     reveal_type({{ obj }}(tree))  # NR: .+ "[\w\.]+\.bool"$
     reveal_type({{ obj }}(etree=elem))  # NR: .+ "[\w\.]+\.bool"$
     reveal_type({{ obj }}.validate(elem))  # NR: .+ "[\w\.]+\.bool"$
@@ -33,11 +30,8 @@
     - obj: dtd
       cls: DTD
       is_call: false
-    - obj: tron
-      cls: Schematron
-      is_call: false
   main: |
-    from inc import dtd, tron, tree, elem
+    from inc import dtd, tree, elem
     {{ obj }}{%- if not is_call -%}.validate{%- endif -%}()  # E: Missing positional argument "etree" in call to {% if is_call -%}"__call__" of "{{cls}}"{%- else -%}"validate" of "_Validator"{%- endif %}  [call-arg]
     {{ obj }}{%- if not is_call -%}.validate{%- endif -%}(None)  # E: Argument 1 to {% if is_call -%}"__call__" of "{{cls}}"{%- else -%}"validate" of "_Validator"{%- endif %} has incompatible type "None"; expected "_Element | _ElementTree[_Element]"  [arg-type]
     {{ obj }}{%- if not is_call -%}.validate{%- endif -%}(tree, None)  # E: Too many arguments for {% if is_call -%}"__call__" of "{{cls}}"{%- else -%}"validate" of "_Validator"{%- endif %}  [call-arg]
@@ -47,9 +41,8 @@
   files: *INC
   parametrized:
     - obj: dtd
-    - obj: tron
   main: |
-    from inc import dtd, tron, tree, elem
+    from inc import dtd, tree, elem
     reveal_type({{ obj }}.error_log)  # NR: .+ "[\w\.]+\._ListErrorLog"
     _ = {{ obj }}.assertValid(tree)  # E: "assertValid" of "_Validator" does not return a value (it only ever returns None)  [func-returns-value]
     _ = {{ obj }}.assert_(elem)  # E: "assert_" of "_Validator" does not return a value (it only ever returns None)  [func-returns-value]

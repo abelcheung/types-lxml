@@ -85,7 +85,7 @@ class Schematron(_e._Validator):
         store_report: bool = False,
         phase: str | None = None,
         error_finder: _e.XPath = ...,  # keep ellipsis
-        validate_schema: bool = ...,  # keep ellipsis
+        validate_schema: bool = ...,  # keep ellipsis  # lxml 5 only
     ) -> None: ...
     @overload
     def __init__(
@@ -102,7 +102,7 @@ class Schematron(_e._Validator):
         store_report: bool = False,
         phase: str | None = None,
         error_finder: _e.XPath = ...,  # keep ellipsis
-        validate_schema: bool = ...,  # keep ellipsis
+        validate_schema: bool = ...,  # keep ellipsis  # lxml 5 only
     ) -> None: ...
     @overload
     def __init__(
@@ -119,7 +119,7 @@ class Schematron(_e._Validator):
         store_report: bool = False,
         phase: str | None = None,
         error_finder: _e.XPath = ...,  # keep ellipsis
-        validate_schema: bool = ...,  # keep ellipsis
+        validate_schema: bool = ...,  # keep ellipsis  # lxml 5 only
     ) -> None: ...
     def __call__(self, etree: _ElementOrTree) -> bool: ...
     @property

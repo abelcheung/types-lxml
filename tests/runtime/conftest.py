@@ -23,12 +23,11 @@ from typing import (
 from urllib.request import urlopen
 from urllib.response import addinfourl
 
-# http.client is incompatible with lxml
-# (in _FileReaderContext.copyToBuffer())
-import urllib3
 import pytest
 import typeguard
+import urllib3
 from lxml import etree as _e, html as _h
+from lxml.isoschematron import Schematron
 
 pytest_plugins = [
     "typeguard",
@@ -127,21 +126,6 @@ def xml2_bytes(xml2_filepath: Path) -> bytes:
     return xml2_filepath.read_bytes()
 
 
-@pytest.fixture(scope="session")
-def xmlschema_path() -> Path:
-    return Path(__file__).resolve().parent / "_data" / "shiporder.xsd"
-
-
-@pytest.fixture(scope="session")
-def xmlschema_root(xmlschema_path: Path) -> _e._Element:
-    return _e.fromstring(xmlschema_path.read_bytes())
-
-
-@pytest.fixture(scope="session")
-def xmlschema(xmlschema_path: Path) -> _e.XMLSchema:
-    return _e.XMLSchema(file=str(xmlschema_path))
-
-
 @pytest.fixture
 def bightml_tree(bightml_bin_fp: BinaryIO) -> _e._ElementTree[_h.HtmlElement]:
     with bightml_bin_fp as f:
@@ -198,6 +182,21 @@ def xinc_sample_data(xml2_filepath: Path) -> str:
 
 
 @pytest.fixture(scope="session")
+def xmlschema_path() -> Path:
+    return Path(__file__).resolve().parent / "_data" / "shiporder.xsd"
+
+
+@pytest.fixture(scope="session")
+def xmlschema_root(xmlschema_path: Path) -> _e._Element:
+    return _e.fromstring(xmlschema_path.read_bytes())
+
+
+@pytest.fixture(scope="session")
+def xmlschema(xmlschema_path: Path) -> _e.XMLSchema:
+    return _e.XMLSchema(file=str(xmlschema_path))
+
+
+@pytest.fixture(scope="session")
 def rnc_path() -> Path:
     return Path(__file__).resolve().parent / "_data" / "shiporder.rnc"
 
@@ -220,6 +219,21 @@ def relaxng_root(relaxng_path: Path) -> _e._Element:
 @pytest.fixture(scope="session")
 def relaxng(relaxng_path: Path) -> _e.RelaxNG:
     return _e.RelaxNG(file=relaxng_path)
+
+
+@pytest.fixture(scope="session")
+def schematron_path() -> Path:
+    return Path(__file__).resolve().parent / "_data" / "shiporder.sch"
+
+
+@pytest.fixture(scope="session")
+def schematron_root(schematron_path: Path) -> _e._Element:
+    return _e.fromstring(schematron_path.read_bytes())
+
+
+@pytest.fixture(scope="session")
+def schematron(schematron_path: Path) -> Schematron:
+    return Schematron(file=schematron_path)
 
 
 @pytest.fixture
