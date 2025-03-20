@@ -110,9 +110,7 @@ class TestFromstring:
             _ = _soup.fromstring(html2_str, iterable_of(BeautifulSoup))
 
     def test_makeelement_arg_ok(self, html2_str: str) -> None:
-        result1 = _soup.fromstring(
-            html2_str, makeelement=xhtml_parser.makeelement
-        )
+        result1 = _soup.fromstring(html2_str, makeelement=xhtml_parser.makeelement)
         reveal_type(result1)
         del result1
 
@@ -194,14 +192,14 @@ class TestParse:
 
     @settings(max_examples=5)
     @given(iterable_of=_st.fixed_item_iterables())
-    def test_beautifulsoup_arg_bad_2(self, html2_filepath: Path, iterable_of: Any) -> None:
+    def test_beautifulsoup_arg_bad_2(
+        self, html2_filepath: Path, iterable_of: Any
+    ) -> None:
         with pytest.raises(TypeError, match=r"object is not callable"):
             _ = _soup.parse(html2_filepath, beautifulsoup=iterable_of(BeautifulSoup))
 
     def test_makeelement_arg_ok(self, html2_filepath: Path) -> None:
-        result1 = _soup.parse(
-            html2_filepath, makeelement=xhtml_parser.makeelement
-        )
+        result1 = _soup.parse(html2_filepath, makeelement=xhtml_parser.makeelement)
         reveal_type(result1)
         reveal_type(result1.getroot())
         del result1
@@ -220,7 +218,9 @@ class TestParse:
 
     @settings(max_examples=5)
     @given(iterable_of=_st.fixed_item_iterables())
-    def test_makeelement_arg_bad_2(self, html2_filepath: Path, iterable_of: Any) -> None:
+    def test_makeelement_arg_bad_2(
+        self, html2_filepath: Path, iterable_of: Any
+    ) -> None:
         with pytest.raises(TypeError):
             _ = _soup.parse(html2_filepath, makeelement=iterable_of(Element))
 

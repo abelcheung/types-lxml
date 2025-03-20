@@ -4,5 +4,5 @@ __all__ = (
     "is_multi_subclass_build",
 )
 
-from .decorator import empty_signature_tester, signature_tester
 from .common import is_multi_subclass_build
+from .decorator import empty_signature_tester, signature_tester

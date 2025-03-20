@@ -22,7 +22,6 @@ if sys.version_info >= (3, 11):
 else:
     from typing_extensions import LiteralString
 
-
 _T_co = TypeVar("_T_co", covariant=True)
 
 # See https://lxml.de/parsing.html#event-types

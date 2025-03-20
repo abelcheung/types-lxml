@@ -325,9 +325,9 @@ def generate_input_file_arguments(
             case ".htm" | ".html":
                 content_type = "text/html"
             case ".svg":
-                content_type = "image/svg+xml",
+                content_type = "image/svg+xml"
             case _:
-                content_type = "application/xml",
+                content_type = "application/xml"
         pook.get(
             "http://example.com/" + path.name,
             response_type=content_type,

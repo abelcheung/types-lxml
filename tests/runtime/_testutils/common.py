@@ -7,7 +7,9 @@ from typing import (
     get_args,
     get_type_hints,
 )
+
 from lxml.etree import LXML_VERSION
+
 from . import strategy as _st
 
 if sys.version_info >= (3, 12):

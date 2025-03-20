@@ -99,7 +99,7 @@ class TestBasicBehavior:
         length = len(elem)
         elem[1] = comment
         assert len(elem) == length
-        elem[length-1:] = (entity, pi)
+        elem[length - 1 :] = (entity, pi)
         assert len(elem) == length + 1
         length = length + 1
         # Actually permitted, just that elements are added in random order
@@ -128,11 +128,14 @@ class TestBasicBehavior:
 
     @settings(max_examples=5)
     @given(iterable_of=_st.fixed_item_iterables())
-    def test_insert_bad_elem_2(self, disposable_element: _Element, iterable_of: Any) -> None:
+    def test_insert_bad_elem_2(
+        self, disposable_element: _Element, iterable_of: Any
+    ) -> None:
         with pytest.raises(
             TypeError, match=r"Cannot convert \w+(\.\w+)* to .+\._Element"
         ):
             disposable_element[0] = iterable_of(disposable_element)
+
 
 class TestProperties:
     def test_basic_stuff(self, xml2_root: _Element) -> None:
@@ -186,7 +189,9 @@ class TestProperties:
 
     @settings(max_examples=5)
     @given(iterable_of=_st.fixed_item_iterables())
-    def test_base_rw_bad_2(self, disposable_element: _Element, iterable_of: Any) -> None:
+    def test_base_rw_bad_2(
+        self, disposable_element: _Element, iterable_of: Any
+    ) -> None:
         with raise_invalid_filename_type:
             disposable_element.base = iterable_of("foo")
 
@@ -236,7 +241,9 @@ class TestProperties:
 
     @settings(max_examples=5)
     @given(iterable_of=_st.fixed_item_iterables())
-    def test_text_rw_bad_2(self, disposable_element: _Element, iterable_of: Any) -> None:
+    def test_text_rw_bad_2(
+        self, disposable_element: _Element, iterable_of: Any
+    ) -> None:
         with raise_invalid_utf8_type:
             disposable_element.text = iterable_of("foo")
 
@@ -262,6 +269,8 @@ class TestProperties:
 
     @settings(max_examples=5)
     @given(iterable_of=_st.fixed_item_iterables())
-    def test_tail_rw_bad_2(self, disposable_element: _Element, iterable_of: Any) -> None:
+    def test_tail_rw_bad_2(
+        self, disposable_element: _Element, iterable_of: Any
+    ) -> None:
         with raise_invalid_utf8_type:
             disposable_element.tail = iterable_of("foo")

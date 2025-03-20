@@ -119,7 +119,9 @@ class TestRelaxNGInput:
     @example(thing=b"start = element shiporder {}")
     def test_from_rnc_input_bad_1(self, thing: Any) -> None:
         if isinstance(thing, (bytes, bytearray)) and not thing:
-            raise_cm = pytest.raises(RelaxNGParseError, match=r"grammar has no children")
+            raise_cm = pytest.raises(
+                RelaxNGParseError, match=r"grammar has no children"
+            )
         else:
             # too diversified
             raise_cm = pytest.raises((TypeError, AttributeError))  # type: ignore[arg-type]
@@ -151,9 +153,7 @@ class TestRelaxNGInput:
     @given(iterable_of=_st.fixed_item_iterables())
     def test_from_rnc_baseurl_bad_2(self, rnc_str: str, iterable_of: Any) -> None:
         with raise_invalid_filename_type:
-            _ = RelaxNG.from_rnc_string(
-                rnc_str, base_url=iterable_of("foo")
-            )
+            _ = RelaxNG.from_rnc_string(rnc_str, base_url=iterable_of("foo"))
 
 
 class TestRelaxNGValidate:

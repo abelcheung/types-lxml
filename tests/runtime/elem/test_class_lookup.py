@@ -14,6 +14,7 @@ from lxml.etree import (
 )
 from lxml.objectify import ObjectifiedElement, ObjectifyElementClassLookup
 from typeguard import TypeCheckError
+
 from .._testutils import is_multi_subclass_build
 
 if sys.version_info >= (3, 11):

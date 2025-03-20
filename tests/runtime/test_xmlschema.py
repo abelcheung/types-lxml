@@ -44,7 +44,9 @@ class TestXMLSchemaInput:
     )
     def test_none_input_arg(self, args: Any, kw: Any) -> None:
         if len(args) < 2:
-            raise_cm = pytest.raises(XMLSchemaParseError, match=r"No tree or file given")
+            raise_cm = pytest.raises(
+                XMLSchemaParseError, match=r"No tree or file given"
+            )
         else:
             raise_cm = raise_wrong_pos_arg_count
         with raise_cm:
