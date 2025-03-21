@@ -17,10 +17,16 @@ from lxml.etree import (
     DTDParseError,
     _Element,
     _ElementTree,
+    _ListErrorLog as _ListErrorLog,
 )
 
-from ._testutils import signature_tester, strategy as _st
+from ._testutils import (
+    empty_signature_tester,
+    signature_tester,
+    strategy as _st,
+)
 from ._testutils.errors import (
+    raise_attr_not_writable,
     raise_invalid_lxml_type,
     raise_invalid_utf8_type,
     raise_wrong_pos_arg_count,
@@ -30,6 +36,29 @@ if sys.version_info >= (3, 11):
     from typing import reveal_type
 else:
     from typing_extensions import reveal_type
+
+
+class TestProperties:
+    def test_properties(self, dtd: DTD) -> None:
+        reveal_type(dtd.external_id)
+        reveal_type(dtd.name)
+        reveal_type(dtd.system_url)
+        for prop in ("external_id", "name", "system_url"):
+            with raise_attr_not_writable:
+                setattr(dtd, prop, getattr(dtd, prop))
+            with raise_attr_not_writable:
+                delattr(dtd, prop)
+
+    def test_errorlog(self, dtd: DTD, xml2_root: _Element) -> None:
+        reveal_type(dtd.error_log)
+        with raise_attr_not_writable:
+            dtd.error_log = dtd.error_log  # type: ignore[misc]  # pyright: ignore[reportAttributeAccessIssue]
+        with raise_attr_not_writable:
+            del dtd.error_log  # pyright: ignore[reportAttributeAccessIssue]
+        new_root = copy.deepcopy(xml2_root)
+        new_root.tag = "bad"
+        dtd(new_root)
+        assert len(dtd.error_log) > 0
 
 
 class TestDtdInput:
@@ -114,6 +143,7 @@ class TestDtdInput:
             raise_cm = pytest.raises(TypeError, match=r"expected bytes, .+ found")
         with raise_cm:
             _ = DTD(external_id=iterable_of("test"))
+
 
 class TestDtdValidate:
     @signature_tester(
@@ -219,3 +249,74 @@ class TestDtdValidate:
             _ = func(iterable_of(xml2_root))
         with raise_invalid_lxml_type:
             _ = func(iterable_of(xml2_tree))
+
+
+class TestDtdMethods:
+    @empty_signature_tester(
+        DTD.iterelements,
+        DTD.elements,
+        DTD.iterentities,
+        DTD.entities,
+    )
+    def test_signature(self) -> None:
+        pass
+
+    # reveal_type() unusable for some properties, because the private classes
+    # are not exposed by lxml.etree, thus not resolvable.
+    def test_elements(self, dtd: DTD) -> None:
+        itr = dtd.iterelements()
+        elems = dtd.elements()
+        assert len(elems) == len(list(itr))
+        for el in elems:
+            reveal_type(el.name)
+            reveal_type(el.prefix)
+            reveal_type(el.type)
+            assert el.content is not None
+            reveal_type(el.content.name)
+            reveal_type(el.content.type)
+            reveal_type(el.content.occur)
+            assert el.content.left is None or type(el.content.left) == type(el.content)
+            assert el.content.right is None or type(el.content.right) == type(
+                el.content
+            )
+            attrs = el.attributes()
+            assert len(attrs) == len(list(el.iterattributes()))
+            for a in attrs:
+                reveal_type(a.name)
+                reveal_type(a.elemname)
+                reveal_type(a.prefix)
+                reveal_type(a.type)
+                reveal_type(a.default)
+                reveal_type(a.default_value)
+                vals = reveal_type(a.values())
+                assert len(vals) == len(list(a.itervalues()))
+
+        el = elems[0]
+        for attr in ("name", "prefix", "type", "content"):
+            with raise_attr_not_writable:
+                setattr(el, attr, getattr(el, attr))
+            with raise_attr_not_writable:
+                delattr(el, attr)
+        c = el.content
+        for attr in ("name", "type", "occur"):
+            with raise_attr_not_writable:
+                setattr(c, attr, getattr(c, attr))
+            with raise_attr_not_writable:
+                delattr(c, attr)
+
+    def test_entities(self, dtd: DTD) -> None:
+        itr = dtd.iterentities()
+        ents = dtd.entities()
+        assert len(ents) == len(list(itr))
+        for ent in ents:
+            reveal_type(ent.name)
+            reveal_type(ent.orig)
+            reveal_type(ent.content)
+            reveal_type(ent.system_url)
+
+        ent = ents[0]
+        for attr in ("name", "orig", "content", "system_url"):
+            with raise_attr_not_writable:
+                setattr(ent, attr, getattr(ent, attr))
+            with raise_attr_not_writable:
+                delattr(ent, attr)

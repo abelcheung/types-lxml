@@ -1,4 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE shiporder [
+    <!ENTITY nbsp   "&#160;">
+    <!ENTITY copy   "&#169;">
+]>
 
 <shiporder orderid="889923">
   <orderperson>John Smith</orderperson>
@@ -11,21 +15,21 @@
   </shipto>
   <item id="b-001">
     <title>Empire Burlesque</title>
-    <author>Bob Dylan</author>
-    <note>Special Edition</note>
+    <author>Bob&nbsp;Dylan</author>
+    <note>Special Edition &copy;</note>
     <bundled>cd-001</bundled>
     <quantity>1</quantity>
     <price>29.90</price>
   </item>
   <item id="b-002">
     <title>Hide your heart</title>
-    <author>Bonnie Tyler</author>
+    <author>Bonnie&nbsp;Tyler</author>
     <quantity>1</quantity>
     <price>9.90</price>
   </item>
   <item id="cd-001">
     <title>Greatest Hits</title>
-    <author>Dolly Parton</author>
+    <author>Dolly&nbsp;Parton</author>
     <note>Double CD</note>
     <quantity>1</quantity>
     <price>0.00</price>
