@@ -23,9 +23,9 @@ from ..cssselect import _CSSTransArg
 from ._form import FormElement, LabelElement
 
 if sys.version_info >= (3, 11):
-    from typing import Never, Self
+    from typing import Never
 else:
-    from typing_extensions import Never, Self
+    from typing_extensions import Never
 
 if sys.version_info >= (3, 13):
     from warnings import deprecated
@@ -97,12 +97,8 @@ class HtmlElement(etree.ElementBase):
     def get_element_by_id(self, id: str | bytes) -> HtmlElement: ...
     @overload
     def get_element_by_id(self, id: str | bytes, default: _T) -> HtmlElement | _T: ...
-    # text_content() uses XPath behind the scene, and smart string
-    # subscript should point to original element type.
-    # But unfortunately, the getparent() result of HtmlElement.text_content()
-    # is always None, as it uses XPath string() to merge text content,
-    # thus destroying element heritage info
-    def text_content(self) -> etree._ElementUnicodeResult[Self]: ...
+    # text_content() result was smart string prior to 6.0
+    def text_content(self) -> str: ...
     #
     # HtmlMixin Link functions
     #

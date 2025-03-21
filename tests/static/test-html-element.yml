@@ -111,7 +111,7 @@
     from lxml.html import HtmlElement
     elem: HtmlElement
     result = elem.text_content()
-    reveal_type(result)  # NR: Revealed type is "[\w\.]+\._ElementUnicodeResult\[[\w\.]+\.HtmlElement]"
+    reveal_type(result)  # N: Revealed type is "builtins.str"
     result = elem.text_content(None)  # E: Too many arguments for "text_content" of "HtmlElement"  [call-arg]
 
 - case: mixin_method_iterlinks
