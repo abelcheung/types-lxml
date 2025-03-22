@@ -122,6 +122,20 @@ def xml2_str(xml2_filepath: Path) -> str:
 
 
 @pytest.fixture(scope="session")
+def xml2_bytes_with_dtd(xml2_filepath: Path) -> bytes:
+    result = xml2_filepath.read_bytes()
+    dtd_path = xml2_filepath.parent / "shiporder.dtd"
+    result = result.replace(
+        b"?>",
+        # python/cpython#103631 or expect this on Windows py3.11
+        # "C:\\/Users/..." --> fails loading DTD
+        '?><!DOCTYPE shiporder SYSTEM "file:///{}">'.format(dtd_path.as_posix()).encode(),
+        1,
+    )
+    return result
+
+
+@pytest.fixture(scope="session")
 def xml2_bytes(xml2_filepath: Path) -> bytes:
     return xml2_filepath.read_bytes()
 
@@ -250,6 +264,10 @@ def dtd_root(dtd_path: Path) -> _e._Element:
 def dtd(dtd_path: Path) -> _e.DTD:
     return _e.DTD(file=dtd_path)
 
+
+@pytest.fixture(scope="session")
+def dtd_enabled_parser() -> _e.XMLParser:
+    return _e.XMLParser(dtd_validation=True, load_dtd=True)
 
 @pytest.fixture
 def list_log() -> _e._ListErrorLog:
