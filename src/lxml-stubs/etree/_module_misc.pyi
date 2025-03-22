@@ -7,7 +7,6 @@ from abc import ABCMeta, abstractmethod
 from typing import Final, overload
 
 from .._types import (
-    _AnyStr,
     _ElementOrTree,
     _TagName,
     _TextArg,
@@ -44,7 +43,7 @@ class DocInfo:
         exist, setting this variable (even to None) will create one.
         """
     @public_id.setter
-    def public_id(self, __v: _AnyStr | None) -> None: ...
+    def public_id(self, __v: str | None) -> None: ...
     @property
     def system_url(self) -> str | None:
         """System ID of the DOCTYPE.
@@ -53,7 +52,7 @@ class DocInfo:
         exist, setting this variable (even to None) will create one.
         """
     @system_url.setter
-    def system_url(self, __v: _AnyStr | None) -> None: ...
+    def system_url(self, __v: _TextArg | None) -> None: ...
     @property
     def xml_version(self) -> str:  # fallback is "1.0"
         """Returns the XML version as declared by the document."""
@@ -76,7 +75,7 @@ class DocInfo:
     def URL(self) -> str | None:
         """The source URL of the document (or None if unknown)."""
     @URL.setter
-    def URL(self, __v: _AnyStr | None) -> None: ...
+    def URL(self, __v: str | bytes | None) -> None: ...
     @property
     def doctype(self) -> str:
         """Returns a DOCTYPE declaration string for the document."""
