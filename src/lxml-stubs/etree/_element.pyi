@@ -181,17 +181,6 @@ class _Element:
     def find(
         self, path: _t._ElemPathArg, namespaces: _t._StrictNSMap | None = None
     ) -> Self | None: ...
-    # Original method has no star. If somebody only supplies
-    # 'path' and 'default' argument as positional one, it
-    # would be misinterpreted as namespaces argument in first
-    # overload form. Add star here to guard against such situation.
-    @overload
-    def findtext(
-        self,
-        path: _t._ElemPathArg,
-        *,
-        namespaces: _t._StrictNSMap | None = None,
-    ) -> str | None: ...
     @overload
     def findtext(
         self,
@@ -199,6 +188,13 @@ class _Element:
         default: _T,
         namespaces: _t._StrictNSMap | None = None,
     ) -> str | _T: ...
+    @overload
+    def findtext(
+        self,
+        path: _t._ElemPathArg,
+        default: None = None,
+        namespaces: _t._StrictNSMap | None = None,
+    ) -> str | None: ...
     def findall(
         self, path: _t._ElemPathArg, namespaces: _t._StrictNSMap | None = None
     ) -> list[Self]: ...
