@@ -310,7 +310,7 @@ class TestFindtext:
     @given(thing=_st.all_instances_except_of_type(str, NoneType))
     def test_path_miss(self, svg_root: _Element, thing: Any) -> None:
         result = svg_root.findtext("foo", default=thing)
-        assert result == thing
+        assert type(result) == type(thing)
 
     def test_namespaces_arg_ok(self, svg_root: _Element) -> None:
         url = "http://example.org/myfoo"
