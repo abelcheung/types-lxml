@@ -161,7 +161,10 @@ select = [
     "I",
 ]
 ignore = [
-    "E501",
+    "E202",  # whitespace-before-close-bracket
+    "E203",  # whitespace-before-punctuation
+    "E271",  # multiple-spaces-after-keyword
+    "E501",  # line-too-long
 ]
 task-tags = [
     "BUG",

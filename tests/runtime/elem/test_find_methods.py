@@ -5,8 +5,8 @@
 
 from __future__ import annotations
 
-from collections.abc import Mapping
 import sys
+from collections.abc import Mapping
 from inspect import Parameter
 from types import (
     MappingProxyType,
@@ -14,17 +14,17 @@ from types import (
 )
 from typing import Any, cast
 
-from hypothesis import HealthCheck, assume, example, given, settings
 import pytest
+from hypothesis import HealthCheck, assume, example, given, settings
 from lxml.etree import (
     QName,
-    iselement,
     _Attrib as _Attrib,
     _Comment as _Comment,
     _Element,
     _ElementTree as _ElementTree,
     _Entity as _Entity,
     _ProcessingInstruction as _ProcessingInstruction,
+    iselement,
 )
 
 from .._testutils import signature_tester, strategy as _st
@@ -302,7 +302,7 @@ class TestFindtext:
     @given(thing=_st.all_instances_except_of_type(str, NoneType))
     def test_path_hit(self, svg_root: _Element, thing: Any) -> None:
         result = svg_root.findtext("desc", default=thing)
-        assert type(result) != type(thing)
+        assert type(result) is not type(thing)
 
     @settings(
         suppress_health_check=[HealthCheck.function_scoped_fixture], max_examples=5
@@ -310,7 +310,7 @@ class TestFindtext:
     @given(thing=_st.all_instances_except_of_type(str, NoneType))
     def test_path_miss(self, svg_root: _Element, thing: Any) -> None:
         result = svg_root.findtext("foo", default=thing)
-        assert type(result) == type(thing)
+        assert type(result) is type(thing)
 
     def test_namespaces_arg_ok(self, svg_root: _Element) -> None:
         url = "http://example.org/myfoo"

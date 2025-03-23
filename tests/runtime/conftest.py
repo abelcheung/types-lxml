@@ -129,7 +129,9 @@ def xml2_bytes_with_dtd(xml2_filepath: Path) -> bytes:
         b"?>",
         # python/cpython#103631 or expect this on Windows py3.11
         # "C:\\/Users/..." --> fails loading DTD
-        '?><!DOCTYPE shiporder SYSTEM "file:///{}">'.format(dtd_path.as_posix()).encode(),
+        '?><!DOCTYPE shiporder SYSTEM "file:///{}">'.format(
+            dtd_path.as_posix()
+        ).encode(),
         1,
     )
     return result
@@ -268,6 +270,7 @@ def dtd(dtd_path: Path) -> _e.DTD:
 @pytest.fixture(scope="session")
 def dtd_enabled_parser() -> _e.XMLParser:
     return _e.XMLParser(dtd_validation=True, load_dtd=True)
+
 
 @pytest.fixture
 def list_log() -> _e._ListErrorLog:

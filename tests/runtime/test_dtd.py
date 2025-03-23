@@ -275,8 +275,8 @@ class TestDtdMethods:
             reveal_type(el.content.name)
             reveal_type(el.content.type)
             reveal_type(el.content.occur)
-            assert el.content.left is None or type(el.content.left) == type(el.content)
-            assert el.content.right is None or type(el.content.right) == type(
+            assert el.content.left is None or type(el.content.left) is type(el.content)
+            assert el.content.right is None or type(el.content.right) is type(
                 el.content
             )
             attrs = el.attributes()

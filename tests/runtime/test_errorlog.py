@@ -40,8 +40,6 @@ else:
     from typing_extensions import reveal_type
 
 
-### NOTES
-#
 # - Not testing manual construction of _ErrorLog; technically
 # feasible, but it does not make sense creating a collection
 # of error entries out of context

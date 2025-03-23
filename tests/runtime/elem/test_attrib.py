@@ -67,7 +67,7 @@ class TestAttrib:
         self, disposable_attrib: _Attrib, iterable_of: Any, k: _AttrName
     ) -> None:
         # unhashable types not addable to set
-        assume(not(
+        assume(not (
             getattr(iterable_of, "type") in {set, frozenset}
             and isinstance(k, bytearray)
         ))  # fmt: skip
@@ -96,7 +96,7 @@ class TestAttrib:
         self, disposable_attrib: _Attrib, iterable_of: Any, v: _AttrVal
     ) -> None:
         # unhashable types not addable to set
-        assume(not(
+        assume(not (
             getattr(iterable_of, "type") in {set, frozenset}
             and isinstance(v, bytearray)
         ))  # fmt: skip
@@ -391,7 +391,7 @@ class TestUpdateMethod:
         iterable_of: Any,
     ) -> None:
         # unhashable types not addable to set
-        assume(not(
+        assume(not (
             getattr(iterable_of, "type") in {set, frozenset}
             and isinstance(v, bytearray)
         ))  # fmt: skip
