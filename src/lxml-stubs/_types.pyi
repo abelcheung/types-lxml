@@ -77,7 +77,6 @@ _NSMapArg = (
     Mapping[str       , _AnyStr] |
     Mapping[str | None, _AnyStr]
 )  # fmt: skip
-_NonDefaultNSMapArg = Mapping[str, _AnyStr]
 
 # Namespace mapping type specifically for Elementpath methods
 #
