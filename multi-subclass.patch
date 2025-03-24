@@ -215,7 +215,7 @@ index 5f49ddf..34ea088 100644
 +    ) -> Iterator[_Element]: ...
      def xpath(
          self,
-         _path: _t._AnyStr,
+         _path: _t._TextArg,
 @@ -216,15 +216,15 @@ class _Element:
          expr: str,
          *,

@@ -19,8 +19,8 @@ from typing import (
 from .._types import (
     _ET,
     SupportsLaxItems,
-    _AnyStr,
     _ElementOrTree,
+    _TextArg,
     _XPathExtFuncArg,
     _XPathNSArg,
     _XPathObject,
@@ -68,7 +68,7 @@ class _XPathEvaluatorBase(Protocol):
 class XPath(_XPathEvaluatorBase):
     def __init__(
         self,
-        path: _AnyStr,
+        path: _TextArg,
         *,
         namespaces: _XPathNSArg | None = None,
         extensions: _XPathExtFuncArg | None = None,
@@ -84,7 +84,7 @@ class XPath(_XPathEvaluatorBase):
 class ETXPath(XPath):
     def __init__(
         self,
-        path: _AnyStr,
+        path: _TextArg,
         *,
         extensions: _XPathExtFuncArg | None = None,
         regexp: bool = True,
@@ -102,7 +102,7 @@ class XPathElementEvaluator(_XPathEvaluatorBase):
         smart_strings: bool = True,
     ) -> None: ...
     def __call__(
-        self, _path: _AnyStr, /, **_variables: _XPathVarArg
+        self, _path: _TextArg, /, **_variables: _XPathVarArg
     ) -> _XPathObject: ...
     def register_namespace(self, prefix: str | bytes, uri: str | bytes) -> None: ...
     def register_namespaces(

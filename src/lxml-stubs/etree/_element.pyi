@@ -203,7 +203,7 @@ class _Element:
     ) -> Iterator[Self]: ...
     def xpath(
         self,
-        _path: _t._AnyStr,
+        _path: _t._TextArg,
         /,
         *,
         namespaces: _t._NonDefaultNSMapArg | None = None,
@@ -351,7 +351,7 @@ class _ElementTree(Generic[_t._ET_co]):
     ) -> Iterator[_t._ET_co]: ...
     def xpath(
         self,
-        _path: _t._AnyStr,
+        _path: _t._TextArg,
         /,
         *,
         namespaces: _t._NonDefaultNSMapArg | None = None,
