@@ -161,9 +161,6 @@ select = [
     "I",
 ]
 ignore = [
-    "E202",  # whitespace-before-close-bracket
-    "E203",  # whitespace-before-punctuation
-    "E271",  # multiple-spaces-after-keyword
     "E501",  # line-too-long
 ]
 task-tags = [
@@ -179,6 +176,13 @@ task-tags = [
     "TODO",
     "UGLY",
     "XXX",
+]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/runtime/**.py" = [
+    "E202",  # whitespace-before-close-bracket
+    "E203",  # whitespace-before-punctuation
+    "E271",  # multiple-spaces-after-keyword
 ]
 
 [tool.ruff.lint.isort]

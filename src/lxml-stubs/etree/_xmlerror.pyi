@@ -188,12 +188,10 @@ class ErrorLevels(enum.IntEnum):
     would work on them.
     """
 
-    # fmt: off
-    NONE    = 0
+    NONE = 0
     WARNING = 1
-    ERROR   = 2
-    FATAL   = 3
-    # fmt: on
+    ERROR = 2
+    FATAL = 3
 
 class ErrorDomains(enum.IntEnum):
     """Part of the library that raised error
@@ -205,39 +203,37 @@ class ErrorDomains(enum.IntEnum):
     would work on them.
     """
 
-    # fmt: off
-    NONE         = 0
-    PARSER       = 1
-    TREE         = 2
-    NAMESPACE    = 3
-    DTD          = 4
-    HTML         = 5
-    MEMORY       = 6
-    OUTPUT       = 7
-    IO           = 8
-    FTP          = 9
-    HTTP         = 10
-    XINCLUDE     = 11
-    XPATH        = 12
-    XPOINTER     = 13
-    REGEXP       = 14
-    DATATYPE     = 15
-    SCHEMASP     = 16
-    SCHEMASV     = 17
-    RELAXNGP     = 18
-    RELAXNGV     = 19
-    CATALOG      = 20
-    C14N         = 21
-    XSLT         = 22
-    VALID        = 23
-    CHECK        = 24
-    WRITER       = 25
-    MODULE       = 26
-    I18N         = 27
-    SCHEMATRONV  = 28
-    BUFFER       = 29
-    URI          = 30
-    # fmt: on
+    NONE = 0
+    PARSER = 1
+    TREE = 2
+    NAMESPACE = 3
+    DTD = 4
+    HTML = 5
+    MEMORY = 6
+    OUTPUT = 7
+    IO = 8
+    FTP = 9
+    HTTP = 10
+    XINCLUDE = 11
+    XPATH = 12
+    XPOINTER = 13
+    REGEXP = 14
+    DATATYPE = 15
+    SCHEMASP = 16
+    SCHEMASV = 17
+    RELAXNGP = 18
+    RELAXNGV = 19
+    CATALOG = 20
+    C14N = 21
+    XSLT = 22
+    VALID = 23
+    CHECK = 24
+    WRITER = 25
+    MODULE = 26
+    I18N = 27
+    SCHEMATRONV = 28
+    BUFFER = 29
+    URI = 30
 
 class ErrorTypes(enum.IntEnum):
     """The actual libxml2 error code
@@ -997,45 +993,43 @@ class RelaxNGErrorTypes(enum.IntEnum):
     would work on them.
     """
 
-    # fmt: off
-    RELAXNG_OK               = 0
-    RELAXNG_ERR_MEMORY       = 1
-    RELAXNG_ERR_TYPE         = 2
-    RELAXNG_ERR_TYPEVAL      = 3
-    RELAXNG_ERR_DUPID        = 4
-    RELAXNG_ERR_TYPECMP      = 5
-    RELAXNG_ERR_NOSTATE      = 6
-    RELAXNG_ERR_NODEFINE     = 7
-    RELAXNG_ERR_LISTEXTRA    = 8
-    RELAXNG_ERR_LISTEMPTY    = 9
-    RELAXNG_ERR_INTERNODATA  = 10
-    RELAXNG_ERR_INTERSEQ     = 11
-    RELAXNG_ERR_INTEREXTRA   = 12
-    RELAXNG_ERR_ELEMNAME     = 13
-    RELAXNG_ERR_ATTRNAME     = 14
-    RELAXNG_ERR_ELEMNONS     = 15
-    RELAXNG_ERR_ATTRNONS     = 16
-    RELAXNG_ERR_ELEMWRONGNS  = 17
-    RELAXNG_ERR_ATTRWRONGNS  = 18
-    RELAXNG_ERR_ELEMEXTRANS  = 19
-    RELAXNG_ERR_ATTREXTRANS  = 20
+    RELAXNG_OK = 0
+    RELAXNG_ERR_MEMORY = 1
+    RELAXNG_ERR_TYPE = 2
+    RELAXNG_ERR_TYPEVAL = 3
+    RELAXNG_ERR_DUPID = 4
+    RELAXNG_ERR_TYPECMP = 5
+    RELAXNG_ERR_NOSTATE = 6
+    RELAXNG_ERR_NODEFINE = 7
+    RELAXNG_ERR_LISTEXTRA = 8
+    RELAXNG_ERR_LISTEMPTY = 9
+    RELAXNG_ERR_INTERNODATA = 10
+    RELAXNG_ERR_INTERSEQ = 11
+    RELAXNG_ERR_INTEREXTRA = 12
+    RELAXNG_ERR_ELEMNAME = 13
+    RELAXNG_ERR_ATTRNAME = 14
+    RELAXNG_ERR_ELEMNONS = 15
+    RELAXNG_ERR_ATTRNONS = 16
+    RELAXNG_ERR_ELEMWRONGNS = 17
+    RELAXNG_ERR_ATTRWRONGNS = 18
+    RELAXNG_ERR_ELEMEXTRANS = 19
+    RELAXNG_ERR_ATTREXTRANS = 20
     RELAXNG_ERR_ELEMNOTEMPTY = 21
-    RELAXNG_ERR_NOELEM       = 22
-    RELAXNG_ERR_NOTELEM      = 23
-    RELAXNG_ERR_ATTRVALID    = 24
+    RELAXNG_ERR_NOELEM = 22
+    RELAXNG_ERR_NOTELEM = 23
+    RELAXNG_ERR_ATTRVALID = 24
     RELAXNG_ERR_CONTENTVALID = 25
     RELAXNG_ERR_EXTRACONTENT = 26
-    RELAXNG_ERR_INVALIDATTR  = 27
-    RELAXNG_ERR_DATAELEM     = 28
-    RELAXNG_ERR_VALELEM      = 29
-    RELAXNG_ERR_LISTELEM     = 30
-    RELAXNG_ERR_DATATYPE     = 31
-    RELAXNG_ERR_VALUE        = 32
-    RELAXNG_ERR_LIST         = 33
-    RELAXNG_ERR_NOGRAMMAR    = 34
-    RELAXNG_ERR_EXTRADATA    = 35
-    RELAXNG_ERR_LACKDATA     = 36
-    RELAXNG_ERR_INTERNAL     = 37
-    RELAXNG_ERR_ELEMWRONG    = 38
-    RELAXNG_ERR_TEXTWRONG    = 39
-    # fmt: on
+    RELAXNG_ERR_INVALIDATTR = 27
+    RELAXNG_ERR_DATAELEM = 28
+    RELAXNG_ERR_VALELEM = 29
+    RELAXNG_ERR_LISTELEM = 30
+    RELAXNG_ERR_DATATYPE = 31
+    RELAXNG_ERR_VALUE = 32
+    RELAXNG_ERR_LIST = 33
+    RELAXNG_ERR_NOGRAMMAR = 34
+    RELAXNG_ERR_EXTRADATA = 35
+    RELAXNG_ERR_LACKDATA = 36
+    RELAXNG_ERR_INTERNAL = 37
+    RELAXNG_ERR_ELEMWRONG = 38
+    RELAXNG_ERR_TEXTWRONG = 39

@@ -74,7 +74,8 @@ class _IDDict(Collection[str], Generic[_ET]):
 
     # Key normalisation happens inside __contains__
     def __contains__(  # pyright: ignore[reportIncompatibleMethodOverride]
-        self, __k: _TextArg  # type: ignore[override]
+        self,
+        __k: _TextArg,  # type: ignore[override]
     ) -> bool: ...
     def __getitem__(self, __k: _TextArg) -> _ET: ...
     def __iter__(self) -> Iterator[str]: ...

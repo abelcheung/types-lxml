@@ -73,8 +73,8 @@ in place of or in addition to `_AttrMapping`.
 # Try to settle for simpler solution, assuming python3 users would not
 # use byte string as namespace prefix.
 _NSMapArg = (
-    Mapping[      None, _AnyStr] |
-    Mapping[str       , _AnyStr] |
+    Mapping[      None, _AnyStr] |  # noqa: E201,E272
+    Mapping[str       , _AnyStr] |  # noqa: E203
     Mapping[str | None, _AnyStr]
 )  # fmt: skip
 
@@ -87,8 +87,8 @@ _NSMapArg = (
 # Bytes and strs are treated as different NS entries.
 # In order to be useful, dict val must be str.
 _StrOnlyNSMap = (
-    Mapping[      None, str] |
-    Mapping[str       , str] |
+    Mapping[      None, str] |  # noqa: E201,E272
+    Mapping[str       , str] |  # noqa: E203
     Mapping[str | None, str]
 )  # fmt: skip
 
@@ -115,14 +115,12 @@ _XPathNSArg = (
 # And xpath extension func really checks for dict in implementation,
 # not just any mapping.
 _XPathExtFuncArg = (
-    Iterable[
-        SupportsLaxItems[
-            tuple[str | None, str],
-            Callable[..., Any],
-        ]
-    ]
-    | dict[tuple[str       , str], Callable[..., Any]]
-    | dict[tuple[      None, str], Callable[..., Any]]
+    Iterable[SupportsLaxItems[
+        tuple[str | None, str],
+        Callable[..., Any],
+    ]]
+    | dict[tuple[str       , str], Callable[..., Any]]  # noqa: E203
+    | dict[tuple[      None, str], Callable[..., Any]]  # noqa: E201,E272
     | dict[tuple[str | None, str], Callable[..., Any]]
 )  # fmt: skip
 
