@@ -13,7 +13,6 @@ from typing import (
 
 from .._types import (
     SupportsLaxItems,
-    _AnyStr,
     _AttrMapping,
     _AttrVal,
     _ElementOrTree,
@@ -22,6 +21,7 @@ from .._types import (
     _NSMapArg,
     _OutputMethodArg,
     _TagName,
+    _TextArg,
 )
 from ._element import _Element
 from ._module_misc import LxmlError
@@ -177,14 +177,14 @@ def canonicalize(
 class _IncrementalFileWriter:
     def write_declaration(
         self,
-        version: _AnyStr | None = None,
+        version: _TextArg | None = None,
         standalone: bool | None = None,
-        doctype: _AnyStr | None = None,
+        doctype: _TextArg | None = None,
     ) -> None: ...
-    def write_doctype(self, doctype: _AnyStr | None) -> None: ...
+    def write_doctype(self, doctype: _TextArg | None) -> None: ...
     def write(
         self,
-        *args: _AnyStr | _Element,
+        *args: str | bytes | _Element,  # no bytearray
         with_tail: bool = True,
         pretty_print: bool = False,
         method: _OutputMethodArg | None = None,
@@ -204,14 +204,14 @@ class _IncrementalFileWriter:
 class _AsyncIncrementalFileWriter:
     async def write_declaration(
         self,
-        version: _AnyStr | None = None,
+        version: _TextArg | None = None,
         standalone: bool | None = None,
-        doctype: _AnyStr | None = None,
+        doctype: _TextArg | None = None,
     ) -> None: ...
-    async def write_doctype(self, doctype: _AnyStr | None) -> None: ...
+    async def write_doctype(self, doctype: _TextArg | None) -> None: ...
     async def write(
         self,
-        *args: _AnyStr | _Element | None,
+        *args: str | bytes | _Element | None,  # no bytearray
         with_tail: bool = True,
         pretty_print: bool = False,
         method: _OutputMethodArg | None = None,
@@ -234,7 +234,7 @@ class xmlfile(
     def __init__(
         self,
         output_file: _FileWriteSource,
-        encoding: _AnyStr | None = None,
+        encoding: _TextArg | None = None,
         compression: int | None = None,
         close: bool = False,
         buffered: bool = True,

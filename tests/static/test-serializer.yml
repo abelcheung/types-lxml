@@ -225,7 +225,7 @@
   - arg: encoding
     val: 1
     wrong_t: int
-    right_t: str | bytes | None
+    right_t: str | bytes | bytearray | None
   - arg: compression
     val: s
     wrong_t: str
