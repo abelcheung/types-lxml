@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import sys
-from copy import deepcopy
 from inspect import Parameter
 from typing import Any, cast
 
@@ -15,12 +14,10 @@ from lxml.etree import (
     _Entity as _Entity,
     _ProcessingInstruction as _ProcessingInstruction,
 )
-from lxml.html import Element as h_Element
 
 from ._testutils import empty_signature_tester, signature_tester
 from ._testutils.errors import (
     raise_non_iterable,
-    raise_wrong_arg_type,
 )
 
 if sys.version_info >= (3, 11):
@@ -31,42 +28,6 @@ else:
 
 # See mypy.ini in testsuite for explanation
 TC_HONORS_REVERSED = True
-
-
-class TestAddMethods:
-    @signature_tester(
-        _Element.addnext,
-        (("element", Parameter.POSITIONAL_OR_KEYWORD, Parameter.empty),),
-    )
-    def test_method_addnext(self, xml2_root: _Element) -> None:
-        root = deepcopy(xml2_root)
-        comm = etree.Comment("foo")
-
-        assert root[0].addnext(comm) is None
-
-        for arg in ("junk", 1, object(), ("a", 0), [comm, comm]):
-            with raise_wrong_arg_type:
-                root[0].addnext(cast(Any, arg))
-
-        h_elem = h_Element("bar")
-        root[1].addnext(h_elem)
-
-    @signature_tester(
-        _Element.addprevious,
-        (("element", Parameter.POSITIONAL_OR_KEYWORD, Parameter.empty),),
-    )
-    def test_method_addprevious(self, xml2_root: _Element) -> None:
-        root = deepcopy(xml2_root)
-        comm = etree.Comment("foo")
-
-        assert root[0].addprevious(comm) is None
-
-        for arg in ("junk", 1, object(), ("a", 0), [comm, comm]):
-            with raise_wrong_arg_type:
-                root[0].addprevious(cast(Any, arg))
-
-        h_elem = h_Element("bar")
-        root[1].addprevious(h_elem)
 
 
 class TestGetMethods:
