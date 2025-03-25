@@ -16,7 +16,7 @@ from .._types import (
     _AttrVal,
     _ElementFactory,
     _ElemPathArg,
-    _StrictNSMap,
+    _StrOnlyNSMap,
     _TagSelector,
 )
 from ..cssselect import _CSSTransArg
@@ -269,17 +269,17 @@ class HtmlElement(etree.ElementBase):
     def find(
         self,
         path: _ElemPathArg,
-        namespaces: _StrictNSMap | None = None,
+        namespaces: _StrOnlyNSMap | None = None,
     ) -> HtmlElement | None: ...
     def findall(
         self,
         path: _ElemPathArg,
-        namespaces: _StrictNSMap | None = None,
+        namespaces: _StrOnlyNSMap | None = None,
     ) -> list[HtmlElement]: ...
     def iterfind(
         self,
         path: _ElemPathArg,
-        namespaces: _StrictNSMap | None = None,
+        namespaces: _StrOnlyNSMap | None = None,
     ) -> Iterator[HtmlElement]: ...
     def cssselect(
         self,

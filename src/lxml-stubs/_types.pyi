@@ -86,7 +86,7 @@ _NSMapArg = (
 # they would silently fail to output any element afterwards.
 # Bytes and strs are treated as different NS entries.
 # In order to be useful, dict val must be str.
-_StrictNSMap = (
+_StrOnlyNSMap = (
     Mapping[      None, str] |
     Mapping[str       , str] |
     Mapping[str | None, str]

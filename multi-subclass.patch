@@ -197,7 +197,7 @@ index 5f49ddf..34ea088 100644
 -    makeelement: _t._ElementFactory[Self]
 +    makeelement: _t._ElementFactory[_Element]
      def find(
-         self, path: _t._ElemPathArg, namespaces: _t._StrictNSMap | None = None
+         self, path: _t._ElemPathArg, namespaces: _t._StrOnlyNSMap | None = None
 -    ) -> Self | None: ...
 +    ) -> _Element | None: ...
      @overload
@@ -206,11 +206,11 @@ index 5f49ddf..34ea088 100644
 @@ -197,10 +197,10 @@ class _Element:
      ) -> str | None: ...
      def findall(
-         self, path: _t._ElemPathArg, namespaces: _t._StrictNSMap | None = None
+         self, path: _t._ElemPathArg, namespaces: _t._StrOnlyNSMap | None = None
 -    ) -> list[Self]: ...
 +    ) -> list[_Element]: ...
      def iterfind(
-         self, path: _t._ElemPathArg, namespaces: _t._StrictNSMap | None = None
+         self, path: _t._ElemPathArg, namespaces: _t._StrOnlyNSMap | None = None
 -    ) -> Iterator[Self]: ...
 +    ) -> Iterator[_Element]: ...
      def xpath(
@@ -371,16 +371,16 @@ index 0e960e5..4b91821 100644
      def find(
          self,
          path: _ElemPathArg,
-         namespaces: _StrictNSMap | None = None,
+         namespaces: _StrOnlyNSMap | None = None,
      ) -> HtmlElement | None: ...
 -    def findall(
 +    def findall(  # type: ignore[override]  # pyright: ignore[reportIncompatibleMethodOverride]
          self,
          path: _ElemPathArg,
-         namespaces: _StrictNSMap | None = None,
+         namespaces: _StrOnlyNSMap | None = None,
 @@ -281,7 +281,7 @@ class HtmlElement(etree.ElementBase):
          path: _ElemPathArg,
-         namespaces: _StrictNSMap | None = None,
+         namespaces: _StrOnlyNSMap | None = None,
      ) -> Iterator[HtmlElement]: ...
 -    def cssselect(
 +    def cssselect(  # type: ignore[override]  # pyright: ignore[reportIncompatibleMethodOverride]

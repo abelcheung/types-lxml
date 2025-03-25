@@ -179,27 +179,27 @@ class _Element:
     ) -> Iterator[str]: ...
     makeelement: _t._ElementFactory[Self]
     def find(
-        self, path: _t._ElemPathArg, namespaces: _t._StrictNSMap | None = None
+        self, path: _t._ElemPathArg, namespaces: _t._StrOnlyNSMap | None = None
     ) -> Self | None: ...
     @overload
     def findtext(
         self,
         path: _t._ElemPathArg,
         default: _T,
-        namespaces: _t._StrictNSMap | None = None,
+        namespaces: _t._StrOnlyNSMap | None = None,
     ) -> str | _T: ...
     @overload
     def findtext(
         self,
         path: _t._ElemPathArg,
         default: None = None,
-        namespaces: _t._StrictNSMap | None = None,
+        namespaces: _t._StrOnlyNSMap | None = None,
     ) -> str | None: ...
     def findall(
-        self, path: _t._ElemPathArg, namespaces: _t._StrictNSMap | None = None
+        self, path: _t._ElemPathArg, namespaces: _t._StrOnlyNSMap | None = None
     ) -> list[Self]: ...
     def iterfind(
-        self, path: _t._ElemPathArg, namespaces: _t._StrictNSMap | None = None
+        self, path: _t._ElemPathArg, namespaces: _t._StrOnlyNSMap | None = None
     ) -> Iterator[Self]: ...
     def xpath(
         self,
@@ -327,27 +327,27 @@ class _ElementTree(Generic[_t._ET_co]):
     # so signature should be the same as _Element ones
     #
     def find(
-        self, path: _t._ElemPathArg, namespaces: _t._StrictNSMap | None = None
+        self, path: _t._ElemPathArg, namespaces: _t._StrOnlyNSMap | None = None
     ) -> _t._ET_co | None: ...
     @overload
     def findtext(
         self,
         path: _t._ElemPathArg,
         *,
-        namespaces: _t._StrictNSMap | None = None,
+        namespaces: _t._StrOnlyNSMap | None = None,
     ) -> str | None: ...
     @overload
     def findtext(
         self,
         path: _t._ElemPathArg,
         default: _T,
-        namespaces: _t._StrictNSMap | None = None,
+        namespaces: _t._StrOnlyNSMap | None = None,
     ) -> str | _T: ...
     def findall(
-        self, path: _t._ElemPathArg, namespaces: _t._StrictNSMap | None = None
+        self, path: _t._ElemPathArg, namespaces: _t._StrOnlyNSMap | None = None
     ) -> list[_t._ET_co]: ...
     def iterfind(
-        self, path: _t._ElemPathArg, namespaces: _t._StrictNSMap | None = None
+        self, path: _t._ElemPathArg, namespaces: _t._StrOnlyNSMap | None = None
     ) -> Iterator[_t._ET_co]: ...
     def xpath(
         self,
