@@ -5,7 +5,6 @@ from .. import etree
 from .._types import (
     Unused,
     _DefEtreeParsers,
-    _ElemClsLookupArg,
     _FileReadSource,
 )
 from ._element import HtmlElement
@@ -135,7 +134,7 @@ class HtmlElementClassLookup(etree.CustomElementClassLookup):
     ) -> None: ...
     def lookup(  # pyright: ignore[reportIncompatibleMethodOverride]
         self,
-        node_type: _ElemClsLookupArg | None,
+        node_type: Literal["element", "comment", "PI", "entity"] | None,
         document: Unused,
         namespace: Unused,
         name: str,  # type: ignore[override]

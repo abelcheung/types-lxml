@@ -144,9 +144,6 @@ _XPathVarArg = (
     | list[_Element]
 )  # fmt: skip
 
-# https://lxml.de/element_classes.html#custom-element-class-lookup
-_ElemClsLookupArg = Literal["element", "comment", "PI", "entity"]
-
 # serializer.pxi _findOutputMethod()
 _OutputMethodArg = Literal[
     "html",

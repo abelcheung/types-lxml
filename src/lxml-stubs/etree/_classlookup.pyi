@@ -3,14 +3,13 @@
 #
 
 from abc import ABCMeta, abstractmethod
-from typing import Mapping, final
+from typing import Literal, Mapping, final
 
 from .._types import (
     _AttrMapping,
     _AttrName,
     _AttrVal,
     _DefEtreeParsers,
-    _ElemClsLookupArg,
     _NSMapArg,
     _TagName,
     _TextArg,
@@ -28,6 +27,7 @@ class ElementBase(_Element):
     --------
     - [API documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree.ElementBase)
     """
+
     TAG: _TagName
     NAMESPACE: _TextArg
     HTML: bool
@@ -197,7 +197,7 @@ class CustomElementClassLookup(FallbackElementClassLookup, metaclass=ABCMeta):
     @abstractmethod
     def lookup(
         self,
-        type: _ElemClsLookupArg,
+        type: Literal["element", "comment", "PI", "entity"],
         doc: object,  # Internal doc object
         namespace: str | None,
         name: str | None,
