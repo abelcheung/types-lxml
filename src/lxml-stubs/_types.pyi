@@ -73,9 +73,9 @@ in place of or in addition to `_AttrMapping`.
 # Try to settle for simpler solution, assuming python3 users would not
 # use byte string as namespace prefix.
 _NSMapArg = (
-    Mapping[      None, _AnyStr] |  # noqa: E201,E272
-    Mapping[str       , _AnyStr] |  # noqa: E203
-    Mapping[str | None, _AnyStr]
+    Mapping[      None, str | bytes] |  # noqa: E201,E272
+    Mapping[str       , str | bytes] |  # noqa: E203
+    Mapping[str | None, str | bytes]
 )  # fmt: skip
 
 # Namespace mapping type specifically for Elementpath methods
@@ -94,7 +94,7 @@ _StrOnlyNSMap = (
 
 # Some namespace map arguments also accept tuple form
 # like what dict() does
-_NSTuples = Iterable[tuple[_AnyStr | None, _AnyStr]]
+_NSTuples = Iterable[tuple[str | bytes | None, str | bytes]]
 
 # Cutting short dict combinations, otherwise we need
 # a union of 9 dicts.
@@ -210,7 +210,7 @@ class SupportsLaxItems(Protocol[_KT_co, _VT_co]):
 
     def items(self) -> Collection[tuple[_KT_co, _VT_co]]: ...
 
-_FilePath = _AnyStr | PathLike[str] | PathLike[bytes]
+_FilePath = str | bytes | PathLike[str] | PathLike[bytes]
 # _parseDocument() from parser.pxi
 _FileReadSource = (
     _FilePath
