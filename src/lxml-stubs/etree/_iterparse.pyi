@@ -30,7 +30,8 @@ _NoNSEventNames = Literal["start", "end", "comment", "pi"]
 _SaxNsEventValues = tuple[str, str] | None  # for start-ns & end-ns event
 
 class iterparse(Iterator[_T_co]):
-    """Incremental parser
+    """Incremental parser. Parses XML into a tree and generates tuples (event, element) in a
+    SAX-like fashion.
 
     Annotation
     ----------
@@ -38,35 +39,15 @@ class iterparse(Iterator[_T_co]):
     - HTML mode (`html=True`), where namespace events are ignored
     - `start`, `end`, `comment` and `pi` events, where only
       Element values are produced
-    - XML mode with `start-ns` or `end-ns` events, producing
+    - `start-ns` or `end-ns` events, producing
       namespace tuple (for `start-ns`) or nothing (`end-ns`)
     - Catch-all signature where `events` arg is specified
     - `events` arg absent, implying only `end` event is emitted
 
-    Original Docstring
-    ------------------
-    Parses XML into a tree and generates tuples (event, element) in a
-    SAX-like fashion. ``event`` is any of 'start', 'end', 'start-ns',
-    'end-ns'.
-
-    For 'start' and 'end', ``element`` is the Element that the parser just
-    found opening or closing.  For 'start-ns', it is a tuple (prefix, URI) of
-    a new namespace declaration.  For 'end-ns', it is simply None.  Note that
-    all start and end events are guaranteed to be properly nested.
-
-    The keyword argument ``events`` specifies a sequence of event type names
-    that should be generated.  By default, only 'end' events will be
-    generated.
-
-    The additional ``tag`` argument restricts the 'start' and 'end' events to
-    those elements that match the given tag.  The ``tag`` argument can also be
-    a sequence of tags to allow matching more than one tag.  By default,
-    events are generated for all elements.  Note that the 'start-ns' and
-    'end-ns' events are not impacted by this restriction.
-
-    The other keyword arguments in the constructor are mainly based on the
-    libxml2 parser configuration.  A DTD will also be loaded if validation or
-    attribute default values are requested."""
+    See Also
+    --------
+    - [API documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree.iterparse)
+    """
 
     @overload  # html mode -> namespace events suppressed
     def __new__(  # type: ignore[overload-overlap]  # pyright: ignore[reportOverlappingOverload]
@@ -75,21 +56,14 @@ class iterparse(Iterator[_T_co]):
         events: Iterable[_SaxEventNames] = ("end",),
         *,
         tag: _TagSelector | Collection[_TagSelector] | None = None,
-        attribute_defaults: bool = False,
-        dtd_validation: bool = False,
-        load_dtd: bool = False,
         no_network: bool = True,
         remove_blank_text: bool = False,
         compact: bool = True,
-        resolve_entities: bool = True,
         remove_comments: bool = False,
         remove_pis: bool = False,
-        strip_cdata: bool = True,
         encoding: _TextArg | None = None,
         html: Literal[True],
         recover: bool | None = None,
-        huge_tree: bool = False,
-        collect_ids: bool = True,
         schema: XMLSchema | None = None,
     ) -> iterparse[tuple[_NoNSEventNames, _Element]]: ...
     @overload  # element-only events
