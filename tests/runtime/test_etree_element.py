@@ -15,7 +15,7 @@ from lxml.etree import (
     _ProcessingInstruction as _ProcessingInstruction,
 )
 
-from ._testutils import empty_signature_tester, signature_tester
+from ._testutils import signature_tester
 from ._testutils.errors import (
     raise_non_iterable,
 )
@@ -28,54 +28,6 @@ else:
 
 # See mypy.ini in testsuite for explanation
 TC_HONORS_REVERSED = True
-
-
-class TestGetMethods:
-    @empty_signature_tester(
-        _Element.getparent,
-        _Element.getprevious,
-        _Element.getnext,
-        _Element.getroottree,
-    )
-    def test_func_sig(self) -> None:
-        pass
-
-    def test_getparent_method(self, xml2_root: _Element) -> None:
-        root = xml2_root
-
-        nada = root.getparent()
-        reveal_type(nada)
-        assert nada is None
-
-        elem = root[0].getparent()
-        reveal_type(elem)
-        assert elem is root
-
-    def test_getprevious_method(self, xml2_root: _Element) -> None:
-        root = xml2_root
-
-        nada = root[0].getprevious()
-        reveal_type(nada)
-        assert nada is None
-
-        elem = root[-1].getprevious()
-        reveal_type(elem)
-
-    def test_getnext_method(self, xml2_root: _Element) -> None:
-        root = xml2_root
-
-        elem = root[0].getnext()
-        reveal_type(elem)
-
-        nada = root[-1].getnext()
-        reveal_type(nada)
-        assert nada is None
-
-    def test_getroottree_method(self, xml2_root: _Element) -> None:
-        root = xml2_root
-
-        tree2 = root.getroottree()
-        reveal_type(tree2)
 
 
 class TestIterMethods:

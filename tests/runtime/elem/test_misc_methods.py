@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import sys
 from inspect import Parameter
 from typing import Any
 
@@ -10,12 +11,18 @@ from lxml.etree import (
     Element,
     ElementBase,
     _Element,
+    _ElementTree as _ElementTree,
 )
 
-from .._testutils import signature_tester, strategy as _st
+from .._testutils import empty_signature_tester, signature_tester, strategy as _st
 from .._testutils.errors import (
     raise_wrong_arg_type,
 )
+
+if sys.version_info >= (3, 11):
+    from typing import reveal_type
+else:
+    from typing_extensions import reveal_type
 
 
 class TestAddMethods:
@@ -81,3 +88,33 @@ class TestAddMethods:
         disposable_element.append(Element("foo"))
         with raise_wrong_arg_type:
             disposable_element[0].addprevious(iterable_of(self.comm))
+
+
+class TestGetMethods:
+    @empty_signature_tester(
+        _Element.getparent,
+        _Element.getprevious,
+        _Element.getnext,
+        _Element.getroottree,
+    )
+    def test_signature(self) -> None:
+        pass
+
+    def test_getparent_method(self, xml2_root: _Element) -> None:
+        nothing = reveal_type(xml2_root.getparent())
+        assert nothing is None
+        elem = reveal_type(xml2_root[0].getparent())
+        assert elem is xml2_root
+
+    def test_getprevious_method(self, xml2_root: _Element) -> None:
+        nothing = reveal_type(xml2_root[0].getprevious())
+        assert nothing is None
+        reveal_type(xml2_root[-1].getprevious())
+
+    def test_getnext_method(self, xml2_root: _Element) -> None:
+        reveal_type(xml2_root[0].getnext())
+        nothing = reveal_type(xml2_root[-1].getnext())
+        assert nothing is None
+
+    def test_getroottree_method(self, xml2_root: _Element) -> None:
+        reveal_type(xml2_root.getroottree())
