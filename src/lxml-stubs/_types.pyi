@@ -191,7 +191,13 @@ class _ElementFactory(Protocol, Generic[_ET_co]):
 # but checks for exact element *factory functions* instead
 # (etree.Element() and friends). Python typing system doesn't
 # support such outlandish usage. Use a generic callable instead.
-_TagSelector = _TagName | Callable[..., _Element]
+#
+# Its behavior is defined in _MultiTagMatcher._storeTags().
+# Note that '.tag' attributes of elements can be bytearray,
+# it's just that tag selector can't use bytearray as argument.
+# Even when using other types as argument, the matcher can
+# still pick up elements with bytearray tags.
+_TagSelector = str | bytes | QName | Callable[..., _Element]
 
 _ElementOrTree = _ET | _ElementTree[_ET]
 

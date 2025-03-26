@@ -1,7 +1,6 @@
 import sys
 from typing import (
     Any,
-    Collection,
     Generic,
     Iterable,
     Iterator,
@@ -154,7 +153,7 @@ class XMLPullParser(_PullParserMixin, XMLParser[_ET_co]):
         self,
         events: Iterable[_SaxEventNames] | None = None,
         *,
-        tag: _TagSelector | Collection[_TagSelector] | None = None,
+        tag: _TagSelector | Iterable[_TagSelector] | None = None,
         base_url: str | bytes | None = None,
         # All arguments from XMLParser
         encoding: _TextArg | None = None,
@@ -235,7 +234,7 @@ class HTMLPullParser(_PullParserMixin, HTMLParser[_ET_co]):
         self,
         events: Iterable[_SaxEventNames] | None = None,
         *,
-        tag: _TagSelector | Collection[_TagSelector] | None = None,
+        tag: _TagSelector | Iterable[_TagSelector] | None = None,
         base_url: str | bytes | None = None,
         # All arguments from HTMLParser
         encoding: _TextArg | None = None,

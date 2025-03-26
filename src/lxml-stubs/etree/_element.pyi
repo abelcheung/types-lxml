@@ -2,7 +2,6 @@ import sys
 from typing import (
     Any,
     Callable,
-    Collection,
     Generic,
     Iterable,
     Iterator,
@@ -133,7 +132,7 @@ class _Element:
     @overload
     def itersiblings(
         self,
-        tag: _t._TagSelector | Collection[_t._TagSelector] | None = None,
+        tag: _t._TagSelector | Iterable[_t._TagSelector] | None = None,
         *,
         preceding: bool = False,
     ) -> Iterator[Self]: ...
@@ -141,13 +140,13 @@ class _Element:
     def iterancestors(self, *tags: _t._TagSelector) -> Iterator[Self]: ...
     @overload
     def iterancestors(
-        self, tag: _t._TagSelector | Collection[_t._TagSelector] | None = None
+        self, tag: _t._TagSelector | Iterable[_t._TagSelector] | None = None
     ) -> Iterator[Self]: ...
     @overload
     def iterdescendants(self, *tags: _t._TagSelector) -> Iterator[Self]: ...
     @overload
     def iterdescendants(
-        self, tag: _t._TagSelector | Collection[_t._TagSelector] | None = None
+        self, tag: _t._TagSelector | Iterable[_t._TagSelector] | None = None
     ) -> Iterator[Self]: ...
     @overload
     def iterchildren(
@@ -156,7 +155,7 @@ class _Element:
     @overload
     def iterchildren(
         self,
-        tag: _t._TagSelector | Collection[_t._TagSelector] | None = None,
+        tag: _t._TagSelector | Iterable[_t._TagSelector] | None = None,
         *,
         reversed: bool = False,
     ) -> Iterator[Self]: ...
@@ -164,7 +163,7 @@ class _Element:
     def iter(self, *tags: _t._TagSelector) -> Iterator[Self]: ...
     @overload
     def iter(
-        self, tag: _t._TagSelector | Collection[_t._TagSelector] | None = None
+        self, tag: _t._TagSelector | Iterable[_t._TagSelector] | None = None
     ) -> Iterator[Self]: ...
     @overload
     def itertext(
@@ -173,7 +172,7 @@ class _Element:
     @overload
     def itertext(
         self,
-        tag: _t._TagSelector | Collection[_t._TagSelector] | None = None,
+        tag: _t._TagSelector | Iterable[_t._TagSelector] | None = None,
         *,
         with_tail: bool = True,
     ) -> Iterator[str]: ...
@@ -320,7 +319,7 @@ class _ElementTree(Generic[_t._ET_co]):
     def iter(self, *tags: _t._TagSelector) -> Iterator[_t._ET_co]: ...
     @overload
     def iter(
-        self, tag: _t._TagSelector | Collection[_t._TagSelector] | None = None
+        self, tag: _t._TagSelector | Iterable[_t._TagSelector] | None = None
     ) -> Iterator[_t._ET_co]: ...
     #
     # ElementPath methods calls the same method on root node,

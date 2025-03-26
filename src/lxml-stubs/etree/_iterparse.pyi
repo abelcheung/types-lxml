@@ -1,6 +1,6 @@
 import sys
 from _typeshed import SupportsRead
-from typing import Collection, Iterable, Iterator, Literal, TypeVar, overload
+from typing import Iterable, Iterator, Literal, TypeVar, overload
 
 from .._types import (
     _ElementFactory,
@@ -55,7 +55,7 @@ class iterparse(Iterator[_T_co]):
         source: _FilePath | SupportsRead[bytes],
         events: Iterable[_SaxEventNames] = ("end",),
         *,
-        tag: _TagSelector | Collection[_TagSelector] | None = None,
+        tag: _TagSelector | Iterable[_TagSelector] | None = None,
         no_network: bool = True,
         remove_blank_text: bool = False,
         compact: bool = True,
@@ -72,7 +72,7 @@ class iterparse(Iterator[_T_co]):
         source: _FilePath | SupportsRead[bytes],
         events: Iterable[_NoNSEventNames],
         *,
-        tag: _TagSelector | Collection[_TagSelector] | None = None,
+        tag: _TagSelector | Iterable[_TagSelector] | None = None,
         attribute_defaults: bool = False,
         dtd_validation: bool = False,
         load_dtd: bool = False,
@@ -96,7 +96,7 @@ class iterparse(Iterator[_T_co]):
         source: _FilePath | SupportsRead[bytes],
         events: Iterable[Literal["start-ns", "end-ns"]],
         *,
-        tag: _TagSelector | Collection[_TagSelector] | None = None,
+        tag: _TagSelector | Iterable[_TagSelector] | None = None,
         attribute_defaults: bool = False,
         dtd_validation: bool = False,
         load_dtd: bool = False,
@@ -122,7 +122,7 @@ class iterparse(Iterator[_T_co]):
         source: _FilePath | SupportsRead[bytes],
         events: Iterable[_SaxEventNames],
         *,
-        tag: _TagSelector | Collection[_TagSelector] | None = None,
+        tag: _TagSelector | Iterable[_TagSelector] | None = None,
         attribute_defaults: bool = False,
         dtd_validation: bool = False,
         load_dtd: bool = False,
@@ -149,7 +149,7 @@ class iterparse(Iterator[_T_co]):
         cls,
         source: _FilePath | SupportsRead[bytes],
         *,
-        tag: _TagSelector | Collection[_TagSelector] | None = None,
+        tag: _TagSelector | Iterable[_TagSelector] | None = None,
         attribute_defaults: bool = False,
         dtd_validation: bool = False,
         load_dtd: bool = False,
@@ -215,14 +215,14 @@ class iterwalk(Iterator[_T_co]):
         cls,
         element_or_tree: _ElementOrTree[_ET_co],
         events: Iterable[_NoNSEventNames],
-        tag: _TagSelector | Collection[_TagSelector] | None = None,
+        tag: _TagSelector | Iterable[_TagSelector] | None = None,
     ) -> iterwalk[tuple[_NoNSEventNames, _ET_co]]: ...
     @overload  # namespace-only events
     def __new__(
         cls,
         element_or_tree: _ElementOrTree[_ET_co],
         events: Iterable[Literal["start-ns", "end-ns"]],
-        tag: _TagSelector | Collection[_TagSelector] | None = None,
+        tag: _TagSelector | Iterable[_TagSelector] | None = None,
     ) -> iterwalk[
         tuple[Literal["start-ns"], tuple[str, str]] | tuple[Literal["end-ns"], None]
     ]: ...
@@ -231,7 +231,7 @@ class iterwalk(Iterator[_T_co]):
         cls,
         element_or_tree: _ElementOrTree[_ET_co],
         events: Iterable[_SaxEventNames],
-        tag: _TagSelector | Collection[_TagSelector] | None = None,
+        tag: _TagSelector | Iterable[_TagSelector] | None = None,
     ) -> iterwalk[
         tuple[_NoNSEventNames, _ET_co]
         | tuple[Literal["start-ns"], tuple[str, str]]
@@ -242,7 +242,7 @@ class iterwalk(Iterator[_T_co]):
         cls,
         element_or_tree: _ElementOrTree[_ET_co],
         /,
-        tag: _TagSelector | Collection[_TagSelector] | None = None,
+        tag: _TagSelector | Iterable[_TagSelector] | None = None,
     ) -> iterwalk[tuple[Literal["end"], _ET_co]]: ...
     def __next__(self) -> _T_co: ...
     def skip_subtree(self) -> None: ...

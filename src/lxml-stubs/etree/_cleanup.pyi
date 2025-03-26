@@ -1,5 +1,5 @@
 import sys
-from typing import Collection, Iterable, overload
+from typing import Iterable, overload
 
 if sys.version_info >= (3, 13):
     from warnings import deprecated
@@ -15,7 +15,7 @@ from .._types import (
 )
 
 @overload
-@deprecated("Supply an iterator or collection of namespace prefixes instead.")
+@deprecated("Supply an iterable of namespace prefixes, instead of a vanilla prefix.")
 def cleanup_namespaces(
     tree_or_element: _ElementOrTree,
     top_nsmap: _NSMapArg | None = None,
@@ -33,7 +33,8 @@ def cleanup_namespaces(
 # that followed are considered positional arguments in
 # all possible function signature overloads.
 
-# internal: bytearray disallowed for _MultiTagMatcher
+# strip_attributes internally uses _MultiTagMatcher and
+# treat attributes like tags
 @overload
 def strip_attributes(
     tree_or_elem: _ElementOrTree,
@@ -41,27 +42,31 @@ def strip_attributes(
 ) -> None: ...
 @overload
 def strip_attributes(
-    tree_or_elem: _ElementOrTree, attribute_names: Iterable[_AttrNameKey], /
+    tree_or_elem: _ElementOrTree,
+    attribute_names: Iterable[_AttrNameKey],
+    /,
 ) -> None: ...
 @overload
 def strip_elements(
-    __tree_or_elem: _ElementOrTree,
+    tree_or_elem: _ElementOrTree,
     *tag_names: _TagSelector,
     with_tail: bool = True,
 ) -> None: ...
 @overload
 def strip_elements(
-    __tree_or_elem: _ElementOrTree,
-    __tag: Collection[_TagSelector],
+    tree_or_elem: _ElementOrTree,
+    tag_names: Iterable[_TagSelector],
     /,
     with_tail: bool = True,
 ) -> None: ...
 @overload
 def strip_tags(
-    __tree_or_elem: _ElementOrTree,
+    tree_or_elem: _ElementOrTree,
     *tag_names: _TagSelector,
 ) -> None: ...
 @overload
 def strip_tags(
-    __tree_or_elem: _ElementOrTree, __tag: Collection[_TagSelector], /
+    tree_or_elem: _ElementOrTree,
+    tag_names: Iterable[_TagSelector],
+    /,
 ) -> None: ...

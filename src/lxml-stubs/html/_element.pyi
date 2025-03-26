@@ -1,7 +1,6 @@
 import sys
 from typing import (
     Callable,
-    Collection,
     Iterable,
     Iterator,
     Literal,
@@ -205,7 +204,7 @@ class HtmlElement(etree.ElementBase):
     @overload
     def itersiblings(
         self,
-        tag: _TagSelector | Collection[_TagSelector] | None = None,
+        tag: _TagSelector | Iterable[_TagSelector] | None = None,
         *,
         preceding: bool = False,
     ) -> Iterator[HtmlElement]: ...
@@ -217,7 +216,7 @@ class HtmlElement(etree.ElementBase):
     @overload
     def iterancestors(
         self,
-        tag: _TagSelector | Collection[_TagSelector] | None = None,
+        tag: _TagSelector | Iterable[_TagSelector] | None = None,
     ) -> Iterator[HtmlElement]: ...
     @overload
     def iterdescendants(
@@ -227,7 +226,7 @@ class HtmlElement(etree.ElementBase):
     @overload
     def iterdescendants(
         self,
-        tag: _TagSelector | Collection[_TagSelector] | None = None,
+        tag: _TagSelector | Iterable[_TagSelector] | None = None,
     ) -> Iterator[HtmlElement]: ...
     @overload
     def iterchildren(
@@ -238,7 +237,7 @@ class HtmlElement(etree.ElementBase):
     @overload
     def iterchildren(
         self,
-        tag: _TagSelector | Collection[_TagSelector] | None = None,
+        tag: _TagSelector | Iterable[_TagSelector] | None = None,
         *,
         reversed: bool = False,
     ) -> Iterator[HtmlElement]: ...
@@ -250,7 +249,7 @@ class HtmlElement(etree.ElementBase):
     @overload
     def iter(
         self,
-        tag: _TagSelector | Collection[_TagSelector] | None = None,
+        tag: _TagSelector | Iterable[_TagSelector] | None = None,
     ) -> Iterator[HtmlElement]: ...
     @overload
     def itertext(
@@ -261,7 +260,7 @@ class HtmlElement(etree.ElementBase):
     @overload
     def itertext(
         self,
-        tag: _TagSelector | Collection[_TagSelector] | None = None,
+        tag: _TagSelector | Iterable[_TagSelector] | None = None,
         *,
         with_tail: bool = True,
     ) -> Iterator[str]: ...

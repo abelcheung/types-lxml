@@ -145,7 +145,7 @@ index 5f49ddf..34ea088 100644
      @overload
      def itersiblings(
          self,
-         tag: _t._TagSelector | Collection[_t._TagSelector] | None = None,
+         tag: _t._TagSelector | Iterable[_t._TagSelector] | None = None,
          *,
          preceding: bool = False,
 -    ) -> Iterator[Self]: ...
@@ -155,7 +155,7 @@ index 5f49ddf..34ea088 100644
 +    def iterancestors(self, *tags: _t._TagSelector) -> Iterator[_Element]: ...
      @overload
      def iterancestors(
-         self, tag: _t._TagSelector | Collection[_t._TagSelector] | None = None
+         self, tag: _t._TagSelector | Iterable[_t._TagSelector] | None = None
 -    ) -> Iterator[Self]: ...
 +    ) -> Iterator[_Element]: ...
      @overload
@@ -163,7 +163,7 @@ index 5f49ddf..34ea088 100644
 +    def iterdescendants(self, *tags: _t._TagSelector) -> Iterator[_Element]: ...
      @overload
      def iterdescendants(
-         self, tag: _t._TagSelector | Collection[_t._TagSelector] | None = None
+         self, tag: _t._TagSelector | Iterable[_t._TagSelector] | None = None
 -    ) -> Iterator[Self]: ...
 +    ) -> Iterator[_Element]: ...
      @overload
@@ -174,7 +174,7 @@ index 5f49ddf..34ea088 100644
      @overload
      def iterchildren(
          self,
-         tag: _t._TagSelector | Collection[_t._TagSelector] | None = None,
+         tag: _t._TagSelector | Iterable[_t._TagSelector] | None = None,
          *,
          reversed: bool = False,
 -    ) -> Iterator[Self]: ...
@@ -184,7 +184,7 @@ index 5f49ddf..34ea088 100644
 +    def iter(self, *tags: _t._TagSelector) -> Iterator[_Element]: ...
      @overload
      def iter(
-         self, tag: _t._TagSelector | Collection[_t._TagSelector] | None = None
+         self, tag: _t._TagSelector | Iterable[_t._TagSelector] | None = None
 -    ) -> Iterator[Self]: ...
 +    ) -> Iterator[_Element]: ...
      @overload
