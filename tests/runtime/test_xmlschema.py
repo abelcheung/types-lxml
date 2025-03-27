@@ -81,27 +81,26 @@ class TestXMLSchemaInput:
         generate_input_file_arguments: Callable[..., Iterable[Any]],
         xmlschema_path: Path,
     ) -> None:
+        # For StringIO, input content needs tweaking
+        # (remove encoding declaration)
+        def _tweak_sio_content(file: Path) -> io.StringIO:
+            return io.StringIO(file.read_text().replace('encoding="UTF-8"', ""))
+
         for file in generate_input_file_arguments(
-            xmlschema_path, exclude_type=(io.StringIO,)
+            xmlschema_path,
+            exclude_type=(io.StringIO,),
+            include=[_tweak_sio_content],
         ):
             schema = XMLSchema(file=file)
             reveal_type(schema)
             del schema
-
-    # TODO How to annotate this situation where TextIOWrapper works but
-    # not for StringIO?
-    def test_file_arg_bad_1(self, xmlschema_path: Path) -> None:
-        sio = io.StringIO(xmlschema_path.read_text())
-        # Unicode strings with encoding declaration are not supported.
-        with pytest.raises(ValueError, match="encoding declaration are not supported"):
-            _ = XMLSchema(file=sio)
 
     @settings(
         suppress_health_check=[HealthCheck.function_scoped_fixture],
         max_examples=5,
     )
     @given(iterator_of=_st.fixed_item_iterables())
-    def test_file_arg_bad_2(
+    def test_file_arg_bad(
         self,
         xmlschema_path: Path,
         generate_input_file_arguments: Callable[..., Iterable[Any]],
