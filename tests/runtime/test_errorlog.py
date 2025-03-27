@@ -128,9 +128,6 @@ class TestListLogMethods:
         reveal_type(new_log)
         assert len(new_log) > 0
 
-    # list_log is function-scoped and causes HealthCheck warning;
-    # should be fine as log is supposedly unmodified.
-    #
     # FIXME: negative test only proves arg is of type
     # int | Iterable[Any], and we want int | Iterable[int].
     #

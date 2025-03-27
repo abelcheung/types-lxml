@@ -149,7 +149,7 @@ class TestXmlid:
             _ = XMLID(xml2_bytes, base_url=iterable_of("http://example.com"))
 
 
-# Note that XMLDTDID() doesn't work with default parser.
+# Beware that XMLDTDID() doesn't work with default parser.
 # Custom parser is required to enable DTD parsing.
 class TestXmldtdid:
     @signature_tester(XMLDTDID, (

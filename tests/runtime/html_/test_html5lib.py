@@ -202,7 +202,7 @@ class TestInputArg:
         generate_input_file_arguments: Callable[..., Iterable[Any]],
     ) -> None:
         if sys.platform == "win32":
-            # Bug in html.html5parser _looks_like_uri() util func
+            # html.html5parser _looks_like_uri() util func has bug
             excluded = (Path, bytes)
         else:
             excluded = (Path,)
@@ -312,7 +312,7 @@ class TestCharsetArg:
         generate_input_file_arguments: Callable[..., Iterable[Any]],
     ) -> None:
         if sys.platform == "win32":
-            # Bug in html.html5parser _looks_like_uri() util func
+            # html.html5parser _looks_like_uri() util func has bug
             excluded = (Path, bytes)
         else:
             excluded = (Path,)
