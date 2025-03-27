@@ -1,14 +1,16 @@
 from __future__ import annotations
 
 import sys
+from collections.abc import Iterable
 from dataclasses import dataclass
+from types import NoneType
 from typing import (
     Any,
     get_args,
     get_type_hints,
 )
 
-from lxml.etree import LXML_VERSION
+from lxml.etree import LXML_VERSION, QName
 
 from . import strategy as _st
 
@@ -28,6 +30,14 @@ class FuncSignatureError(Exception):
 
     def __str__(self) -> str:
         return "{}(): {}".format(self._func, self.args[0])
+
+
+def is_hashable(obj: object) -> bool:
+    try:
+        hash(obj)
+    except TypeError:
+        return False
+    return True
 
 
 @dataclass
@@ -51,4 +61,9 @@ tag_name_types = attr_name_types
 text_document_types = ArgumentTypes(
     (str, Buffer) if LXML_VERSION >= (6, 0) else (str, bytes),
     (),
+)
+
+tag_selector_types = ArgumentTypes(
+    (str, bytes, QName, NoneType),
+    (Iterable,),
 )
