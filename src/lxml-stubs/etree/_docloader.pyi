@@ -1,3 +1,5 @@
+# Resolver documented at https://lxml.de/resolvers.html
+
 import sys
 from _typeshed import SupportsRead
 from abc import ABCMeta, abstractmethod
@@ -8,39 +10,47 @@ if sys.version_info >= (3, 11):
 else:
     from typing_extensions import Self
 
-from .._types import _AnyStr
-
+# Keep its usage in Resolver, making sure resolve() method
+# always return one of the resolve_*() results.
 @type_check_only
 class _InputDocument:
     """An internal opaque object used as resolver result"""
 
-@type_check_only
-class _ResolverContext:
-    """An internal opaque object used in resolve methods"""
+# @type_check_only
+# class _ResolverContext:
+#     """An internal opaque object used in resolve methods"""
 
 class Resolver(metaclass=ABCMeta):
     @abstractmethod
     def resolve(
-        self, system_url: str, public_id: str, context: _ResolverContext
+        self,
+        system_url: str | None,
+        public_id: str | None,
+        context: object,  # _ResolverContext
     ) -> _InputDocument | None: ...
-    def resolve_empty(self, context: _ResolverContext) -> _InputDocument: ...
+    def resolve_empty(
+        self,
+        context: object,  # _ResolverContext
+    ) -> _InputDocument: ...
     def resolve_string(
         self,
-        string: _AnyStr,
-        context: _ResolverContext,
+        string: str | bytes,
+        context: object,  # _ResolverContext
         *,
         base_url: str | bytes | None = None,
     ) -> _InputDocument: ...
     def resolve_filename(
-        self, filename: _AnyStr, context: _ResolverContext
+        self,
+        filename: str | bytes,
+        context: object,  # _ResolverContext
     ) -> _InputDocument: ...
     def resolve_file(
         self,
         f: SupportsRead[Any],
-        context: _ResolverContext,
+        context: object,  # _ResolverContext
         *,
-        base_url: str | bytes | None,
-        close: bool,
+        base_url: str | bytes | None = None,
+        close: bool = True,
     ) -> _InputDocument: ...
 
 @final
@@ -48,9 +58,5 @@ class _ResolverRegistry:
     def add(self, resolver: Resolver) -> None: ...
     def remove(self, resolver: Resolver) -> None: ...
     def copy(self) -> Self: ...
-    # Wonder if resolve() should be removed. It's not like one
-    # can supply the internal context object at all. So far it
-    # is only used internally.
-    def resolve(
-        self, system_url: str, public_id: str, context: _ResolverContext
-    ) -> _InputDocument | None: ...
+    # resolve() removed. User can't possibly extract or create
+    # the context object independently and supply it.
