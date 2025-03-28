@@ -32,6 +32,12 @@ _T = TypeVar("_T")
 # plus mixin methods for _Attrib.
 # Extra methods follow the order of _Element source approximately
 class _Element:
+    """Element class. References a document object and a libxml node.
+
+    See Also
+    --------
+    - [API Documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree._Element)
+    """
     #
     # Common properties
     #
@@ -39,17 +45,68 @@ class _Element:
     # is manually set, supplied value is directly stored
     # in element and never normalized.
     @property
-    def tag(self) -> _t._TagName: ...
+    def tag(self) -> _t._TagName:
+        """Element tag name
+
+        Annotation
+        ----------
+        - input type: `str | bytes | bytearray | QName`
+        - output type: `str | bytes | bytearray | QName`
+
+        Value is initially `str` after parsing tree or content, but can be
+        modified to any value manually. Modified value is stored as-is.
+
+        See Also
+        --------
+        - [API Documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree._Element.tag)
+        """
     @tag.setter
     def tag(self, value: _t._TagName) -> None: ...
     @property
-    def attrib(self) -> _Attrib: ...
+    def attrib(self) -> _Attrib:
+        """Element attribute dictionary. Where possible, use `get()`, `set()`,
+        `keys()`, `values()` and `items()` to access element attributes.
+
+        See Also
+        --------
+        - [API Documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree._Element.attrib)
+        - [`_Attrib` API](https://lxml.de/apidoc/lxml.etree.html#lxml.etree._Attrib)
+        """
     @property
-    def text(self) -> str | None: ...
+    def text(self) -> str | None:
+        """Text before the first subelement.
+
+        Annotation
+        ----------
+        - input type: `str | bytes | bytearray | QName | CDATA | None`
+        - output type: `str | None`
+
+        Value is always normalised to `str` unless it is explicitly
+        set to `None`.
+
+        See Also
+        --------
+        - [API Documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree._Element.text)
+        """
     @text.setter
     def text(self, value: _t._TextArg | QName | CDATA | None) -> None: ...
     @property
-    def tail(self) -> str | None: ...
+    def tail(self) -> str | None:
+        """Text after this element's end tag, but before the next sibling
+        element's start tag.
+
+        Annotation
+        ----------
+        - input type: `str | bytes | bytearray | CDATA | None`
+        - output type: `str | None`
+
+        Value is always normalised to `str` unless it is explicitly
+        set to `None`.
+
+        See Also
+        --------
+        - [API Documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree._Element.tail)
+        """
     @tail.setter
     def tail(self, value: _t._TextArg | CDATA | None) -> None: ...
     #
@@ -60,15 +117,52 @@ class _Element:
     # modifying .sourceline is meaningless.
     #
     @property
-    def prefix(self) -> str | None: ...
+    def prefix(self) -> str | None:
+        """Namespace prefix
+
+        See Also
+        --------
+        - [API Documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree._Element.prefix)
+        """
     @property
-    def sourceline(self) -> int | None: ...
+    def sourceline(self) -> int | None:
+        """Original line number as found by the parser or None if unknown.
+
+        Annotation
+        ----------
+        This annotation package pretends the property is read-only, but
+        it is actually read-write. However, modifying the value is
+        meaningless, as its only purpose is to reflect the line number
+        this element appears in original content.
+
+        See Also
+        --------
+        - [API Documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree._Element.sourceline)
+        """
     @property
-    def nsmap(self) -> dict[str | None, str]: ...
+    def nsmap(self) -> dict[str | None, str]:
+        """Namespace prefix->URI mapping known in the context of this
+        Element.
+
+        See Also
+        --------
+        - [API Documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree._Element.nsmap)
+        """
     @property
-    def base(self) -> str | None: ...
+    def base(self) -> str | None:
+        """The base URI of the Element (xml:base or HTML base URL).
+
+        Annotation
+        ----------
+        - input type: `str | bytes | None`
+        - output type: `str | None`
+
+        See Also
+        --------
+        - [API Documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree._Element.base)
+        """
     @base.setter
-    def base(self, value: _t._AnyStr | None) -> None: ...
+    def base(self, value: str | bytes | None) -> None: ...
     #
     # Accessors
     #
@@ -95,111 +189,440 @@ class _Element:
     # they only differ in implementation detail and don't affect typing.
     def __iter__(self) -> Iterator[Self]: ...
     def __reversed__(self) -> Iterator[Self]: ...
-    def set(self, key: _t._AttrName, value: _t._AttrVal) -> None: ...
-    def append(self, element: Self) -> None: ...
+    def set(self, key: _t._AttrName, value: _t._AttrVal) -> None:
+        """Sets an element attribute.
+
+        See Also
+        --------
+        - [API Documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree._Element.set)
+        """
+    def append(self, element: Self) -> None:
+        """Adds a subelement to the end of this element.
+
+        See Also
+        --------
+        - [API Documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree._Element.append)
+        """
     @overload  # see __setitem__ for explanation
     @deprecated("Expects iterable of elements as value, not single element")
-    def extend(self, elements: _Element) -> Never: ...
+    def extend(self, elements: _Element) -> Never:
+        """Extends the current children by the elements in the iterable.
+
+        Annotation
+        ----------
+        This overload discourages supplying a single element as value, because
+        only its children (if any) are inserted, not the element itself.
+
+        See Also
+        --------
+        - [API Documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree._Element.extend)
+        """
     @overload
-    def extend(self, elements: Iterable[Self]) -> None: ...
-    def clear(self, keep_tail: bool = False) -> None: ...
-    def insert(self, index: int, element: Self) -> None: ...
-    def remove(self, element: Self) -> None: ...
+    def extend(self, elements: Iterable[Self]) -> None:
+        """Extends the current children by the elements in the iterable.
+
+        See Also
+        --------
+        - [API Documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree._Element.extend)
+        """
+    def clear(self, keep_tail: bool = False) -> None:
+        """Resets an element.
+
+        See Also
+        --------
+        - [API Documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree._Element.clear)
+        """
+    def insert(self, index: int, element: Self) -> None:
+        """Inserts a subelement at the given position in this element
+
+        See Also
+        --------
+        - [API Documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree._Element.insert)
+        """
+    def remove(self, element: Self) -> None:
+        """Removes a matching subelement.
+
+        See Also
+        --------
+        - [API Documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree._Element.remove)
+        """
     def index(
-        self, child: Self, start: int | None = None, stop: int | None = None
-    ) -> int: ...
+        self,
+        child: Self,
+        start: int | None = None,
+        stop: int | None = None,
+    ) -> int:
+        """Find the position of the child within the parent.
+
+        See Also
+        --------
+        - [API Documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree._Element.index)
+        """
     @overload
-    def get(self, key: _t._AttrName) -> str | None: ...
+    def get(self, key: _t._AttrName) -> str | None:
+        """Gets an element attribute.
+
+        Annotation
+        ----------
+        This overload handles the case where default value is not supplied.
+
+        See Also
+        --------
+        - [API Documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree._Element.get)
+        """
     @overload
-    def get(self, key: _t._AttrName, default: _T) -> str | _T: ...
-    def keys(self) -> list[str]: ...
-    def values(self) -> list[str]: ...
-    def items(self) -> list[tuple[str, str]]: ...
+    def get(self, key: _t._AttrName, default: _T) -> str | _T:
+        """Gets an element attribute.
+
+        Annotation
+        ----------
+        This overload handles the case where default value is given.
+
+        See Also
+        --------
+        - [API Documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree._Element.get)
+        """
+    def keys(self) -> list[str]:
+        """Gets a list of attribute names.
+
+        See Also
+        --------
+        - [API Documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree._Element.keys)
+        """
+    def values(self) -> list[str]:
+        """Gets element attribute values as a sequence of strings.
+
+        See Also
+        --------
+        - [API Documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree._Element.values)
+        """
+    def items(self) -> list[tuple[str, str]]:
+        """Gets element attributes, as a sequence.
+
+        See Also
+        --------
+        - [API Documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree._Element.items)
+        """
     #
     # extra Element / ET methods
     #
-    def addnext(self, element: Self) -> None: ...
-    def addprevious(self, element: Self) -> None: ...
-    def replace(self, old_element: Self, new_element: Self) -> None: ...
-    def getparent(self) -> Self | None: ...
-    def getnext(self) -> Self | None: ...
-    def getprevious(self) -> Self | None: ...
-    def getroottree(self) -> _ElementTree[Self]: ...
+    def addnext(self, element: Self) -> None:
+        """Adds the element as a following sibling directly after this element.
+
+        See Also
+        --------
+        - [API Documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree._Element.addnext)
+        """
+    def addprevious(self, element: Self) -> None:
+        """Adds the element as a preceding sibling directly before this element.
+
+        See Also
+        --------
+        - [API Documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree._Element.addprevious)
+        """
+    def replace(self, old_element: Self, new_element: Self) -> None:
+        """Replaces a subelement with the element passed as second argument.
+
+        See Also
+        --------
+        - [API Documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree._Element.replace)
+        """
+    def getparent(self) -> Self | None:
+        """Returns the parent of this element or None for the root element.
+
+        See Also
+        --------
+        - [API Documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree._Element.getparent)
+        """
+    def getnext(self) -> Self | None:
+        """Returns the following sibling of this element or None.
+
+        See Also
+        --------
+        - [API Documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree._Element.getnext)
+        """
+    def getprevious(self) -> Self | None:
+        """Returns the preceding sibling of this element or None.
+
+        See Also
+        --------
+        - [API Documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree._Element.getprevious)
+        """
+    def getroottree(self) -> _ElementTree[Self]:
+        """Return an ElementTree for the root node of the document that
+        contains this element.
+
+        See Also
+        --------
+        - [API Documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree._Element.getroottree)
+        """
     @overload
     def itersiblings(
         self, *tags: _t._TagSelector, preceding: bool = False
-    ) -> Iterator[Self]: ...
+    ) -> Iterator[Self]:
+        """Iterate over the following or preceding siblings of this element.
+
+        Annotation
+        ----------
+        This overload handles the case where all tags are supplied as positional
+        arguments.
+
+        See Also
+        --------
+        - [API Documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree._Element.itersiblings)
+        - [Possible tag values in `iter()`](https://lxml.de/apidoc/lxml.etree.html#lxml.etree._Element.iter)
+        """
     @overload
     def itersiblings(
         self,
         tag: _t._TagSelector | Iterable[_t._TagSelector] | None = None,
         *,
         preceding: bool = False,
-    ) -> Iterator[Self]: ...
+    ) -> Iterator[Self]:
+        """Iterate over the following or preceding siblings of this element.
+
+        Annotation
+        ----------
+        This overload handles following cases:
+        - A single tag is supplied as keyword argument
+        - Multiple tags are grouped into an iterable
+
+        See Also
+        --------
+        - [API Documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree._Element.itersiblings)
+        - [Possible tag values in `iter()`](https://lxml.de/apidoc/lxml.etree.html#lxml.etree._Element.iter)
+        """
     @overload
-    def iterancestors(self, *tags: _t._TagSelector) -> Iterator[Self]: ...
+    def iterancestors(self, *tags: _t._TagSelector) -> Iterator[Self]:
+        """Iterate over the ancestors of this element (from parent to parent).
+
+        Annotation
+        ----------
+        This overload handles the case where all tags are supplied as positional
+        arguments.
+
+        See Also
+        --------
+        - [API Documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree._Element.iterancestors)
+        - [Possible tag values in `iter()`](https://lxml.de/apidoc/lxml.etree.html#lxml.etree._Element.iter)
+        """
     @overload
     def iterancestors(
         self, tag: _t._TagSelector | Iterable[_t._TagSelector] | None = None
-    ) -> Iterator[Self]: ...
+    ) -> Iterator[Self]:
+        """Iterate over the ancestors of this element (from parent to parent).
+
+        Annotation
+        ----------
+        This overload handles following cases:
+        - A single tag is supplied as keyword argument
+        - Multiple tags are grouped into an iterable
+
+        See Also
+        --------
+        - [API Documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree._Element.iterancestors)
+        - [Possible tag values in `iter()`](https://lxml.de/apidoc/lxml.etree.html#lxml.etree._Element.iter)
+        """
     @overload
-    def iterdescendants(self, *tags: _t._TagSelector) -> Iterator[Self]: ...
+    def iterdescendants(self, *tags: _t._TagSelector) -> Iterator[Self]:
+        """Iterate over the descendants of this element in document order.
+
+        Annotation
+        ----------
+        This overload handles the case where all tags are supplied as positional
+        arguments.
+
+        See Also
+        --------
+        - [API Documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree._Element.iterdescendants)
+        - [Possible tag values in `iter()`](https://lxml.de/apidoc/lxml.etree.html#lxml.etree._Element.iter)
+        """
     @overload
     def iterdescendants(
         self, tag: _t._TagSelector | Iterable[_t._TagSelector] | None = None
-    ) -> Iterator[Self]: ...
+    ) -> Iterator[Self]:
+        """Iterate over the descendants of this element in document order.
+
+        Annotation
+        ----------
+        This overload handles following cases:
+        - A single tag is supplied as keyword argument
+        - Multiple tags are grouped into an iterable
+
+        See Also
+        --------
+        - [API Documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree._Element.iterdescendants)
+        - [Possible tag values in `iter()`](https://lxml.de/apidoc/lxml.etree.html#lxml.etree._Element.iter)
+        """
     @overload
     def iterchildren(
         self, *tags: _t._TagSelector, reversed: bool = False
-    ) -> Iterator[Self]: ...
+    ) -> Iterator[Self]:
+        """Iterate over the children of this element.
+
+        Annotation
+        ----------
+        This overload handles the case where all tags are supplied as positional
+        arguments.
+
+        See Also
+        --------
+        - [API Documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree._Element.iterchildren)
+        - [Possible tag values in `iter()`](https://lxml.de/apidoc/lxml.etree.html#lxml.etree._Element.iter)
+        """
     @overload
     def iterchildren(
         self,
         tag: _t._TagSelector | Iterable[_t._TagSelector] | None = None,
         *,
         reversed: bool = False,
-    ) -> Iterator[Self]: ...
+    ) -> Iterator[Self]:
+        """Iterate over the children of this element.
+
+        Annotation
+        ----------
+        This overload handles following cases:
+        - A single tag is supplied as keyword argument
+        - Multiple tags are grouped into an iterable
+
+        See Also
+        --------
+        - [API Documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree._Element.iterchildren)
+        - [Possible tag values in `iter()`](https://lxml.de/apidoc/lxml.etree.html#lxml.etree._Element.iter)
+        """
     @overload
-    def iter(self, *tags: _t._TagSelector) -> Iterator[Self]: ...
+    def iter(self, *tags: _t._TagSelector) -> Iterator[Self]:
+        """Iterate over all elements in the subtree in document order (depth
+        first pre-order), starting with this element.
+
+        Annotation
+        ----------
+        This overload handles the case where all tags are supplied as positional
+        arguments.
+
+        See Also
+        --------
+        - [API Documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree._Element.iter)
+        """
     @overload
     def iter(
         self, tag: _t._TagSelector | Iterable[_t._TagSelector] | None = None
-    ) -> Iterator[Self]: ...
+    ) -> Iterator[Self]:
+        """Iterate over all elements in the subtree in document order (depth
+        first pre-order), starting with this element.
+
+        Annotation
+        ----------
+        This overload handles following cases:
+        - A single tag is supplied as keyword argument
+        - Multiple tags are grouped into an iterable
+
+        See Also
+        --------
+        - [API Documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree._Element.iter)
+        """
     @overload
-    def itertext(
-        self, *tags: _t._TagSelector, with_tail: bool = True
-    ) -> Iterator[str]: ...
+    def itertext(self, *tags: _t._TagSelector, with_tail: bool = True) -> Iterator[str]:
+        """Iterates over the text content of a subtree.
+
+        Annotation
+        ----------
+        This overload handles the case where all tags are supplied as positional
+        arguments.
+
+        See Also
+        --------
+        - [API Documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree._Element.itertext)
+        - [Possible tag values in `iter()`](https://lxml.de/apidoc/lxml.etree.html#lxml.etree._Element.iter)
+        """
     @overload
     def itertext(
         self,
         tag: _t._TagSelector | Iterable[_t._TagSelector] | None = None,
         *,
         with_tail: bool = True,
-    ) -> Iterator[str]: ...
+    ) -> Iterator[str]:
+        """Iterates over the text content of a subtree.
+
+        Annotation
+        ----------
+        This overload handles following cases:
+        - A single tag is supplied as keyword argument
+        - Multiple tags are grouped into an iterable
+
+        See Also
+        --------
+        - [API Documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree._Element.itertext)
+        - [Possible tag values in `iter()`](https://lxml.de/apidoc/lxml.etree.html#lxml.etree._Element.iter)
+        """
     makeelement: _t._ElementFactory[Self]
+    """Creates a new element associated with the same document.
+
+    See Also
+    --------
+    - [API Documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree._Element.makeelement)
+    """
     def find(
         self, path: _t._ElemPathArg, namespaces: _t._StrOnlyNSMap | None = None
-    ) -> Self | None: ...
+    ) -> Self | None:
+        """Creates a new element associated with the same document.
+
+        See Also
+        --------
+        - [API Documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree._Element.find)
+        """
     @overload
     def findtext(
         self,
         path: _t._ElemPathArg,
         default: _T,
         namespaces: _t._StrOnlyNSMap | None = None,
-    ) -> str | _T: ...
+    ) -> str | _T:
+        """Finds text for the first matching subelement, by tag name or path.
+
+        Annotation
+        ----------
+        This overload handles the case where default value is given.
+
+        See Also
+        --------
+        - [API Documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree._Element.findtext)
+        """
     @overload
     def findtext(
         self,
         path: _t._ElemPathArg,
         default: None = None,
         namespaces: _t._StrOnlyNSMap | None = None,
-    ) -> str | None: ...
+    ) -> str | None:
+        """Finds text for the first matching subelement, by tag name or path."
+
+        Annotation
+        ----------
+        This overload handles the case where default value is not supplied.
+
+        See Also
+        --------
+        - [API Documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree._Element.findtext)
+        """
     def findall(
         self, path: _t._ElemPathArg, namespaces: _t._StrOnlyNSMap | None = None
-    ) -> list[Self]: ...
+    ) -> list[Self]:
+        """Finds all matching subelements, by tag name or path.
+
+        See Also
+        --------
+        - [API Documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree._Element.findall)
+        """
     def iterfind(
         self, path: _t._ElemPathArg, namespaces: _t._StrOnlyNSMap | None = None
-    ) -> Iterator[Self]: ...
+    ) -> Iterator[Self]:
+        """Iterates over all matching subelements, by tag name or path.
+
+        See Also
+        --------
+        - [API Documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree._Element.iterfind)
+        """
     def xpath(
         self,
         _path: _t._TextArg,
@@ -209,13 +632,26 @@ class _Element:
         extensions: _t._XPathExtFuncArg | None = None,
         smart_strings: bool = True,
         **_variables: _t._XPathVarArg,
-    ) -> _t._XPathObject: ...
+    ) -> _t._XPathObject:
+        """Evaluate an xpath expression using the element as context node.
+
+        See Also
+        --------
+        - [API Documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree._Element.xpath)
+        """
     def cssselect(
         self,
         expr: str,
         *,
         translator: _CSSTransArg = "xml",
-    ) -> list[Self]: ...
+    ) -> list[Self]:
+        """Run the CSS expression on this element and its children,
+        returning a list of the results.
+
+        See Also
+        --------
+        - [API Documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree._Entity.cssselect)
+        """
     @deprecated("Since v2.0 (2008); use list(element) or iterate over element")
     def getchildren(self) -> list[Self]: ...
     # Should have been overloaded for accuracy, but we can turn a blind eye
