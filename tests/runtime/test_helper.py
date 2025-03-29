@@ -4,6 +4,7 @@ import re
 import sys
 from contextlib import nullcontext
 from itertools import product
+from pathlib import PurePath
 from types import NoneType
 from typing import Any
 
@@ -87,17 +88,21 @@ class TestQName:
                 with raise_attr_not_writable:
                     delattr(qn, attr)
 
+    # Path and Exception can stringify to anything, and QName
+    # construction really succeed with them. Other offending
+    # types handled in regex below
     @settings(max_examples=300)
     @given(
-        thing=_st.all_instances_except_of_type(str, bytes, QName, _Element, NoneType)
+        thing=_st.all_instances_except_of_type(
+            str, bytes, QName, _Element, NoneType, PurePath, Exception
+        )
     )
     @example(thing=bytearray(b"foo"))
     def test_single_arg_bad(self, thing: Any) -> None:
         if len(str(thing)) == 0 or str(thing).endswith("}"):
             raise_cm = pytest.raises(ValueError, match=r"Empty tag name")
         elif re.match(r"^[A-Za-z_]([\w\.-])*$", str(thing)):
-            # QName creation really succeed with quite a few unexpected
-            # types like UUID, timezones, literal constants etc
+            # UUID, timezones, literal constants etc
             raise_cm = nullcontext()
         else:
             raise_cm = pytest.raises(
