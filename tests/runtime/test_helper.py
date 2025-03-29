@@ -1,15 +1,13 @@
 from __future__ import annotations
 
-import re
 import sys
 from contextlib import nullcontext
 from itertools import product
-from pathlib import PurePath
 from types import NoneType
 from typing import Any
 
 import pytest
-from hypothesis import example, given, settings
+from hypothesis import given, settings
 from lxml.etree import Element, QName, _Element
 
 from ._testutils import strategy as _st
@@ -88,35 +86,18 @@ class TestQName:
                 with raise_attr_not_writable:
                     delattr(qn, attr)
 
-    # Path and Exception can stringify to anything, and QName
-    # construction really succeed with them. Other offending
-    # types handled in regex below
-    @settings(max_examples=300)
-    @given(
-        thing=_st.all_instances_except_of_type(
-            str, bytes, QName, _Element, NoneType, PurePath, Exception
-        )
-    )
-    @example(thing=bytearray(b"foo"))
-    def test_single_arg_bad(self, thing: Any) -> None:
-        if len(str(thing)) == 0 or str(thing).endswith("}"):
-            raise_cm = pytest.raises(ValueError, match=r"Empty tag name")
-        elif re.match(r"^[A-Za-z_]([\w\.-])*$", str(thing)):
-            # UUID, timezones, literal constants etc
-            raise_cm = nullcontext()
-        else:
-            raise_cm = pytest.raises(
-                ValueError,
-                match=r"(Invalid tag name|All strings must be XML compatible)",
-            )
-        with raise_cm:
-            _ = QName(thing)
-        with raise_cm:
-            _ = QName(None, thing)
+    # Negative test for single arg is removed altogether, as there are too many
+    # exceptions. Absurdities like QName(Path("Á")) or QName(TypeError("foo"))
+    # works fine, not to mention True, False, Ellipsis etc which stringify to
+    # valid XML tag names.
 
     # Proves following rules:
     # - 2nd arg can't be QName or _Element if 1st non-empty
-    # - Only 2nd arg can be bytearray when 1st is non-empty
+    # - 2nd arg can be bytearray when 1st is non-empty
+    #
+    # As a side note, supplying bytearray as 1st arg works when 2nd arg is
+    # non-empty, but it is almost absolutely certain users don't want to have
+    # qualified names like {bytearray(b"foo")}bar
     @pytest.mark.parametrize(
         ("arg1", "arg2"),
         product(arg1_choice, arg2_choice),
