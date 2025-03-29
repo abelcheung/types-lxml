@@ -173,7 +173,6 @@ def xml_name(
     )
 
 
-# FIXME: For future test, _e.QName("", "foo") raise exception
 def xml_name_arg() -> st.SearchStrategy[str | bytes | bytearray | _e.QName]:
     s = xml_name()
     qn = s.map(_e.QName)
