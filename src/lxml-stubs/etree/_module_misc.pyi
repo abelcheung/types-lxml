@@ -4,7 +4,7 @@
 
 import sys
 from abc import ABCMeta, abstractmethod
-from typing import Any, Final, Literal, overload
+from typing import Final, overload
 
 from .._types import (
     _ElementOrTree,
@@ -19,11 +19,6 @@ if sys.version_info >= (3, 11):
     from typing import LiteralString
 else:
     from typing_extensions import LiteralString
-
-if sys.version_info >= (3, 13):
-    from warnings import deprecated
-else:
-    from typing_extensions import deprecated
 
 DEBUG: int
 ICONV_COMPILED_VERSION: Final[tuple[int, int]]
@@ -100,13 +95,6 @@ class QName:
     --------
     - [API Documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree.QName)
     """
-    @overload  # empty string = exception
-    @deprecated("Use None instead, empty string would cause exception")
-    def __init__(
-        self,
-        text_or_uri_or_element: Literal[""],
-        tag: Any = None,
-    ) -> None: ...  # Switching to Never causes testsuite problem
     @overload  # first arg non-empty
     def __init__(
         self,
