@@ -39,7 +39,19 @@ raise_unexpected_kwarg = pytest.raises(
 # TypeError("takes \d+ positional arguments? but \d+ was/were given")
 # TypeError("takes (at most|exactly) \d+ positional argument \(\d+ given\)")
 raise_wrong_pos_arg_count = pytest.raises(
-    TypeError, match=r"takes (at most |exactly )?\d+ positional argument"
+    TypeError, match=r"takes (at least |at most |exactly )?\d+ positional argument"
+)
+
+raise_too_few_pos_arg = pytest.raises(
+    TypeError, match=r"takes at least \d+ positional argument"
+)
+
+raise_too_many_pos_arg = pytest.raises(
+    TypeError, match=r"takes at most \d+ positional argument"
+)
+
+raise_inexact_pos_arg = pytest.raises(
+    TypeError, match=r"takes (exactly )?\d+ positional argument"
 )
 
 # TypeError("Argument '...' has incorrect type")
