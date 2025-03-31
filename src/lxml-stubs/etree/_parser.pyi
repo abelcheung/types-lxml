@@ -56,24 +56,13 @@ class ParseError(LxmlSyntaxError):
 class XMLSyntaxError(ParseError): ...
 class ParserError(LxmlError): ...
 
-# Custom parser target support is abandoned,
-# see comment in XMLParser
-class _ParserTargetMixin(Generic[_T]):
-    @property
-    def target(self) -> ParserTarget[_T] | None: ...
-    def close(self) -> _T: ...
-
 class _PullParserMixin:
     # The iterated items from pull parser events may return anything.
     # Even etree.TreeBuilder, which produce element nodes by default, allows
     # overriding factory functions via arguments to generate anything.
     def read_events(self) -> Iterator[tuple[str, _Element | Any]]: ...
 
-# It is unfortunate that, in the end, it is decided to forfeit
-# integration of custom target annotation (the 'target' parameter).
-# So far all attempts would cause usage of annotation unnecessarily
-# complex and convoluted, yet still can't get everything right.
-class XMLParser(_ParserTargetMixin[Any], Generic[_ET_co]):
+class XMLParser(Generic[_ET_co]):
     """The XML Parser. Parsers can be supplied as additional argument
     to various parse functions of the lxml API.
 
@@ -153,6 +142,17 @@ class XMLParser(_ParserTargetMixin[Any], Generic[_ET_co]):
         --------
         - [API Documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree._FeedParser.feed)
         """
+    @property
+    def target(self) -> None: ...
+    def close(self) -> _ET_co:
+        """Terminates feeding data to this parser. This tells the parser to
+        process any remaining data in the feed buffer, and then returns the root
+        Element of the tree that was parsed.
+
+        See Also
+        --------
+        - [API Documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree.XMLParser.close)
+        """
 
 class XMLPullParser(_PullParserMixin, XMLParser[_ET_co]):
     def __init__(
@@ -207,7 +207,7 @@ class ETCompatXMLParser(XMLParser[_ET_co]):
 def set_default_parser(parser: _DefEtreeParsers[Any] | None) -> None: ...
 def get_default_parser() -> _DefEtreeParsers[Any]: ...
 
-class HTMLParser(_ParserTargetMixin[Any], Generic[_ET_co]):
+class HTMLParser(Generic[_ET_co]):
     """This parser allows reading HTML into a normal XML tree. By default, it
     can read broken (non well-formed) HTML, depending on the capabilities of
     libxml2.
@@ -291,6 +291,17 @@ class HTMLParser(_ParserTargetMixin[Any], Generic[_ET_co]):
         See Also
         --------
         - [API Documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree._FeedParser.feed)
+        """
+    @property
+    def target(self) -> None: ...
+    def close(self) -> _ET_co:
+        """Terminates feeding data to this parser. This tells the parser to
+        process any remaining data in the feed buffer, and then returns the root
+        Element of the tree that was parsed.
+
+        See Also
+        --------
+        - [API Documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree.HTMLParser.close)
         """
 
 class HTMLPullParser(_PullParserMixin, HTMLParser[_ET_co]):
