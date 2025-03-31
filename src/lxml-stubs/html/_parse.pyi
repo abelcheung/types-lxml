@@ -4,7 +4,6 @@ from typing import Any, Iterable, Literal, MutableMapping, overload
 from .. import etree
 from .._types import (
     Unused,
-    _DefEtreeParsers,
     _FileReadSource,
 )
 from ._element import HtmlElement
@@ -13,8 +12,6 @@ if sys.version_info >= (3, 12):
     from collections.abc import Buffer
 else:
     from typing_extensions import Buffer
-
-_HtmlElemParser = _DefEtreeParsers[HtmlElement]
 
 #
 # Parser
@@ -83,7 +80,7 @@ xhtml_parser: XHTMLParser
 # fromstring(text, parser, *, base_url)
 def document_fromstring(
     html: str | Buffer,
-    parser: _HtmlElemParser | None = None,
+    parser: HTMLParser | XHTMLParser | None = None,
     ensure_head_body: bool = False,
     *,
     base_url: str | None = None,
@@ -93,29 +90,29 @@ def fragments_fromstring(  # type: ignore[overload-overlap]  # pyright: ignore[r
     html: str | bytes,
     no_leading_text: Literal[True],
     base_url: str | None = None,
-    parser: _HtmlElemParser | None = None,
+    parser: HTMLParser | XHTMLParser | None = None,
 ) -> list[HtmlElement]: ...
 @overload
 def fragments_fromstring(
     html: str | bytes,
     no_leading_text: bool = False,
     base_url: str | None = None,
-    parser: _HtmlElemParser | None = None,
+    parser: HTMLParser | XHTMLParser | None = None,
 ) -> list[str | HtmlElement]: ...
 def fragment_fromstring(
     html: str | bytes,
     create_parent: bool | str = False,
     base_url: str | None = None,
-    parser: _HtmlElemParser | None = None,
+    parser: HTMLParser | XHTMLParser | None = None,
 ) -> HtmlElement: ...
 def fromstring(
     html: str | bytes,
     base_url: str | None = None,
-    parser: _HtmlElemParser | None = None,
+    parser: HTMLParser | XHTMLParser | None = None,
 ) -> HtmlElement: ...
 def parse(
     filename_or_url: _FileReadSource,
-    parser: _HtmlElemParser | None = None,
+    parser: HTMLParser | XHTMLParser | None = None,
     base_url: str | None = None,
 ) -> etree._ElementTree[HtmlElement]: ...
 
