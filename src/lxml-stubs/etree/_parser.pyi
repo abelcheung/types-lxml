@@ -56,58 +56,6 @@ class ParseError(LxmlSyntaxError):
 class XMLSyntaxError(ParseError): ...
 class ParserError(LxmlError): ...
 
-# Includes most stuff in _BaseParser
-class _FeedParser(Generic[_ET_co]):
-    @property
-    def error_log(self) -> _ListErrorLog: ...
-    @property
-    def resolvers(self) -> _ResolverRegistry: ...
-    @property
-    def version(self) -> LiteralString: ...
-    def copy(self) -> Self: ...
-    makeelement: _ElementFactory[_ET_co]
-    # In terms of annotation, what setting class_lookup does
-    # is change _ET_co (type specialization), which can't be
-    # done automatically with current python typing system.
-    # One has to change it manually during type checking.
-    # Very few people would do, if there were any at all.
-    def set_element_class_lookup(
-        self, lookup: ElementClassLookup | None = None
-    ) -> None:
-        """
-        Notes
-        -----
-        When calling this method, it is advised to also change typing
-        specialization of concerned parser too, because current python
-        typing system can't change it automatically.
-
-        Example
-        -------
-        Following code demonstrates how to create ``lxml.html.HTMLParser``
-        manually from ``lxml.etree.HTMLParser``::
-
-        ```python
-        parser = etree.HTMLParser()
-        reveal_type(parser)  # HTMLParser[_Element]
-        if TYPE_CHECKING:
-            parser = cast('etree.HTMLParser[HtmlElement]', parser)
-        else:
-            parser.set_element_class_lookup(
-                html.HtmlElementClassLookup())
-        result = etree.fromstring(data, parser=parser)
-        reveal_type(result)  # HtmlElement
-        ```
-        """
-        ...
-
-    @deprecated("Removed since 5.0; renamed to set_element_class_lookup()")
-    def setElementClassLookup(
-        self, lookup: ElementClassLookup | None = None
-    ) -> None: ...
-    @property
-    def feed_error_log(self) -> _ListErrorLog: ...
-    def feed(self, data: _AnyStr) -> None: ...
-
 # Custom parser target support is abandoned,
 # see comment in XMLParser
 class _ParserTargetMixin(Generic[_T]):
@@ -125,7 +73,14 @@ class _PullParserMixin:
 # integration of custom target annotation (the 'target' parameter).
 # So far all attempts would cause usage of annotation unnecessarily
 # complex and convoluted, yet still can't get everything right.
-class XMLParser(_ParserTargetMixin[Any], _FeedParser[_ET_co]):
+class XMLParser(_ParserTargetMixin[Any], Generic[_ET_co]):
+    """The XML Parser. Parsers can be supplied as additional argument
+    to various parse functions of the lxml API.
+
+    See Also
+    --------
+    - [API Documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree.XMLParser)
+    """
     def __init__(
         self,
         *,
@@ -147,6 +102,57 @@ class XMLParser(_ParserTargetMixin[Any], _FeedParser[_ET_co]):
         target: ParserTarget[Any] | None = None,
         compact: bool = True,
     ) -> None: ...
+    @property
+    def error_log(self) -> _ListErrorLog:
+        """The error log of the last parser run."""
+    @property
+    def resolvers(self) -> _ResolverRegistry:
+        """The custom resolver registry of this parser."""
+    @property
+    def version(self) -> LiteralString:
+        """The version of the underlying XML parser."""
+    def copy(self) -> Self:
+        """Create a new parser with the same configuration."""
+    makeelement: _ElementFactory[_ET_co]
+    """Creates a new element associated with this parser."""
+    def set_element_class_lookup(
+        self, lookup: ElementClassLookup | None = None
+    ) -> None:
+        """Set a lookup scheme for element classes generated from this parser.
+
+        Annotation
+        ----------
+        When calling this method, user would want to
+        [change typing specialization](https://github.com/abelcheung/types-lxml/wiki/Using-specialised-class-directly#no-automatic-change-of-subscript)
+        of concerned parser manually, because current python
+        typing system can't change it automatically.
+        Above link contains example on how to do it.
+
+        See Also
+        --------
+        - [API Documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree._FeedParser.set_element_class_lookup)
+        """
+    @deprecated("Removed since 5.0; renamed to set_element_class_lookup()")
+    def setElementClassLookup(
+        self, lookup: ElementClassLookup | None = None
+    ) -> None: ...
+    @property
+    def feed_error_log(self) -> _ListErrorLog:
+        """The error log of the last (or current) run of the feed parser.
+
+        See Also
+        --------
+        - [API Documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree._FeedParser.feed_error_log)
+        """
+    def feed(self, data: _AnyStr) -> None:
+        """Feeds data to the parser. The argument should be an 8-bit string
+        buffer containing encoded data, although Unicode is supported as long
+        as both string types are not mixed.
+
+        See Also
+        --------
+        - [API Documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree._FeedParser.feed)
+        """
 
 class XMLPullParser(_PullParserMixin, XMLParser[_ET_co]):
     def __init__(
@@ -201,7 +207,15 @@ class ETCompatXMLParser(XMLParser[_ET_co]):
 def set_default_parser(parser: _DefEtreeParsers[Any] | None) -> None: ...
 def get_default_parser() -> _DefEtreeParsers[Any]: ...
 
-class HTMLParser(_ParserTargetMixin[Any], _FeedParser[_ET_co]):
+class HTMLParser(_ParserTargetMixin[Any], Generic[_ET_co]):
+    """This parser allows reading HTML into a normal XML tree. By default, it
+    can read broken (non well-formed) HTML, depending on the capabilities of
+    libxml2.
+
+    See Also
+    --------
+    - [API Documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree.HTMLParser)
+    """
     @overload
     def __init__(
         self,
@@ -227,6 +241,57 @@ class HTMLParser(_ParserTargetMixin[Any], _FeedParser[_ET_co]):
         strip_cdata: bool,
         **__kw: Any,
     ) -> None: ...
+    @property
+    def error_log(self) -> _ListErrorLog:
+        """The error log of the last parser run."""
+    @property
+    def resolvers(self) -> _ResolverRegistry:
+        """The custom resolver registry of this parser."""
+    @property
+    def version(self) -> LiteralString:
+        """The version of the underlying XML parser."""
+    def copy(self) -> Self:
+        """Create a new parser with the same configuration."""
+    makeelement: _ElementFactory[_ET_co]
+    """Creates a new element associated with this parser."""
+    def set_element_class_lookup(
+        self, lookup: ElementClassLookup | None = None
+    ) -> None:
+        """Set a lookup scheme for element classes generated from this parser.
+
+        Annotation
+        ----------
+        When calling this method, user would want to
+        [change typing specialization](https://github.com/abelcheung/types-lxml/wiki/Using-specialised-class-directly#no-automatic-change-of-subscript)
+        of concerned parser manually, because current python
+        typing system can't change it automatically.
+        Above link contains example on how to do it.
+
+        See Also
+        --------
+        - [API Documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree._FeedParser.set_element_class_lookup)
+        """
+    @deprecated("Removed since 5.0; renamed to set_element_class_lookup()")
+    def setElementClassLookup(
+        self, lookup: ElementClassLookup | None = None
+    ) -> None: ...
+    @property
+    def feed_error_log(self) -> _ListErrorLog:
+        """The error log of the last (or current) run of the feed parser.
+
+        See Also
+        --------
+        - [API Documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree._FeedParser.feed_error_log)
+        """
+    def feed(self, data: _AnyStr) -> None:
+        """Feeds data to the parser. The argument should be an 8-bit string
+        buffer containing encoded data, although Unicode is supported as long
+        as both string types are not mixed.
+
+        See Also
+        --------
+        - [API Documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree._FeedParser.feed)
+        """
 
 class HTMLPullParser(_PullParserMixin, HTMLParser[_ET_co]):
     @overload

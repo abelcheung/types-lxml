@@ -95,7 +95,7 @@ from ._parser import (
     XMLParser as XMLParser,
     XMLPullParser as XMLPullParser,
     XMLSyntaxError as XMLSyntaxError,
-    _FeedParser as _FeedParser,
+    # _FeedParser as _FeedParser,  # removed
     get_default_parser as get_default_parser,
     set_default_parser as set_default_parser,
 )
