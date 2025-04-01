@@ -24,7 +24,7 @@ from .._types import (
     _TextArg,
 )
 from ._element import _Element
-from ._module_misc import LxmlError
+from ._module_misc import CDATA, LxmlError
 
 if sys.version_info >= (3, 11):
     from typing import Never
@@ -184,7 +184,7 @@ class _IncrementalFileWriter:
     def write_doctype(self, doctype: _TextArg | None) -> None: ...
     def write(
         self,
-        *args: str | bytes | _Element,  # no bytearray
+        *args: str | bytes | CDATA | _Element,  # no bytearray
         with_tail: bool = True,
         pretty_print: bool = False,
         method: _OutputMethodArg | None = None,
@@ -211,7 +211,7 @@ class _AsyncIncrementalFileWriter:
     async def write_doctype(self, doctype: _TextArg | None) -> None: ...
     async def write(
         self,
-        *args: str | bytes | _Element | None,  # no bytearray
+        *args: str | bytes | CDATA | _Element | None,  # no bytearray
         with_tail: bool = True,
         pretty_print: bool = False,
         method: _OutputMethodArg | None = None,
