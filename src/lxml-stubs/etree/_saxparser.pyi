@@ -1,8 +1,8 @@
 from abc import abstractmethod
-from typing import Callable, Mapping, Protocol, TypeVar
+from typing import Callable, Protocol, TypeVar
 
 from .._types import _DefEtreeParsers, _ElementFactory
-from ._element import _Attrib, _Comment, _Element, _ProcessingInstruction
+from ._element import _Comment, _Element, _ProcessingInstruction
 from ._parser import XMLSyntaxError
 
 _T_co = TypeVar("_T_co", covariant=True)
@@ -63,11 +63,13 @@ class ParserTarget(Protocol[_T_co]):
     def comment(self, text: str) -> None: ...
     def data(self, data: str) -> None: ...
     def end(self, tag: str) -> None: ...
+    # TODO Think about how to handle 3-argument form later,
+    # presumably for SaxParserTarget.
     def start(
         self,
         tag: str,
-        attrib: _Attrib | Mapping[str, str] | None,
-        nsmap: Mapping[str, str] | None = None,
+        attrib: dict[str, str],
+        /,  # avoid pyright incompatible parameter name error
     ) -> None: ...
     # Methods below are undocumented. Lxml has described
     # 'start-ns' and 'end-ns' events however.
