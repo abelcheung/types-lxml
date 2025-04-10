@@ -118,8 +118,9 @@ class XMLParser(Generic[_ET_co]):
     --------
     - [API Documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree.XMLParser)
     """
-    def __init__(
-        self,
+    @overload
+    def __new__(
+        cls,
         *,
         encoding: _TextArg | None = None,
         attribute_defaults: bool = False,
@@ -136,9 +137,44 @@ class XMLParser(Generic[_ET_co]):
         remove_pis: bool = False,
         strip_cdata: bool = True,
         collect_ids: bool = True,
-        target: ParserTarget[Any] | None = None,
         compact: bool = True,
-    ) -> None: ...
+    ) -> XMLParser[_ET_co]: ...
+    @overload
+    def __new__(
+        cls,
+        *,
+        encoding: _TextArg | None = None,
+        attribute_defaults: bool = False,
+        dtd_validation: bool = False,
+        load_dtd: bool = False,
+        no_network: bool = True,
+        ns_clean: bool = False,
+        recover: bool = False,
+        schema: XMLSchema | None = None,
+        huge_tree: bool = False,
+        remove_blank_text: bool = False,
+        resolve_entities: bool | Literal["internal"] = "internal",
+        remove_comments: bool = False,
+        remove_pis: bool = False,
+        strip_cdata: bool = True,
+        collect_ids: bool = True,
+        target: ParserTarget[_T],
+        compact: bool = True,
+    ) -> CustomTargetParser[_T]:
+        """The XML Parser. Parsers can be supplied as additional argument
+        to various parse functions of the lxml API.
+
+        Annotation
+        ----------
+        This overload handles the case where a custom parser target is provided
+        via `target` parameter. Visit [wiki
+        page](https://github.com/abelcheung/types-lxml/wiki/Custom-target-parser)
+        on how to create such custom parser target.
+
+        See Also
+        --------
+        - [API Documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree.XMLParser)
+        """
     @property
     def error_log(self) -> _ListErrorLog:
         """The error log of the last parser run."""
