@@ -62,6 +62,51 @@ class _PullParserMixin:
     # overriding factory functions via arguments to generate anything.
     def read_events(self) -> Iterator[tuple[str, _Element | Any]]: ...
 
+# TODO Write wiki page and add link to this docstring
+class CustomTargetParser(Generic[_T]):
+    """This is a stub-only class (docstring pending)"""
+    @property
+    def error_log(self) -> _ListErrorLog:
+        """The error log of the last parser run."""
+    @property
+    def resolvers(self) -> _ResolverRegistry:
+        """The custom resolver registry of this parser."""
+    @property
+    def version(self) -> LiteralString:
+        """The version of the underlying XML parser."""
+    def copy(self) -> Self:
+        """Create a new parser with the same configuration."""
+    makeelement: _ElementFactory[_Element]
+    """Creates a new element associated with this parser."""
+    @property
+    def feed_error_log(self) -> _ListErrorLog:
+        """The error log of the last (or current) run of the feed parser.
+
+        See Also
+        --------
+        - [API Documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree.XMLParser.feed_error_log)
+        """
+    def feed(self, data: _AnyStr) -> None:
+        """Feeds data to the parser. The argument should be an 8-bit string
+        buffer containing encoded data, although Unicode is supported as long
+        as both string types are not mixed.
+
+        See Also
+        --------
+        - [API Documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree.XMLParser.feed)
+        """
+    @property
+    def target(self) -> ParserTarget[_T]: ...
+    def close(self) -> _T:
+        """Terminates feeding data to this parser. This tells the parser to
+        process any remaining data in the feed buffer, and then returns the root
+        Element of the tree that was parsed.
+
+        See Also
+        --------
+        - [API Documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree.XMLParser.close)
+        """
+
 # subscripted element typevar needs to be casted manually for type
 # checking, and use .set_element_class_lookup() to set the element class
 # lookup for runtime.
