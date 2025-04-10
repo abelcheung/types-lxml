@@ -62,6 +62,9 @@ class _PullParserMixin:
     # overriding factory functions via arguments to generate anything.
     def read_events(self) -> Iterator[tuple[str, _Element | Any]]: ...
 
+# subscripted element typevar needs to be casted manually for type
+# checking, and use .set_element_class_lookup() to set the element class
+# lookup for runtime.
 class XMLParser(Generic[_ET_co]):
     """The XML Parser. Parsers can be supplied as additional argument
     to various parse functions of the lxml API.
@@ -119,7 +122,7 @@ class XMLParser(Generic[_ET_co]):
 
         See Also
         --------
-        - [API Documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree._FeedParser.set_element_class_lookup)
+        - [API Documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree.XMLParser.set_element_class_lookup)
         """
     @deprecated("Removed since 5.0; renamed to set_element_class_lookup()")
     def setElementClassLookup(
@@ -131,7 +134,7 @@ class XMLParser(Generic[_ET_co]):
 
         See Also
         --------
-        - [API Documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree._FeedParser.feed_error_log)
+        - [API Documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree.XMLParser.feed_error_log)
         """
     def feed(self, data: _AnyStr) -> None:
         """Feeds data to the parser. The argument should be an 8-bit string
@@ -140,7 +143,7 @@ class XMLParser(Generic[_ET_co]):
 
         See Also
         --------
-        - [API Documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree._FeedParser.feed)
+        - [API Documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree.XMLParser.feed)
         """
     @property
     def target(self) -> None: ...
@@ -207,6 +210,9 @@ class ETCompatXMLParser(XMLParser[_ET_co]):
 def set_default_parser(parser: _DefEtreeParsers[Any] | None) -> None: ...
 def get_default_parser() -> _DefEtreeParsers[Any]: ...
 
+# subscripted element typevar needs to be casted manually for type
+# checking, and use set_element_class_lookup() to set the element class
+# lookup for runtime.
 class HTMLParser(Generic[_ET_co]):
     """This parser allows reading HTML into a normal XML tree. By default, it
     can read broken (non well-formed) HTML, depending on the capabilities of
@@ -269,7 +275,7 @@ class HTMLParser(Generic[_ET_co]):
 
         See Also
         --------
-        - [API Documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree._FeedParser.set_element_class_lookup)
+        - [API Documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree.HTMLParser.set_element_class_lookup)
         """
     @deprecated("Removed since 5.0; renamed to set_element_class_lookup()")
     def setElementClassLookup(
@@ -281,7 +287,7 @@ class HTMLParser(Generic[_ET_co]):
 
         See Also
         --------
-        - [API Documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree._FeedParser.feed_error_log)
+        - [API Documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree.HTMLParser.feed_error_log)
         """
     def feed(self, data: _AnyStr) -> None:
         """Feeds data to the parser. The argument should be an 8-bit string
@@ -290,7 +296,7 @@ class HTMLParser(Generic[_ET_co]):
 
         See Also
         --------
-        - [API Documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree._FeedParser.feed)
+        - [API Documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree.HTMLParser.feed)
         """
     @property
     def target(self) -> None: ...
