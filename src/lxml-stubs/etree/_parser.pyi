@@ -27,9 +27,9 @@ from ._xmlerror import _ListErrorLog
 from ._xmlschema import XMLSchema
 
 if sys.version_info >= (3, 11):
-    from typing import LiteralString, Self
+    from typing import LiteralString, Never, Self
 else:
-    from typing_extensions import LiteralString, Self
+    from typing_extensions import LiteralString, Never, Self
 
 if sys.version_info >= (3, 13):
     from warnings import deprecated
@@ -140,7 +140,7 @@ class XMLParser(Generic[_ET_co]):
         compact: bool = True,
     ) -> XMLParser[_ET_co]: ...
     @overload
-    def __new__(
+    def __new__(  # type: ignore[misc]
         cls,
         *,
         encoding: _TextArg | None = None,
@@ -239,13 +239,21 @@ class XMLParser(Generic[_ET_co]):
         """
 
 class XMLPullParser(_PullParserMixin, XMLParser[_ET_co]):
+    """XML parser that collects parse events in an iterator.
+
+    See Also
+    --------
+    - [API Documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree.XMLPullParser)
+    """
     def __init__(
         self,
         events: Iterable[_SaxEventNames] | None = None,
         *,
         tag: _TagSelector | Iterable[_TagSelector] | None = None,
         base_url: str | bytes | None = None,
-        # All arguments from XMLParser
+        # All arguments from XMLParser, except 'target' which is
+        # removed. Leave custom target parser creation to XMLParser
+        # and HTMLParser.
         encoding: _TextArg | None = None,
         attribute_defaults: bool = False,
         dtd_validation: bool = False,
@@ -261,13 +269,13 @@ class XMLPullParser(_PullParserMixin, XMLParser[_ET_co]):
         remove_pis: bool = False,
         strip_cdata: bool = True,
         collect_ids: bool = True,
-        target: ParserTarget[Any] | None = None,
         compact: bool = True,
     ) -> None: ...
 
 # This is XMLParser with some preset keyword arguments, and without
 # 'collect_ids' argument. Removing those keywords here, otherwise
-# ETCompatXMLParser has no reason to exist.
+# ETCompatXMLParser has no reason to exist. 'target' argument
+# is likewise removed.
 class ETCompatXMLParser(XMLParser[_ET_co]):
     def __init__(
         self,
@@ -284,7 +292,6 @@ class ETCompatXMLParser(XMLParser[_ET_co]):
         remove_blank_text: bool = False,
         resolve_entities: bool | Literal["internal"] = True,
         strip_cdata: bool = True,
-        target: ParserTarget[Any] | None = None,
         compact: bool = True,
     ) -> None: ...
 
@@ -304,30 +311,74 @@ class HTMLParser(Generic[_ET_co]):
     - [API Documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree.HTMLParser)
     """
     @overload
-    def __init__(
-        self,
+    def __new__(
+        cls,
         *,
         encoding: _TextArg | None = None,
         remove_blank_text: bool = False,
         remove_comments: bool = False,
         remove_pis: bool = False,
         no_network: bool = True,
-        target: ParserTarget[Any] | None = None,
         schema: XMLSchema | None = None,
         recover: bool = True,
         compact: bool = True,
         default_doctype: bool = True,
         collect_ids: bool = True,
         huge_tree: bool = False,
-    ) -> None: ...
+    ) -> HTMLParser[_ET_co]: ...
+    @overload
+    def __new__(  # type: ignore[misc]
+        cls,
+        *,
+        encoding: _TextArg | None = None,
+        remove_blank_text: bool = False,
+        remove_comments: bool = False,
+        remove_pis: bool = False,
+        no_network: bool = True,
+        target: ParserTarget[_T],
+        schema: XMLSchema | None = None,
+        recover: bool = True,
+        compact: bool = True,
+        default_doctype: bool = True,
+        collect_ids: bool = True,
+        huge_tree: bool = False,
+    ) -> CustomTargetParser[_T]:
+        """This parser allows reading HTML into a normal XML tree. By default, it
+        can read broken (non well-formed) HTML, depending on the capabilities of
+        libxml2.
+
+        Annotation
+        ----------
+        This overload handles the case where a custom parser target is provided
+        via `target` parameter. Visit [wiki
+        page](https://github.com/abelcheung/types-lxml/wiki/Custom-target-parser)
+        on how to create such custom parser target.
+
+        See Also
+        --------
+        - [API Documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree.HTMLParser)
+        """
     @overload
     @deprecated("strip_cdata argument was always useless, and dropped after 5.2.2")
-    def __init__(
-        self,
+    def __new__(
+        cls,
         *,
         strip_cdata: bool,
         **__kw: Any,
-    ) -> None: ...
+    ) -> Never:
+        """This parser allows reading HTML into a normal XML tree. By default, it
+        can read broken (non well-formed) HTML, depending on the capabilities of
+        libxml2.
+
+        Annotation
+        ----------
+        This overload guards against usage of 'strip_cdata' parameter, which is
+        found to be completely noop, and ultimate removed since v5.2.2.
+
+        See Also
+        --------
+        - [API Documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree.HTMLParser)
+        """
     @property
     def error_log(self) -> _ListErrorLog:
         """The error log of the last parser run."""
@@ -392,6 +443,12 @@ class HTMLParser(Generic[_ET_co]):
         """
 
 class HTMLPullParser(_PullParserMixin, HTMLParser[_ET_co]):
+    """HTML parser that collects parse events in an iterator.
+
+    See Also
+    --------
+    - [API Documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree.HTMLPullParser)
+    """
     @overload
     def __init__(
         self,
@@ -399,13 +456,14 @@ class HTMLPullParser(_PullParserMixin, HTMLParser[_ET_co]):
         *,
         tag: _TagSelector | Iterable[_TagSelector] | None = None,
         base_url: str | bytes | None = None,
-        # All arguments from HTMLParser
+        # All arguments from XMLParser, except 'target' which is
+        # removed. Leave custom target parser creation to XMLParser
+        # and HTMLParser.
         encoding: _TextArg | None = None,
         remove_blank_text: bool = False,
         remove_comments: bool = False,
         remove_pis: bool = False,
         no_network: bool = True,
-        target: ParserTarget[Any] | None = None,
         schema: XMLSchema | None = None,
         recover: bool = True,
         compact: bool = True,
@@ -420,4 +478,16 @@ class HTMLPullParser(_PullParserMixin, HTMLParser[_ET_co]):
         *,
         strip_cdata: bool,
         **__kw: Any,
-    ) -> None: ...
+    ) -> Never:
+        """HTML parser that collects parse events in an iterator.
+
+        Annotation
+        ----------
+        This overload guards against usage of 'strip_cdata' parameter, which is
+        found to be completely noop, and ultimate removed since v5.2.2.
+
+        See Also
+        --------
+        - [API Documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree.HTMLPullParser)
+        """
+
