@@ -24,6 +24,7 @@ from .._types import (
 )
 from ._element import _Element
 from ._module_misc import LxmlError
+from ._saxparser import ParserTarget
 
 if sys.version_info >= (3, 11):
     from typing import Never
@@ -39,7 +40,7 @@ class SerialisationError(LxmlError): ...
 
 # Interface quite similar to a ParserTarget, but canonicalized output
 # is written during various stages before calling .close()
-class C14NWriterTarget:
+class C14NWriterTarget(ParserTarget[None]):
     @overload
     @deprecated("Should specify a collection or iterator of tags")
     def __init__(self, *args: Any, qname_aware_tags: str, **kw: Any) -> Never: ...
