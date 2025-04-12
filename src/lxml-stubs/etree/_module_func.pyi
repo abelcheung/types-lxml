@@ -1,5 +1,13 @@
 import sys
-from typing import Any, Collection, Iterable, Literal, final, overload
+from typing import (
+    Any,
+    Collection,
+    Iterable,
+    Literal,
+    TypeVar,
+    final,
+    overload,
+)
 
 if sys.version_info >= (3, 11):
     from typing import Never
@@ -27,7 +35,9 @@ from .._types import (
     _TextArg,
 )
 from ._element import _Element, _ElementTree
-from ._parser import HTMLParser, XMLParser
+from ._parser import CustomTargetParser, HTMLParser, XMLParser
+
+_T = TypeVar("_T")
 
 @overload
 def HTML(
@@ -47,8 +57,29 @@ def HTML(
     Please [refer to wiki](https://github.com/abelcheung/types-lxml/wiki/Using-specialised-class-directly#no-automatic-change-of-subscript)
     on how to create such annotation-only specialized parsers.
 
-    Returning result of custom parser target is unsupported in stubs.
-    Please use `typing.cast()` directly in such case.
+    See Also
+    --------
+    [API Documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree.HTML)
+    """
+
+@overload
+def HTML(
+    text: str | Buffer,
+    parser: CustomTargetParser[_T],
+    *,
+    base_url: str | bytes | None = None,
+) -> _T:
+    """Parses an HTML document or fragment from a string constant.
+    Returns the root node (or the result returned by a parser target).
+
+    Annotation
+    ----------
+    When specially constructed parser with custom parser target is supplied,
+    `HTML()` returns that value dictated in parser target definition, that is
+    the parser target `.close()` method return value.
+
+    Please [refer to wiki](https://github.com/abelcheung/types-lxml/wiki/Custom-target-parser)
+    on how to create fully annotated parser with custom target object.
 
     See Also
     --------
@@ -64,6 +95,10 @@ def HTML(
 ) -> _Element:
     """Parses an HTML document or fragment from a string constant.
     Returns the root node (or the result returned by a parser target).
+
+    Annotation
+    ----------
+    This overload handles usage of `HTML()` with default parser.
 
     See Also
     --------
@@ -88,8 +123,29 @@ def XML(
     Please [refer to wiki](https://github.com/abelcheung/types-lxml/wiki/Using-specialised-class-directly#no-automatic-change-of-subscript)
     on how to create such annotation-only specialized parsers.
 
-    Returning result of custom parser target is unsupported in stubs.
-    Please use `typing.cast()` directly in such case.
+    See Also
+    --------
+    [API Documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree.XML)
+    """
+
+@overload
+def XML(
+    text: str | Buffer,
+    parser: CustomTargetParser[_T],
+    *,
+    base_url: str | bytes | None = None,
+) -> _T:
+    """Parses an XML document or fragment from a string constant.
+    Returns the root node (or the result returned by a parser target).
+
+    Annotation
+    ----------
+    When specially constructed parser with custom parser target is supplied,
+    `XML()` returns that value dictated in parser target definition, that is
+    the parser target `.close()` method return value.
+
+    Please [refer to wiki](https://github.com/abelcheung/types-lxml/wiki/Custom-target-parser)
+    on how to create fully annotated parser with custom target object.
 
     See Also
     --------
@@ -105,6 +161,10 @@ def XML(
 ) -> _Element:
     """Parses an XML document or fragment from a string constant.
     Returns the root node (or the result returned by a parser target).
+
+    Annotation
+    ----------
+    This overload handles usage of `XML()` with default parser.
 
     See Also
     --------
