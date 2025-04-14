@@ -273,7 +273,7 @@ def fromstringlist(
     [API Documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree.fromstringlist)
     """
 
-@overload
+@overload  # common parser
 def fromstringlist(
     strings: Iterable[str | bytes],
     parser: _DefEtreeParsers[_ET_co],
@@ -290,21 +290,44 @@ def fromstringlist(
     Please [refer to wiki](https://github.com/abelcheung/types-lxml/wiki/Using-specialised-class-directly#no-automatic-change-of-subscript)
     on how to create such annotation-only specialized parsers.
 
-    Returning result of custom parser target is unsupported in stubs.
-    Please use `typing.cast()` directly in such case.
+    See Also
+    --------
+    [API Documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree.fromstringlist)
+    """
+
+@overload  # custom target parser
+def fromstringlist(
+    strings: Iterable[str | bytes],
+    parser: CustomTargetParser[_T],
+) -> _T:
+    """Parses an XML document from a sequence of strings.
+    Returns the root node (or the result returned by a parser target).
+
+    Annotation
+    ----------
+    When specially constructed parser with custom parser target is supplied,
+    `fromstringlist()` returns that value dictated in parser target definition,
+    that is the parser target `.close()` method return value.
+
+    Please [refer to wiki](https://github.com/abelcheung/types-lxml/wiki/Custom-target-parser)
+    on how to create fully annotated parser with custom target object.
 
     See Also
     --------
     [API Documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree.fromstringlist)
     """
 
-@overload
+@overload  # parser not supplied
 def fromstringlist(
     strings: Iterable[str | bytes],
     parser: None = None,
 ) -> _Element:
     """Parses an XML document from a sequence of strings.
     Returns the root node (or the result returned by a parser target).
+
+    Annotation
+    ----------
+    This overload handles usage of `fromstringlist()` with default parser.
 
     See Also
     --------
@@ -477,9 +500,6 @@ def adopt_external_document(
 
     Please [refer to wiki](https://github.com/abelcheung/types-lxml/wiki/Using-specialised-class-directly#no-automatic-change-of-subscript)
     on how to create such annotation-only specialized parsers.
-
-    Returning result of custom parser target is unsupported in stubs.
-    Please use `typing.cast()` directly in such case.
 
     See Also
     --------
