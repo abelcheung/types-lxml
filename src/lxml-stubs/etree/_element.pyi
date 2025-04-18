@@ -11,6 +11,12 @@ from typing import (
     overload,
 )
 
+from .. import _types as _t
+from ..cssselect import _CSSTransArg
+from ._module_misc import CDATA, DocInfo, QName
+from ._parser import CustomTargetParser
+from ._xslt import XSLTAccessControl, XSLTExtension, _Stylesheet_Param, _XSLTResultTree
+
 if sys.version_info >= (3, 11):
     from typing import Never, Self
 else:
@@ -20,11 +26,6 @@ if sys.version_info >= (3, 13):
     from warnings import deprecated
 else:
     from typing_extensions import deprecated
-
-from .. import _types as _t
-from ..cssselect import _CSSTransArg
-from ._module_misc import CDATA, DocInfo, QName
-from ._xslt import XSLTAccessControl, XSLTExtension, _Stylesheet_Param, _XSLTResultTree
 
 _T = TypeVar("_T")
 
@@ -661,6 +662,8 @@ class _Element:
         self, tag: _t._TagSelector | None = None, *tags: _t._TagSelector
     ) -> Iterator[Self]: ...
 
+_ET2_co = TypeVar("_ET2_co", bound=_Element, default=_Element, covariant=True)
+
 # ET class notation is specialized, indicating the type of element
 # it is holding (e.g. XML element, HTML element or Objectified
 # Element).
@@ -673,13 +676,63 @@ class _ElementTree(Generic[_t._ET_co]):
     def parser(self) -> _t._DefEtreeParsers[_t._ET_co] | None: ...
     @property
     def docinfo(self) -> DocInfo: ...
+    @overload  # common parser
     def parse(
         self,
         source: _t._FileReadSource,
-        parser: _t._DefEtreeParsers[_t._ET_co] | None = None,
+        parser: _t._DefEtreeParsers[_ET2_co],
         *,
-        base_url: _t._AnyStr | None = None,
-    ) -> None: ...
+        base_url: str | bytes | None = None,
+    ) -> _ET2_co:
+        """Updates self with the content of source and returns its root.
+
+        Annotation
+        ----------
+        This overload handles the case where a common parser is supplied.
+
+        See Also
+        --------
+        - [API Documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree._ElementTree.parse)
+        """
+    @overload  # custom target parser
+    def parse(
+        self,
+        source: _t._FileReadSource,
+        parser: CustomTargetParser[_ET2_co],
+        *,
+        base_url: str | bytes | None = None,
+    ) -> _ET2_co:
+        """Updates self with the content of source and returns its root.
+
+        Annotation
+        ----------
+        This overload handles the case where a custom target parser is supplied.
+        Note that target object must return an element, i.e. compatible with
+        `etree.TreeBuilder`.
+
+        See Also
+        --------
+        - [API Documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree._ElementTree.parse)
+        """
+    @overload  # parser not supplied
+    def parse(
+        self,
+        source: _t._FileReadSource,
+        parser: None = None,
+        *,
+        base_url: str | bytes | None = None,
+    ) -> _Element:
+        """Updates self with the content of source and returns its root.
+
+        Annotation
+        ----------
+        This overload handles the case where no parser is supplied (thus
+        default parser is utilised).
+
+        See Also
+        --------
+        - [API Documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree._ElementTree.parse)
+        """
     # Changes root node; in terms of typing, this means changing
     # specialization of ElementTree. This is not expressible in
     # current typing system.
