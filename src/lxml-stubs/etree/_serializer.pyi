@@ -12,7 +12,6 @@ from typing import (
 )
 
 from .._types import (
-    SupportsLaxItems,
     _AttrMapping,
     _AttrVal,
     _ElementOrTree,
@@ -25,6 +24,7 @@ from .._types import (
 )
 from ._element import _Element
 from ._module_misc import CDATA, LxmlError
+from ._saxparser import ParserTarget
 
 if sys.version_info >= (3, 11):
     from typing import Never
@@ -40,7 +40,7 @@ class SerialisationError(LxmlError): ...
 
 # Usage identical to custom target parser, but canonicalized output
 # is written during various stages before calling .close()
-class C14NWriterTarget:
+class C14NWriterTarget(ParserTarget[None]):
     """Canonicalization writer target for the XMLParser. Serialises parse events
     to XML C14N 2.0.
 
@@ -164,7 +164,7 @@ class C14NWriterTarget:
         """
     def data(self, data: str) -> None: ...
     def start_ns(self, prefix: str, uri: str) -> None: ...
-    def start(self, tag: str, attrs: SupportsLaxItems[str, str] | None) -> None: ...
+    def start(self, tag: str, attrs: dict[str, str]) -> None: ...
     def end(self, tag: str) -> None: ...
     def comment(self, text: str) -> None: ...
     def pi(self, target: str, data: str | None) -> None: ...

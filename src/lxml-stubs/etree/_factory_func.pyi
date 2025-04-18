@@ -1,4 +1,4 @@
-from typing import overload
+from typing import TypeVar, overload
 
 from .._types import (
     _ET,
@@ -15,6 +15,9 @@ from .._types import (
 from ..html import HtmlElement
 from ..objectify import ObjectifiedElement, StringElement
 from ._element import _Comment, _ElementTree, _Entity, _ProcessingInstruction
+from ._parser import CustomTargetParser
+
+_T = TypeVar("_T")
 
 def Comment(text: _TextArg | None = None) -> _Comment: ...
 def ProcessingInstruction(
@@ -69,18 +72,73 @@ def SubElement(
     **_extra: _AttrVal,
 ) -> _ET: ...
 @overload  # from element, parser ignored
-def ElementTree(element: _ET) -> _ElementTree[_ET]: ...
-@overload  # from file source, custom parser
+def ElementTree(element: _ET) -> _ElementTree[_ET]:
+    """ElementTree wrapper class for Element objects.
+
+    Annotation
+    ----------
+    This overload is used when creating an ElementTree directly from a root
+    Element object. Other arguments are ignored in this case.
+
+    See Also
+    --------
+    - [API Documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree.ElementTree)
+    """
+
+@overload  # from file source, standard parser
 def ElementTree(
     element: None = None,
     *,
     file: _FileReadSource,
     parser: _DefEtreeParsers[_ET_co],
-) -> _ElementTree[_ET_co]: ...
-@overload  # from file source, default parser
+) -> _ElementTree[_ET_co]:
+    """ElementTree wrapper class for Element objects.
+
+    Annotation
+    ----------
+    This overload is used when creating an ElementTree from a file source with
+    user-supplied standard parser.
+
+    See Also
+    --------
+    - [API Documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree.ElementTree)
+    """
+
+@overload  # from file source, custom target parser
+def ElementTree(
+    element: None = None,
+    *,
+    file: _FileReadSource,
+    parser: CustomTargetParser[_T],
+) -> _T:
+    """ElementTree wrapper class for Element objects.
+
+    Annotation
+    ----------
+    This overload is used when creating an ElementTree from a file source with
+    custom target parser. Returns the result dictated by parser target object
+    instead of ElementTree.
+
+    See Also
+    --------
+    - [API Documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree.ElementTree)
+    """
+
+@overload  # from file source, no parser supplied
 def ElementTree(
     element: None = None,
     *,
     file: _FileReadSource,
     parser: None = None,
-) -> _ElementTree: ...
+) -> _ElementTree:
+    """ElementTree wrapper class for Element objects.
+
+    Annotation
+    ----------
+    This overload is used when creating an ElementTree from a file source
+    without a parser supplied. The default parser is used in this case.
+
+    See Also
+    --------
+    - [API Documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree.ElementTree)
+    """

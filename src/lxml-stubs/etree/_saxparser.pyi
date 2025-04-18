@@ -1,8 +1,8 @@
 from abc import abstractmethod
-from typing import Callable, Mapping, Protocol, TypeVar
+from typing import Callable, Protocol, TypeVar
 
 from .._types import _DefEtreeParsers, _ElementFactory
-from ._element import _Attrib, _Comment, _Element, _ProcessingInstruction
+from ._element import _Comment, _Element, _ProcessingInstruction
 from ._parser import XMLSyntaxError
 
 _T_co = TypeVar("_T_co", covariant=True)
@@ -12,50 +12,17 @@ class XMLSyntaxAssertionError(XMLSyntaxError, AssertionError): ...
 class ParserTarget(Protocol[_T_co]):
     """This is a stub-only class representing parser target interface.
 
-    - Because almost all methods are optional, ParserTarget should be
-      explicitly inherited in code for type checking. See TreeBuilder
-      and the snippet example below.
-    - Some IDEs can do method signature autocompletion. See notes below.
-
-    Example
-    -------
-    ```python
-    from lxml import etree
-    if not TYPE_CHECKING:
-        etree.ParserTarget = object
-
-    class MyParserTarget(etree.ParserTarget):
-        def __init__(self) -> None: ...
-        def start(self,  # 3 argument form is not autocompleted
-            tag: str, attrib: _Attrib, nsmap: Mapping[str, str] = ...,
-        ) -> None: ...
-            # Do something
-        def close(self) -> str:
-            return "something"
-
-    parser = etree.HTMLParser()  # type is HTMLParser[_Element]
-    result = parser.close()  # _Element
-
-    t1 = MyParserTarget()
-    parser = etree.HTMLParser(target=t1)  # mypy -> HTMLParser[Any]
-                                          # pyright -> HTMLParser[Unknown]
-
-    t2 = cast("etree.ParserTarget[str]", MyParserTarget())
-    parser = etree.HTMLParser(target=t2)  # HTMLParser[str]
-    result = parser.close()  # str
-    ```
-
-    Notes
-    -----
-    - Only `close()` is mandatory. In extreme case, a vanilla class instance
-      with noop `close()` is a valid null parser target that does nothing.
-    - `start()` can take either 2 or 3 extra arguments.
-    - Some methods are undocumented. They are included in stub nonetheless.
+    Annotation
+    ----------
+    All custom target objects should inherit from this class if they
+    want to be fully annotated. Please [check out wiki
+    page](https://github.com/abelcheung/types-lxml/wiki/Custom-target-parser)
+    on how to do this and how to use the custom target parser.
 
     See Also
     --------
-    - `_PythonSaxParserTarget()` in `src/lxml/parsertarget.pxi`
     - [Target parser official document](https://lxml.de/parsing.html#the-target-parser-interface)
+    - [`_PythonSaxParserTarget()`](https://github.com/lxml/lxml/blob/820db896be83f72f1cb653981362c682c8fc0d1f/src/lxml/parsertarget.pxi#L20)
     """
 
     @abstractmethod
@@ -63,11 +30,13 @@ class ParserTarget(Protocol[_T_co]):
     def comment(self, text: str) -> None: ...
     def data(self, data: str) -> None: ...
     def end(self, tag: str) -> None: ...
+    # TODO Think about how to handle 3-argument form later,
+    # presumably for SaxParserTarget.
     def start(
         self,
         tag: str,
-        attrib: _Attrib | Mapping[str, str] | None,
-        nsmap: Mapping[str, str] | None = None,
+        attrib: dict[str, str],
+        /,  # avoid pyright incompatible parameter name error
     ) -> None: ...
     # Methods below are undocumented. Lxml has described
     # 'start-ns' and 'end-ns' events however.

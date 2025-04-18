@@ -55,11 +55,11 @@ index 1ccf715..24f914b 100644
 -    ) -> list[_ET]: ...
 +    ) -> list[_Element]: ...
 diff --git a/src/lxml-stubs/etree/_element.pyi b/src/lxml-stubs/etree/_element.pyi
-index cc1f37a..9e4a85d 100644
+index 771b76c..90b0f8f 100644
 --- a/src/lxml-stubs/etree/_element.pyi
 +++ b/src/lxml-stubs/etree/_element.pyi
-@@ -12,9 +12,9 @@ from typing import (
- )
+@@ -18,9 +18,9 @@ from ._parser import CustomTargetParser
+ from ._xslt import XSLTAccessControl, XSLTExtension, _Stylesheet_Param, _XSLTResultTree
  
  if sys.version_info >= (3, 11):
 -    from typing import Never, Self
@@ -70,7 +70,7 @@ index cc1f37a..9e4a85d 100644
  
  if sys.version_info >= (3, 13):
      from warnings import deprecated
-@@ -168,11 +168,11 @@ class _Element:
+@@ -169,11 +169,11 @@ class _Element:
      #
      def __delitem__(self, __k: int | slice) -> None: ...
      @overload
@@ -85,7 +85,7 @@ index cc1f37a..9e4a85d 100644
      # An element itself can be treated as container of other elements. When used
      # like elem[:] = new_elem, only subelements within new_elem will be
      # inserted, but not new_elem itself. If there is none, the whole slice would
-@@ -182,13 +182,13 @@ class _Element:
+@@ -183,13 +183,13 @@ class _Element:
      # doesn't apply to magic methods, at least for Pylance. Thus we create
      # additional overload for extend() but not here.
      @overload
@@ -102,7 +102,7 @@ index cc1f37a..9e4a85d 100644
      def set(self, key: _t._AttrName, value: _t._AttrVal) -> None:
          """Sets an element attribute.
  
-@@ -196,7 +196,7 @@ class _Element:
+@@ -197,7 +197,7 @@ class _Element:
          --------
          - [API Documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree._Element.set)
          """
@@ -111,7 +111,7 @@ index cc1f37a..9e4a85d 100644
          """Adds a subelement to the end of this element.
  
          See Also
-@@ -218,7 +218,7 @@ class _Element:
+@@ -219,7 +219,7 @@ class _Element:
          - [API Documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree._Element.extend)
          """
      @overload
@@ -120,7 +120,7 @@ index cc1f37a..9e4a85d 100644
          """Extends the current children by the elements in the iterable.
  
          See Also
-@@ -232,14 +232,14 @@ class _Element:
+@@ -233,14 +233,14 @@ class _Element:
          --------
          - [API Documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree._Element.clear)
          """
@@ -137,7 +137,7 @@ index cc1f37a..9e4a85d 100644
          """Removes a matching subelement.
  
          See Also
-@@ -248,7 +248,7 @@ class _Element:
+@@ -249,7 +249,7 @@ class _Element:
          """
      def index(
          self,
@@ -146,7 +146,7 @@ index cc1f37a..9e4a85d 100644
          start: int | None = None,
          stop: int | None = None,
      ) -> int:
-@@ -306,49 +306,49 @@ class _Element:
+@@ -307,49 +307,49 @@ class _Element:
      #
      # extra Element / ET methods
      #
@@ -203,7 +203,7 @@ index cc1f37a..9e4a85d 100644
          """Return an ElementTree for the root node of the document that
          contains this element.
  
-@@ -359,7 +359,7 @@ class _Element:
+@@ -360,7 +360,7 @@ class _Element:
      @overload
      def itersiblings(
          self, *tags: _t._TagSelector, preceding: bool = False
@@ -212,7 +212,7 @@ index cc1f37a..9e4a85d 100644
          """Iterate over the following or preceding siblings of this element.
  
          Annotation
-@@ -378,7 +378,7 @@ class _Element:
+@@ -379,7 +379,7 @@ class _Element:
          tag: _t._TagSelector | Iterable[_t._TagSelector] | None = None,
          *,
          preceding: bool = False,
@@ -221,7 +221,7 @@ index cc1f37a..9e4a85d 100644
          """Iterate over the following or preceding siblings of this element.
  
          Annotation
-@@ -393,7 +393,7 @@ class _Element:
+@@ -394,7 +394,7 @@ class _Element:
          - [Possible tag values in `iter()`](https://lxml.de/apidoc/lxml.etree.html#lxml.etree._Element.iter)
          """
      @overload
@@ -230,7 +230,7 @@ index cc1f37a..9e4a85d 100644
          """Iterate over the ancestors of this element (from parent to parent).
  
          Annotation
-@@ -409,7 +409,7 @@ class _Element:
+@@ -410,7 +410,7 @@ class _Element:
      @overload
      def iterancestors(
          self, tag: _t._TagSelector | Iterable[_t._TagSelector] | None = None
@@ -239,7 +239,7 @@ index cc1f37a..9e4a85d 100644
          """Iterate over the ancestors of this element (from parent to parent).
  
          Annotation
-@@ -424,7 +424,7 @@ class _Element:
+@@ -425,7 +425,7 @@ class _Element:
          - [Possible tag values in `iter()`](https://lxml.de/apidoc/lxml.etree.html#lxml.etree._Element.iter)
          """
      @overload
@@ -248,7 +248,7 @@ index cc1f37a..9e4a85d 100644
          """Iterate over the descendants of this element in document order.
  
          Annotation
-@@ -440,7 +440,7 @@ class _Element:
+@@ -441,7 +441,7 @@ class _Element:
      @overload
      def iterdescendants(
          self, tag: _t._TagSelector | Iterable[_t._TagSelector] | None = None
@@ -257,7 +257,7 @@ index cc1f37a..9e4a85d 100644
          """Iterate over the descendants of this element in document order.
  
          Annotation
-@@ -457,7 +457,7 @@ class _Element:
+@@ -458,7 +458,7 @@ class _Element:
      @overload
      def iterchildren(
          self, *tags: _t._TagSelector, reversed: bool = False
@@ -266,7 +266,7 @@ index cc1f37a..9e4a85d 100644
          """Iterate over the children of this element.
  
          Annotation
-@@ -476,7 +476,7 @@ class _Element:
+@@ -477,7 +477,7 @@ class _Element:
          tag: _t._TagSelector | Iterable[_t._TagSelector] | None = None,
          *,
          reversed: bool = False,
@@ -275,7 +275,7 @@ index cc1f37a..9e4a85d 100644
          """Iterate over the children of this element.
  
          Annotation
-@@ -491,7 +491,7 @@ class _Element:
+@@ -492,7 +492,7 @@ class _Element:
          - [Possible tag values in `iter()`](https://lxml.de/apidoc/lxml.etree.html#lxml.etree._Element.iter)
          """
      @overload
@@ -284,7 +284,7 @@ index cc1f37a..9e4a85d 100644
          """Iterate over all elements in the subtree in document order (depth
          first pre-order), starting with this element.
  
-@@ -507,7 +507,7 @@ class _Element:
+@@ -508,7 +508,7 @@ class _Element:
      @overload
      def iter(
          self, tag: _t._TagSelector | Iterable[_t._TagSelector] | None = None
@@ -293,7 +293,7 @@ index cc1f37a..9e4a85d 100644
          """Iterate over all elements in the subtree in document order (depth
          first pre-order), starting with this element.
  
-@@ -555,7 +555,7 @@ class _Element:
+@@ -556,7 +556,7 @@ class _Element:
          - [API Documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree._Element.itertext)
          - [Possible tag values in `iter()`](https://lxml.de/apidoc/lxml.etree.html#lxml.etree._Element.iter)
          """
@@ -302,7 +302,7 @@ index cc1f37a..9e4a85d 100644
      """Creates a new element associated with the same document.
  
      See Also
-@@ -564,7 +564,7 @@ class _Element:
+@@ -565,7 +565,7 @@ class _Element:
      """
      def find(
          self, path: _t._ElemPathArg, namespaces: _t._StrOnlyNSMap | None = None
@@ -311,7 +311,7 @@ index cc1f37a..9e4a85d 100644
          """Creates a new element associated with the same document.
  
          See Also
-@@ -607,7 +607,7 @@ class _Element:
+@@ -608,7 +608,7 @@ class _Element:
          """
      def findall(
          self, path: _t._ElemPathArg, namespaces: _t._StrOnlyNSMap | None = None
@@ -320,7 +320,7 @@ index cc1f37a..9e4a85d 100644
          """Finds all matching subelements, by tag name or path.
  
          See Also
-@@ -616,7 +616,7 @@ class _Element:
+@@ -617,7 +617,7 @@ class _Element:
          """
      def iterfind(
          self, path: _t._ElemPathArg, namespaces: _t._StrOnlyNSMap | None = None
@@ -329,7 +329,7 @@ index cc1f37a..9e4a85d 100644
          """Iterates over all matching subelements, by tag name or path.
  
          See Also
-@@ -644,7 +644,7 @@ class _Element:
+@@ -645,7 +645,7 @@ class _Element:
          expr: str,
          *,
          translator: _CSSTransArg = "xml",
@@ -338,7 +338,7 @@ index cc1f37a..9e4a85d 100644
          """Run the CSS expression on this element and its children,
          returning a list of the results.
  
-@@ -653,13 +653,13 @@ class _Element:
+@@ -654,13 +654,13 @@ class _Element:
          - [API Documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree._Entity.cssselect)
          """
      @deprecated("Since v2.0 (2008); use list(element) or iterate over element")
@@ -352,10 +352,10 @@ index cc1f37a..9e4a85d 100644
 -    ) -> Iterator[Self]: ...
 +    ) -> Iterator[_Element]: ...
  
- # ET class notation is specialized, indicating the type of element
- # it is holding (e.g. XML element, HTML element or Objectified
+ _ET2_co = TypeVar("_ET2_co", bound=_Element, default=_Element, covariant=True)
+ 
 diff --git a/src/lxml-stubs/etree/_factory_func.pyi b/src/lxml-stubs/etree/_factory_func.pyi
-index c76d234..a30daff 100644
+index 3525354..243383f 100644
 --- a/src/lxml-stubs/etree/_factory_func.pyi
 +++ b/src/lxml-stubs/etree/_factory_func.pyi
 @@ -14,7 +14,7 @@ from .._types import (
@@ -364,10 +364,10 @@ index c76d234..a30daff 100644
  from ..objectify import ObjectifiedElement, StringElement
 -from ._element import _Comment, _ElementTree, _Entity, _ProcessingInstruction
 +from ._element import _Comment, _Element, _ElementTree, _Entity, _ProcessingInstruction
+ from ._parser import CustomTargetParser
  
- def Comment(text: _TextArg | None = None) -> _Comment: ...
- def ProcessingInstruction(
-@@ -61,13 +61,13 @@ def SubElement(
+ _T = TypeVar("_T")
+@@ -64,13 +64,13 @@ def SubElement(
  ) -> HtmlElement: ...
  @overload
  def SubElement(
@@ -381,8 +381,8 @@ index c76d234..a30daff 100644
 -) -> _ET: ...
 +) -> _Element: ...
  @overload  # from element, parser ignored
- def ElementTree(element: _ET) -> _ElementTree[_ET]: ...
- @overload  # from file source, custom parser
+ def ElementTree(element: _ET) -> _ElementTree[_ET]:
+     """ElementTree wrapper class for Element objects.
 diff --git a/src/lxml-stubs/html/_element.pyi b/src/lxml-stubs/html/_element.pyi
 index 52f07a6..8cda2b3 100644
 --- a/src/lxml-stubs/html/_element.pyi
