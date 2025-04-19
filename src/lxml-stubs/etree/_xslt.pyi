@@ -15,17 +15,12 @@ from typing import (
     overload,
 )
 
-if sys.version_info >= (3, 13):
-    from warnings import deprecated
-else:
-    from typing_extensions import deprecated
-
 from .._types import (
     SupportsLaxItems,
-    _AnyStr,
     _DefEtreeParsers,
     _ElementOrTree,
     _FileWriteSource,
+    _TextArg,
 )
 from ._classlookup import PIBase
 from ._element import _Element, _ElementTree
@@ -33,6 +28,11 @@ from ._module_misc import LxmlError
 from ._serializer import SerialisationError
 from ._xmlerror import _ListErrorLog
 from ._xpath import XPath
+
+if sys.version_info >= (3, 13):
+    from warnings import deprecated
+else:
+    from typing_extensions import deprecated
 
 _Stylesheet_Param = _XSLTQuotedStringParam | XPath | str  # noqa: F821
 
@@ -162,7 +162,7 @@ class XSLT:
     @property
     def error_log(self) -> _ListErrorLog: ...
     @staticmethod
-    def strparam(strval: _AnyStr) -> _XSLTQuotedStringParam: ...
+    def strparam(strval: _TextArg) -> _XSLTQuotedStringParam: ...
     @staticmethod
     def set_global_max_depth(max_depth: int) -> None: ...
     @deprecated("Removed since 5.0; call instance directly instead")

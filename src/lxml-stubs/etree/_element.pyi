@@ -940,7 +940,7 @@ class _ElementTree(Generic[_t._ET_co]):
         exclusive: bool = False,
         with_comments: bool = True,
         compression: int | None = 0,
-        inclusive_ns_prefixes: Iterable[_t._AnyStr] | None = None,
+        inclusive_ns_prefixes: Iterable[str | bytes] | None = None,
     ) -> None: ...
 
 # Behaves like MutableMapping but deviates a lot in details

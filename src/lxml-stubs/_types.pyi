@@ -26,12 +26,7 @@ Unused = Any
 # This type alias should only be used for input arguments, while one would
 # expect plain str in return type for most part of API (except a few places),
 # as far as python3 annotation is concerned.
-# _AnyStr should not to be confused with typing.AnyStr which is TypeVar.
-# TODO slowly migrating to _TextArg
-_AnyStr = str | bytes
 _TextArg = str | bytes | bytearray
-"""Generic text arguments or properties supported
-throughout lxml API."""
 
 # String argument also support QName in various places;
 # also include aliases semantically indicating the purpose
