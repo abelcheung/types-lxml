@@ -10,7 +10,6 @@ from typing import (
 )
 
 from .._types import (
-    _AnyStr,
     _DefEtreeParsers,
     _ElementFactory,
     _ET_co,
@@ -86,7 +85,7 @@ class CustomTargetParser(Generic[_T]):
         --------
         - [API Documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree.XMLParser.feed_error_log)
         """
-    def feed(self, data: _AnyStr) -> None:
+    def feed(self, data: str | bytes) -> None:
         """Feeds data to the parser. The argument should be an 8-bit string
         buffer containing encoded data, although Unicode is supported as long
         as both string types are not mixed.
@@ -217,7 +216,7 @@ class XMLParser(Generic[_ET_co]):
         --------
         - [API Documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree.XMLParser.feed_error_log)
         """
-    def feed(self, data: _AnyStr) -> None:
+    def feed(self, data: str | bytes) -> None:
         """Feeds data to the parser. The argument should be an 8-bit string
         buffer containing encoded data, although Unicode is supported as long
         as both string types are not mixed.
@@ -421,7 +420,7 @@ class HTMLParser(Generic[_ET_co]):
         --------
         - [API Documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree.HTMLParser.feed_error_log)
         """
-    def feed(self, data: _AnyStr) -> None:
+    def feed(self, data: str | bytes) -> None:
         """Feeds data to the parser. The argument should be an 8-bit string
         buffer containing encoded data, although Unicode is supported as long
         as both string types are not mixed.
