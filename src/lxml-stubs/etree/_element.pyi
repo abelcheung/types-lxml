@@ -916,9 +916,8 @@ class _ElementTree(Generic[_t._ET_co]):
         self,
         _xslt: _t._ElementOrTree,
         /,
-        extensions: (
-            _t.SupportsLaxItems[tuple[_t._AnyStr, _t._AnyStr], XSLTExtension] | None
-        ) = None,
+        extensions: _t.SupportsLaxItems[tuple[str | bytes, str | bytes], XSLTExtension]
+        | None = None,
         access_control: XSLTAccessControl | None = None,
         *,  # all keywords are passed to XSLT.__call__
         profile_run: bool = False,

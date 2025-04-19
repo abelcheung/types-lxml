@@ -147,9 +147,8 @@ class XSLT:
     def __init__(
         self,
         xslt_input: _ElementOrTree,
-        extensions: (
-            SupportsLaxItems[tuple[_AnyStr, _AnyStr], XSLTExtension] | None
-        ) = None,
+        extensions: SupportsLaxItems[tuple[str | bytes, str | bytes], XSLTExtension]
+        | None = None,
         regexp: bool = True,
         access_control: XSLTAccessControl | None = None,
     ) -> None: ...
