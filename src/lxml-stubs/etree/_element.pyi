@@ -748,47 +748,7 @@ class _ElementTree(Generic[_t._ET_co]):
     #     - method is 'c14n2', and
     #     - no compression
     #
-    @overload  # deprecated usage of docstring param
-    @deprecated('Since v3.8.0; use "doctype" parameter instead')
-    def write(
-        self,
-        *args: Any,
-        docstring: str,
-        **kw: Any,
-    ) -> None: ...
-    @overload  # warn if inclusive_ns_prefixes is not collection
-    @deprecated(
-        "'inclusive_ns_prefixes' should be collection, otherwise "
-        "will either search for wrong NS prefix or raise exception"
-    )
-    def write(
-        self,
-        *args: Any,
-        inclusive_ns_prefixes: _t._AnyStr,
-        **kw: Any,
-    ) -> None: ...
-    @overload  # method=c14n
-    def write(
-        self,
-        file: _t._FileWriteSource,
-        *,
-        method: Literal["c14n"],
-        exclusive: bool = False,
-        with_comments: bool = True,
-        compression: int | None = 0,
-        inclusive_ns_prefixes: Iterable[_t._AnyStr] | None = None,
-    ) -> None: ...
-    @overload  # method=c14n2
-    def write(
-        self,
-        file: _t._FileWriteSource,
-        *,
-        method: Literal["c14n2"],
-        with_comments: bool = True,
-        compression: int | None = 0,
-        strip_text: bool = False,
-    ) -> None: ...
-    @overload  # other write methods
+    @overload  # generic write methods
     def write(
         self,
         file: _t._FileWriteSource,
@@ -801,7 +761,112 @@ class _ElementTree(Generic[_t._ET_co]):
         standalone: bool | None = None,
         doctype: str | None = None,
         compression: int | None = 0,
-    ) -> None: ...
+    ) -> None:
+        """Write the tree to a filename, file or file-like object.
+
+        Annotation
+        ----------
+        This overload handles the most generic usage of method,
+        where the `method` argument is `"xml"` (default value),
+        `"html"` or `"text"`.
+
+        See Also
+        --------
+        - [API Documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree._ElementTree.write)
+        """
+    @overload  # method=c14n2
+    def write(
+        self,
+        file: _t._FileWriteSource,
+        *,
+        method: Literal["c14n2"],
+        with_comments: bool = True,
+        compression: int | None = 0,
+        strip_text: bool = False,
+    ) -> None:
+        """Write the tree to a filename, file or file-like object.
+
+        Annotation
+        ----------
+        This overload handles the case where `method` is `"c14n2"`
+        (Canonical XML version 2).
+
+        See Also
+        --------
+        - [API Documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree._ElementTree.write)
+        """
+    @overload  # guard against plain str inclusive_ns_prefixes
+    @deprecated(
+        "'inclusive_ns_prefixes' should be an iterable even when "
+        "just a single namespace prefix is included"
+    )
+    def write(
+        self,
+        file: _t._FileWriteSource,
+        *,
+        method: Literal["c14n"],
+        exclusive: bool = False,
+        with_comments: bool = True,
+        compression: int | None = 0,
+        inclusive_ns_prefixes: str | bytes,
+    ) -> None:
+        """Write the tree to a filename, file or file-like object.
+
+        Annotation
+        ----------
+        This overload guards against using a plain string in
+        `inclusive_ns_prefixes` argument which is only used in
+        `method="c14n"` (Canonical XML version 1).
+
+        If it is specified as a single string, it will be split
+        as individual letter and each treated as a namespace
+        prefix.
+
+        See Also
+        --------
+        - [API Documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree._ElementTree.write)
+        """
+    @overload  # method=c14n
+    def write(
+        self,
+        file: _t._FileWriteSource,
+        *,
+        method: Literal["c14n"],
+        exclusive: bool = False,
+        with_comments: bool = True,
+        compression: int | None = 0,
+        inclusive_ns_prefixes: Iterable[str | bytes] | None = None,
+    ) -> None:
+        """Write the tree to a filename, file or file-like object.
+
+        Annotation
+        ----------
+        This overload handles the case where `method` is `"c14n"`
+        (Canonical XML version 1).
+
+        See Also
+        --------
+        - [API Documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree._ElementTree.write)
+        """
+    @overload  # deprecated usage of docstring param
+    @deprecated('Since v3.8.0; use "doctype" parameter instead')
+    def write(
+        self,
+        *args: Any,
+        docstring: str,
+        **kw: Any,
+    ) -> None:
+        """Write the tree to a filename, file or file-like object.
+
+        Annotation
+        ----------
+        This overload handles the deprecated usage of `docstring`
+        parameter, which is replaced by `doctype` parameter.
+
+        See Also
+        --------
+        - [API Documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree._ElementTree.write)
+        """
     def getpath(self: _ElementTree[_t._ET], element: _t._ET) -> str: ...
     def getelementpath(self: _ElementTree[_t._ET], element: _t._ET) -> str: ...
     @overload
