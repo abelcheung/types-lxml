@@ -7,7 +7,6 @@ from __future__ import annotations
 import abc
 import sys
 from typing import (
-    Any,
     ClassVar,
     Final,
     Literal,
@@ -185,20 +184,19 @@ class _XSLTProcessingInstruction(PIBase):
     def parseXSL(self, parser: _DefEtreeParsers | None = None) -> _ElementTree: ...
     def set(self, key: Literal["href"], value: str) -> None: ...  # type: ignore[override]  # pyright: ignore[reportIncompatibleMethodOverride]
 
-# Nodes are usually some opaque or read-only wrapper of _Element.
-# They provide access of varying attributes depending on node type,
-# which are not known to static typing. So use typing.Any here
-# to not prevent their access.
+# We replace argument types with close-enough public types. It is a disservice
+# to require users to include whole bunch of stub-only internal types just to
+# satisfy annotation requirement.
 class XSLTExtension(metaclass=abc.ABCMeta):
     """Base class of an XSLT extension element"""
 
     @abc.abstractmethod
     def execute(
         self,
-        context: Any,  # _XSLTContext,
-        self_node: Any,
-        input_node: Any,
-        output_parent: _Element | None,
+        context: object,  # _XSLTContext
+        self_node: _Element,  # _ReadOnlyElementProxy
+        input_node: _Element,  # _ReadOnlyElementProxy
+        output_parent: _Element | None,  # _AppendOnlyElementProxy
     ) -> None:
         """Execute this extension element
 
@@ -217,9 +215,9 @@ class XSLTExtension(metaclass=abc.ABCMeta):
     @overload
     def apply_templates(
         self,
-        context: Any,  # _XSLTContext,
-        node: Any,
-        output_parent: _Element,
+        context: object,  # _XSLTContext
+        node: _Element,  # _ReadOnlyElementProxy
+        output_parent: _Element,  # _AppendOnlyElementProxy
         *,
         elements_only: bool = False,
         remove_blank_text: bool = False,
@@ -227,8 +225,8 @@ class XSLTExtension(metaclass=abc.ABCMeta):
     @overload
     def apply_templates(  # type: ignore[overload-overlap]  # pyright: ignore[reportOverlappingOverload]
         self,
-        context: Any,
-        node: Any,
+        context: object,  # _XSLTContext
+        node: _Element,  # _ReadOnlyElementProxy
         output_parent: None = None,
         *,
         elements_only: Literal[True],
@@ -237,8 +235,8 @@ class XSLTExtension(metaclass=abc.ABCMeta):
     @overload
     def apply_templates(
         self,
-        context: Any,
-        node: Any,
+        context: object,  # _XSLTContext
+        node: _Element,  # _ReadOnlyElementProxy
         output_parent: None = None,
         *,
         elements_only: bool = False,
@@ -267,8 +265,8 @@ class XSLTExtension(metaclass=abc.ABCMeta):
     @overload
     def process_children(
         self,
-        context: Any,  # _XSLTContext,
-        output_parent: _Element,
+        context: object,  # _XSLTContext
+        output_parent: _Element,  # _AppendOnlyElementProxy
         *,
         elements_only: bool = False,
         remove_blank_text: bool = False,
@@ -276,7 +274,7 @@ class XSLTExtension(metaclass=abc.ABCMeta):
     @overload
     def process_children(  # type: ignore[overload-overlap]  # pyright: ignore[reportOverlappingOverload]
         self,
-        context: Any,
+        context: object,  # _XSLTContext
         output_parent: None = None,
         *,
         elements_only: Literal[True],
@@ -285,7 +283,7 @@ class XSLTExtension(metaclass=abc.ABCMeta):
     @overload
     def process_children(
         self,
-        context: Any,
+        context: object,  # _XSLTContext
         output_parent: None = None,
         *,
         elements_only: bool = False,
