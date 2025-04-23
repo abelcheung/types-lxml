@@ -489,4 +489,3 @@ class HTMLPullParser(_PullParserMixin, HTMLParser[_ET_co]):
         --------
         - [API Documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree.HTMLPullParser)
         """
-
