@@ -526,4 +526,3 @@ class TestIterText:
         )
         with raise_non_iterable:
             xml2_root.itertext(iterable_of(thing))
-
