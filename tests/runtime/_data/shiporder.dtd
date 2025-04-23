@@ -1,5 +1,4 @@
-<!ENTITY % ISOlat1 PUBLIC "-//W3C//ENTITIES Latin 1 for XHTML//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml-lat1.ent">
-%ISOlat1;
+<!ENTITY myentity "my entity">
 <!ELEMENT shiporder (orderperson,shipto,item+)>
 <!ATTLIST shiporder
     orderid CDATA #REQUIRED>
