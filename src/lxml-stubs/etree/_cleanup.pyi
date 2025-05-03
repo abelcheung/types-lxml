@@ -100,6 +100,7 @@ def strip_elements(
     tree_or_element: _ElementOrTree,
     tag_names: Iterable[_TagSelector],
     /,
+    *,
     with_tail: bool = True,
 ) -> None: ...
 @overload
