@@ -1,5 +1,5 @@
 import sys
-from typing import Any, ClassVar, Final, overload
+from typing import Any, ClassVar, Final, Literal, overload
 
 from . import etree as _e
 from ._types import _ElementOrTree, _FileReadSource
@@ -46,9 +46,9 @@ schematron_schema_valid_supported: bool
 def stylesheet_params(**__kw: str | _e.XPath | Any) -> dict[str, _Stylesheet_Param]: ...
 
 class Schematron(_e._Validator):
-    _domain: ClassVar[_e.ErrorDomains]
-    _level: ClassVar[_e.ErrorLevels]
-    _error_type: ClassVar[_e.ErrorTypes]
+    _domain: ClassVar[Literal[28]]
+    _level: ClassVar[Literal[2]]
+    _error_type: ClassVar[Literal[4000]]
     ASSERTS_ONLY: Final[_e.XPath]
     ASSERTS_AND_REPORTS: Final[_e.XPath]
     _extract_xsd: ClassVar[_e.XSLT]
