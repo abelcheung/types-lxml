@@ -18,7 +18,7 @@ _T = TypeVar("_T")
 # Dumping tree and class lookup
 #
 
-def enable_recursive_str(on: bool) -> None:
+def enable_recursive_str(on: bool = True) -> None:
     """Enable a recursively generated tree representation for
     `str(element)`, based on `objectify.dump(element)`"""
 
