@@ -96,23 +96,16 @@ def makeparser(
     """
 
 def parse(
-    source: _FileReadSource,
+    f: _FileReadSource,
     parser: _DefEtreeParsers[ObjectifiedElement] | None = None,
     *,
     base_url: str | bytes | None = None,
 ) -> etree._ElementTree[ObjectifiedElement]:
     """Parse a file or file-like object with objectify parser
 
-    Parameters
-    ----------
-    parser: `etree.XMLParser` or `etree.HTMLParser`, optional
-        Using different parser is allowed. If not specified, default
-        value is `None`, which means using `objectify` module's internal
-        default parser.
-    base_url: str or bytes, optional
-        Allows setting a URL for the document when parsing from a file-like
-        object. This is needed when looking up external entities
-        (DTD, XInclude, ...) with relative paths.
+    See Also
+    --------
+    - [API documentation](https://lxml.de/apidoc/lxml.objectify.html#lxml.objectify.parse)
     """
 
 def fromstring(
