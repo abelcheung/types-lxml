@@ -80,36 +80,36 @@ def cleanup_namespaces(
 # treat attributes like tags
 @overload
 def strip_attributes(
-    tree_or_elem: _ElementOrTree,
+    tree_or_element: _ElementOrTree,
     *attribute_names: _AttrNameKey,
 ) -> None: ...
 @overload
 def strip_attributes(
-    tree_or_elem: _ElementOrTree,
+    tree_or_element: _ElementOrTree,
     attribute_names: Iterable[_AttrNameKey],
     /,
 ) -> None: ...
 @overload
 def strip_elements(
-    tree_or_elem: _ElementOrTree,
+    tree_or_element: _ElementOrTree,
     *tag_names: _TagSelector,
     with_tail: bool = True,
 ) -> None: ...
 @overload
 def strip_elements(
-    tree_or_elem: _ElementOrTree,
+    tree_or_element: _ElementOrTree,
     tag_names: Iterable[_TagSelector],
     /,
     with_tail: bool = True,
 ) -> None: ...
 @overload
 def strip_tags(
-    tree_or_elem: _ElementOrTree,
+    tree_or_element: _ElementOrTree,
     *tag_names: _TagSelector,
 ) -> None: ...
 @overload
 def strip_tags(
-    tree_or_elem: _ElementOrTree,
+    tree_or_element: _ElementOrTree,
     tag_names: Iterable[_TagSelector],
     /,
 ) -> None: ...
