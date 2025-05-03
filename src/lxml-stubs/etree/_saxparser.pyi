@@ -7,7 +7,8 @@ from ._parser import XMLSyntaxError
 
 _T_co = TypeVar("_T_co", covariant=True)
 
-class XMLSyntaxAssertionError(XMLSyntaxError, AssertionError): ...
+class XMLSyntaxAssertionError(XMLSyntaxError, AssertionError):
+    def __init__(self, message: object) -> None: ...
 
 class ParserTarget(Protocol[_T_co]):
     """This is a stub-only class representing parser target interface.
