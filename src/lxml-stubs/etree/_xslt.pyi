@@ -223,6 +223,7 @@ class XSLTExtension(metaclass=abc.ABCMeta):
         self,
         context: object,  # _XSLTContext
         node: _Element,  # _ReadOnlyElementProxy
+        output_parent: None = None,
         *,
         elements_only: Literal[True],
         remove_blank_text: bool = False,
@@ -232,6 +233,7 @@ class XSLTExtension(metaclass=abc.ABCMeta):
         self,
         context: object,  # _XSLTContext
         node: _Element,  # _ReadOnlyElementProxy
+        output_parent: None = None,
         *,
         elements_only: bool = False,
         remove_blank_text: bool = False,
@@ -266,6 +268,7 @@ class XSLTExtension(metaclass=abc.ABCMeta):
     def process_children(  # type: ignore[overload-overlap]  # pyright: ignore[reportOverlappingOverload]
         self,
         context: object,  # _XSLTContext
+        output_parent: None = None,
         *,
         elements_only: Literal[True],
         remove_blank_text: bool = False,
@@ -274,6 +277,7 @@ class XSLTExtension(metaclass=abc.ABCMeta):
     def process_children(
         self,
         context: object,  # _XSLTContext
+        output_parent: None = None,
         *,
         elements_only: bool = False,
         remove_blank_text: bool = False,
