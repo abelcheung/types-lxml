@@ -8,6 +8,7 @@ from typing import (
     Literal,
     Mapping,
     TypeVar,
+    final,
     overload,
 )
 
@@ -944,6 +945,7 @@ class _ElementTree(Generic[_t._ET_co]):
     ) -> None: ...
 
 # Behaves like MutableMapping but deviates a lot in details
+@final
 class _Attrib:
     def __setitem__(self, __k: _t._AttrName, __v: _t._AttrVal) -> None: ...
     def __delitem__(self, __k: _t._AttrName) -> None: ...
