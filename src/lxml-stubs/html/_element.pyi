@@ -268,7 +268,6 @@ class HtmlElement(etree.ElementBase):
         *,
         with_tail: bool = True,
     ) -> Iterator[str]: ...
-    makeelement: type[Self]
     def find(
         self,
         path: _ElemPathArg,
