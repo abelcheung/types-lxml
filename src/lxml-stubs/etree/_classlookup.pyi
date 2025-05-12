@@ -3,14 +3,15 @@
 #
 
 from abc import ABCMeta, abstractmethod
-from typing import Mapping, final
+from typing import Literal, Mapping, final
 
 from .._types import (
     _AttrMapping,
     _AttrName,
     _AttrVal,
-    _ElemClsLookupArg,
+    _DefEtreeParsers,
     _NSMapArg,
+    _TagName,
     _TextArg,
 )
 from ._element import _Comment, _Element, _Entity, _ProcessingInstruction
@@ -19,42 +20,18 @@ from ._element import _Comment, _Element, _Entity, _ProcessingInstruction
 # Public element classes
 #
 class ElementBase(_Element):
-    """The public Element class
+    """The public Element class. All custom Element classes must inherit
+    from this one.
 
-    Original Docstring
-    ------------------
-    All custom Element classes must inherit from this one.
-    To create an Element, use the `Element()` factory.
-
-    BIG FAT WARNING: Subclasses *must not* override `__init__` or
-    `__new__` as it is absolutely undefined when these objects will be
-    created or destroyed.  All persistent state of Elements must be
-    stored in the underlying XML.  If you really need to initialize
-    the object after creation, you can implement an ``_init(self)``
-    method that will be called directly after object creation.
-
-    Subclasses of this class can be instantiated to create a new
-    Element.  By default, the tag name will be the class name and the
-    namespace will be empty.  You can modify this with the following
-    class attributes:
-
-    * TAG - the tag name, possibly containing a namespace in Clark
-      notation
-
-    * NAMESPACE - the default namespace URI, unless provided as part
-      of the TAG attribute.
-
-    * HTML - flag if the class is an HTML tag, as opposed to an XML
-      tag.  This only applies to un-namespaced tags and defaults to
-      false (i.e. XML).
-
-    * PARSER - the parser that provides the configuration for the
-      newly created document.  Providing an HTML parser here will
-      default to creating an HTML element.
-
-    In user code, the latter three are commonly inherited in class
-    hierarchies that implement a common namespace.
+    See Also
+    --------
+    - [API documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree.ElementBase)
     """
+
+    TAG: _TagName
+    NAMESPACE: _TextArg
+    HTML: bool
+    PARSER: _DefEtreeParsers[_Element]
 
     @final
     def __init__(
@@ -220,7 +197,7 @@ class CustomElementClassLookup(FallbackElementClassLookup, metaclass=ABCMeta):
     @abstractmethod
     def lookup(
         self,
-        type: _ElemClsLookupArg,
+        type: Literal["element", "comment", "PI", "entity"],
         doc: object,  # Internal doc object
         namespace: str | None,
         name: str | None,

@@ -1,12 +1,10 @@
 import sys
 from typing import (
     Callable,
-    Collection,
     Iterable,
     Iterator,
     Literal,
     MutableSet,
-    Sequence,
     TypeVar,
     overload,
 )
@@ -18,15 +16,24 @@ else:
 
 from .. import etree
 from .._types import (
-    _AnyStr,
     _AttrName,
     _AttrVal,
     _ElemPathArg,
-    _StrictNSMap,
+    _StrOnlyNSMap,
     _TagSelector,
 )
 from ..cssselect import _CSSTransArg
 from ._form import FormElement, LabelElement
+
+if sys.version_info >= (3, 11):
+    from typing import Never
+else:
+    from typing_extensions import Never
+
+if sys.version_info >= (3, 13):
+    from warnings import deprecated
+else:
+    from typing_extensions import deprecated
 
 _T = TypeVar("_T")
 
@@ -84,21 +91,17 @@ class HtmlElement(etree.ElementBase):
     ) -> list[HtmlElement]: ...
     def find_class(
         self,
-        class_name: _AnyStr,  # needs check
+        class_name: str | bytes,
     ) -> list[HtmlElement]: ...
     # Signature is actually (self, id, *default), but situation is
     # similar to _Attrib.pop(); all defaults except the first
     # is discarded. No point to honor such useless signature.
     @overload
-    def get_element_by_id(self, id: _AnyStr) -> HtmlElement: ...
+    def get_element_by_id(self, id: str | bytes) -> HtmlElement: ...
     @overload
-    def get_element_by_id(self, id: _AnyStr, default: _T) -> HtmlElement | _T: ...
-    # text_content() uses XPath behind the scene, and smart string
-    # subscript should point to original element type.
-    # But unfortunately, the getparent() result of HtmlElement.text_content()
-    # is always None, as it uses XPath string() to merge text content,
-    # thus destroying element heritage info
-    def text_content(self) -> etree._ElementUnicodeResult[Self]: ...
+    def get_element_by_id(self, id: str | bytes, default: _T) -> HtmlElement | _T: ...
+    # text_content() result was smart string prior to 6.0
+    def text_content(self) -> str: ...
     #
     # HtmlMixin Link functions
     #
@@ -126,89 +129,160 @@ class HtmlElement(etree.ElementBase):
     # while children of HtmlElement are mostly HtmlElement, FormElement never
     # contains FormElement as child.
     @overload
-    def __getitem__(self, __x: int) -> HtmlElement: ...
+    def __getitem__(
+        self,
+        __x: int,
+    ) -> HtmlElement: ...
     @overload
-    def __getitem__(self, __x: slice) -> list[HtmlElement]: ...
+    def __getitem__(
+        self,
+        __x: slice,
+    ) -> list[HtmlElement]: ...
     @overload
-    def __setitem__(self, __x: int, __v: HtmlElement) -> None: ...
+    def __setitem__(
+        self,
+        __x: int,
+        __v: HtmlElement,
+    ) -> None: ...
     @overload
-    def __setitem__(self, __x: slice, __v: Sequence[HtmlElement]) -> None: ...
+    def __setitem__(
+        self,
+        __x: slice,
+        __v: Iterable[HtmlElement],
+    ) -> None: ...
     def __iter__(self) -> Iterator[HtmlElement]: ...
     def __reversed__(self) -> Iterator[HtmlElement]: ...
-    def append(self, element: HtmlElement) -> None: ...
-    def extend(self, elements: Sequence[HtmlElement]) -> None: ...
-    def insert(self, index: int, element: HtmlElement) -> None: ...
-    def remove(self, element: HtmlElement) -> None: ...
+    def append(
+        self,
+        element: HtmlElement,
+    ) -> None: ...
+    @overload
+    @deprecated("Expects iterable of elements as value, not single element")
+    def extend(
+        self,
+        elements: etree._Element,
+    ) -> Never: ...
+    @overload
+    def extend(
+        self,
+        elements: Iterable[HtmlElement],
+    ) -> None: ...
+    def insert(
+        self,
+        index: int,
+        element: HtmlElement,
+    ) -> None: ...
+    def remove(
+        self,
+        element: HtmlElement,
+    ) -> None: ...
     def index(
-        self, child: HtmlElement, start: int | None = None, end: int | None = None
+        self,
+        child: HtmlElement,
+        start: int | None = None,
+        stop: int | None = None,
     ) -> int: ...
-    def addnext(self, element: HtmlElement) -> None: ...
-    def addprevious(self, element: HtmlElement) -> None: ...
-    def replace(self, old_element: HtmlElement, new_element: HtmlElement) -> None: ...
+    def addnext(
+        self,
+        element: HtmlElement,
+    ) -> None: ...
+    def addprevious(
+        self,
+        element: HtmlElement,
+    ) -> None: ...
+    def replace(
+        self,
+        old_element: HtmlElement,
+        new_element: HtmlElement,
+    ) -> None: ...
     def getparent(self) -> HtmlElement | None: ...
     def getnext(self) -> HtmlElement | None: ...
     def getprevious(self) -> HtmlElement | None: ...
     def getroottree(self) -> etree._ElementTree[Self]: ...
     @overload
     def itersiblings(
-        self, *tags: _TagSelector, preceding: bool = False
+        self,
+        *tags: _TagSelector,
+        preceding: bool = False,
     ) -> Iterator[HtmlElement]: ...
     @overload
     def itersiblings(
         self,
-        tag: _TagSelector | Collection[_TagSelector] | None = None,
+        tag: _TagSelector | Iterable[_TagSelector] | None = None,
         *,
         preceding: bool = False,
     ) -> Iterator[HtmlElement]: ...
     @overload
-    def iterancestors(self, *tags: _TagSelector) -> Iterator[HtmlElement]: ...
-    @overload
     def iterancestors(
-        self, tag: _TagSelector | Collection[_TagSelector] | None = None
+        self,
+        *tags: _TagSelector,
     ) -> Iterator[HtmlElement]: ...
     @overload
-    def iterdescendants(self, *tags: _TagSelector) -> Iterator[Self]: ...
+    def iterancestors(
+        self,
+        tag: _TagSelector | Iterable[_TagSelector] | None = None,
+    ) -> Iterator[HtmlElement]: ...
     @overload
     def iterdescendants(
-        self, tag: _TagSelector | Collection[_TagSelector] | None = None
+        self,
+        *tags: _TagSelector,
     ) -> Iterator[Self]: ...
     @overload
-    def iterchildren(
-        self, *tags: _TagSelector, reversed: bool = False
+    def iterdescendants(
+        self,
+        tag: _TagSelector | Iterable[_TagSelector] | None = None,
     ) -> Iterator[HtmlElement]: ...
     @overload
     def iterchildren(
         self,
-        tag: _TagSelector | Collection[_TagSelector] | None = None,
+        *tags: _TagSelector,
+        reversed: bool = False,
+    ) -> Iterator[HtmlElement]: ...
+    @overload
+    def iterchildren(
+        self,
+        tag: _TagSelector | Iterable[_TagSelector] | None = None,
         *,
         reversed: bool = False,
     ) -> Iterator[HtmlElement]: ...
     @overload
-    def iter(self, *tags: _TagSelector) -> Iterator[HtmlElement]: ...
+    def iter(
+        self,
+        *tags: _TagSelector,
+    ) -> Iterator[HtmlElement]: ...
     @overload
     def iter(
-        self, tag: _TagSelector | Collection[_TagSelector] | None = None
+        self,
+        tag: _TagSelector | Iterable[_TagSelector] | None = None,
     ) -> Iterator[HtmlElement]: ...
     @overload
     def itertext(
-        self, *tags: _TagSelector, with_tail: bool = True
+        self,
+        *tags: _TagSelector,
+        with_tail: bool = True,
     ) -> Iterator[str]: ...
     @overload
     def itertext(
         self,
-        tag: _TagSelector | Collection[_TagSelector] | None = None,
+        tag: _TagSelector | Iterable[_TagSelector] | None = None,
         *,
         with_tail: bool = True,
     ) -> Iterator[str]: ...
     makeelement: type[HtmlElement]
     def find(
-        self, path: _ElemPathArg, namespaces: _StrictNSMap | None = None
+        self,
+        path: _ElemPathArg,
+        namespaces: _StrOnlyNSMap | None = None,
     ) -> HtmlElement | None: ...
     def findall(
-        self, path: _ElemPathArg, namespaces: _StrictNSMap | None = None
+        self,
+        path: _ElemPathArg,
+        namespaces: _StrOnlyNSMap | None = None,
     ) -> list[HtmlElement]: ...
     def iterfind(
-        self, path: _ElemPathArg, namespaces: _StrictNSMap | None = None
+        self,
+        path: _ElemPathArg,
+        namespaces: _StrOnlyNSMap | None = None,
     ) -> Iterator[HtmlElement]: ...
     def cssselect(
         self,

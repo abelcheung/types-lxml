@@ -62,7 +62,9 @@ from ._module_misc import (
     CDATA as CDATA,
     DEBUG as DEBUG,
     ICONV_COMPILED_VERSION as ICONV_COMPILED_VERSION,
+    LIBXML_COMPILED_FEATURES as LIBXML_COMPILED_FEATURES,
     LIBXML_COMPILED_VERSION as LIBXML_COMPILED_VERSION,
+    LIBXML_FEATURES as LIBXML_FEATURES,
     LIBXML_VERSION as LIBXML_VERSION,
     LXML_VERSION as LXML_VERSION,
     C14NError as C14NError,
@@ -93,7 +95,7 @@ from ._parser import (
     XMLParser as XMLParser,
     XMLPullParser as XMLPullParser,
     XMLSyntaxError as XMLSyntaxError,
-    _FeedParser as _FeedParser,
+    # _FeedParser as _FeedParser,  # removed
     get_default_parser as get_default_parser,
     set_default_parser as set_default_parser,
 )

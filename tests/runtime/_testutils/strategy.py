@@ -2,13 +2,19 @@ from __future__ import annotations
 
 import inspect
 import operator
-from typing import Any, Literal, cast
+from collections import deque
+from collections.abc import Callable, Iterable, Iterator
+from typing import Any, Literal, TypeVar, cast
 
 import hypothesis.strategies as st
 import hypothesis.strategies._internal.types as st_types
 import lxml.etree as _e
+import lxml.html as _h
 from hypothesis import note
 from lxml.builder import E
+from lxml.html.builder import DIV
+
+_T = TypeVar("_T")
 
 
 def all_types_except(
@@ -42,6 +48,48 @@ def all_instances_except_of_type(*excluded: type[Any]) -> st.SearchStrategy[Any]
         st.SearchStrategy[Any],
         all_types_except(*excluded).filter(_aux_filter).flatmap(st.from_type),
     ).filter(lambda x: not isinstance(x, excluded))
+
+
+def fixed_item_iterables() -> st.SearchStrategy[Callable[..., Iterable[Any]]]:
+    # Delay evaluation so that we can supply fixtures as arguments
+    def _gen_list(*element: _T) -> Iterable[_T]:
+        return list(element)
+
+    def _gen_tuple(*element: _T) -> Iterable[_T]:
+        return tuple(element)
+
+    def _gen_set(*element: _T) -> Iterable[_T]:
+        return set(element)
+
+    def _gen_frozenset(*element: _T) -> Iterable[_T]:
+        return frozenset(element)
+
+    def _gen_deque(*element: _T) -> Iterable[_T]:
+        return deque(element)
+
+    def _gen_iter(*element: _T) -> Iterable[_T]:
+        return iter(element)
+
+    setattr(_gen_list, "type", list)
+    setattr(_gen_tuple, "type", tuple)
+    setattr(_gen_set, "type", set)
+    setattr(_gen_frozenset, "type", frozenset)
+    setattr(_gen_deque, "type", deque)
+    setattr(_gen_iter, "type", Iterator)
+
+    return st.sampled_from([
+        _gen_list,
+        _gen_tuple,
+        _gen_set,
+        _gen_frozenset,
+        _gen_deque,
+        _gen_iter,
+    ])
+
+
+#
+# Below are generator of XML text or arguments
+#
 
 
 # Although stringified XML names use colon (:) character,
@@ -125,7 +173,6 @@ def xml_name(
     )
 
 
-# FIXME: For future test, _e.QName("", "foo") raise exception
 def xml_name_arg() -> st.SearchStrategy[str | bytes | bytearray | _e.QName]:
     s = xml_name()
     qn = s.map(_e.QName)
@@ -239,17 +286,34 @@ def xml_attr_value_arg() -> st.SearchStrategy[str | bytes | bytearray | _e.QName
 
 
 @st.composite
-def single_simple_element(draw: st.DrawFn) -> _e._Element:
-    tag_name = draw(xml_name_nons())
-    attrib = draw(st.dictionaries(xml_name_nons(), xml_attr_value(), max_size=3))
+def single_simple_element(
+    draw: st.DrawFn,
+    variant: Literal["unicode", "ascii"] = "unicode",
+) -> _e._Element:
+    tag_name = draw(xml_name_nons(variant))
+    attrib = draw(
+        st.dictionaries(xml_name_nons(variant), xml_attr_value(variant), max_size=3)
+    )
     # After discarding value quoting issue, attribute value is equivalent to
     # chardata sans child elements, so use it instead of recreating chardata
     # strategy.
     # HACK: Lxml builder doesn't allow adding cdata if element text is present.
     #   Seems to disagree with XML spec.
-    first_child = draw(st.lists(cdata(), max_size=1))
-    other_child = draw(st.lists(xml_attr_value(), max_size=1))
+    first_child = draw(st.lists(cdata(variant), max_size=1))
+    other_child = draw(st.lists(xml_attr_value(variant), max_size=1))
     return E(tag_name, *first_child, *other_child, **attrib)
+
+
+@st.composite
+def simple_elementtree(draw: st.DrawFn) -> _e._ElementTree[_e._Element]:
+    elem = draw(single_simple_element())
+    return elem.getroottree()
+
+
+@st.composite
+def simple_html_element(draw: st.DrawFn) -> _h.HtmlElement:
+    class_name = draw(xml_attr_value(variant="ascii"))
+    return DIV(draw(xml_name_nons()), {"class": class_name})
 
 
 # https://www.w3.org/TR/xml/#NT-Comment
@@ -297,6 +361,21 @@ def entity(
     return st.builds(
         _e.Entity,
         ref.map(lambda x: x[1:-1]),
+    )
+
+
+def iterable_of_elements(
+    variant: Literal["unicode", "ascii"] = "unicode",
+) -> st.SearchStrategy[Iterable[_e._Element]]:
+    return st.iterables(
+        st.one_of(
+            single_simple_element(variant),
+            comment(variant),
+            processing_instruction(variant),
+            entity(variant),
+        ),
+        max_size=5,
+        min_size=1,
     )
 
 

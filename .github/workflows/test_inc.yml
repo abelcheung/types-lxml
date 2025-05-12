@@ -15,14 +15,16 @@ jobs:
       fail-fast: false
       matrix:
         pyver:
-          - "3.8"
           - "3.9"
           - "3.10"
           - "3.11"
           - "3.12"
           - "3.13"
         os:
-          - "ubuntu-22.04"
+          - "ubuntu-24.04"
+        include:
+          - pyver: "3.8"
+            os: "ubuntu-22.04"
     runs-on: ${{ matrix.os }}
     steps:
     - uses: actions/download-artifact@v4
@@ -35,9 +37,9 @@ jobs:
       run: >
         tar -zxf dist/*.tar.gz --strip-components=1
 
-    - uses: astral-sh/setup-uv@v4
+    - uses: astral-sh/setup-uv@v6
       with:
-        version: '0.4.27'
+        version: '0.6.2'
         enable-cache: true
         cache-dependency-glob: |
           ./pyproject.toml
@@ -77,9 +79,9 @@ jobs:
           - "3.12"
           - "3.13"
         os:
-          - ubuntu-22.04
-          - windows-2022
-          - macos-13
+          - ubuntu-24.04
+          - windows-2025
+          - macos-14
     runs-on: ${{ matrix.os }}
     steps:
     - uses: actions/download-artifact@v4
@@ -92,9 +94,9 @@ jobs:
       run: >
         tar -zxf dist/*.tar.gz --strip-components=1
 
-    - uses: astral-sh/setup-uv@v4
+    - uses: astral-sh/setup-uv@v6
       with:
-        version: '0.4.27'
+        version: '0.6.2'
         enable-cache: true
         cache-dependency-glob: |
           ./pyproject.toml
@@ -108,14 +110,6 @@ jobs:
         --with tox-uv
         tox@4.23.2
 
-    # Trigger npm install pyright once, otherwise
-    # tox run-parallel would cause multiple concurrent
-    # installation into same location and fail
-    # RobertCraigie/pyright-python#318
-    - name: Prepare test environment
-      run: |
-        uvx tox run -e pyright -- --version
-
     # Glob not supported under default windows env
     - name: Determine wheel file name
       id: wheel-name
@@ -124,23 +118,9 @@ jobs:
         echo "filename=$(echo dist/*.whl)" >> "$GITHUB_OUTPUT"
 
     - name: Test runtime
-      if: runner.os != 'Windows'
       run: >
         uvx
         tox run-parallel
-        --skip-env='.*-stub$'
-        --installpkg ${{ steps.wheel-name.outputs.filename }}
-        --result-json test-${{ inputs.flavor }}-rt-${{ matrix.os }}-py${{ matrix.pyver }}.json
-
-    # Tox-uv wreak havoc on the platform that needs it
-    # most (Windows) under concurrent cache access,
-    # which can potentially occur at every tox setup
-    # steps before pytest. No workaround so far.
-    - name: Test runtime (serially)
-      if: runner.os == 'Windows'
-      run: >
-        uvx
-        tox run
         --skip-env='.*-stub$'
         --installpkg ${{ steps.wheel-name.outputs.filename }}
         --result-json test-${{ inputs.flavor }}-rt-${{ matrix.os }}-py${{ matrix.pyver }}.json
@@ -154,7 +134,7 @@ jobs:
   log-aggregation:
     if: success() || failure()
     needs: [test-stub, test-rt]
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     permissions:
       actions: write
     steps:

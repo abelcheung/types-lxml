@@ -5,7 +5,11 @@
 from typing import Iterable, Literal, TypeVar, overload
 
 from .. import etree
-from .._types import _AnyStr, _DefEtreeParsers, _FileReadSource
+from .._types import (
+    _DefEtreeParsers,
+    _FileReadSource,
+    _TextArg,
+)
 from ._element import ObjectifiedDataElement, ObjectifiedElement
 
 _T = TypeVar("_T")
@@ -14,7 +18,7 @@ _T = TypeVar("_T")
 # Dumping tree and class lookup
 #
 
-def enable_recursive_str(on: bool) -> None:
+def enable_recursive_str(on: bool = True) -> None:
     """Enable a recursively generated tree representation for
     `str(element)`, based on `objectify.dump(element)`"""
 
@@ -64,7 +68,7 @@ def set_default_parser(
 # default value is True
 def makeparser(
     *,
-    encoding: _AnyStr | None = None,
+    encoding: _TextArg | None = None,
     attribute_defaults: bool = False,
     dtd_validation: bool = False,
     load_dtd: bool = False,
@@ -92,30 +96,23 @@ def makeparser(
     """
 
 def parse(
-    source: _FileReadSource,
+    f: _FileReadSource,
     parser: _DefEtreeParsers[ObjectifiedElement] | None = None,
     *,
-    base_url: _AnyStr | None = None,
+    base_url: str | bytes | None = None,
 ) -> etree._ElementTree[ObjectifiedElement]:
     """Parse a file or file-like object with objectify parser
 
-    Parameters
-    ----------
-    parser: `etree.XMLParser` or `etree.HTMLParser`, optional
-        Using different parser is allowed. If not specified, default
-        value is `None`, which means using `objectify` module's internal
-        default parser.
-    base_url: str or bytes, optional
-        Allows setting a URL for the document when parsing from a file-like
-        object. This is needed when looking up external entities
-        (DTD, XInclude, ...) with relative paths.
+    See Also
+    --------
+    - [API documentation](https://lxml.de/apidoc/lxml.objectify.html#lxml.objectify.parse)
     """
 
 def fromstring(
-    xml: _AnyStr,
+    xml: str | bytes,
     parser: _DefEtreeParsers[ObjectifiedElement] | None = None,
     *,
-    base_url: _AnyStr | None = None,
+    base_url: str | bytes | None = None,
 ) -> ObjectifiedElement:
     """Variant of corresponding `lxml.etree` function that uses objectify parser
 

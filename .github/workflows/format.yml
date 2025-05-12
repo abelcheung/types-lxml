@@ -7,7 +7,7 @@ on:
 
 jobs:
   formatting:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     permissions:
       contents: write
       pull-requests: write
@@ -26,9 +26,9 @@ jobs:
           args: 'format'
           src: '.'
 
-      - uses: astral-sh/setup-uv@v4
+      - uses: astral-sh/setup-uv@v6
         with:
-          version: '0.4.27'
+          version: '0.6.2'
           enable-cache: true
           cache-dependency-glob: |
             ./pyproject.toml

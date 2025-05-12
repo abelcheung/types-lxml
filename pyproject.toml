@@ -13,9 +13,10 @@ requires-python = '>=3.8'
 license = 'Apache-2.0'
 license-files = ['LICENSE']
 dependencies = [
-    'types-beautifulsoup4 ~= 4.12',
     'typing_extensions ~= 4.10; python_version < "3.13"',
-    'cssselect ~= 1.2'  # cssselect uses inline annotation
+    'cssselect ~= 1.2',  # inline annotation
+    'beautifulsoup4 ~= 4.13',  # inline annotation
+    'types-html5lib ~= 1.1.11.20241018',
 ]
 keywords = ['lxml', 'typing', 'stubs', 'annotation']
 authors = [
@@ -42,43 +43,64 @@ homepage = 'https://github.com/abelcheung/types-lxml'
 [project.optional-dependencies]
 mypy = ['mypy ~= 1.11']
 pyright = ['pyright >= 1.1.351']
+basedpyright = ['basedpyright >= 1.4.0']
 
 # mostly pinned for tox testing except dev group
 [dependency-groups]
 basic = [
-    "types-beautifulsoup4 == 4.12.0.20241020",
+    "types-html5lib ~= 1.1.11",
     "typing_extensions == 4.12.2; python_version < '3.13'",
-    "cssselect == 1.2.0",
+    "cssselect == 1.2.0; python_version <= '3.8'",
+    "cssselect == 1.3.0; python_version >= '3.9'",
+    "beautifulsoup4 == 4.13.3",
 ]
-mypy    = ["mypy == 1.11.2"]
-pyright = ["pyright == 1.1.390"]
+mypy    = [
+    "mypy == 1.15.0; python_version >= '3.9'",
+    "mypy == 1.14.0; python_version <= '3.8'",
+]
+pyright = [
+    # RobertCraigie/pyright-python/#318
+    "pyright == 1.1.397",
+    # 1.28.1 broke hypothesis the same way pyright 1.1.395 did
+    "basedpyright == 1.28.2",
+]
 format  = ["ruff ~= 0.6"]
 stub-test = [
-    "pytest-mypy-plugins == 3.1.2",
+    "pytest-mypy-plugins == 3.2.0; python_version >= '3.9'",
+    "pytest-mypy-plugins == 3.1.2; python_version <= '3.8'",
     {include-group = "mypy"},
 ]
 rt-test = [
-    "beautifulsoup4 == 4.12.3",
     "html5lib == 1.1",
-    "hypothesis[zoneinfo] == 6.122.3",
-    "pytest-revealtype-injector",
+    "pook == 2.1.3",
+    "urllib3 == 2.3.0",
+    "hypothesis[zoneinfo] == 6.129.4",
+    "pytest-revealtype-injector == 0.5.1",
+    "rnc2rng == 2.7.0",
+    {include-group = "mypy"},
     {include-group = "pyright"},
 ]
 lxml49 = ["lxml == 4.9.4"]
 lxml50 = ["lxml == 5.0.2"]
 lxml51 = ["lxml == 5.1.1"]
 lxml52 = ["lxml == 5.2.2"]
-lxml53 = ["lxml == 5.3.0"]
+lxml53 = ["lxml == 5.3.2"]
+lxml54 = ["lxml == 5.4.0"]
 dev = [
     'tox ~= 4.22',
-    # microsoft/pyright#9286, microsoft/pyright#9296, microsoft/pyright#9412
-    'pyright >= 1.1.389',
+    # microsoft/pyright#9412, microsoft/pyright#9984
+    'pyright >=1.1.389,!=1.1.395',
     'html5lib == 1.1',
+    'pook >= 2.0',
+    'urllib3 >= 2.0',
     'pytest-mypy-plugins >= 2.0',
-    'pytest-revealtype-injector',
+    'pytest-revealtype-injector >= 0.5.0',
     'lxml >= 4.9',
-    'beautifulsoup4 ~= 4.8',
-    'hypothesis[zoneinfo] ~= 6.0',
+    'rnc2rng',
+    # HypothesisWorks/hypothesis#4269
+    'hypothesis[zoneinfo] >= 6.127.7',
+    {include-group = "format"},
+    {include-group = "basic"},
 ]
 
 [tool.pdm.version]
@@ -115,7 +137,8 @@ reportUnnecessaryTypeIgnoreComment = false
 enableTypeIgnoreComments = false
 executionEnvironments = [
     { root = 'src' },
-    { root = 'tests/runtime', stubPath = 'src' },
+    # basedpyright doesn't understand stubPath
+    { root = 'tests/runtime', extraPaths = ['src'] },
 ]
 
 [tool.mypy]
@@ -139,7 +162,7 @@ select = [
     "I",
 ]
 ignore = [
-    "E501",
+    "E501",  # line-too-long
 ]
 task-tags = [
     "BUG",
@@ -154,6 +177,13 @@ task-tags = [
     "TODO",
     "UGLY",
     "XXX",
+]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/runtime/**.py" = [
+    "E202",  # whitespace-before-close-bracket
+    "E203",  # whitespace-before-punctuation
+    "E271",  # multiple-spaces-after-keyword
 ]
 
 [tool.ruff.lint.isort]
@@ -172,8 +202,12 @@ addopts = [
 markers = [
     "slow: marks tests as slow",
 ]
-typeguard-forward-ref-policy = "ERROR"
-typeguard-collection-check-strategy = "ALL_ITEMS"
+filterwarnings = [
+    "ignore:Truth-testing of elements was .+:FutureWarning",
+    "ignore:The behavior of this method will change .+:FutureWarning",
+    "ignore:NotImplemented should not be used in a boolean context:DeprecationWarning",
+    "ignore:The 'strip_cdata' option of HTMLParser.+:DeprecationWarning",
+]
 
 [tool.tox]
 env_list = [
@@ -202,24 +236,29 @@ runtime = [
     'py310-rt-lxml51',
     'py310-rt-lxml52',
     'py310-rt-lxml53',
+    'py310-rt-lxml54',
     'py311-rt-lxml49',
     'py311-rt-lxml50',
     'py311-rt-lxml51',
     'py311-rt-lxml52',
     'py311-rt-lxml53',
+    'py311-rt-lxml54',
     'py312-rt-lxml49',
     'py312-rt-lxml50',
     'py312-rt-lxml51',
     'py312-rt-lxml52',
     'py312-rt-lxml53',
+    'py312-rt-lxml54',
     'py313-rt-lxml53',
+    'py313-rt-lxml54',
 ]
 
 # HACK Taking advantage of tox-gh-actions using
 # its own string processing when parsing config,
 # therefore works even when migrating tox config
 # to TOML. Beware that tox-gh-actions version
-# must be hardcoded to 3.2.0
+# must be hardcoded in case this behavior changes
+# in the future
 [tool.tox.gh-actions]
 python = """
     3.8: py38
@@ -258,7 +297,7 @@ pass_env = [
 ]
 package = 'wheel'
 wheel_build_env = '{package_env}'
-dependency_groups = ['stub-test']
+dependency_groups = ['basic', 'stub-test']
 commands = [[
     'pytest',
     '--mypy-ini-file=tests/static/mypy-pytest.ini',
@@ -279,19 +318,22 @@ commands = [[
 ]]
 
 [tool.tox._env_lxml49]
-dependency_groups = ['rt-test', 'lxml49']
+dependency_groups = ['basic', 'rt-test', 'lxml49']
 
 [tool.tox._env_lxml50]
-dependency_groups = ['rt-test', 'lxml50']
+dependency_groups = ['basic', 'rt-test', 'lxml50']
 
 [tool.tox._env_lxml51]
-dependency_groups = ['rt-test', 'lxml51']
+dependency_groups = ['basic', 'rt-test', 'lxml51']
 
 [tool.tox._env_lxml52]
-dependency_groups = ['rt-test', 'lxml52']
+dependency_groups = ['basic', 'rt-test', 'lxml52']
 
 [tool.tox._env_lxml53]
-dependency_groups = ['rt-test', 'lxml53']
+dependency_groups = ['basic', 'rt-test', 'lxml53']
+
+[tool.tox._env_lxml54]
+dependency_groups = ['basic', 'rt-test', 'lxml54']
 
 [tool.tox.env]
 py38-stub  = {base = ['_env_stub']}
@@ -305,17 +347,21 @@ py310-rt-lxml50 = {base = ['_env_rt', '_env_lxml50']}
 py310-rt-lxml51 = {base = ['_env_rt', '_env_lxml51']}
 py310-rt-lxml52 = {base = ['_env_rt', '_env_lxml52']}
 py310-rt-lxml53 = {base = ['_env_rt', '_env_lxml53']}
+py310-rt-lxml54 = {base = ['_env_rt', '_env_lxml54']}
 py311-rt-lxml49 = {base = ['_env_rt', '_env_lxml49']}
 py311-rt-lxml50 = {base = ['_env_rt', '_env_lxml50']}
 py311-rt-lxml51 = {base = ['_env_rt', '_env_lxml51']}
 py311-rt-lxml52 = {base = ['_env_rt', '_env_lxml52']}
 py311-rt-lxml53 = {base = ['_env_rt', '_env_lxml53']}
+py311-rt-lxml54 = {base = ['_env_rt', '_env_lxml54']}
 py312-rt-lxml49 = {base = ['_env_rt', '_env_lxml49']}
 py312-rt-lxml50 = {base = ['_env_rt', '_env_lxml50']}
 py312-rt-lxml51 = {base = ['_env_rt', '_env_lxml51']}
 py312-rt-lxml52 = {base = ['_env_rt', '_env_lxml52']}
 py312-rt-lxml53 = {base = ['_env_rt', '_env_lxml53']}
+py312-rt-lxml54 = {base = ['_env_rt', '_env_lxml54']}
 py313-rt-lxml53 = {base = ['_env_rt', '_env_lxml53']}
+py313-rt-lxml54 = {base = ['_env_rt', '_env_lxml54']}
 
 [tool.tox.env.build-normal]
 pass_env = ['PDM_BUILD_SCM_VERSION']

@@ -3,6 +3,7 @@ from __future__ import annotations
 import bz2
 import gzip
 import io
+import logging
 import lzma
 from collections.abc import (
     Callable,
@@ -23,7 +24,10 @@ from urllib.request import urlopen
 from urllib.response import addinfourl
 
 import pytest
+import typeguard
+import urllib3
 from lxml import etree as _e, html as _h
+from lxml.isoschematron import Schematron
 
 pytest_plugins = [
     "typeguard",
@@ -32,11 +36,14 @@ pytest_plugins = [
     "runtime.register_strategy",
 ]
 
-is_multi_subclass_build = pytest.StashKey[bool]()
+http_pool = urllib3.PoolManager()
+
+_logger = logging.getLogger(__name__)
+_logger.setLevel(logging.DEBUG)
 
 
-def pytest_configure(config: pytest.Config) -> None:
-    config.stash[is_multi_subclass_build] = False
+typeguard.config.forward_ref_policy = typeguard.ForwardRefPolicy.ERROR
+typeguard.config.collection_check_strategy = typeguard.CollectionCheckStrategy.ALL_ITEMS
 
 
 def _bightml_filepath() -> Path:
@@ -109,6 +116,32 @@ def xml2_filepath() -> Path:
     return Path(__file__).resolve().parent / "_data" / "shiporder.xml"
 
 
+@pytest.fixture(scope="session")
+def xml2_str(xml2_filepath: Path) -> str:
+    return xml2_filepath.read_text()
+
+
+@pytest.fixture(scope="session")
+def xml2_bytes_with_dtd(xml2_filepath: Path) -> bytes:
+    result = xml2_filepath.read_bytes()
+    dtd_path = xml2_filepath.parent / "shiporder.dtd"
+    result = result.replace(
+        b"?>",
+        # python/cpython#103631 or expect this on Windows py3.11
+        # "C:\\/Users/..." --> fails loading DTD
+        '?><!DOCTYPE shiporder SYSTEM "file:///{}">'.format(
+            dtd_path.as_posix()
+        ).encode(),
+        1,
+    )
+    return result
+
+
+@pytest.fixture(scope="session")
+def xml2_bytes(xml2_filepath: Path) -> bytes:
+    return xml2_filepath.read_bytes()
+
+
 @pytest.fixture
 def bightml_tree(bightml_bin_fp: BinaryIO) -> _e._ElementTree[_h.HtmlElement]:
     with bightml_bin_fp as f:
@@ -164,6 +197,81 @@ def xinc_sample_data(xml2_filepath: Path) -> str:
         <foo/><xi:include href="{}" /></doc>""".format(inc_href)
 
 
+@pytest.fixture(scope="session")
+def xmlschema_path() -> Path:
+    return Path(__file__).resolve().parent / "_data" / "shiporder.xsd"
+
+
+@pytest.fixture(scope="session")
+def xmlschema_root(xmlschema_path: Path) -> _e._Element:
+    return _e.fromstring(xmlschema_path.read_bytes())
+
+
+@pytest.fixture(scope="session")
+def xmlschema(xmlschema_path: Path) -> _e.XMLSchema:
+    return _e.XMLSchema(file=str(xmlschema_path))
+
+
+@pytest.fixture(scope="session")
+def rnc_path() -> Path:
+    return Path(__file__).resolve().parent / "_data" / "shiporder.rnc"
+
+
+@pytest.fixture(scope="session")
+def rnc_str(rnc_path: Path) -> str:
+    return rnc_path.read_text()
+
+
+@pytest.fixture(scope="session")
+def relaxng_path() -> Path:
+    return Path(__file__).resolve().parent / "_data" / "shiporder.rng"
+
+
+@pytest.fixture(scope="session")
+def relaxng_root(relaxng_path: Path) -> _e._Element:
+    return _e.fromstring(relaxng_path.read_bytes())
+
+
+@pytest.fixture(scope="session")
+def relaxng(relaxng_path: Path) -> _e.RelaxNG:
+    return _e.RelaxNG(file=relaxng_path)
+
+
+@pytest.fixture(scope="session")
+def schematron_path() -> Path:
+    return Path(__file__).resolve().parent / "_data" / "shiporder.sch"
+
+
+@pytest.fixture(scope="session")
+def schematron_root(schematron_path: Path) -> _e._Element:
+    return _e.fromstring(schematron_path.read_bytes())
+
+
+@pytest.fixture(scope="session")
+def schematron(schematron_path: Path) -> Schematron:
+    return Schematron(file=schematron_path)
+
+
+@pytest.fixture(scope="session")
+def dtd_path() -> Path:
+    return Path(__file__).resolve().parent / "_data" / "shiporder.dtd"
+
+
+@pytest.fixture(scope="session")
+def dtd_root(dtd_path: Path) -> _e._Element:
+    return _e.fromstring(dtd_path.read_bytes())
+
+
+@pytest.fixture(scope="session")
+def dtd(dtd_path: Path) -> _e.DTD:
+    return _e.DTD(file=dtd_path)
+
+
+@pytest.fixture(scope="session")
+def dtd_enabled_parser() -> _e.XMLParser:
+    return _e.XMLParser(dtd_validation=True, load_dtd=True)
+
+
 @pytest.fixture
 def list_log() -> _e._ListErrorLog:
     bad_data = "<bad><a><b></a>&qwerty;</bad>"
@@ -176,6 +284,20 @@ def list_log() -> _e._ListErrorLog:
         raise RuntimeError("Unknown error when creating error_log fixture")
 
     return err
+
+
+@pytest.fixture(scope="class")
+def pylog() -> _e.PyErrorLog:
+    result = _e.PyErrorLog()
+    _e.use_global_python_log(result)
+    bad_data = "<bad><a><b></a>&qwerty;</bad>"
+    try:
+        _ = _e.fromstring(bad_data)
+    except _e.XMLSyntaxError:
+        pass
+    else:
+        raise RuntimeError("Unknown error when creating pylog fixture")
+    return result
 
 
 # For hypothesis tests, parsing valid document spends too much
@@ -215,6 +337,7 @@ def _get_compressed_fp_from(zmode: str) -> Any:
         with path.open("rb") as f, comp_type(**{param: buffer, "mode": "wb"}) as z:  # pyright: ignore
             z.write(f.read())
 
+        buffer.seek(0, io.SEEK_SET)
         return comp_type(**{param: buffer, "mode": "rb"})  # pyright: ignore
 
     return _wrapped
@@ -222,7 +345,10 @@ def _get_compressed_fp_from(zmode: str) -> Any:
 
 # It's too much to create protocol signature just for this thing
 @pytest.fixture
-def generate_input_file_arguments() -> Callable[..., Iterator[Any]]:
+def generate_input_file_arguments(
+    pytestconfig: pytest.Config,
+    pook: Any,
+) -> Callable[..., Iterator[Any]]:
     def _wrapped(
         path: Path,
         *,
@@ -230,6 +356,22 @@ def generate_input_file_arguments() -> Callable[..., Iterator[Any]]:
         include: Collection[Callable[[Path], Any]] = tuple(),
     ) -> Iterator[Any]:
         assert path.is_file()
+
+        match path.suffix.lower():
+            case ".htm" | ".html":
+                content_type = "text/html"
+            case ".svg":
+                content_type = "image/svg+xml"
+            case _:
+                content_type = "application/xml"
+        pook.get(
+            "http://example.com/" + path.name,
+            response_type=content_type,
+            response_body=path.read_text(),
+            persist=True,
+        )
+        mock_http_response = http_pool.request("GET", "http://example.com/" + path.name)
+
         items = [
             path,
             str(path),
@@ -246,7 +388,9 @@ def generate_input_file_arguments() -> Callable[..., Iterator[Any]]:
             _get_compressed_fp_from("gz"),
             _get_compressed_fp_from("bz2"),
             _get_compressed_fp_from("xz"),
+            mock_http_response,
         ]
+
         for func in include:
             items.append(func)
         for i in items:
@@ -254,7 +398,9 @@ def generate_input_file_arguments() -> Callable[..., Iterator[Any]]:
                 continue
             if callable(i):
                 i = i(path)
-            if isinstance(i, AbstractContextManager):
+            if pytestconfig.get_verbosity() >= 2:
+                _logger.debug(f"Testing file input {i!r}")
+            if isinstance(i, AbstractContextManager) and not isinstance(i, Path):
                 cm = i
             else:
                 cm = nullcontext(i)

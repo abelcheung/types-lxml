@@ -1,4 +1,4 @@
-from typing import overload
+from typing import TypeVar, overload
 
 from .._types import (
     _ET,
@@ -11,6 +11,8 @@ from .._types import (
 from ..html import HtmlElement
 from ..objectify import ObjectifiedElement, StringElement
 from ._element import _Comment, _Entity, _ProcessingInstruction
+
+_T = TypeVar("_T")
 
 def Comment(text: _TextArg | None = None) -> _Comment: ...
 def ProcessingInstruction(
@@ -36,7 +38,7 @@ def Entity(name: _TextArg) -> _Entity: ...
 # type annotation attribute is modified.
 # OE users need to use E-factory for more flexibility.
 @overload
-def SubElement(
+def SubElement(  # type: ignore[overload-overlap]
     _parent: ObjectifiedElement,
     _tag: _TagName,
     /,

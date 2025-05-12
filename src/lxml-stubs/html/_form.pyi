@@ -1,8 +1,8 @@
 from __future__ import annotations
 
 import sys
+from http.client import HTTPResponse
 from typing import (
-    Any,
     Callable,
     Collection,
     Iterable,
@@ -179,12 +179,17 @@ class LabelElement(HtmlElement):
     def for_element(self, __v: HtmlElement) -> None: ...
 
 # open_http argument has signature (method, url, values) -> Any
-@overload
+# Default connection handler is open_http_urllib, which uses
+# urllib.request.urlopen internally. Though its return type
+# varies with protocol handler (e.g. urllib.response.addinfourl
+# for FTP), we are talking about HTTP/HTTPS here, so return type
+# is limited.
+@overload  # default handler (open_http_urllib)
 def submit_form(
     form: FormElement,
     extra_values: Iterable[tuple[str, str]] | SupportsLaxItems[str, str] | None = None,
     open_http: None = None,
-) -> Any: ...  # See typeshed _UrlOpenRet
+) -> HTTPResponse: ...
 @overload  # open_http as positional argument
 def submit_form(
     form: FormElement,

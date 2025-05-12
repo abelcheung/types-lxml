@@ -1,9 +1,5 @@
 import sys
-
-if sys.version_info >= (3, 11):
-    from typing import LiteralString
-else:
-    from typing_extensions import LiteralString
+from typing import Final
 
 from ._element import (
     Classes as Classes,
@@ -52,4 +48,9 @@ from ._parse import (
     xhtml_parser as xhtml_parser,
 )
 
-XHTML_NAMESPACE: LiteralString
+if sys.version_info >= (3, 11):
+    from typing import LiteralString
+else:
+    from typing_extensions import LiteralString
+
+XHTML_NAMESPACE: Final[LiteralString]

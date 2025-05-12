@@ -1,0 +1,22 @@
+default namespace = ""
+
+start =
+  element shiporder {
+    attribute orderid { xsd:positiveInteger },
+    element orderperson { text },
+    element shipto {
+      element name { text },
+      element address { text },
+      element city { text },
+      element country { text }
+    },
+    element item {
+      attribute id { xsd:string },
+      element title { text },
+      element author { text },
+      element note { text }?,
+      element bundled { text }?,
+      element quantity { xsd:positiveInteger },
+      element price { xsd:decimal }
+    }+
+  }

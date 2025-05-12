@@ -12,7 +12,7 @@ if sys.version_info >= (3, 11):
 else:
     from typing_extensions import LiteralString, Self
 
-from .._types import _AnyStr, _TagName
+from .._types import _TagName, _TextArg
 from ..cssselect import _CSSTransArg
 from ..etree import CDATA, ElementBase
 
@@ -94,26 +94,13 @@ class ObjectifiedDataElement(ObjectifiedElement):
     @property
     @abc.abstractmethod
     def pyval(self) -> Any: ...
-    def _setText(self, s: _AnyStr | CDATA | None) -> None:
+    def _setText(self, s: _TextArg | CDATA | None) -> None:
         """Modify text content of objectified element directly.
 
         Original Docstring
         ------------------
         For use in subclasses only. Don't use unless you know what you are
         doing.
-        """
-    def _setValueParser(self, function: Callable[[Any], Any]) -> None:
-        """Set the function that parses the Python value from a string
-
-        Annotation notice
-        -----------------
-        This func originates from an abstract subclass of data element
-        called `NumberElement`. Since there is no intention to construct
-        such class in type annotation (yet?), the function is placed here.
-
-        Original Docstring
-        ------------------
-        Do not use this unless you know what you are doing.
         """
 
 # Forget about LongElement, which is only for Python 2.x.
@@ -130,12 +117,26 @@ class IntElement(ObjectifiedDataElement, int):
     def pyval(self) -> int: ...
     @property  # type: ignore[misc]
     def text(self) -> str: ...  # type: ignore[override]
+    def _setValueParser(self, function: Callable[[str], Any]) -> None:
+        """Set the function that parses the Python value from a string
+
+        See Also
+        --------
+        - [API Documentation](https://lxml.de/apidoc/lxml.objectify.html#lxml.objectify.IntElement._setValueParser)
+        """
 
 class FloatElement(ObjectifiedDataElement, float):
     @property
     def pyval(self) -> float: ...
     @property  # type: ignore[misc]
     def text(self) -> str: ...  # type: ignore[override]
+    def _setValueParser(self, function: Callable[[str], Any]) -> None:
+        """Set the function that parses the Python value from a string
+
+        See Also
+        --------
+        - [API Documentation](https://lxml.de/apidoc/lxml.objectify.html#lxml.objectify.FloatElement._setValueParser)
+        """
 
 class StringElement(ObjectifiedDataElement):
     """String data class

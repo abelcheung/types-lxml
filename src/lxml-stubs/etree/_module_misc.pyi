@@ -4,15 +4,9 @@
 
 import sys
 from abc import ABCMeta, abstractmethod
-from typing import overload
-
-if sys.version_info >= (3, 11):
-    from typing import LiteralString
-else:
-    from typing_extensions import LiteralString
+from typing import Final, overload
 
 from .._types import (
-    _AnyStr,
     _ElementOrTree,
     _TagName,
     _TextArg,
@@ -21,12 +15,19 @@ from ._dtd import DTD
 from ._element import _Element
 from ._xmlerror import _BaseErrorLog, _ListErrorLog
 
+if sys.version_info >= (3, 11):
+    from typing import LiteralString
+else:
+    from typing_extensions import LiteralString
+
 DEBUG: int
-ICONV_COMPILED_VERSION: tuple[int, int]
-LIBXML_VERSION: tuple[int, int, int]
-LIBXML_COMPILED_VERSION: tuple[int, int, int]
-LXML_VERSION: tuple[int, int, int, int]
-__version__: LiteralString
+ICONV_COMPILED_VERSION: Final[tuple[int, int]]
+LIBXML_COMPILED_VERSION: Final[tuple[int, int, int]]
+LIBXML_COMPILED_FEATURES: Final[set[str]]
+LIBXML_FEATURES: Final[set[str]]
+LIBXML_VERSION: Final[tuple[int, int, int]]
+LXML_VERSION: Final[tuple[int, int, int, int]]
+__version__: Final[LiteralString]
 
 class DocInfo:
     """Document information provided by parser and DTD"""
@@ -42,7 +43,7 @@ class DocInfo:
         exist, setting this variable (even to None) will create one.
         """
     @public_id.setter
-    def public_id(self, __v: _AnyStr | None) -> None: ...
+    def public_id(self, __v: str | None) -> None: ...
     @property
     def system_url(self) -> str | None:
         """System ID of the DOCTYPE.
@@ -51,7 +52,7 @@ class DocInfo:
         exist, setting this variable (even to None) will create one.
         """
     @system_url.setter
-    def system_url(self, __v: _AnyStr | None) -> None: ...
+    def system_url(self, __v: _TextArg | None) -> None: ...
     @property
     def xml_version(self) -> str:  # fallback is "1.0"
         """Returns the XML version as declared by the document."""
@@ -74,7 +75,7 @@ class DocInfo:
     def URL(self) -> str | None:
         """The source URL of the document (or None if unknown)."""
     @URL.setter
-    def URL(self, __v: _AnyStr | None) -> None: ...
+    def URL(self, __v: str | bytes | None) -> None: ...
     @property
     def doctype(self) -> str:
         """Returns a DOCTYPE declaration string for the document."""
@@ -90,40 +91,29 @@ class DocInfo:
 class QName:
     """QName wrapper for qualified XML names.
 
-    Pass a tag name by itself or a namespace URI and a tag name to
-    create a qualified name.  Alternatively, pass an Element to
-    extract its tag name.  ``None`` as first argument is ignored in
-    order to allow for generic 2-argument usage.
-
-    The ``text`` property holds the qualified name in
-    ``{namespace}tagname`` notation.  The ``.namespace`` and
-    ``.localname`` properties hold the respective parts of the tag
-    name.
-
-    You can pass QName objects wherever a tag name is expected.  Also,
-    setting Element text from a QName will resolve the namespace prefix
-    on assignment and set a qualified text value.  This is helpful in XML
-    languages like SOAP or XML-Schema that use prefixed tag names in
-    their text content.
+    See Also
+    --------
+    - [API Documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree.QName)
     """
-    @overload
+    @overload  # first arg non-empty
     def __init__(
         self,
-        text_or_uri_or_element: _TagName | _Element,
-        tag: _TagName | None = None,
+        text_or_uri_or_element: str | bytes | QName | _Element,
+        tag: _TextArg | None = None,
     ) -> None: ...
-    @overload
+    @overload  # first arg empty
     def __init__(
         self,
         text_or_uri_or_element: None,
-        tag: _TagName | _Element,
+        tag: str | bytes | QName | _Element,
     ) -> None: ...
     @property
     def localname(self) -> str: ...
     @property
     def namespace(self) -> str | None: ...
     @property
-    def text(self) -> str: ...
+    def text(self) -> str:
+        """Holds the qualified name in `{namespace}tagname` notation"""
     # Emulate __richcmp__()
     def __ge__(self, other: _TagName) -> bool: ...
     def __gt__(self, other: _TagName) -> bool: ...

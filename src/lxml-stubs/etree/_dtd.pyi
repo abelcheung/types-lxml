@@ -1,6 +1,6 @@
 from typing import Iterator, Literal, final, overload
 
-from .._types import _ElementOrTree, _FileReadSource
+from .._types import _ElementOrTree, _FileReadSource, _TextArg
 from ._module_misc import LxmlError, _Validator
 
 class DTDError(LxmlError): ...
@@ -85,7 +85,9 @@ class DTD(_Validator):
     @overload
     def __init__(self, file: _FileReadSource) -> None: ...
     @overload
-    def __init__(self, file: None = None, *, external_id: bytes) -> None: ...
+    def __init__(  # str only supported since 5.3.1
+        self, file: None = None, *, external_id: _TextArg
+    ) -> None: ...
     @property
     def name(self) -> str | None: ...
     @property

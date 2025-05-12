@@ -5,17 +5,20 @@
 
 ## Important note
 
-![image showing deprecation warning](https://github.com/user-attachments/assets/6ab30a54-60e7-4e34-932a-2ac2e253c669)
+- Since `2025.03.04`:
+  - `BeautifulSoup4` package is added as dependency to utilise its inline annotation, thus dropping `types-beautifulsoup4` dependency.
+  - Fixes compatibility with older versions of type checkers, as well as `mypy` 1.14+.
+
+- Since `2025.02.24`:
+  - Add [`basedpyright`](https://github.com/DetachHead/basedpyright) type checker support (an enhanced fork of `pyright`)
 
 - Since `2024.11.08`:
-  - `pyright` users will see warning if a single string is supplied where collection of string is expected (`tuple`, `set`, `list` etc). In terms of typing, a single `str` itself is valid as a `Sequence`, so type checkers normally would not raise alarm when using `str` in such function parameters, but can induce unexpected runtime behavior. See [#64](https://github.com/abelcheung/types-lxml/issues/64) for more info. `mypy` does not support this feature (which (ab)uses `@deprecated` warning).
-  - It is possible to verify release files indeed come from GitHub and not maliciously altered. See [Release file attestation](#release-file-attestation) for detail.
-- Since `2024.08.07`:
-  - Each release will contain multiple builds; besides normal version, there is an alternative build suitable for multiple XML element subclass. Please check out [relevant Installation section](#choosing-the-build) for detail (hint: many people don't need to bother with this). Also note that this release requires `mypy 1.11` if one chooses to use `mypy` for type checking. `pyright` version requirement (`1.1.351`) is not changed.
+  - `pyright` and `vscode` users will [receive warnings](#warnings-for-exception-and-wrong-code) if certain `lxml` API usage would result in exception or undesirable runtime behavior.
+  - It is possible to [verify release files](#release-file-attestation) indeed come from GitHub and not maliciously altered.
 
 ## Introduction
 
-This repository contains [external type annotations](https://peps.python.org/pep-0561/) for [`lxml`](http://lxml.de/). It can be used by type-checking tools (currently supporting [`pyright`](https://github.com/Microsoft/pyright) and [`mypy`](https://pypi.org/project/mypy/)) to check code that uses `lxml`, or used within IDEs like [VSCode](https://code.visualstudio.com/) to facilitate development.
+This repository contains [external type annotations](https://peps.python.org/pep-0561/) for [`lxml`](http://lxml.de/). It can be used by [type-checking tools](#goal---support-multiple-type-checkers) to check code that uses `lxml`, or used within IDEs like [VSCode](https://code.visualstudio.com/) to facilitate development.
 
 ## Goal ① : Completion
 
@@ -45,9 +48,13 @@ Check out [project page](https://github.com/abelcheung/types-lxml/projects) for 
 
 ## Goal ② : Support multiple type checkers
 
-Currently the annotations are validated for both `pyright` and `mypy`, with `pyright` recommended because of its greater flexibility and early adoption of newer type checking features.
+Currently the annotations are validated for following type checkers:
 
-In the future, there is plan to bring even more type checker support.
+- [`basedpyright`](https://github.com/DetachHead/basedpyright), version 1.4.0 or above
+- [`pyright`](https://github.com/microsoft/pyright), version 1.1.351 or above
+- [`mypy`](https://github.com/python/mypy), version 1.10.0 or above
+
+`pyright` and `basedpyright` are recommended for their greater flexibility and early adoption of newer type checking features. In the future, there is plan to bring even more type checker support.
 
 ## Goal ③: Review and test suite
 
@@ -56,14 +63,30 @@ In the future, there is plan to bring even more type checker support.
 - [x] Existing static test suite already vastly expanded, and is under progress of migrating to runtime test
 - [x] Modernize package building infrastructure
 
-## Goal ④ : Support for IDEs
+## Goal ④ : Geared towards users
 
-Despite having no official PEP, some IDEs support showing docstring from external annotations. This package tries to bring type annotation specific docstrings for some `lxml` classes and functions, explaining how they can be used. Following screenshots show what would look like in Visual Studio Code, behaving as if docstrings come from real python code:
+#### Docstring
+
+This package tries to bring type annotation specific docstrings for some classes and functions, explaining how they can be used. Following screenshot demonstrates annotation specific docstring in Visual Studio Code:
 
 ![Stub docstring in VSCode mouseover tooltip](https://user-images.githubusercontent.com/83110/277119481-debbd929-afbd-4f59-b9e6-52a1f7f23241.png)
 
-Besides docstring, current annotations are geared towards convenience for code writers instead of absolute logical 'correctness'. The [deviation of class inheritance](https://github.com/abelcheung/types-lxml/wiki/Element-inheritance-change) for `HtmlComment` and friends is one prominent example.
+#### Warnings for exception and wrong code
 
+`pyright` (and therefore `vscode`) users receive additional benefit of being forewarned when their lxml code will likely cause undesirable runtime behavior or outright exception.
+- [#64](https://github.com/abelcheung/types-lxml/issues/64) covers one such example where such warnings are warrented.
+- Another example is `html.html5parser` submodule functions causing exception when `str` input and `guess_charset` parameter are used together.
+
+> [!NOTE]
+> This feature makes use of [`@deprecated` decorator](https://typing.python.org/en/latest/spec/directives.html#deprecated) from Python 3.13. `mypy` disables such warnings by default, and need to be [turned on explicitly](https://mypy.readthedocs.io/en/stable/error_code_list2.html#check-that-imported-or-used-feature-is-deprecated-deprecated).
+
+![image showing deprecation warning](https://github.com/user-attachments/assets/6ab30a54-60e7-4e34-932a-2ac2e253c669)
+
+#### Class inheritance change
+
+Current annotations are geared towards convenience for programmers' convenience instead of absolute logical 'correctness'. The [deviation of class inheritance](https://github.com/abelcheung/types-lxml/wiki/Element-inheritance-change) for `HtmlComment` and friends is one prominent example.
+
+----
 
 ## Installation
 
@@ -99,14 +122,16 @@ Such scenario is already in effect for `lxml.html`. `<form>` element (`FormEleme
 
 The 2 paradigms can't coexist within a single type annotation package. See [bug #51](https://github.com/abelcheung/types-lxml/issues/51) that illustrated why multiple build is necessary.
 
-Remember that anybody can only choose one of the 2 builds. It is impossible to install both, as `pip` just [arbitrarily overwrite conflicting files with one another](https://github.com/pypa/pip/issues/4625). If in doubt, removing existing package first, then install the one you needed.
+> [!IMPORTANT]
+> Users can only choose to install either build, not both. `pip` would [arbitrarily overwrite conflicting files with one another](https://github.com/pypa/pip/issues/4625). If in doubt, removing existing package first, then install the one you needed.
 
 
 ### Release file attestation
 
-Since `2024.11.08` users can download `types-lxml` release files and verify that they indeed do originate from GitHub. For those haven't heard of it, this is sort of like `gnupg` or [`minisign`](https://jedisct1.github.io/minisign/) signatures, but with GitHub backed infrastructure.
+> [!TIP]
+> For those haven't heard of it, this is sort of like `gnupg` or [`minisign`](https://jedisct1.github.io/minisign/) signatures, but with GitHub backed infrastructure.
 
-After downloading release wheel file (say `pip download types-lxml`, or browser access to PyPI directly), one can use [GitHub cli](https://cli.github.com/) to verify it comes from this GitHub repository without being altered:
+Since `2024.11.08` users can download `types-lxml` release files and verify that they indeed do originate from GitHub. After downloading release wheel file (say `pip download types-lxml`, or browser access to PyPI directly), one can use [GitHub cli](https://cli.github.com/) to verify it comes from this GitHub repository without being altered:
 
 ```
 gh at verify types_lxml-2024.11.8-py3-none-any.whl --repo abelcheung/types-lxml

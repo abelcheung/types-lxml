@@ -25,12 +25,7 @@ Unused = Any
 # This type alias should only be used for input arguments, while one would
 # expect plain str in return type for most part of API (except a few places),
 # as far as python3 annotation is concerned.
-# _AnyStr should not to be confused with typing.AnyStr which is TypeVar.
-# TODO slowly migrating to _TextArg
-_AnyStr = str | bytes
 _TextArg = str | bytes | bytearray
-"""Generic text arguments or properties supported
-throughout lxml API."""
 
 # String argument also support QName in various places;
 # also include aliases semantically indicating the purpose
@@ -72,11 +67,10 @@ in place of or in addition to `_AttrMapping`.
 # Try to settle for simpler solution, assuming python3 users would not
 # use byte string as namespace prefix.
 _NSMapArg = (
-    Mapping[      None, _AnyStr] |
-    Mapping[str       , _AnyStr] |
-    Mapping[str | None, _AnyStr]
+    Mapping[      None, str | bytes] |  # noqa: E201,E272
+    Mapping[str       , str | bytes] |  # noqa: E203
+    Mapping[str | None, str | bytes]
 )  # fmt: skip
-_NonDefaultNSMapArg = Mapping[str, _AnyStr]
 
 # Namespace mapping type specifically for Elementpath methods
 #
@@ -86,15 +80,28 @@ _NonDefaultNSMapArg = Mapping[str, _AnyStr]
 # they would silently fail to output any element afterwards.
 # Bytes and strs are treated as different NS entries.
 # In order to be useful, dict val must be str.
-_StrictNSMap = (
-    Mapping[      None, str] |
-    Mapping[str       , str] |
+_StrOnlyNSMap = (
+    Mapping[      None, str] |  # noqa: E201,E272
+    Mapping[str       , str] |  # noqa: E203
     Mapping[str | None, str]
 )  # fmt: skip
 
 # Some namespace map arguments also accept tuple form
 # like what dict() does
-_NSTuples = Iterable[tuple[_AnyStr | None, _AnyStr]]
+_NSTuples = Iterable[tuple[str | bytes | None, str | bytes]]
+
+# Cutting short dict combinations, otherwise we need
+# a union of 9 dicts.
+_XPathNSArg = (
+    Iterable[tuple[str | bytes, str | bytes]]
+    | dict[str, str]
+    | dict[bytes, bytes]
+)  # fmt: skip
+"""XPath specific namespace mapping, with following properties:
+
+- Both prefix and URI can be str or bytes, must be non-empty
+- Either a dict of `{prefix: URI}` (other mapping types not OK), or
+- Iterable of prefix-URI tuple pairs"""
 
 # https://lxml.de/extensions.html#xpath-extension-functions
 # The returned result of extension function itself is not exactly Any,
@@ -102,14 +109,12 @@ _NSTuples = Iterable[tuple[_AnyStr | None, _AnyStr]]
 # And xpath extension func really checks for dict in implementation,
 # not just any mapping.
 _XPathExtFuncArg = (
-    Iterable[
-        SupportsLaxItems[
-            tuple[str | None, str],
-            Callable[..., Any],
-        ]
-    ]
-    | dict[tuple[str       , str], Callable[..., Any]]
-    | dict[tuple[      None, str], Callable[..., Any]]
+    Iterable[SupportsLaxItems[
+        tuple[str | None, str],
+        Callable[..., Any],
+    ]]
+    | dict[tuple[str       , str], Callable[..., Any]]  # noqa: E203
+    | dict[tuple[      None, str], Callable[..., Any]]  # noqa: E201,E272
     | dict[tuple[str | None, str], Callable[..., Any]]
 )  # fmt: skip
 
@@ -131,9 +136,6 @@ _XPathVarArg = (
     | list[_Element]
 )  # fmt: skip
 
-# https://lxml.de/element_classes.html#custom-element-class-lookup
-_ElemClsLookupArg = Literal["element", "comment", "PI", "entity"]
-
 # serializer.pxi _findOutputMethod()
 _OutputMethodArg = Literal[
     "html",
@@ -154,11 +156,16 @@ _SaxEventNames = Literal[
 _ET = TypeVar("_ET", bound=_Element, default=_Element)
 _ET_co = TypeVar("_ET_co", bound=_Element, default=_Element, covariant=True)
 
-# HACK _TagSelector filters element type not by classes,
-# but checks for exact element *factory functions* instead
-# (etree.Element() and friends). Python typing system doesn't
-# support such outlandish usage. Use a generic callable instead.
-_TagSelector = _TagName | Callable[..., _Element]
+# HACK _TagSelector filters element type not by classes, but checks for exact
+# element *factory functions* instead (etree.Element() and friends). Python
+# typing system doesn't support such outlandish usage. Use a generic callable
+# instead.
+#
+# Its behavior is defined in _MultiTagMatcher._storeTags(). '.tag' attributes of
+# elements can be bytearray, it's just that tag selector can't use bytearray as
+# argument. Even when using other types as argument, the matcher can still pick
+# up elements with bytearray tags.
+_TagSelector = str | bytes | QName | Callable[..., _Element]
 
 _ElementOrTree = _ET | _ElementTree[_ET]
 
@@ -177,7 +184,7 @@ class SupportsLaxItems(Protocol[_KT_co, _VT_co]):
 
     def items(self) -> Collection[tuple[_KT_co, _VT_co]]: ...
 
-_FilePath = _AnyStr | PathLike[str] | PathLike[bytes]
+_FilePath = str | bytes | PathLike[str] | PathLike[bytes]
 # _parseDocument() from parser.pxi
 _FileReadSource = (
     _FilePath

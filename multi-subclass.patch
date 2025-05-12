@@ -1,16 +1,17 @@
  pyproject.toml                         |  2 +-
- src/lxml-stubs/etree/_element.pyi      | 76 +++++++++++++++++-----------------
+ src/lxml-stubs/cssselect.pyi           | 10 ++---
+ src/lxml-stubs/etree/_element.pyi      | 74 +++++++++++++++++-----------------
  src/lxml-stubs/etree/_factory_func.pyi |  6 +--
- src/lxml-stubs/html/_element.pyi       | 35 +++++++++-------
+ src/lxml-stubs/html/_element.pyi       | 48 +++++++++++-----------
  src/lxml-stubs/objectify/_element.pyi  | 10 +++--
- tests/runtime/conftest.py              |  2 +-
- 6 files changed, 68 insertions(+), 63 deletions(-)
+ tests/runtime/_testutils/common.py     |  2 +-
+ 7 files changed, 77 insertions(+), 75 deletions(-)
 
 diff --git a/pyproject.toml b/pyproject.toml
-index bc08196..7e6af31 100644
+index 7741988..03ebb97 100644
 --- a/pyproject.toml
 +++ b/pyproject.toml
-@@ -5,7 +5,7 @@ requires = ['pdm-backend ~= 2.3']
+@@ -5,7 +5,7 @@ requires = ['pdm-backend ~= 2.4']
  build-backend = 'pdm.backend'
  
  [project]
@@ -19,12 +20,46 @@ index bc08196..7e6af31 100644
  dynamic = ['version']
  description = 'Complete lxml external type annotation'
  readme = 'README.md'
+diff --git a/src/lxml-stubs/cssselect.pyi b/src/lxml-stubs/cssselect.pyi
+index 1ccf715..24f914b 100644
+--- a/src/lxml-stubs/cssselect.pyi
++++ b/src/lxml-stubs/cssselect.pyi
+@@ -6,8 +6,8 @@ import cssselect as _csel
+ from cssselect.parser import Function
+ from cssselect.xpath import XPathExpr
+ 
+-from ._types import _ET, _ElementOrTree, _XPathNSArg, _XPathVarArg
+-from .etree import XPath
++from ._types import _ElementOrTree, _XPathNSArg, _XPathVarArg
++from .etree import XPath, _Element
+ from .html import HtmlElement
+ from .objectify import ObjectifiedElement
+ 
+@@ -48,7 +48,7 @@ class CSSSelector(XPath):
+     # we handle the 2 built-in element families (HtmlElement
+     # and ObjectifiedElement), but the rest is up to users.
+     @overload
+-    def __call__(
++    def __call__(  # pyright: ignore[reportOverlappingOverload]
+         self,
+         _etree_or_element: _ElementOrTree[ObjectifiedElement],
+         /,
+@@ -64,7 +64,7 @@ class CSSSelector(XPath):
+     @overload
+     def __call__(
+         self,
+-        _etree_or_element: _ElementOrTree[_ET],
++        _etree_or_element: _ElementOrTree,
+         /,
+         **_variables: _XPathVarArg,
+-    ) -> list[_ET]: ...
++    ) -> list[_Element]: ...
 diff --git a/src/lxml-stubs/etree/_element.pyi b/src/lxml-stubs/etree/_element.pyi
-index 7b6076d..65eec60 100644
+index 771b76c..90b0f8f 100644
 --- a/src/lxml-stubs/etree/_element.pyi
 +++ b/src/lxml-stubs/etree/_element.pyi
-@@ -14,9 +14,9 @@ from typing import (
- )
+@@ -18,9 +18,9 @@ from ._parser import CustomTargetParser
+ from ._xslt import XSLTAccessControl, XSLTExtension, _Stylesheet_Param, _XSLTResultTree
  
  if sys.version_info >= (3, 11):
 -    from typing import Never, Self
@@ -35,7 +70,7 @@ index 7b6076d..65eec60 100644
  
  if sys.version_info >= (3, 13):
      from warnings import deprecated
-@@ -76,34 +76,34 @@ class _Element:
+@@ -169,11 +169,11 @@ class _Element:
      #
      def __delitem__(self, __k: int | slice) -> None: ...
      @overload
@@ -46,17 +81,16 @@ index 7b6076d..65eec60 100644
 +    def __getitem__(self, __x: slice) -> list[_Element]: ...
      @overload
 -    def __setitem__(self, __x: int, __v: Self) -> None: ...
--    # Not using Iterable[Self] here. Note that an element itself
 +    def __setitem__(self, __x: int, __v: _Element) -> None: ...
-+    # Not using Iterable here. Note that an element itself
-     # is considered an Iterable; when used with __setitem__()
-     # like elem[:] = new_elem, only subelements within new_elem
-     # will be inserted, but not new_elem itself. If there is none,
-     # the whole slice would be silently deleted. Though permitted
-     # in runtime, this is not an expected behavior.
+     # An element itself can be treated as container of other elements. When used
+     # like elem[:] = new_elem, only subelements within new_elem will be
+     # inserted, but not new_elem itself. If there is none, the whole slice would
+@@ -183,13 +183,13 @@ class _Element:
+     # doesn't apply to magic methods, at least for Pylance. Thus we create
+     # additional overload for extend() but not here.
      @overload
--    def __setitem__(self, __x: slice, __v: Sequence[Self]) -> None: ...
-+    def __setitem__(self, __x: slice, __v: Sequence[_Element]) -> None: ...
+-    def __setitem__(self, __x: slice, __v: Iterable[Self]) -> None: ...
++    def __setitem__(self, __x: slice, __v: Iterable[_Element]) -> None: ...
      def __contains__(self, __o: object) -> bool: ...
      def __len__(self) -> int: ...
      # There are a hoard of element iterators used in lxml, but
@@ -65,126 +99,248 @@ index 7b6076d..65eec60 100644
 -    def __reversed__(self) -> Iterator[Self]: ...
 +    def __iter__(self) -> Iterator[_Element]: ...
 +    def __reversed__(self) -> Iterator[_Element]: ...
-     def set(self, key: _t._AttrName, value: _t._AttrVal) -> None: ...
--    def append(self, element: Self) -> None: ...
-+    def append(self, element: _Element) -> None: ...
-     # for extend() argument, see __setitem__() for explanation
--    def extend(self, elements: Sequence[Self]) -> None: ...
-+    def extend(self, elements: Sequence[_Element]) -> None: ...
-     def clear(self, keep_tail: bool = False) -> None: ...
--    def insert(self, index: int, element: Self) -> None: ...
--    def remove(self, element: Self) -> None: ...
-+    def insert(self, index: int, element: _Element) -> None: ...
-+    def remove(self, element: _Element) -> None: ...
-     def index(
--        self, child: Self, start: int | None = None, end: int | None = None
-+        self, child: _Element, start: int | None = None, end: int | None = None
-     ) -> int: ...
+     def set(self, key: _t._AttrName, value: _t._AttrVal) -> None:
+         """Sets an element attribute.
+ 
+@@ -197,7 +197,7 @@ class _Element:
+         --------
+         - [API Documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree._Element.set)
+         """
+-    def append(self, element: Self) -> None:
++    def append(self, element: _Element) -> None:
+         """Adds a subelement to the end of this element.
+ 
+         See Also
+@@ -219,7 +219,7 @@ class _Element:
+         - [API Documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree._Element.extend)
+         """
      @overload
-     def get(self, key: _t._AttrName) -> str | None: ...
-@@ -115,53 +115,53 @@ class _Element:
+-    def extend(self, elements: Iterable[Self]) -> None:
++    def extend(self, elements: Iterable[_Element]) -> None:
+         """Extends the current children by the elements in the iterable.
+ 
+         See Also
+@@ -233,14 +233,14 @@ class _Element:
+         --------
+         - [API Documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree._Element.clear)
+         """
+-    def insert(self, index: int, element: Self) -> None:
++    def insert(self, index: int, element: _Element) -> None:
+         """Inserts a subelement at the given position in this element
+ 
+         See Also
+         --------
+         - [API Documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree._Element.insert)
+         """
+-    def remove(self, element: Self) -> None:
++    def remove(self, element: _Element) -> None:
+         """Removes a matching subelement.
+ 
+         See Also
+@@ -249,7 +249,7 @@ class _Element:
+         """
+     def index(
+         self,
+-        child: Self,
++        child: _Element,
+         start: int | None = None,
+         stop: int | None = None,
+     ) -> int:
+@@ -307,49 +307,49 @@ class _Element:
      #
      # extra Element / ET methods
      #
--    def addnext(self, element: Self) -> None: ...
--    def addprevious(self, element: Self) -> None: ...
--    def replace(self, old_element: Self, new_element: Self) -> None: ...
--    def getparent(self) -> Self | None: ...
--    def getnext(self) -> Self | None: ...
--    def getprevious(self) -> Self | None: ...
--    def getroottree(self) -> _ElementTree[Self]: ...
-+    def addnext(self, element: _Element) -> None: ...
-+    def addprevious(self, element: _Element) -> None: ...
-+    def replace(self, old_element: _Element, new_element: _Element) -> None: ...
-+    def getparent(self) -> _Element | None: ...
-+    def getnext(self) -> _Element | None: ...
-+    def getprevious(self) -> _Element | None: ...
-+    def getroottree(self) -> _ElementTree[_Element]: ...
+-    def addnext(self, element: Self) -> None:
++    def addnext(self, element: _Element) -> None:
+         """Adds the element as a following sibling directly after this element.
+ 
+         See Also
+         --------
+         - [API Documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree._Element.addnext)
+         """
+-    def addprevious(self, element: Self) -> None:
++    def addprevious(self, element: _Element) -> None:
+         """Adds the element as a preceding sibling directly before this element.
+ 
+         See Also
+         --------
+         - [API Documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree._Element.addprevious)
+         """
+-    def replace(self, old_element: Self, new_element: Self) -> None:
++    def replace(self, old_element: _Element, new_element: _Element) -> None:
+         """Replaces a subelement with the element passed as second argument.
+ 
+         See Also
+         --------
+         - [API Documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree._Element.replace)
+         """
+-    def getparent(self) -> Self | None:
++    def getparent(self) -> _Element | None:
+         """Returns the parent of this element or None for the root element.
+ 
+         See Also
+         --------
+         - [API Documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree._Element.getparent)
+         """
+-    def getnext(self) -> Self | None:
++    def getnext(self) -> _Element | None:
+         """Returns the following sibling of this element or None.
+ 
+         See Also
+         --------
+         - [API Documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree._Element.getnext)
+         """
+-    def getprevious(self) -> Self | None:
++    def getprevious(self) -> _Element | None:
+         """Returns the preceding sibling of this element or None.
+ 
+         See Also
+         --------
+         - [API Documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree._Element.getprevious)
+         """
+-    def getroottree(self) -> _ElementTree[Self]:
++    def getroottree(self) -> _ElementTree[_Element]:
+         """Return an ElementTree for the root node of the document that
+         contains this element.
+ 
+@@ -360,7 +360,7 @@ class _Element:
      @overload
      def itersiblings(
          self, *tags: _t._TagSelector, preceding: bool = False
--    ) -> Iterator[Self]: ...
-+    ) -> Iterator[_Element]: ...
-     @overload
-     def itersiblings(
-         self,
-         tag: _t._TagSelector | Collection[_t._TagSelector] | None = None,
+-    ) -> Iterator[Self]:
++    ) -> Iterator[_Element]:
+         """Iterate over the following or preceding siblings of this element.
+ 
+         Annotation
+@@ -379,7 +379,7 @@ class _Element:
+         tag: _t._TagSelector | Iterable[_t._TagSelector] | None = None,
          *,
          preceding: bool = False,
--    ) -> Iterator[Self]: ...
-+    ) -> Iterator[_Element]: ...
+-    ) -> Iterator[Self]:
++    ) -> Iterator[_Element]:
+         """Iterate over the following or preceding siblings of this element.
+ 
+         Annotation
+@@ -394,7 +394,7 @@ class _Element:
+         - [Possible tag values in `iter()`](https://lxml.de/apidoc/lxml.etree.html#lxml.etree._Element.iter)
+         """
      @overload
--    def iterancestors(self, *tags: _t._TagSelector) -> Iterator[Self]: ...
-+    def iterancestors(self, *tags: _t._TagSelector) -> Iterator[_Element]: ...
+-    def iterancestors(self, *tags: _t._TagSelector) -> Iterator[Self]:
++    def iterancestors(self, *tags: _t._TagSelector) -> Iterator[_Element]:
+         """Iterate over the ancestors of this element (from parent to parent).
+ 
+         Annotation
+@@ -410,7 +410,7 @@ class _Element:
      @overload
      def iterancestors(
-         self, tag: _t._TagSelector | Collection[_t._TagSelector] | None = None
--    ) -> Iterator[Self]: ...
-+    ) -> Iterator[_Element]: ...
+         self, tag: _t._TagSelector | Iterable[_t._TagSelector] | None = None
+-    ) -> Iterator[Self]:
++    ) -> Iterator[_Element]:
+         """Iterate over the ancestors of this element (from parent to parent).
+ 
+         Annotation
+@@ -425,7 +425,7 @@ class _Element:
+         - [Possible tag values in `iter()`](https://lxml.de/apidoc/lxml.etree.html#lxml.etree._Element.iter)
+         """
      @overload
--    def iterdescendants(self, *tags: _t._TagSelector) -> Iterator[Self]: ...
-+    def iterdescendants(self, *tags: _t._TagSelector) -> Iterator[_Element]: ...
+-    def iterdescendants(self, *tags: _t._TagSelector) -> Iterator[Self]:
++    def iterdescendants(self, *tags: _t._TagSelector) -> Iterator[_Element]:
+         """Iterate over the descendants of this element in document order.
+ 
+         Annotation
+@@ -441,7 +441,7 @@ class _Element:
      @overload
      def iterdescendants(
-         self, tag: _t._TagSelector | Collection[_t._TagSelector] | None = None
--    ) -> Iterator[Self]: ...
-+    ) -> Iterator[_Element]: ...
+         self, tag: _t._TagSelector | Iterable[_t._TagSelector] | None = None
+-    ) -> Iterator[Self]:
++    ) -> Iterator[_Element]:
+         """Iterate over the descendants of this element in document order.
+ 
+         Annotation
+@@ -458,7 +458,7 @@ class _Element:
      @overload
      def iterchildren(
          self, *tags: _t._TagSelector, reversed: bool = False
--    ) -> Iterator[Self]: ...
-+    ) -> Iterator[_Element]: ...
-     @overload
-     def iterchildren(
-         self,
-         tag: _t._TagSelector | Collection[_t._TagSelector] | None = None,
+-    ) -> Iterator[Self]:
++    ) -> Iterator[_Element]:
+         """Iterate over the children of this element.
+ 
+         Annotation
+@@ -477,7 +477,7 @@ class _Element:
+         tag: _t._TagSelector | Iterable[_t._TagSelector] | None = None,
          *,
          reversed: bool = False,
--    ) -> Iterator[Self]: ...
-+    ) -> Iterator[_Element]: ...
+-    ) -> Iterator[Self]:
++    ) -> Iterator[_Element]:
+         """Iterate over the children of this element.
+ 
+         Annotation
+@@ -492,7 +492,7 @@ class _Element:
+         - [Possible tag values in `iter()`](https://lxml.de/apidoc/lxml.etree.html#lxml.etree._Element.iter)
+         """
      @overload
--    def iter(self, *tags: _t._TagSelector) -> Iterator[Self]: ...
-+    def iter(self, *tags: _t._TagSelector) -> Iterator[_Element]: ...
+-    def iter(self, *tags: _t._TagSelector) -> Iterator[Self]:
++    def iter(self, *tags: _t._TagSelector) -> Iterator[_Element]:
+         """Iterate over all elements in the subtree in document order (depth
+         first pre-order), starting with this element.
+ 
+@@ -508,7 +508,7 @@ class _Element:
      @overload
      def iter(
-         self, tag: _t._TagSelector | Collection[_t._TagSelector] | None = None
--    ) -> Iterator[Self]: ...
-+    ) -> Iterator[_Element]: ...
-     @overload
-     def itertext(
-         self, *tags: _t._TagSelector, with_tail: bool = True
-@@ -173,10 +173,10 @@ class _Element:
-         *,
-         with_tail: bool = True,
-     ) -> Iterator[str]: ...
+         self, tag: _t._TagSelector | Iterable[_t._TagSelector] | None = None
+-    ) -> Iterator[Self]:
++    ) -> Iterator[_Element]:
+         """Iterate over all elements in the subtree in document order (depth
+         first pre-order), starting with this element.
+ 
+@@ -556,7 +556,7 @@ class _Element:
+         - [API Documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree._Element.itertext)
+         - [Possible tag values in `iter()`](https://lxml.de/apidoc/lxml.etree.html#lxml.etree._Element.iter)
+         """
 -    makeelement: _t._ElementFactory[Self]
 +    makeelement: _t._ElementFactory[_Element]
+     """Creates a new element associated with the same document.
+ 
+     See Also
+@@ -565,7 +565,7 @@ class _Element:
+     """
      def find(
-         self, path: _t._ElemPathArg, namespaces: _t._StrictNSMap | None = None
--    ) -> Self | None: ...
-+    ) -> _Element | None: ...
-     # Original method has no star. If somebody only supplies
-     # 'path' and 'default' argument as positional one, it
-     # would be misinterpreted as namespaces argument in first
-@@ -197,10 +197,10 @@ class _Element:
-     ) -> str | _T: ...
+         self, path: _t._ElemPathArg, namespaces: _t._StrOnlyNSMap | None = None
+-    ) -> Self | None:
++    ) -> _Element | None:
+         """Creates a new element associated with the same document.
+ 
+         See Also
+@@ -608,7 +608,7 @@ class _Element:
+         """
      def findall(
-         self, path: _t._ElemPathArg, namespaces: _t._StrictNSMap | None = None
--    ) -> list[Self]: ...
-+    ) -> list[_Element]: ...
+         self, path: _t._ElemPathArg, namespaces: _t._StrOnlyNSMap | None = None
+-    ) -> list[Self]:
++    ) -> list[_Element]:
+         """Finds all matching subelements, by tag name or path.
+ 
+         See Also
+@@ -617,7 +617,7 @@ class _Element:
+         """
      def iterfind(
-         self, path: _t._ElemPathArg, namespaces: _t._StrictNSMap | None = None
--    ) -> Iterator[Self]: ...
-+    ) -> Iterator[_Element]: ...
-     def xpath(
-         self,
-         _path: _t._AnyStr,
-@@ -216,15 +216,15 @@ class _Element:
+         self, path: _t._ElemPathArg, namespaces: _t._StrOnlyNSMap | None = None
+-    ) -> Iterator[Self]:
++    ) -> Iterator[_Element]:
+         """Iterates over all matching subelements, by tag name or path.
+ 
+         See Also
+@@ -645,7 +645,7 @@ class _Element:
          expr: str,
          *,
          translator: _CSSTransArg = "xml",
--    ) -> list[Self]: ...
-+    ) -> list[_Element]: ...
+-    ) -> list[Self]:
++    ) -> list[_Element]:
+         """Run the CSS expression on this element and its children,
+         returning a list of the results.
+ 
+@@ -654,13 +654,13 @@ class _Element:
+         - [API Documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree._Entity.cssselect)
+         """
      @deprecated("Since v2.0 (2008); use list(element) or iterate over element")
 -    def getchildren(self) -> list[Self]: ...
 +    def getchildren(self) -> list[_Element]: ...
@@ -196,10 +352,10 @@ index 7b6076d..65eec60 100644
 -    ) -> Iterator[Self]: ...
 +    ) -> Iterator[_Element]: ...
  
- # ET class notation is specialized, indicating the type of element
- # it is holding (e.g. XML element, HTML element or Objectified
+ _ET2_co = TypeVar("_ET2_co", bound=_Element, default=_Element, covariant=True)
+ 
 diff --git a/src/lxml-stubs/etree/_factory_func.pyi b/src/lxml-stubs/etree/_factory_func.pyi
-index 407eda6..3f6c237 100644
+index 3525354..243383f 100644
 --- a/src/lxml-stubs/etree/_factory_func.pyi
 +++ b/src/lxml-stubs/etree/_factory_func.pyi
 @@ -14,7 +14,7 @@ from .._types import (
@@ -208,10 +364,10 @@ index 407eda6..3f6c237 100644
  from ..objectify import ObjectifiedElement, StringElement
 -from ._element import _Comment, _ElementTree, _Entity, _ProcessingInstruction
 +from ._element import _Comment, _Element, _ElementTree, _Entity, _ProcessingInstruction
+ from ._parser import CustomTargetParser
  
- def Comment(text: _TextArg | None = None) -> _Comment: ...
- def ProcessingInstruction(
-@@ -61,13 +61,13 @@ def SubElement(
+ _T = TypeVar("_T")
+@@ -64,13 +64,13 @@ def SubElement(
  ) -> HtmlElement: ...
  @overload
  def SubElement(
@@ -225,70 +381,125 @@ index 407eda6..3f6c237 100644
 -) -> _ET: ...
 +) -> _Element: ...
  @overload  # from element, parser ignored
- def ElementTree(element: _ET) -> _ElementTree[_ET]: ...
- @overload  # from file source, custom parser
+ def ElementTree(element: _ET) -> _ElementTree[_ET]:
+     """ElementTree wrapper class for Element objects.
 diff --git a/src/lxml-stubs/html/_element.pyi b/src/lxml-stubs/html/_element.pyi
-index 58998eb..4d09668 100644
+index 52f07a6..8cda2b3 100644
 --- a/src/lxml-stubs/html/_element.pyi
 +++ b/src/lxml-stubs/html/_element.pyi
-@@ -128,26 +128,29 @@ class HtmlElement(etree.ElementBase):
+@@ -124,72 +124,72 @@ class HtmlElement(etree.ElementBase):
      # Subclassing of _Element should not go beyond HtmlElement. For example,
      # while children of HtmlElement are mostly HtmlElement, FormElement never
      # contains FormElement as child.
 -    @overload
 +    @overload  # type: ignore[override]
-     def __getitem__(self, __x: int) -> HtmlElement: ...
+     def __getitem__(
+         self,
+         __x: int,
+     ) -> HtmlElement: ...
      @overload
--    def __getitem__(self, __x: slice) -> list[HtmlElement]: ...
+-    def __getitem__(
++    def __getitem__(  # pyright: ignore[reportIncompatibleMethodOverride]
+         self,
+         __x: slice,
+     ) -> list[HtmlElement]: ...
 -    @overload
-+    def __getitem__(self, __x: slice) -> list[HtmlElement]: ...  # pyright: ignore[reportIncompatibleMethodOverride]
 +    @overload  # type: ignore[override]
-     def __setitem__(self, __x: int, __v: HtmlElement) -> None: ...
+     def __setitem__(
+         self,
+         __x: int,
+         __v: HtmlElement,
+     ) -> None: ...
      @overload
--    def __setitem__(self, __x: slice, __v: Sequence[HtmlElement]) -> None: ...
-+    def __setitem__(self, __x: slice, __v: Sequence[HtmlElement]) -> None: ...  # pyright: ignore[reportIncompatibleMethodOverride]
+-    def __setitem__(
++    def __setitem__(  # pyright: ignore[reportIncompatibleMethodOverride]
+         self,
+         __x: slice,
+         __v: Iterable[HtmlElement],
+     ) -> None: ...
      def __iter__(self) -> Iterator[HtmlElement]: ...
      def __reversed__(self) -> Iterator[HtmlElement]: ...
--    def append(self, element: HtmlElement) -> None: ...
--    def extend(self, elements: Sequence[HtmlElement]) -> None: ...
--    def insert(self, index: int, element: HtmlElement) -> None: ...
--    def remove(self, element: HtmlElement) -> None: ...
+-    def append(
++    def append(  # pyright: ignore[reportIncompatibleMethodOverride]
+         self,
+-        element: HtmlElement,
++        element: HtmlElement,  # type: ignore[override]
+     ) -> None: ...
+-    @overload
++    @overload  # type: ignore[override]
+     @deprecated("Expects iterable of elements as value, not single element")
+     def extend(
+         self,
+         elements: etree._Element,
+     ) -> Never: ...
+     @overload
+-    def extend(
++    def extend(  # pyright: ignore[reportIncompatibleMethodOverride]
+         self,
+         elements: Iterable[HtmlElement],
+     ) -> None: ...
+-    def insert(
++    def insert(  # pyright: ignore[reportIncompatibleMethodOverride]
+         self,
+         index: int,
+-        element: HtmlElement,
++        element: HtmlElement,  # type: ignore[override]
+     ) -> None: ...
+-    def remove(
++    def remove(  # pyright: ignore[reportIncompatibleMethodOverride]
+         self,
+-        element: HtmlElement,
++        element: HtmlElement,  # type: ignore[override]
+     ) -> None: ...
 -    def index(
--        self, child: HtmlElement, start: int | None = None, end: int | None = None
-+    def append(self, element: HtmlElement) -> None: ...  # type: ignore[override]  # pyright: ignore[reportIncompatibleMethodOverride]
-+    def extend(self, elements: Sequence[HtmlElement]) -> None: ...  # type: ignore[override]  # pyright: ignore[reportIncompatibleMethodOverride]
-+    def insert(self, index: int, element: HtmlElement) -> None: ...  # type: ignore[override]  # pyright: ignore[reportIncompatibleMethodOverride]
-+    def remove(self, element: HtmlElement) -> None: ...  # type: ignore[override]  # pyright: ignore[reportIncompatibleMethodOverride]
 +    def index(  # pyright: ignore[reportIncompatibleMethodOverride]
-+        self,
+         self,
+-        child: HtmlElement,
 +        child: HtmlElement,  # type: ignore[override]
-+        start: int | None = None,
-+        end: int | None = None,
+         start: int | None = None,
+         stop: int | None = None,
      ) -> int: ...
--    def addnext(self, element: HtmlElement) -> None: ...
--    def addprevious(self, element: HtmlElement) -> None: ...
--    def replace(self, old_element: HtmlElement, new_element: HtmlElement) -> None: ...
-+    def addnext(self, element: HtmlElement) -> None: ...  # type: ignore[override]  # pyright: ignore[reportIncompatibleMethodOverride]
-+    def addprevious(self, element: HtmlElement) -> None: ...  # type: ignore[override]  # pyright: ignore[reportIncompatibleMethodOverride]
-+    def replace(self, old_element: HtmlElement, new_element: HtmlElement) -> None: ...  # type: ignore[override]  # pyright: ignore[reportIncompatibleMethodOverride]
+-    def addnext(
++    def addnext(  # pyright: ignore[reportIncompatibleMethodOverride]
+         self,
+-        element: HtmlElement,
++        element: HtmlElement,  # type: ignore[override]
+     ) -> None: ...
+-    def addprevious(
++    def addprevious(  # pyright: ignore[reportIncompatibleMethodOverride]
+         self,
+-        element: HtmlElement,
++        element: HtmlElement,  # type: ignore[override]
+     ) -> None: ...
+-    def replace(
++    def replace(  # pyright: ignore[reportIncompatibleMethodOverride]
+         self,
+-        old_element: HtmlElement,
+-        new_element: HtmlElement,
++        old_element: HtmlElement,  # type: ignore[override]
++        new_element: HtmlElement,  # type: ignore[override]
+     ) -> None: ...
      def getparent(self) -> HtmlElement | None: ...
      def getnext(self) -> HtmlElement | None: ...
-     def getprevious(self) -> HtmlElement | None: ...
-@@ -203,17 +206,17 @@ class HtmlElement(etree.ElementBase):
+@@ -264,13 +264,13 @@ class HtmlElement(etree.ElementBase):
          *,
          with_tail: bool = True,
      ) -> Iterator[str]: ...
 -    makeelement: _ElementFactory[HtmlElement]
 +    makeelement: _ElementFactory[HtmlElement]  # pyright: ignore[reportIncompatibleVariableOverride]
      def find(
-         self, path: _ElemPathArg, namespaces: _StrictNSMap | None = None
+         self,
+         path: _ElemPathArg,
+         namespaces: _StrOnlyNSMap | None = None,
      ) -> HtmlElement | None: ...
 -    def findall(
 +    def findall(  # type: ignore[override]  # pyright: ignore[reportIncompatibleMethodOverride]
-         self, path: _ElemPathArg, namespaces: _StrictNSMap | None = None
-     ) -> list[HtmlElement]: ...
-     def iterfind(
-         self, path: _ElemPathArg, namespaces: _StrictNSMap | None = None
+         self,
+         path: _ElemPathArg,
+         namespaces: _StrOnlyNSMap | None = None,
+@@ -280,7 +280,7 @@ class HtmlElement(etree.ElementBase):
+         path: _ElemPathArg,
+         namespaces: _StrOnlyNSMap | None = None,
      ) -> Iterator[HtmlElement]: ...
 -    def cssselect(
 +    def cssselect(  # type: ignore[override]  # pyright: ignore[reportIncompatibleMethodOverride]
@@ -296,7 +507,7 @@ index 58998eb..4d09668 100644
          expr: str,
          *,
 diff --git a/src/lxml-stubs/objectify/_element.pyi b/src/lxml-stubs/objectify/_element.pyi
-index 8ef012e..d8948d2 100644
+index fbf91ab..694caee 100644
 --- a/src/lxml-stubs/objectify/_element.pyi
 +++ b/src/lxml-stubs/objectify/_element.pyi
 @@ -50,7 +50,7 @@ class ObjectifiedElement(ElementBase):
@@ -332,16 +543,16 @@ index 8ef012e..d8948d2 100644
          self,
          expr: str,
          *,
-diff --git a/tests/runtime/conftest.py b/tests/runtime/conftest.py
-index 54a6a08..c4ecbad 100644
---- a/tests/runtime/conftest.py
-+++ b/tests/runtime/conftest.py
-@@ -21,7 +21,7 @@ is_multi_subclass_build = pytest.StashKey[bool]()
+diff --git a/tests/runtime/_testutils/common.py b/tests/runtime/_testutils/common.py
+index 0fcd113..31042c9 100644
+--- a/tests/runtime/_testutils/common.py
++++ b/tests/runtime/_testutils/common.py
+@@ -20,7 +20,7 @@ else:
+     from typing_extensions import Buffer
+ 
+ # Intended for multi subclass patch
+-is_multi_subclass_build = False
++is_multi_subclass_build = True
  
  
- def pytest_configure(config: pytest.Config) -> None:
--    config.stash[is_multi_subclass_build] = False
-+    config.stash[is_multi_subclass_build] = True
- 
- 
- def _bightml_filepath() -> Path:
+ class FuncSignatureError(Exception):

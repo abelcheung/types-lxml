@@ -2,16 +2,22 @@ from __future__ import annotations
 
 import logging
 import sys
+from collections.abc import Iterable
+from decimal import Decimal
 from inspect import Parameter
+from numbers import Real
+from types import NoneType
 from typing import Any, cast
 
 import pytest
+from hypothesis import HealthCheck, assume, given, settings
 from lxml.etree import (
     LXML_VERSION,
     ErrorDomains,
     ErrorLevels,
-    ErrorTypes as ErrorTypes,
+    ErrorTypes,
     PyErrorLog,
+    QName,
     XMLSyntaxError,
     _ListErrorLog,
     _LogEntry as _LogEntry,
@@ -20,7 +26,13 @@ from lxml.etree import (
     use_global_python_log,
 )
 
-from . import _testutils
+from ._testutils import empty_signature_tester, signature_tester, strategy as _st
+from ._testutils.errors import (
+    raise_attr_not_writable,
+    raise_no_attribute,
+    raise_non_iterable,
+    raise_wrong_arg_type,
+)
 
 if sys.version_info >= (3, 11):
     from typing import reveal_type
@@ -28,8 +40,6 @@ else:
     from typing_extensions import reveal_type
 
 
-### NOTES
-#
 # - Not testing manual construction of _ErrorLog; technically
 # feasible, but it does not make sense creating a collection
 # of error entries out of context
@@ -71,6 +81,20 @@ class TestListLog:
         reveal_type(e0.message)
         reveal_type(e0.filename)
         reveal_type(e0.path)
+
+        for attr in (
+            "domain_name",
+            "type_name",
+            "level_name",
+            "line",
+            "column",
+            "message",
+            "filename",
+            "path",
+        ):
+            with raise_attr_not_writable:
+                setattr(e0, attr, getattr(e0, attr))
+
         reveal_type(list_log.last_error)
 
         # types-lxml is lying below for following properties:
@@ -78,7 +102,7 @@ class TestListLog:
         # encourage symbolic comparisons, not whether they are int
         assert e0.domain == ErrorDomains.PARSER
         assert e0.level == ErrorLevels.FATAL
-        # assert e0.type == ErrorTypes.ERR_TAG_NAME_MISMATCH
+        assert e0.type == ErrorTypes.ERR_TAG_NAME_MISMATCH
 
     def test_container_behavior(self, list_log: _ListErrorLog) -> None:
         e0 = list_log[0]
@@ -90,68 +114,130 @@ class TestListLog:
 
 
 class TestListLogMethods:
-    @_testutils.signature_tester(_ListErrorLog.filter_domains, (
+    @signature_tester(_ListErrorLog.filter_domains, (
         ("domains", Parameter.POSITIONAL_OR_KEYWORD, Parameter.empty),
     ))  # fmt: skip
-    def test_filter_domains(self, list_log: _ListErrorLog) -> None:
-        filtered = list_log.filter_domains([ErrorDomains.XINCLUDE, ErrorDomains.DTD])
-        reveal_type(filtered)
-        del filtered
+    def test_filter_domains_arg_ok(self, list_log: _ListErrorLog) -> None:
+        new_log = list_log.filter_domains(ErrorDomains.PARSER)
+        reveal_type(new_log)
+        assert len(new_log) > 0
+        del new_log
 
-        filtered = list_log.filter_domains(ErrorDomains.PARSER)
-        reveal_type(filtered)
-        del filtered
+        domains = iter([ErrorDomains.PARSER, ErrorDomains.BUFFER])
+        new_log = list_log.filter_domains(domains)
+        reveal_type(new_log)
+        assert len(new_log) > 0
 
-        with pytest.raises(TypeError, match=r"argument .+ is not iterable"):
+    # FIXME: negative test only proves arg is of type
+    # int | Iterable[Any], and we want int | Iterable[int].
+    #
+    # Whole slew of types and classes don't cause any exception if placed
+    # insider iterable, like NotImplementedType, enumerate, map, lambda etc.
+    #
+    # Issues apply to filter_levels below as well
+    @settings(suppress_health_check=[
+        HealthCheck.too_slow,
+        HealthCheck.function_scoped_fixture,
+    ])  # fmt: skip
+    @given(domains=_st.all_instances_except_of_type(int, Iterable))
+    @pytest.mark.slow
+    def test_filter_domains_arg_bad(
+        self, list_log: _ListErrorLog, domains: Any
+    ) -> None:
+        with raise_non_iterable:
             _ = list_log.filter_domains(cast(Any, None))
 
-    @_testutils.signature_tester(
+    @signature_tester(
+        _ListErrorLog.filter_types,
+        (("types", Parameter.POSITIONAL_OR_KEYWORD, Parameter.empty),),
+    )
+    def test_filter_types_arg_ok(self, list_log: _ListErrorLog) -> None:
+        new_log = list_log.filter_types(ErrorTypes.ERR_TAG_NAME_MISMATCH)
+        reveal_type(new_log)
+        assert len(new_log) > 0
+        del new_log
+
+        types = iter([
+            ErrorTypes.ERR_TAG_NAME_MISMATCH,
+            ErrorTypes.ERR_UNKNOWN_ENCODING,
+        ])
+        new_log = list_log.filter_types(types)
+        reveal_type(new_log)
+        assert len(new_log) > 0
+
+    @settings(suppress_health_check=[
+        HealthCheck.too_slow,
+        HealthCheck.function_scoped_fixture,
+    ])  # fmt: skip
+    @given(types=_st.all_instances_except_of_type(int, Iterable))
+    @pytest.mark.slow
+    def test_filter_types_arg_bad(self, list_log: _ListErrorLog, types: Any) -> None:
+        with raise_non_iterable:
+            _ = list_log.filter_types(types)
+
+    @signature_tester(
         _ListErrorLog.filter_levels,
         (("levels", Parameter.POSITIONAL_OR_KEYWORD, Parameter.empty),),
     )
-    def test_filter_levels(self, list_log: _ListErrorLog) -> None:
-        new_log = list_log.filter_levels(ErrorLevels.ERROR)
+    def test_filter_levels_arg_ok(self, list_log: _ListErrorLog) -> None:
+        new_log = list_log.filter_levels(ErrorLevels.FATAL)
         reveal_type(new_log)
+        assert len(new_log) > 0
         del new_log
 
+        levels = iter([ErrorLevels.ERROR, ErrorLevels.FATAL])
         if _method_no_kwarg():
-            new_log = list_log.filter_levels([ErrorLevels.ERROR, ErrorLevels.FATAL])
+            new_log = list_log.filter_levels(levels)
         else:
-            new_log = list_log.filter_levels(
-                levels=[ErrorLevels.ERROR, ErrorLevels.FATAL]
-            )
+            new_log = list_log.filter_levels(levels=levels)
         reveal_type(new_log)
-        del new_log
+        assert len(new_log) > 0
 
-        with pytest.raises(TypeError, match=r"argument .+ is not iterable"):
-            _ = list_log.filter_levels(cast(Any, None))
+    @settings(suppress_health_check=[
+        HealthCheck.too_slow,
+        HealthCheck.function_scoped_fixture,
+    ])  # fmt: skip
+    @given(levels=_st.all_instances_except_of_type(int, Iterable))
+    @pytest.mark.slow
+    def test_filter_levels_arg_bad(self, list_log: _ListErrorLog, levels: Any) -> None:
+        with raise_non_iterable:
+            _ = list_log.filter_levels(levels)
 
-    @_testutils.empty_signature_tester(
-        _ListErrorLog.filter_from_errors,
-        _ListErrorLog.filter_from_fatals,
-        _ListErrorLog.filter_from_warnings,
-    )
-    @_testutils.signature_tester(
+    @signature_tester(
         _ListErrorLog.filter_from_level,
         (("level", Parameter.POSITIONAL_OR_KEYWORD, Parameter.empty),),
     )
-    def test_filter_from_level(self, list_log: _ListErrorLog) -> None:
+    def test_filter_from_level_arg_ok(self, list_log: _ListErrorLog) -> None:
         if _method_no_kwarg():
             new_log = list_log.filter_from_level(ErrorLevels.NONE)
         else:
             new_log = list_log.filter_from_level(level=ErrorLevels.NONE)
         reveal_type(new_log)
-        del new_log
+        assert len(new_log) > 0
 
+    @settings(suppress_health_check=[
+        HealthCheck.too_slow,
+        HealthCheck.function_scoped_fixture,
+    ])  # fmt: skip
+    @given(level=_st.all_instances_except_of_type(int, float, Real, Decimal, QName))
+    @pytest.mark.slow
+    def test_filter_from_level_arg_bad(
+        self, list_log: _ListErrorLog, level: Any
+    ) -> None:
+        with pytest.raises(TypeError, match=r"'>=' not supported between instances"):
+            _ = list_log.filter_from_level(level)
+
+    @empty_signature_tester(
+        _ListErrorLog.filter_from_errors,
+        _ListErrorLog.filter_from_fatals,
+        _ListErrorLog.filter_from_warnings,
+    )
+    def test_filter_from_level_deriv(self, list_log: _ListErrorLog) -> None:
         reveal_type(list_log.filter_from_errors())
         reveal_type(list_log.filter_from_fatals())
         reveal_type(list_log.filter_from_warnings())
 
-    # TODO implement filter_types test when enums are completed in stub
-    # def test_filter_types(self, list_log: _ListErrorLog) -> None:
-    # new_log = list_log.filter_types(ErrorTypes.???)
-
-    @_testutils.signature_tester(
+    @signature_tester(
         _ListErrorLog.receive,
         (("entry", Parameter.POSITIONAL_OR_KEYWORD, Parameter.empty),),
     )
@@ -166,7 +252,7 @@ class TestListLogMethods:
     # BEWARE: vanilla _ListErrorLog has no clear() method,
     # thus can't be inspected
 
-    @_testutils.empty_signature_tester(_ListErrorLog.copy)
+    @empty_signature_tester(_ListErrorLog.copy)
     def test_copy(self, list_log: _ListErrorLog) -> None:
         reveal_type(list_log.copy())
 
@@ -188,19 +274,26 @@ class TestEmptyLog:
 
 
 class TestModuleFunc:
-    @_testutils.empty_signature_tester(clear_error_log)
-    @_testutils.signature_tester(use_global_python_log, (
-        ("log", Parameter.POSITIONAL_OR_KEYWORD, Parameter.empty),
-    ))  # fmt: skip
-    def test_sig(self) -> None:
-        pass
+    @settings(suppress_health_check=[HealthCheck.too_slow], max_examples=300)
+    @given(thing=_st.all_instances_except_of_type())
+    @pytest.mark.slow
+    def test_global_log_arg_bad_1(self, thing: Any) -> None:
+        with pytest.raises(TypeError, match=r"expected .+\.PyErrorLog, got .+"):
+            use_global_python_log(thing)
 
-    def test_global_log_usage(self) -> None:
-        with pytest.raises(
-            TypeError, match=r"expected lxml\.etree\.PyErrorLog, got int"
-        ):
-            use_global_python_log(cast(Any, 1))
+    @settings(max_examples=5)
+    @given(iterable_of=_st.fixed_item_iterables())
+    def test_global_log_arg_bad_2(self, iterable_of: Any) -> None:
+        pylog = PyErrorLog()
+        with pytest.raises(TypeError, match=r"expected .+\.PyErrorLog, got .+"):
+            use_global_python_log(iterable_of(pylog))
 
+    @empty_signature_tester(clear_error_log)
+    @signature_tester(
+        use_global_python_log,
+        (("log", Parameter.POSITIONAL_OR_KEYWORD, Parameter.empty),),
+    )
+    def test_global_log_arg_ok(self) -> None:
         # exception if used after use_global_python_log
         clear_error_log()
 
@@ -209,36 +302,19 @@ class TestModuleFunc:
 
 
 class TestPyErrorLog:
-    def test_construct(self) -> None:
-        pylog = PyErrorLog()
-        use_global_python_log(pylog)
-        del pylog
-
-        pylog = PyErrorLog("foobar")
-        use_global_python_log(pylog)
-        del pylog
-
-        with pytest.raises(TypeError, match="logger name must be a string"):
-            _ = PyErrorLog(cast(Any, 1))
-
-        pylog = PyErrorLog(logger_name="foobar")
-        use_global_python_log(pylog)
-        del pylog
-
-        logger = logging.Logger("foobar")
-        pylog = PyErrorLog(logger=logger)
-        use_global_python_log(pylog)
-        del pylog
-
-        with pytest.raises(AttributeError, match="has no attribute 'log'"):
-            _ = PyErrorLog(logger=cast(Any, "foobar"))
-
-    def test_properties(self) -> None:
+    # Generic Cython function signature
+    def test_init_and_prop(self) -> None:
         pylog = PyErrorLog()
         use_global_python_log(pylog)
 
         reveal_type(pylog.last_error)  # None initially
         reveal_type(pylog.level_map)
+
+        for attr_ in ("last_error", "level_map"):
+            with raise_attr_not_writable:
+                delattr(pylog, attr_)
+            with raise_attr_not_writable:
+                setattr(pylog, attr_, getattr(pylog, attr_))
 
         broken_xml = "<doc><a><b></a>&bar;</doc>"
         with pytest.raises(XMLSyntaxError):
@@ -246,4 +322,106 @@ class TestPyErrorLog:
 
         assert pylog.last_error is not None
         reveal_type(pylog.last_error)
+        pylog.receive(pylog.last_error)
+
+    def test_init_name_arg_ok(self) -> None:
+        pylog = PyErrorLog("foobar")
+        use_global_python_log(pylog)
+
+        pylog = PyErrorLog(logger_name="foobar")
+        use_global_python_log(pylog)
+
+    @settings(suppress_health_check=[HealthCheck.too_slow], max_examples=300)
+    @given(thing=_st.all_instances_except_of_type(str))
+    @pytest.mark.slow
+    def test_init_name_arg_bad_1(self, thing: Any) -> None:
+        assume(thing is NotImplemented or bool(thing))
+        with pytest.raises(TypeError, match="logger name must be a string"):
+            _ = PyErrorLog(logger_name=thing)
+
+    @settings(max_examples=5)
+    @given(iterable_of=_st.fixed_item_iterables())
+    def test_init_name_arg_bad_2(self, iterable_of: Any) -> None:
+        with pytest.raises(TypeError, match="logger name must be a string"):
+            _ = PyErrorLog(logger_name=iterable_of("foobar"))
+
+    def test_init_logger_arg_ok(self) -> None:
+        logger = logging.Logger("foobar")
+        pylog = PyErrorLog(logger=logger)
+        use_global_python_log(pylog)
+
+        new_logger = logging.LoggerAdapter(logger, {})
+        pylog = PyErrorLog(logger=new_logger)
+        use_global_python_log(pylog)
+
+    @settings(suppress_health_check=[HealthCheck.too_slow], max_examples=300)
+    @given(thing=_st.all_instances_except_of_type(NoneType))
+    @pytest.mark.slow
+    def test_init_logger_arg_bad_1(self, thing: Any) -> None:
+        with raise_no_attribute:
+            _ = PyErrorLog(logger=thing)
+
+    @settings(max_examples=5)
+    @given(iterable_of=_st.fixed_item_iterables())
+    def test_init_logger_arg_bad_2(self, iterable_of: Any) -> None:
+        logger = logging.Logger("foobar")
+        with raise_no_attribute:
+            _ = PyErrorLog(logger=iterable_of(logger))
+
+
+class TestPyErrorLogMethods:
+    @signature_tester(PyErrorLog.log, (
+        ("log_entry", Parameter.POSITIONAL_OR_KEYWORD, Parameter.empty),
+        ("message"  , Parameter.POSITIONAL_OR_KEYWORD, Parameter.empty),
+        ("args"     , Parameter.VAR_POSITIONAL       , Parameter.empty),
+    ))  # fmt: skip
+    def test_log_method_sig(self) -> None:
+        pass
+
+    @settings(suppress_health_check=[HealthCheck.too_slow], max_examples=300)
+    @given(thing=_st.all_instances_except_of_type())
+    @pytest.mark.slow
+    def test_log_arg1_bad(self, pylog: PyErrorLog, thing: Any) -> None:
+        with raise_no_attribute:
+            pylog.log(log_entry=thing, message="dummy message")
+
+    @settings(max_examples=5)
+    @given(iterable_of=_st.fixed_item_iterables())
+    def test_log_arg1_bad_2(self, pylog: PyErrorLog, iterable_of: Any) -> None:
+        with raise_no_attribute:
+            pylog.log(log_entry=iterable_of(pylog.last_error), message="dummy message")
+
+    def test_log_arg1_ok(self, pylog: PyErrorLog) -> None:
+        assert pylog.last_error is not None
+        pylog.log(pylog.last_error, "dummy message")
+
+    # Don't perform any tests on .log() second argument.
+    # logging module stringify the message so that any type
+    # is acceptable, i.e. the method never fails.
+    # Similarly, no varargs tests are performed, as they
+    # are just passed to logging module as-is without any
+    # effect by default.
+
+    @signature_tester(
+        PyErrorLog.receive,
+        (("log_entry", Parameter.POSITIONAL_OR_KEYWORD, Parameter.empty),),
+    )
+    def test_receive_sig(self) -> None:
+        pass
+
+    @settings(suppress_health_check=[HealthCheck.too_slow], max_examples=300)
+    @given(thing=_st.all_instances_except_of_type())
+    @pytest.mark.slow
+    def test_receive_arg_bad_1(self, pylog: PyErrorLog, thing: Any) -> None:
+        raise_cm = raise_no_attribute if thing is None else raise_wrong_arg_type
+        with raise_cm:  # type: ignore[attr-defined]
+            pylog.receive(thing)
+
+    @given(iterable_of=_st.fixed_item_iterables())
+    def test_receive_arg_bad_2(self, pylog: PyErrorLog, iterable_of: Any) -> None:
+        with raise_wrong_arg_type:
+            pylog.receive(iterable_of(pylog.last_error))
+
+    def test_receive_arg_ok(self, pylog: PyErrorLog) -> None:
+        assert pylog.last_error is not None
         pylog.receive(pylog.last_error)

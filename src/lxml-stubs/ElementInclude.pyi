@@ -1,21 +1,20 @@
 import sys
+from typing import Final, Literal, Protocol, overload
+
+from ._types import Unused, _ElementOrTree
+from .etree import LxmlSyntaxError, _Element
 
 if sys.version_info >= (3, 11):
     from typing import LiteralString
 else:
     from typing_extensions import LiteralString
 
-from typing import Literal, Protocol, overload
-
-from ._types import Unused, _ElementOrTree
-from .etree import LxmlSyntaxError, _Element
-
 # exported constants
-XINCLUDE: LiteralString
-XINCLUDE_INCLUDE: LiteralString
-XINCLUDE_FALLBACK: LiteralString
-XINCLUDE_ITER_TAG: LiteralString
-DEFAULT_MAX_INCLUSION_DEPTH: int
+XINCLUDE: Final[LiteralString]
+XINCLUDE_INCLUDE: Final[LiteralString]
+XINCLUDE_FALLBACK: Final[LiteralString]
+XINCLUDE_ITER_TAG: Final[LiteralString]
+DEFAULT_MAX_INCLUSION_DEPTH: Final[int]
 
 class FatalIncludeError(LxmlSyntaxError): ...
 class LimitedRecursiveIncludeError(FatalIncludeError): ...

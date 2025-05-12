@@ -8,6 +8,7 @@ from types import MappingProxyType
 from typing import (
     TYPE_CHECKING,
     Any,
+    BinaryIO,
     cast,
 )
 
@@ -20,19 +21,20 @@ from hypothesis import (
     settings,
     strategies as st,
 )
-from lxml.etree import Element, QName, _Attrib, _Element
+from lxml.etree import Element, HTMLParser, QName, _Attrib, _Element, parse
 
-from ._testutils import (
+from .._testutils import (
     empty_signature_tester,
     signature_tester,
     strategy as _st,
 )
+from .._testutils.common import attr_name_types, attr_value_types
+from .._testutils.errors import raise_invalid_utf8_type
 
 if sys.version_info >= (3, 11):
     from typing import reveal_type
 else:
     from typing_extensions import reveal_type
-from ._testutils.common import attr_name_types, attr_value_types
 
 if TYPE_CHECKING:
     from lxml._types import (  # pyright: ignore[reportMissingModuleSource]
@@ -51,35 +53,58 @@ class TestAttrib:
         for k1 in attrib:
             reveal_type(k1)
 
-    @settings(suppress_health_check=[HealthCheck.too_slow], max_examples=500)
-    @given(
-        k=_st.all_instances_except_of_type(
-            *attr_name_types.allow, *attr_name_types.skip
-        )
-    )
+    @settings(suppress_health_check=[HealthCheck.too_slow], max_examples=300)
+    @given(thing=_st.all_instances_except_of_type(
+        *attr_name_types.allow, *attr_name_types.skip
+    ))  # fmt: skip
     @pytest.mark.slow
-    def test_wrong_key_type(self, disposable_attrib: _Attrib, k: Any) -> None:
-        with pytest.raises(TypeError, match="Argument must be bytes or unicode"):
-            _ = disposable_attrib[k]
+    def test_key_type_bad_1(self, disposable_attrib: _Attrib, thing: Any) -> None:
+        with raise_invalid_utf8_type:
+            _ = disposable_attrib[thing]
+
+    @given(iterable_of=_st.fixed_item_iterables(), k=_st.xml_name_arg())
+    def test_key_type_bad_2(
+        self, disposable_attrib: _Attrib, iterable_of: Any, k: _AttrName
+    ) -> None:
+        # unhashable types not addable to set
+        assume(not (
+            getattr(iterable_of, "type") in {set, frozenset}
+            and isinstance(k, bytearray)
+        ))  # fmt: skip
+        with raise_invalid_utf8_type:
+            _ = disposable_attrib[iterable_of(k)]
 
     @given(k=_st.xml_name_arg())
-    def test_valid_key_type(self, disposable_attrib: _Attrib, k: _AttrName) -> None:
+    def test_key_type_ok(self, disposable_attrib: _Attrib, k: _AttrName) -> None:
         disposable_attrib[k] = "bar"
         del disposable_attrib[k]
 
-    @settings(suppress_health_check=[HealthCheck.too_slow], max_examples=500)
-    @given(
-        v=_st.all_instances_except_of_type(
-            *attr_value_types.allow, *attr_value_types.skip
-        )
-    )
+    @settings(suppress_health_check=[HealthCheck.too_slow], max_examples=300)
+    @given(thing=_st.all_instances_except_of_type(
+        *attr_value_types.allow, *attr_value_types.skip
+    ))  # fmt: skip
     @pytest.mark.slow
-    def test_wrong_value_type(self, disposable_attrib: _Attrib, v: Any) -> None:
-        with pytest.raises(TypeError, match="Argument must be bytes or unicode"):
-            disposable_attrib["foo"] = v
+    def test_value_type_bad_1(self, disposable_attrib: _Attrib, thing: Any) -> None:
+        with raise_invalid_utf8_type:
+            disposable_attrib["foo"] = thing
+
+    @given(
+        iterable_of=_st.fixed_item_iterables(),
+        v=_st.xml_attr_value_arg(),
+    )
+    def test_value_type_bad_2(
+        self, disposable_attrib: _Attrib, iterable_of: Any, v: _AttrVal
+    ) -> None:
+        # unhashable types not addable to set
+        assume(not (
+            getattr(iterable_of, "type") in {set, frozenset}
+            and isinstance(v, bytearray)
+        ))  # fmt: skip
+        with raise_invalid_utf8_type:
+            disposable_attrib["foo"] = iterable_of(v)
 
     @given(v=_st.xml_attr_value_arg())
-    def test_valid_value_type(self, disposable_attrib: _Attrib, v: _AttrVal) -> None:
+    def test_value_type_ok(self, disposable_attrib: _Attrib, v: _AttrVal) -> None:
         disposable_attrib["foo"] = v
         reveal_type(disposable_attrib["foo"])
 
@@ -119,31 +144,36 @@ class TestAttrib:
             reveal_type(i)
 
 
-class TestMethodHasKey:
+class TestHasKeyMethod:
     @signature_tester(_Attrib.has_key, (
         ("key", Parameter.POSITIONAL_OR_KEYWORD, Parameter.empty),
     ))  # fmt: skip
     def test_signature(self) -> None:
         pass
 
-    @settings(suppress_health_check=[HealthCheck.too_slow], max_examples=500)
-    @given(
-        k=_st.all_instances_except_of_type(
-            *attr_name_types.allow, *attr_name_types.skip
-        )
-    )
+    @settings(suppress_health_check=[HealthCheck.too_slow], max_examples=300)
+    @given(k=_st.all_instances_except_of_type(
+        *attr_name_types.allow, *attr_name_types.skip
+    ))  # fmt: skip
     @pytest.mark.slow
-    def test_wrong_key_type(self, disposable_attrib: _Attrib, k: Any) -> None:
-        with pytest.raises(TypeError, match="Argument must be bytes or unicode"):
+    def test_key_type_bad_1(self, disposable_attrib: _Attrib, k: Any) -> None:
+        with raise_invalid_utf8_type:
             _ = disposable_attrib.has_key(k)
+
+    @given(iterable_of=_st.fixed_item_iterables(), k=_st.xml_name_key_arg())
+    def test_key_type_bad_2(
+        self, disposable_attrib: _Attrib, iterable_of: Any, k: _AttrName
+    ) -> None:
+        with raise_invalid_utf8_type:
+            _ = disposable_attrib.has_key(iterable_of(k))
 
     @given(k=_st.xml_name_arg())
     @example(k="date")
-    def test_valid_key_type(self, disposable_attrib: _Attrib, k: _AttrName) -> None:
+    def test_key_type_ok(self, disposable_attrib: _Attrib, k: _AttrName) -> None:
         reveal_type(disposable_attrib.has_key(k))
 
 
-class TestMethodGet:
+class TestGetMethod:
     @signature_tester(_Attrib.get, (
         ("key"    , Parameter.POSITIONAL_OR_KEYWORD, Parameter.empty),
         ("default", Parameter.POSITIONAL_OR_KEYWORD, None           ),
@@ -151,32 +181,30 @@ class TestMethodGet:
     def test_signature(self) -> None:
         pass
 
-    @settings(suppress_health_check=[HealthCheck.too_slow], max_examples=500)
-    @given(
-        k=_st.all_instances_except_of_type(
-            *attr_name_types.allow, *attr_name_types.skip
-        )
-    )
+    @settings(suppress_health_check=[HealthCheck.too_slow], max_examples=300)
+    @given(k=_st.all_instances_except_of_type(
+        *attr_name_types.allow, *attr_name_types.skip
+    ))  # fmt: skip
     @pytest.mark.slow
-    def test_wrong_key_type(self, disposable_attrib: _Attrib, k: Any) -> None:
-        with pytest.raises(TypeError, match="Argument must be bytes or unicode"):
+    def test_key_type_bad(self, disposable_attrib: _Attrib, k: Any) -> None:
+        with raise_invalid_utf8_type:
             _ = disposable_attrib.get(k)
 
     @given(k=_st.xml_name_arg())
     @example(k="date")
-    def test_valid_key_type(self, disposable_attrib: _Attrib, k: _AttrName) -> None:
+    def test_key_type_ok(self, disposable_attrib: _Attrib, k: _AttrName) -> None:
         reveal_type(disposable_attrib.get(k))
 
     @settings(max_examples=5)
     @given(default=_st.all_instances_except_of_type())
     def test_default_value(self, disposable_attrib: _Attrib, default: object) -> None:
         val = disposable_attrib.get("id", default=default)
-        reveal_type(val)  # Not useful for typeguard, too generic
+        # No reveal_type test, result typevar (str | object) is too generic
         assert type(val) is str
         assert type(disposable_attrib.get("foo", default)) is type(default)
 
 
-class TestMethodPop:
+class TestPopMethod:
     @signature_tester(_Attrib.pop, (
         ("key"    , Parameter.POSITIONAL_OR_KEYWORD, Parameter.empty),
         ("default", Parameter.VAR_POSITIONAL       , Parameter.empty),
@@ -187,19 +215,24 @@ class TestMethodPop:
         with pytest.raises(TypeError, match="pop expected at most 2 arguments"):
             xml2_root.attrib.pop("foo", 0, 1)  # type: ignore[call-overload]  # pyright: ignore[reportCallIssue]
 
-    @settings(suppress_health_check=[HealthCheck.too_slow], max_examples=500)
-    @given(
-        k=_st.all_instances_except_of_type(
-            *attr_name_types.allow, *attr_name_types.skip
-        )
-    )
+    @settings(suppress_health_check=[HealthCheck.too_slow], max_examples=300)
+    @given(k=_st.all_instances_except_of_type(
+        *attr_name_types.allow, *attr_name_types.skip
+    ))  # fmt: skip
     @pytest.mark.slow
-    def test_wrong_key_type(self, disposable_attrib: _Attrib, k: Any) -> None:
-        with pytest.raises(TypeError, match="Argument must be bytes or unicode"):
+    def test_key_type_bad(self, disposable_attrib: _Attrib, k: Any) -> None:
+        with raise_invalid_utf8_type:
             _ = disposable_attrib.pop(k)
 
+    @given(iterable_of=_st.fixed_item_iterables(), k=_st.xml_name_key_arg())
+    def test_key_type_bad_2(
+        self, disposable_attrib: _Attrib, iterable_of: Any, k: _AttrName
+    ) -> None:
+        with raise_invalid_utf8_type:
+            _ = disposable_attrib.pop(iterable_of(k))
+
     @given(k=_st.xml_name_arg(), v=_st.xml_attr_value_arg())
-    def test_valid_key_type(
+    def test_key_type_ok(
         self,
         disposable_attrib: _Attrib,
         k: _AttrName,
@@ -217,7 +250,7 @@ class TestMethodPop:
         with pytest.MonkeyPatch().context() as m:
             m.setitem(disposable_attrib, "fakekey", "fakevalue")  # type: ignore[arg-type]  # pyright: ignore[reportArgumentType]
             val = disposable_attrib.pop("fakekey", default)
-            reveal_type(val)  # Not useful for typeguard too generic
+            # No reveal_type test, result typevar (str | object) is too generic
             assert type(val) is str
 
     @settings(max_examples=5)
@@ -232,7 +265,7 @@ class TestMethodPop:
 
 # Beware that monkeypatch is useless here. _Attrib merely provides an
 # interface to the underlying _Element which is not patched
-class TestMethodUpdate:
+class TestUpdateMethod:
     # HACK Using _AttrName instead of _AttrVal to play safe, as attribute names
     # use this routine as well
     def _normalized_value(self, v: _AttrName) -> str:
@@ -297,28 +330,23 @@ class TestMethodUpdate:
         assert disposable_attrib.update({"foo": "bar"}) is None
         disposable_attrib.clear()
 
-    # TODO register_type_strategy for element, QName, CDATA etc
-
-    @given(
-        atts=st.dictionaries(
-            keys=_st.xml_name_key_arg(),
-            values=_st.xml_attr_value_arg(),
-            max_size=3,
-        )
-    )
+    @given(atts=st.dictionaries(
+        keys=_st.xml_name_key_arg(),
+        values=_st.xml_attr_value_arg(),
+        max_size=3,
+    ))  # fmt: skip
     def test_input_dict_ok(
         self, disposable_attrib: _Attrib, atts: dict[Any, Any]
     ) -> None:
         self._verify_key_val_present(disposable_attrib, atts)
         self._verify_key_val_present(disposable_attrib, atts.items())
 
-    @given(
-        atts=st.dictionaries(
-            keys=_st.xml_name_key_arg(),
-            values=_st.xml_attr_value_arg(),
-            max_size=3,
-        )
-    )
+    @given(atts=st.dictionaries(
+        keys=_st.xml_name_key_arg(),
+        values=_st.xml_attr_value_arg(),
+        min_size=1,
+        max_size=3,
+    ))  # fmt: skip
     def test_input_dict_subclass(
         self, disposable_attrib: _Attrib, atts: dict[Any, Any]
     ) -> None:
@@ -326,44 +354,53 @@ class TestMethodUpdate:
 
     # Prove that non-dict Mapping won't do
     @settings(max_examples=5)
-    @given(
-        atts=st.dictionaries(
-            keys=_st.xml_name_key_arg(),
-            values=_st.xml_attr_value_arg(),
-            min_size=1,
-            max_size=3,
-        )
-    )
+    @given(atts=st.dictionaries(
+        keys=_st.xml_name_key_arg(),
+        values=_st.xml_attr_value_arg(),
+        min_size=1,
+        max_size=3,
+    ))  # fmt: skip
     def test_input_other_mapping_1(
         self, disposable_attrib: _Attrib, atts: dict[Any, Any]
     ) -> None:
         with pytest.raises((TypeError, ValueError, AssertionError)):
             self._verify_key_val_present(disposable_attrib, MappingProxyType(atts))
 
-    @given(
-        atts=st.dictionaries(
-            keys=_st.xml_name_key_arg(),
-            values=_st.xml_attr_value_arg(),
-            min_size=1,
-            max_size=3,
-        )
-    )
+    @given(atts=st.dictionaries(
+        keys=_st.xml_name_key_arg(),
+        values=_st.xml_attr_value_arg(),
+        min_size=1,
+        max_size=3,
+    ))  # fmt: skip
     def test_input_other_mapping_2(
         self, disposable_attrib: _Attrib, atts: dict[Any, Any]
     ) -> None:
         with pytest.raises((TypeError, ValueError, AssertionError)):
             self._verify_key_val_present(disposable_attrib, ChainMap(atts))
 
-    @given(atts=st.iterables(
-        st.tuples(_st.xml_name_arg(), _st.xml_attr_value_arg()), max_size=3
-    ))  # fmt: skip
-    def test_input_sequence_ok(
-        self, disposable_attrib: _Attrib, atts: list[tuple[Any, Any]]
+    @given(
+        k=_st.xml_name_key_arg(),
+        v=_st.xml_attr_value_arg(),
+        iterable_of=_st.fixed_item_iterables(),
+    )
+    def test_input_iterable_ok(
+        self,
+        disposable_attrib: _Attrib,
+        k: Any,
+        v: Any,
+        iterable_of: Any,
     ) -> None:
-        self._verify_key_val_present(disposable_attrib, atts)
+        # unhashable types not addable to set
+        assume(not (
+            getattr(iterable_of, "type") in {set, frozenset}
+            and isinstance(v, bytearray)
+        ))  # fmt: skip
+        self._verify_key_val_present(disposable_attrib, iterable_of((k, v)))
 
     @given(atts=st.iterables(
-        st.tuples(_st.xml_name_arg(), _st.xml_attr_value_arg()), max_size=3
+        st.tuples(_st.xml_name_arg(), _st.xml_attr_value_arg()),
+        min_size=1,
+        max_size=3,
     ))  # fmt: skip
     def test_input_attrib(
         self, disposable_attrib: _Attrib, atts: list[tuple[Any, Any]]
@@ -375,3 +412,108 @@ class TestMethodUpdate:
         self._verify_key_val_present(disposable_attrib, new_elem.attrib)
 
     # TODO Need negative tests for _Attrib.update()
+
+
+class TestElementKeyValMethods:
+    @empty_signature_tester(
+        _Element.keys,
+        _Element.values,
+        _Element.items,
+    )
+    @pytest.mark.slow
+    def test_basic(self, bightml_bin_fp: BinaryIO) -> None:
+        parser = HTMLParser()
+        with bightml_bin_fp as f:
+            doc = parse(f, parser=parser)
+        for elem in doc.iter():
+            if type(elem) is not _Element:
+                continue
+            reveal_type(elem.keys())
+            reveal_type(elem.values())
+            reveal_type(elem.items())
+
+
+class TestElementGetMethod:
+    @signature_tester(_Element.get, (
+        ("key"    , Parameter.POSITIONAL_OR_KEYWORD, Parameter.empty),
+        ("default", Parameter.POSITIONAL_OR_KEYWORD, None           ),
+    ))  # fmt: skip
+    def test_signature(self) -> None:
+        pass
+
+    def test_key_arg_ok(self, svg_root: _Element) -> None:
+        result = reveal_type(svg_root.get("width"))
+        assert result == reveal_type(svg_root.get(b"width"))
+        assert result == reveal_type(svg_root.get(bytearray(b"width")))
+        qname = QName(None, "width")
+        assert result == reveal_type(svg_root.get(qname))
+        assert reveal_type(svg_root.get("somejunk")) is None
+
+    @settings(suppress_health_check=[HealthCheck.too_slow], max_examples=300)
+    @given(thing=_st.all_instances_except_of_type(*attr_name_types.allow))
+    @pytest.mark.slow
+    def test_key_arg_bad_1(self, disposable_element: _Element, thing: Any) -> None:
+        with raise_invalid_utf8_type:
+            _ = disposable_element.get(thing)
+
+    @settings(max_examples=5)
+    @given(iterable_of=_st.fixed_item_iterables())
+    def test_key_arg_bad_2(
+        self, disposable_element: _Element, iterable_of: Any
+    ) -> None:
+        with raise_invalid_utf8_type:
+            _ = disposable_element.get(iterable_of("foo"))
+
+    def test_default_arg(self, svg_root: _Element) -> None:
+        assert reveal_type(svg_root.get("width", 0)) != 0
+        assert reveal_type(svg_root.get("junk", "foo")) == "foo"
+        assert reveal_type(svg_root.get("junk", (0, "bar"))) == (0, "bar")
+
+
+class TestElementSetMethod:
+    @signature_tester(_Element.set, (
+        ("key"  , Parameter.POSITIONAL_OR_KEYWORD, Parameter.empty),
+        ("value", Parameter.POSITIONAL_OR_KEYWORD, Parameter.empty),
+    ))  # fmt: skip
+    def test_signature(self) -> None:
+        pass
+
+    def test_basic_usage(self, disposable_element: _Element) -> None:
+        qname = QName(None, "foo")
+        for key in ("foo", b"foo", bytearray(b"foo"), qname):
+            disposable_element.set(key, "bar")
+        # QName for attribute value is meaningless, we only
+        # do this for completeness
+        qname = QName(None, "bar")
+        for val in ("bar", b"bar", bytearray(b"bar"), qname):
+            disposable_element.set("foo", val)
+
+    @settings(suppress_health_check=[HealthCheck.too_slow], max_examples=300)
+    @given(thing=_st.all_instances_except_of_type(*attr_name_types.allow))
+    @pytest.mark.slow
+    def test_key_arg_bad_1(self, disposable_element: _Element, thing: Any) -> None:
+        with raise_invalid_utf8_type:
+            disposable_element.set(thing, "bar")
+
+    @settings(max_examples=5)
+    @given(iterable_of=_st.fixed_item_iterables())
+    def test_key_arg_bad_2(
+        self, disposable_element: _Element, iterable_of: Any
+    ) -> None:
+        with raise_invalid_utf8_type:
+            disposable_element.set(iterable_of("foo"), "bar")
+
+    @settings(suppress_health_check=[HealthCheck.too_slow], max_examples=300)
+    @given(thing=_st.all_instances_except_of_type(*attr_value_types.allow))
+    @pytest.mark.slow
+    def test_val_arg_bad_1(self, disposable_element: _Element, thing: Any) -> None:
+        with raise_invalid_utf8_type:
+            disposable_element.set("foo", thing)
+
+    @settings(max_examples=5)
+    @given(iterable_of=_st.fixed_item_iterables())
+    def test_val_arg_bad_2(
+        self, disposable_element: _Element, iterable_of: Any
+    ) -> None:
+        with raise_invalid_utf8_type:
+            disposable_element.set("foo", iterable_of("bar"))

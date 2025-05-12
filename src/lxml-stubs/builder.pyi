@@ -1,6 +1,11 @@
 from typing import Any, Callable, Generic, Mapping, Protocol, overload
 
-from ._types import _AnyStr, _ET_co, _NSMapArg, _NSTuples, _TagName
+from ._types import (
+    _ET_co,
+    _NSMapArg,
+    _NSTuples,
+    _TagName,
+)
 from .etree import CDATA, _Element
 
 # Mapping should have been something like
@@ -102,7 +107,7 @@ class ElementMaker(Generic[_ET_co]):
     @property
     def _namespace(self) -> str | None: ...
     @property
-    def _nsmap(self) -> dict[str | None, _AnyStr] | None: ...
+    def _nsmap(self) -> dict[str | bytes | None, str | bytes] | None: ...
     @property
     def _typemap(self) -> dict[type[Any], Callable[[_ET_co, Any], None]]: ...
 

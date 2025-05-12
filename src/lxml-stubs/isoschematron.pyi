@@ -1,14 +1,14 @@
 import sys
-from typing import Any, ClassVar, overload
+from typing import Any, ClassVar, Final, Literal, overload
+
+from . import etree as _e
+from ._types import _ElementOrTree, _FileReadSource
+from .etree._xslt import _Stylesheet_Param
 
 if sys.version_info >= (3, 11):
     from typing import LiteralString
 else:
     from typing_extensions import LiteralString
-
-from . import etree as _e
-from ._types import _ElementOrTree, _FileReadSource
-from .etree._xslt import _Stylesheet_Param
 
 __all__ = (
     # Official exports
@@ -29,10 +29,10 @@ __all__ = (
     "SVRL_NS",
 )
 
-XML_SCHEMA_NS: LiteralString
-RELAXNG_NS: LiteralString
-SCHEMATRON_NS: LiteralString
-SVRL_NS: LiteralString
+XML_SCHEMA_NS: Final[LiteralString]
+RELAXNG_NS: Final[LiteralString]
+SCHEMATRON_NS: Final[LiteralString]
+SVRL_NS: Final[LiteralString]
 
 extract_xsd: _e.XSLT
 extract_rng: _e.XSLT
@@ -46,11 +46,11 @@ schematron_schema_valid_supported: bool
 def stylesheet_params(**__kw: str | _e.XPath | Any) -> dict[str, _Stylesheet_Param]: ...
 
 class Schematron(_e._Validator):
-    _domain: ClassVar[_e.ErrorDomains]
-    _level: ClassVar[_e.ErrorLevels]
-    _error_type: ClassVar[_e.ErrorTypes]
-    ASSERTS_ONLY: ClassVar[_e.XPath]
-    ASSERTS_AND_REPORTS: ClassVar[_e.XPath]
+    _domain: ClassVar[Literal[28]]
+    _level: ClassVar[Literal[2]]
+    _error_type: ClassVar[Literal[4000]]
+    ASSERTS_ONLY: Final[_e.XPath]
+    ASSERTS_AND_REPORTS: Final[_e.XPath]
     _extract_xsd: ClassVar[_e.XSLT]
     _extract_rng: ClassVar[_e.XSLT]
     _include: ClassVar[_e.XSLT]
@@ -85,7 +85,7 @@ class Schematron(_e._Validator):
         store_report: bool = False,
         phase: str | None = None,
         error_finder: _e.XPath = ...,  # keep ellipsis
-        validate_schema: bool = ...,  # keep ellipsis
+        validate_schema: bool = ...,  # keep ellipsis  # lxml 5 only
     ) -> None: ...
     @overload
     def __init__(
@@ -102,7 +102,7 @@ class Schematron(_e._Validator):
         store_report: bool = False,
         phase: str | None = None,
         error_finder: _e.XPath = ...,  # keep ellipsis
-        validate_schema: bool = ...,  # keep ellipsis
+        validate_schema: bool = ...,  # keep ellipsis  # lxml 5 only
     ) -> None: ...
     @overload
     def __init__(
@@ -119,7 +119,7 @@ class Schematron(_e._Validator):
         store_report: bool = False,
         phase: str | None = None,
         error_finder: _e.XPath = ...,  # keep ellipsis
-        validate_schema: bool = ...,  # keep ellipsis
+        validate_schema: bool = ...,  # keep ellipsis  # lxml 5 only
     ) -> None: ...
     def __call__(self, etree: _ElementOrTree) -> bool: ...
     @property

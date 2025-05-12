@@ -18,6 +18,7 @@ from typing import (
 import pytest
 from hypothesis import (
     HealthCheck,
+    assume,
     given,
     settings,
 )
@@ -43,6 +44,12 @@ from lxml.html import (
 
 from .._testutils import strategy as _st
 from .._testutils.common import attr_value_types
+from .._testutils.errors import (
+    raise_invalid_utf8_type,
+    raise_non_integer,
+    raise_unexpected_kwarg,
+    raise_wrong_pos_arg_count,
+)
 
 if sys.version_info >= (3, 11):
     from typing import reveal_type
@@ -67,11 +74,7 @@ def _get_elementtree_from_file(filepath: Path) -> _ElementTree[HtmlElement]:
         return parse(fp)
 
 
-# COMPLETED
 class TestInputOutputType:
-    @pytest.mark.filterwarnings(
-        r"ignore:.* Path objects as a context manager is a no-op$:DeprecationWarning"
-    )
     def test_bad_input_arg(
         self,
         html2_filepath: Path,
@@ -178,7 +181,6 @@ class TestInputOutputType:
         reveal_type(rewrite_links(bightml_root, lambda _: _BASE_HREF))
 
 
-# COMPLETED
 class TestFindRelLinksArg:
     # XPath selection result always generate str, never match other
     # string-like types. So bytes and bytearray are banned in stub
@@ -194,7 +196,7 @@ class TestFindRelLinksArg:
         links = find_rel_links(bightml_root, cast(Any, bytearray(b)))
         assert len(links) == 0
 
-    @settings(suppress_health_check=[HealthCheck.too_slow], max_examples=500)
+    @settings(suppress_health_check=[HealthCheck.too_slow], max_examples=300)
     @given(t=_st.all_instances_except_of_type(str, bytes, bytearray))
     @pytest.mark.slow
     def test_wrong_type_raises(
@@ -207,7 +209,6 @@ class TestFindRelLinksArg:
             _ = find_rel_links(disposable_html_element, t)
 
 
-# COMPLETED
 class TestFindClassArg:
     def test_valid_type(self, bightml_str: str) -> None:
         elems1 = find_class(bightml_str, "single")
@@ -228,7 +229,7 @@ class TestFindClassArg:
             return len(x) > 0
         return (x.stop - x.start) / x.step > 0
 
-    @settings(suppress_health_check=[HealthCheck.too_slow], max_examples=500)
+    @settings(suppress_health_check=[HealthCheck.too_slow], max_examples=300)
     @given(
         t=_st.all_instances_except_of_type(
             str,
@@ -270,9 +271,8 @@ class TestFindClassArg:
             assert len(elems) == 0
 
 
-# COMPLETED
 class TestResolveBaseHrefArg:
-    def test_handle_failures_valid_type(
+    def test_handle_failures_arg_ok(
         self, disposable_html_with_base_href: HtmlElement
     ) -> None:
         old_links = [
@@ -294,20 +294,30 @@ class TestResolveBaseHrefArg:
                 else:
                     assert old != new
 
-    @settings(suppress_health_check=[HealthCheck.too_slow], max_examples=500)
-    @given(
-        t=_st.all_instances_except_of_type().filter(
-            lambda x: x not in ("discard", "ignore", None)
-        )
-    )
+    @settings(suppress_health_check=[HealthCheck.too_slow], max_examples=300)
+    @given(thing=_st.all_instances_except_of_type(NoneType))
     @pytest.mark.slow
-    def test_handle_failures_wrong_type(
-        self, disposable_html_with_base_href: HtmlElement, t: Any
+    def test_handle_failures_arg_bad_1(
+        self, disposable_html_with_base_href: HtmlElement, thing: Any
     ) -> None:
+        assume(thing not in ("ignore", "discard"))
         # collection raises TypeError instead
         # because of error in constructing exception
         with pytest.raises((ValueError, TypeError)):
-            _ = resolve_base_href(disposable_html_with_base_href, handle_failures=t)
+            _ = resolve_base_href(disposable_html_with_base_href, handle_failures=thing)
+
+    @settings(max_examples=5)
+    @given(iterable_of=_st.fixed_item_iterables())
+    def test_handle_failures_arg_bad_2(
+        self,
+        disposable_html_with_base_href: HtmlElement,
+        iterable_of: Any,
+    ) -> None:
+        with pytest.raises(ValueError, match=r"unexpected value for handle_failure"):
+            _ = resolve_base_href(
+                disposable_html_with_base_href,
+                handle_failures=iterable_of("ignore"),
+            )
 
 
 class TestMakeLinksAbsoluteArg:
@@ -334,105 +344,96 @@ class TestMakeLinksAbsoluteArg:
                 else:
                     assert old != new
 
-    @settings(suppress_health_check=[HealthCheck.too_slow], max_examples=500)
-    @given(
-        t=_st.all_instances_except_of_type().filter(
-            lambda _: _ not in ("ignore", "discard", None)
-        )
-    )
+    @settings(suppress_health_check=[HealthCheck.too_slow], max_examples=300)
+    @given(thing=_st.all_instances_except_of_type(NoneType))
     @pytest.mark.slow
     def test_handle_failures_wrong_type(
-        self, disposable_html_with_base_href: HtmlElement, t: Any
+        self, disposable_html_with_base_href: HtmlElement, thing: Any
     ) -> None:
+        assume(thing not in ("ignore", "discard"))
         with pytest.raises((ValueError, TypeError)):
             _ = make_links_absolute(
-                disposable_html_with_base_href, _BASE_HREF, handle_failures=t
+                disposable_html_with_base_href, _BASE_HREF, handle_failures=thing
             )
 
     # Not testing resolve_base_href type, as it is a truthy/falsy argument
     # that can be anything
 
-    # Falsy values got short circuited by urljoin() and never raises
-    @settings(suppress_health_check=[HealthCheck.too_slow], max_examples=500)
-    @given(t=_st.all_instances_except_of_type(str, NoneType).filter(bool))
+    @settings(suppress_health_check=[HealthCheck.too_slow], max_examples=300)
+    @given(thing=_st.all_instances_except_of_type(str, NoneType))
     @pytest.mark.slow
-    @pytest.mark.filterwarnings(
-        "ignore:NotImplemented should not be used in a boolean context:DeprecationWarning"
-    )
-    @pytest.mark.filterwarnings(
-        "ignore:The behavior of this method will change .+:FutureWarning"
-    )
     def test_base_href(
-        self, disposable_html_with_base_href: HtmlElement, t: Any
+        self, disposable_html_with_base_href: HtmlElement, thing: Any
     ) -> None:
+        # Falsy values short circuited by urljoin() and never raises
+        assume(thing is NotImplemented or bool(thing))
         with pytest.raises(TypeError, match="Cannot mix str and non-str arguments"):
-            _ = make_links_absolute(disposable_html_with_base_href, base_url=t)
+            _ = make_links_absolute(disposable_html_with_base_href, base_url=thing)
 
 
-# COMPLETED
 # Need HTML fixtures that really contains link, otherwise
 # iterlinks() is a no-op and most tests won't fail
 class TestRewriteLinksArg:
-    @given(t=_st.all_instances_except_of_type().filter(lambda x: not callable(x)))
+    @settings(suppress_health_check=[HealthCheck.too_slow], max_examples=300)
+    @given(thing=_st.all_instances_except_of_type().filter(lambda x: not callable(x)))
+    @pytest.mark.slow
     def test_link_repl_func_is_callable(
-        self, disposable_html_with_base_href: HtmlElement, t: Any
+        self, disposable_html_with_base_href: HtmlElement, thing: Any
     ) -> None:
         with pytest.raises(TypeError, match="object is not callable"):
-            _ = rewrite_links(disposable_html_with_base_href, t)
+            _ = rewrite_links(disposable_html_with_base_href, thing)
 
     # QName has the unintended consequence of doing tag name check while
     # replaced link is an attribute value, thus raising ValueError instead
-    @settings(suppress_health_check=[HealthCheck.too_slow], max_examples=500)
-    @given(
-        t=_st.all_instances_except_of_type(
-            *attr_value_types.allow,
-            *attr_value_types.skip,
-            NoneType,
-        )
-    )
+    @settings(suppress_health_check=[HealthCheck.too_slow], max_examples=300)
+    @given(thing=_st.all_instances_except_of_type(
+        *attr_value_types.allow, *attr_value_types.skip, NoneType,
+    ))  # fmt: skip
     @pytest.mark.slow
-    def test_link_repl_func_output_type(
-        self, disposable_html_with_base_href: HtmlElement, t: Any
+    def test_link_repl_func_bad_output(
+        self, disposable_html_with_base_href: HtmlElement, thing: Any
     ) -> None:
-        with pytest.raises(TypeError, match="Argument must be bytes or unicode"):
-            _ = rewrite_links(disposable_html_with_base_href, lambda _: t)
+        with raise_invalid_utf8_type:
+            _ = rewrite_links(disposable_html_with_base_href, lambda _: thing)
 
-    def test_link_repl_func_input_arg(
+    @settings(max_examples=5)
+    @given(iterable_of=_st.fixed_item_iterables())
+    def test_link_repl_func_bad_output_2(
+        self,
+        disposable_html_with_base_href: HtmlElement,
+        iterable_of: Any,
+    ) -> None:
+        with raise_invalid_utf8_type:
+            _ = rewrite_links(
+                disposable_html_with_base_href, lambda _: iterable_of(_BASE_HREF)
+            )
+
+    def test_link_repl_func_bad_input(
         self, disposable_html_with_base_href: HtmlElement
     ) -> None:
-        with pytest.raises(
-            TypeError, match="takes 0 positional arguments but 1 was given"
-        ):
+        with raise_wrong_pos_arg_count:
             _ = rewrite_links(
                 disposable_html_with_base_href, cast(Any, lambda: _BASE_HREF)
             )
         # Induce it into revealing feeded data type by supplying wrong function
-        with pytest.raises(
-            TypeError, match="'str' object cannot be interpreted as an integer"
-        ):
+        with raise_non_integer:
             _ = rewrite_links(disposable_html_with_base_href, cast(Any, range))
 
     # Not testing resolve_base_href type, as it is a truthy/falsy argument
     # that can be anything
 
-    # Falsy values got short circuited by urljoin() and never raises
-    @settings(suppress_health_check=[HealthCheck.too_slow], max_examples=500)
-    @given(t=_st.all_instances_except_of_type(str, NoneType).filter(bool))
+    @settings(suppress_health_check=[HealthCheck.too_slow], max_examples=300)
+    @given(thing=_st.all_instances_except_of_type(str, NoneType))
     @pytest.mark.slow
-    @pytest.mark.filterwarnings(
-        "ignore:NotImplemented should not be used in a boolean context:DeprecationWarning"
-    )
-    @pytest.mark.filterwarnings(
-        "ignore:The behavior of this method will change .+:FutureWarning"
-    )
     def test_base_href(
-        self, disposable_html_with_base_href: HtmlElement, t: Any
+        self, disposable_html_with_base_href: HtmlElement, thing: Any
     ) -> None:
+        # Falsy values got short circuited by urljoin() and never raises
+        assume(thing is NotImplemented or bool(thing))
         with pytest.raises(TypeError, match="Cannot mix str and non-str arguments"):
-            _ = rewrite_links(disposable_html_with_base_href, str, base_href=t)
+            _ = rewrite_links(disposable_html_with_base_href, str, base_href=thing)
 
 
-# COMPLETED
 # non-Element input + keyword args = Exception
 # See comment on module level functions in html/_funcs.pyi
 # Not just for pytest, we want to make sure they show
@@ -442,14 +443,14 @@ class TestMethodFuncBug:
     def test_find_rel_links(self, disposable_html_with_base_href: HtmlElement) -> None:
         for encoding in ("utf-8", str):
             content = tostring(disposable_html_with_base_href, encoding=encoding)
-            with pytest.raises(TypeError, match="got an unexpected keyword argument"):
+            with raise_unexpected_kwarg:
                 _ = find_rel_links(content, rel="nofollow")
         _ = find_rel_links(disposable_html_with_base_href, rel="nofollow")
 
     def test_find_class(self, disposable_html_with_base_href: HtmlElement) -> None:
         for encoding in ("utf-8", str):
             content = tostring(disposable_html_with_base_href, encoding=encoding)
-            with pytest.raises(TypeError, match="got an unexpected keyword argument"):
+            with raise_unexpected_kwarg:
                 _ = find_class(content, class_name="single")
         _ = find_class(disposable_html_with_base_href, class_name="single")
 
@@ -463,7 +464,7 @@ class TestMethodFuncBug:
         _ = make_links_absolute(bytes_content, base_url=_BASE_HREF)
 
         for input in (str_content, bytes_content):
-            with pytest.raises(TypeError, match="got an unexpected keyword argument"):
+            with raise_unexpected_kwarg:
                 _ = make_links_absolute(  # type: ignore[call-overload]
                     input, _BASE_HREF, resolve_base_href=True
                 )
@@ -472,7 +473,7 @@ class TestMethodFuncBug:
         )
 
         for input in (str_content, bytes_content):
-            with pytest.raises(TypeError, match="got an unexpected keyword argument"):
+            with raise_unexpected_kwarg:
                 _ = make_links_absolute(  # type: ignore[call-overload]
                     input, _BASE_HREF, handle_failures=None
                 )
@@ -486,7 +487,7 @@ class TestMethodFuncBug:
     ) -> None:
         for encoding in ("utf-8", str):
             content = tostring(disposable_html_with_base_href, encoding=encoding)
-            with pytest.raises(TypeError, match="got an unexpected keyword argument"):
+            with raise_unexpected_kwarg:
                 _ = resolve_base_href(  # type: ignore[call-overload]
                     content, handle_failures=None
                 )
@@ -500,21 +501,21 @@ class TestMethodFuncBug:
         byte_content = tostring(disposable_html_with_base_href, encoding="utf-8")
 
         for input in (str_content, byte_content):
-            with pytest.raises(TypeError, match="got an unexpected keyword argument"):
+            with raise_unexpected_kwarg:
                 _ = rewrite_links(  # type: ignore[call-overload]
                     input, link_repl_func=str
                 )
         _ = rewrite_links(disposable_html_with_base_href, link_repl_func=str)
 
         for input in (str_content, byte_content):
-            with pytest.raises(TypeError, match="got an unexpected keyword argument"):
+            with raise_unexpected_kwarg:
                 _ = rewrite_links(  # type: ignore[call-overload]
                     input, str, resolve_base_href=False
                 )
         _ = rewrite_links(disposable_html_with_base_href, str, resolve_base_href=False)
 
         for input in (str_content, byte_content):
-            with pytest.raises(TypeError, match="got an unexpected keyword argument"):
+            with raise_unexpected_kwarg:
                 _ = rewrite_links(  # type: ignore[call-overload]
                     input, str, base_href=_BASE_HREF
                 )

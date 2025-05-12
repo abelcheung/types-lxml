@@ -16,6 +16,20 @@ from typing import (
     overload,
 )
 
+from .._types import (
+    _ET,
+    SupportsLaxItems,
+    _ElementOrTree,
+    _TextArg,
+    _XPathExtFuncArg,
+    _XPathNSArg,
+    _XPathObject,
+    _XPathVarArg,
+)
+from ._element import _Element, _ElementTree
+from ._module_misc import LxmlError, LxmlSyntaxError
+from ._xmlerror import _ListErrorLog
+
 if sys.version_info >= (3, 11):
     from typing import Never
 else:
@@ -25,19 +39,6 @@ if sys.version_info >= (3, 13):
     from warnings import deprecated
 else:
     from typing_extensions import deprecated
-
-from .._types import (
-    _ET,
-    _AnyStr,
-    _ElementOrTree,
-    _NonDefaultNSMapArg,
-    _XPathExtFuncArg,
-    _XPathObject,
-    _XPathVarArg,
-)
-from ._element import _Element, _ElementTree
-from ._module_misc import LxmlError, LxmlSyntaxError
-from ._xmlerror import _ListErrorLog
 
 class XPathError(LxmlError):
     """Base class of all XPath errors"""
@@ -67,9 +68,9 @@ class _XPathEvaluatorBase(Protocol):
 class XPath(_XPathEvaluatorBase):
     def __init__(
         self,
-        path: _AnyStr,
+        path: _TextArg,
         *,
-        namespaces: _NonDefaultNSMapArg | None = None,
+        namespaces: _XPathNSArg | None = None,
         extensions: _XPathExtFuncArg | None = None,
         regexp: bool = True,
         smart_strings: bool = True,
@@ -83,7 +84,7 @@ class XPath(_XPathEvaluatorBase):
 class ETXPath(XPath):
     def __init__(
         self,
-        path: _AnyStr,
+        path: _TextArg,
         *,
         extensions: _XPathExtFuncArg | None = None,
         regexp: bool = True,
@@ -95,23 +96,25 @@ class XPathElementEvaluator(_XPathEvaluatorBase):
         self,
         element: _Element,
         *,
-        namespaces: _NonDefaultNSMapArg | None = None,
+        namespaces: _XPathNSArg | None = None,
         extensions: _XPathExtFuncArg | None = None,
         regexp: bool = True,
         smart_strings: bool = True,
     ) -> None: ...
     def __call__(
-        self, _path: _AnyStr, /, **_variables: _XPathVarArg
+        self, _path: _TextArg, /, **_variables: _XPathVarArg
     ) -> _XPathObject: ...
-    def register_namespace(self, prefix: _AnyStr, uri: _AnyStr) -> None: ...
-    def register_namespaces(self, namespaces: _NonDefaultNSMapArg | None) -> None: ...
+    def register_namespace(self, prefix: str | bytes, uri: str | bytes) -> None: ...
+    def register_namespaces(
+        self, namespaces: SupportsLaxItems[str | bytes, str | bytes]
+    ) -> None: ...
 
 class XPathDocumentEvaluator(XPathElementEvaluator):
     def __init__(
         self,
         etree: _ElementTree,
         *,
-        namespaces: _NonDefaultNSMapArg | None = None,
+        namespaces: _XPathNSArg | None = None,
         extensions: _XPathExtFuncArg | None = None,
         regexp: bool = True,
         smart_strings: bool = True,
@@ -121,7 +124,7 @@ class XPathDocumentEvaluator(XPathElementEvaluator):
 def XPathEvaluator(
     etree_or_element: _Element,
     *,
-    namespaces: _NonDefaultNSMapArg | None = None,
+    namespaces: _XPathNSArg | None = None,
     extensions: _XPathExtFuncArg | None = None,
     regexp: bool = True,
     smart_strings: bool = True,
@@ -130,7 +133,7 @@ def XPathEvaluator(
 def XPathEvaluator(
     etree_or_element: _ElementTree,
     *,
-    namespaces: _NonDefaultNSMapArg | None = None,
+    namespaces: _XPathNSArg | None = None,
     extensions: _XPathExtFuncArg | None = None,
     regexp: bool = True,
     smart_strings: bool = True,
