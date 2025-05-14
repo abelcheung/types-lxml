@@ -295,14 +295,20 @@ pass_env = [
     'CI',
     'TF_BUILD',
 ]
+deps = [
+    'lxml',
+]
 package = 'wheel'
 wheel_build_env = '{package_env}'
 dependency_groups = ['basic', 'stub-test']
-commands = [[
-    'pytest',
-    '--mypy-ini-file=tests/static/mypy-pytest.ini',
-    {replace = 'posargs', default = ['tests/static'], extend = true},
-]]
+commands = [
+    ['python', '-m', 'mypy.stubtest', 'lxml', '--allowlist', 'tests/stubtest_allowlist.txt'],
+    [
+        'pytest',
+        '--mypy-ini-file=tests/static/mypy-pytest.ini',
+        {replace = 'posargs', default = ['tests/static'], extend = true},
+    ],
+]
 
 [tool.tox._env_rt]
 pass_env = [
