@@ -13,7 +13,6 @@ from .. import etree
 from .._types import (
     _AttrName,
     _AttrVal,
-    _ElementFactory,
     _ElemPathArg,
     _StrOnlyNSMap,
     _TagSelector,
@@ -264,7 +263,7 @@ class HtmlElement(etree.ElementBase):
         *,
         with_tail: bool = True,
     ) -> Iterator[str]: ...
-    makeelement: _ElementFactory[HtmlElement]  # pyright: ignore[reportIncompatibleVariableOverride]
+    makeelement: type[HtmlElement]  # pyright: ignore[reportIncompatibleVariableOverride]
     def find(
         self,
         path: _ElemPathArg,
@@ -331,4 +330,4 @@ class HtmlEntity(etree.EntityBase, HtmlElement): ...  # type: ignore[misc]  # py
 # Factory func, there is no counterpart for SubElement though
 # (use etree.SubElement())
 #
-Element: _ElementFactory[HtmlElement]
+Element: type[HtmlElement]

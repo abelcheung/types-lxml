@@ -8,7 +8,6 @@ from .._types import (
     _AttrMapping,
     _AttrTuples,
     _AttrVal,
-    _ElementFactory,
     _NSMapArg,
     _TagName,
 )
@@ -318,7 +317,7 @@ class ElementMaker:
         namespace: str | None = None,
         nsmap: _NSMapArg | None = None,
         annotate: bool = True,
-        makeelement: _ElementFactory[_e.ObjectifiedElement] | None = None,
+        makeelement: type[_e.ObjectifiedElement] | None = None,
     ) -> None: ...
     # Special notes:
     # - Attribute values supplied as children dict will be stringified,
