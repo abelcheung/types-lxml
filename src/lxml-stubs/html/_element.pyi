@@ -9,11 +9,6 @@ from typing import (
     overload,
 )
 
-if sys.version_info >= (3, 11):
-    from typing import Self
-else:
-    from typing_extensions import Self
-
 from .. import etree
 from .._types import (
     _AttrName,
@@ -198,7 +193,7 @@ class HtmlElement(etree.ElementBase):
     def getparent(self) -> HtmlElement | None: ...
     def getnext(self) -> HtmlElement | None: ...
     def getprevious(self) -> HtmlElement | None: ...
-    def getroottree(self) -> etree._ElementTree[Self]: ...
+    def getroottree(self) -> etree._ElementTree[HtmlElement]: ...
     @overload
     def itersiblings(
         self,
@@ -226,7 +221,7 @@ class HtmlElement(etree.ElementBase):
     def iterdescendants(
         self,
         *tags: _TagSelector,
-    ) -> Iterator[Self]: ...
+    ) -> Iterator[HtmlElement]: ...
     @overload
     def iterdescendants(
         self,
