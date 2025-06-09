@@ -383,75 +383,6 @@ def fromstringlist(
     [API Documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree.fromstringlist)
     """
 
-# Under XML Canonicalization (C14N) mode, most arguments are ignored,
-# some arguments would even raise exception outright if specified.
-@overload  # warn if inclusive_ns_prefixes is not collection
-@deprecated(
-    "`inclusive_ns_prefixes` should be collection, otherwise "
-    "will either search for wrong NS prefix or raise exception"
-)
-def tostring(
-    element_or_tree: Any,
-    *,
-    method: Literal["c14n"],
-    inclusive_ns_prefixes: _TextArg,
-    **_kw: Any,
-) -> Never:
-    """Serialize an element to an encoded string representation of its XML tree.
-
-    Annotation
-    ----------
-    This `@overload` is a guard against using plain string in
-    `inclusive_ns_prefixes` argument, which can result in subtle bug.
-    The prefix string would be split into single characters and each
-    treated as a separate namespace prefix.
-
-    See Also
-    --------
-    [API Documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree.tostring)
-    """
-
-@overload  # method="c14n"
-def tostring(
-    element_or_tree: _ElementOrTree,
-    *,
-    method: Literal["c14n"],
-    exclusive: bool = False,
-    inclusive_ns_prefixes: Collection[_TextArg] | None = None,
-    with_comments: bool = True,
-) -> bytes:
-    """Serialize an element to an encoded string representation of its XML tree.
-
-    Annotation
-    ----------
-    This `@overload` covers C14N version 1 (``method="c14n"``), along with its
-    specific keyword arguments.
-
-    See Also
-    --------
-    [API Documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree.tostring)
-    """
-
-@overload  # method="c14n2"
-def tostring(
-    element_or_tree: _ElementOrTree,
-    *,
-    method: Literal["c14n2"],
-    with_comments: bool = True,
-    strip_text: bool = False,
-) -> bytes:
-    """Serialize an element to an encoded string representation of its XML tree.
-
-    Annotation
-    ----------
-    This `@overload` covers C14N version 2 (``method="c14n2"``), along with its
-    specific keyword arguments.
-
-    See Also
-    --------
-    [API Documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree.tostring)
-    """
-
 @overload  # Native str, no XML declaration allowed
 def tostring(  # type: ignore[overload-overlap]  # pyright: ignore[reportOverlappingOverload]
     element_or_tree: _ElementOrTree,
@@ -494,6 +425,76 @@ def tostring(
     ----------
     This `@overload` covers all remaining generic usage of `tostring()`.
     Returns byte string.
+
+    See Also
+    --------
+    [API Documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree.tostring)
+    """
+
+# Under XML Canonicalization (C14N) mode, most arguments are ignored,
+# some arguments would even raise exception outright if specified.
+@overload  # method="c14n2"
+def tostring(
+    element_or_tree: _ElementOrTree,
+    *,
+    method: Literal["c14n2"],
+    with_comments: bool = True,
+    strip_text: bool = False,
+) -> bytes:
+    """Serialize an element to an encoded string representation of its XML tree.
+
+    Annotation
+    ----------
+    This `@overload` covers C14N version 2 (``method="c14n2"``), along with its
+    specific keyword arguments.
+
+    See Also
+    --------
+    [API Documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree.tostring)
+    """
+
+@overload  # warn if inclusive_ns_prefixes is not collection
+@deprecated(
+    "`inclusive_ns_prefixes` should be collection, otherwise "
+    "will either search for wrong NS prefix or raise exception"
+)
+def tostring(
+    element_or_tree: _ElementOrTree,
+    *,
+    method: Literal["c14n"],
+    exclusive: bool = False,
+    with_comments: bool = True,
+    inclusive_ns_prefixes: _TextArg,
+) -> Never:
+    """Serialize an element to an encoded string representation of its XML tree.
+
+    Annotation
+    ----------
+    This `@overload` is a guard against using plain string in
+    `inclusive_ns_prefixes` argument, which can result in subtle bug.
+    The prefix string would be split into single characters and each
+    treated as a separate namespace prefix.
+
+    See Also
+    --------
+    [API Documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree.tostring)
+    """
+
+@overload  # method="c14n"
+def tostring(
+    element_or_tree: _ElementOrTree,
+    *,
+    method: Literal["c14n"],
+    exclusive: bool = False,
+    inclusive_ns_prefixes: Collection[_TextArg] | None = None,
+    with_comments: bool = True,
+) -> bytes:
+    """Serialize an element to an encoded string representation of its XML tree.
+
+    Annotation
+    ----------
+    This `@overload` covers C14N version 1 (``method="c14n"``), along with its
+    specific keyword arguments.
 
     See Also
     --------
