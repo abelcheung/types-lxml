@@ -109,6 +109,17 @@ class ObjectifiedDataElement(ObjectifiedElement):
         doing.
         """
 
+class NumberElement(ObjectifiedDataElement, metaclass=abc.ABCMeta):
+    @property  # type: ignore[misc]
+    def text(self) -> str: ...  # type: ignore[override]
+    def _setValueParser(self, function: Callable[[str], Any]) -> None:
+        """Set the function that parses the Python value from a string
+
+        See Also
+        --------
+        - [API Documentation](https://lxml.de/apidoc/lxml.objectify.html#lxml.objectify.NumberElement._setValueParser)
+        """
+
 # Forget about LongElement, which is only for Python 2.x.
 #
 # These data elements emulate native python data type operations,
@@ -118,31 +129,13 @@ class ObjectifiedDataElement(ObjectifiedElement):
 #
 # Not doing the same for StringElement and BoolElement though,
 # each for different reason.
-class IntElement(ObjectifiedDataElement, int):
+class IntElement(NumberElement, int):
     @property
     def pyval(self) -> int: ...
-    @property  # type: ignore[misc]
-    def text(self) -> str: ...  # type: ignore[override]
-    def _setValueParser(self, function: Callable[[str], Any]) -> None:
-        """Set the function that parses the Python value from a string
 
-        See Also
-        --------
-        - [API Documentation](https://lxml.de/apidoc/lxml.objectify.html#lxml.objectify.IntElement._setValueParser)
-        """
-
-class FloatElement(ObjectifiedDataElement, float):
+class FloatElement(NumberElement, float):
     @property
     def pyval(self) -> float: ...
-    @property  # type: ignore[misc]
-    def text(self) -> str: ...  # type: ignore[override]
-    def _setValueParser(self, function: Callable[[str], Any]) -> None:
-        """Set the function that parses the Python value from a string
-
-        See Also
-        --------
-        - [API Documentation](https://lxml.de/apidoc/lxml.objectify.html#lxml.objectify.FloatElement._setValueParser)
-        """
 
 class StringElement(ObjectifiedDataElement):
     """String data class

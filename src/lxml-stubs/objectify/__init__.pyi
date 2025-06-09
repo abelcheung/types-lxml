@@ -16,6 +16,7 @@ from ._element import (
     FloatElement as FloatElement,
     IntElement as IntElement,
     NoneElement as NoneElement,
+    NumberElement as NumberElement,
     ObjectifiedDataElement as ObjectifiedDataElement,
     ObjectifiedElement as ObjectifiedElement,
     StringElement as StringElement,
