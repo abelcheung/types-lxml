@@ -1039,7 +1039,7 @@ class _Comment(__ContentOnlyElement):
     def tag(self) -> Callable[..., _Comment]: ...  # type: ignore[override]  # pyright: ignore[reportIncompatibleMethodOverride]
     @property  # type: ignore[override]
     def text(self) -> str: ...
-    @text.setter
+    @text.setter  # type: ignore[override]
     def text(  # pyright: ignore[reportIncompatibleMethodOverride]
         self, value: _t._TextArg | None
     ) -> None: ...
@@ -1050,7 +1050,7 @@ class _ProcessingInstruction(__ContentOnlyElement):
     def tag(self) -> Callable[..., _ProcessingInstruction]: ...  # type: ignore[override]  # pyright: ignore[reportIncompatibleMethodOverride]
     @property  # type: ignore[override]
     def text(self) -> str: ...
-    @text.setter
+    @text.setter  # type: ignore[override]
     def text(  # pyright: ignore[reportIncompatibleMethodOverride]
         self, value: _t._TextArg | None
     ) -> None: ...

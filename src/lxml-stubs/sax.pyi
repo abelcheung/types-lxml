@@ -26,7 +26,7 @@ class ElementTreeContentHandler(Generic[_ET], ContentHandler):
 
     # Incompatible method overrides; some args are similar
     # but use other structures or names
-    def startElementNS(  # pyright: ignore[reportIncompatibleMethodOverride]
+    def startElementNS(  # type: ignore[override]  # pyright: ignore[reportIncompatibleMethodOverride]
         self,
         ns_name: tuple[str, str],
         qname: Unused,
@@ -34,7 +34,7 @@ class ElementTreeContentHandler(Generic[_ET], ContentHandler):
     ) -> None: ...
     def endElementNS(  # pyright: ignore[reportIncompatibleMethodOverride]
         self,
-        ns_name: tuple[str, str],
+        ns_name: tuple[str | None, str],
         qname: Unused,
     ) -> None: ...
     def characters(  # pyright: ignore[reportIncompatibleMethodOverride]
