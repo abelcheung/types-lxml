@@ -4,6 +4,8 @@ from ..etree import _Element
 
 _T = TypeVar("_T")
 
+__all__ = ["html_annotate", "htmldiff"]
+
 # annotation attribute can be anything, which is stringified
 # later on; but the type would better be consistent though
 def html_annotate(

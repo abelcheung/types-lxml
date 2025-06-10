@@ -48,3 +48,37 @@ else:
 # Exported constants
 __version__: Final[LiteralString]
 PYTYPE_ATTRIBUTE: Final[LiteralString]
+
+__all__ = [
+    "BoolElement",
+    "DataElement",
+    "E",
+    "Element",
+    "ElementMaker",
+    "FloatElement",
+    "IntElement",
+    "NoneElement",
+    "NumberElement",
+    "ObjectPath",
+    "ObjectifiedDataElement",
+    "ObjectifiedElement",
+    "ObjectifyElementClassLookup",
+    "PYTYPE_ATTRIBUTE",
+    "PyType",
+    "StringElement",
+    "SubElement",
+    "XML",
+    "annotate",
+    "deannotate",
+    "dump",
+    "enable_recursive_str",
+    "fromstring",
+    "getRegisteredTypes",
+    "makeparser",
+    "parse",
+    "pyannotate",
+    "pytypename",
+    "set_default_parser",
+    "set_pytype_attribute_tag",
+    "xsiannotate",
+]

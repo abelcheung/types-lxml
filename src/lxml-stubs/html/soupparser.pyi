@@ -34,6 +34,8 @@ _Features = Literal[
     "lxml-html",
 ]
 
+__all__ = ["fromstring", "parse", "convert_tree"]
+
 # NOTES:
 # - kw only arguments for fromstring() and parse() are
 #   taken from types-beautifulsoup4

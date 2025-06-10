@@ -13,6 +13,13 @@ from .objectify import ObjectifiedElement
 
 _CSSTransArg = LxmlTranslator | Literal["xml", "html", "xhtml"]  # noqa: F821
 
+__all__ = [
+    "SelectorSyntaxError",
+    "ExpressionError",
+    "SelectorError",
+    "CSSSelector",
+]
+
 SelectorError = _csel.SelectorError
 SelectorSyntaxError = _csel.SelectorSyntaxError
 ExpressionError = _csel.ExpressionError

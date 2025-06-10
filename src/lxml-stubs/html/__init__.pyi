@@ -54,3 +54,25 @@ else:
     from typing_extensions import LiteralString
 
 XHTML_NAMESPACE: Final[LiteralString]
+
+__all__ = [
+    "document_fromstring",
+    "fragment_fromstring",
+    "fragments_fromstring",
+    "fromstring",
+    "tostring",
+    "Element",
+    # FIXME defs is implemented as a module, yet used like a common
+    # object with set of tags as its attributes. Addition of "defs"
+    # into __all__ is a proof that defs isn't treated like a submodule.
+    # "defs",
+    "open_in_browser",
+    "submit_form",
+    "find_rel_links",
+    "find_class",
+    "make_links_absolute",
+    "resolve_base_href",
+    "iterlinks",
+    "rewrite_links",
+    "parse",
+]

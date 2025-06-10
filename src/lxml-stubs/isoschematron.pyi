@@ -10,8 +10,7 @@ if sys.version_info >= (3, 11):
 else:
     from typing_extensions import LiteralString
 
-__all__ = (
-    # Official exports
+__all__ = [
     "extract_xsd",
     "extract_rng",
     "iso_dsdl_include",
@@ -19,15 +18,9 @@ __all__ = (
     "iso_svrl_for_xslt1",
     "svrl_validation_errors",
     "schematron_schema_valid",
-    "schematron_schema_valid_supported",
     "stylesheet_params",
     "Schematron",
-    # Namespace constants
-    "XML_SCHEMA_NS",
-    "RELAXNG_NS",
-    "SCHEMATRON_NS",
-    "SVRL_NS",
-)
+]
 
 XML_SCHEMA_NS: Final[LiteralString]
 RELAXNG_NS: Final[LiteralString]
