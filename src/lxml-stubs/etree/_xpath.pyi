@@ -30,11 +30,6 @@ from ._element import _Element, _ElementTree
 from ._module_misc import LxmlError, LxmlSyntaxError
 from ._xmlerror import _ListErrorLog
 
-if sys.version_info >= (3, 11):
-    from typing import Never
-else:
-    from typing_extensions import Never
-
 if sys.version_info >= (3, 13):
     from warnings import deprecated
 else:
@@ -158,22 +153,6 @@ class _ElementUnicodeResult(str, Generic[_ET]):
     def attrname(self) -> str | None: ...
     def getparent(self: _ElementUnicodeResult[_ET]) -> _ET | None: ...
 
-@overload  # guard against str
-@deprecated(
-    "Use Iterable even when only one function is specified in function_mapping argument"
-)
-def Extension(
-    module: object | ModuleType,
-    function_mapping: str,
-    **kw: Any,
-) -> Never: ...
-@overload  # no namespace
-def Extension(
-    module: object | ModuleType,
-    function_mapping: dict[str, str] | Iterable[str] | None = None,
-    *,
-    ns: None = None,
-) -> dict[tuple[None, str], Callable[..., Any]]: ...
 @overload  # namespace present
 def Extension(
     module: object | ModuleType,
@@ -184,12 +163,32 @@ def Extension(
     """Build a dictionary of extension functions from the functions
     defined in a module or the methods of an object.
 
-    Original Docstring
-    ------------------
-    As second argument, you can pass an additional mapping of
-    attribute names to XPath function names, or a list of function
-    names that should be taken.
+    Annotation
+    ----------
+    This overload handles the case where a namespace is provided
+    via `ns` parameter.
 
-    The ``ns`` keyword argument accepts a namespace URI for the XPath
-    functions.
+    See Also
+    --------
+    - [User documentation](https://lxml.de/extensions.html#evaluator-local-extensions)
+    - [API documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree.Extension)
+    """
+@overload  # no namespace
+def Extension(
+    module: object | ModuleType,
+    function_mapping: dict[str, str] | Iterable[str] | None = None,
+    *,
+    ns: None = None,
+) -> dict[tuple[None, str], Callable[..., Any]]:
+    """Build a dictionary of extension functions from the functions
+    defined in a module or the methods of an object.
+
+    Annotation
+    ----------
+    This overload handles the case where namespace is not supplied.
+
+    See Also
+    --------
+    - [User documentation](https://lxml.de/extensions.html#evaluator-local-extensions)
+    - [API documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree.Extension)
     """
