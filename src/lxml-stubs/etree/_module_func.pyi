@@ -306,8 +306,7 @@ def fromstring(
 @deprecated("Raises exception if input is a single string")
 def fromstringlist(
     strings: str | bytes,
-    *args: Any,
-    **kw: Any,
+    parser: Any = None,
 ) -> Never:
     """Parses an XML document from a sequence of strings.
     Returns the root node (or the result returned by a parser target).

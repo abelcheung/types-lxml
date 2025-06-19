@@ -72,7 +72,11 @@ def SubElement(
     **_extra: _AttrVal,
 ) -> _ET: ...
 @overload  # from element, parser ignored
-def ElementTree(element: _ET) -> _ElementTree[_ET]:
+def ElementTree(
+    element: _ET,
+    *,
+    file: None = None,
+) -> _ElementTree[_ET]:
     """ElementTree wrapper class for Element objects.
 
     Annotation

@@ -177,38 +177,11 @@ class C14NWriterTarget(ParserTarget[None]):
 #   - output: None, .write()
 # keyword arguments come from C14NWriterTarget.__init__
 @overload
-@deprecated("Should specify a collection or iterator of tags")
-def canonicalize(
-    *args: Any,
-    qname_aware_tags: str,
-    **kw: Any,
-) -> Never: ...
-@overload
-@deprecated("Should specify a collection or iterator of attributes")
-def canonicalize(
-    *args: Any,
-    qname_aware_attrs: str,
-    **kw: Any,
-) -> Never: ...
-@overload
-@deprecated("Should specify a collection or iterator of attributes")
-def canonicalize(
-    *args: Any,
-    exclude_attrs: str,
-    **kw: Any,
-) -> Never: ...
-@overload
-@deprecated("Should specify a collection or iterator of tags")
-def canonicalize(
-    *args: Any,
-    exclude_tags: str,
-    **kw: Any,
-) -> Never: ...
-@overload
 def canonicalize(
     xml_data: str | _ElementOrTree,
     *,
     out: SupportsWrite[str],
+    from_file: None = None,
     with_comments: bool = False,
     strip_text: bool = False,
     rewrite_prefixes: bool = False,
@@ -236,6 +209,7 @@ def canonicalize(
     xml_data: str | _ElementOrTree,
     *,
     out: None = None,
+    from_file: None = None,
     with_comments: bool = False,
     strip_text: bool = False,
     rewrite_prefixes: bool = False,
