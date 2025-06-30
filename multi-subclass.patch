@@ -8,7 +8,7 @@
  7 files changed, 63 insertions(+), 63 deletions(-)
 
 diff --git a/pyproject.toml b/pyproject.toml
-index b550b56..2f8a926 100644
+index 86ed27d..57b9561 100644
 --- a/pyproject.toml
 +++ b/pyproject.toml
 @@ -5,7 +5,7 @@ requires = ['pdm-backend ~= 2.4']
@@ -21,7 +21,7 @@ index b550b56..2f8a926 100644
  description = 'Complete lxml external type annotation'
  readme = 'README.md'
 diff --git a/src/lxml-stubs/cssselect.pyi b/src/lxml-stubs/cssselect.pyi
-index 1ccf715..24f914b 100644
+index 51e7c0f..f4e4072 100644
 --- a/src/lxml-stubs/cssselect.pyi
 +++ b/src/lxml-stubs/cssselect.pyi
 @@ -6,8 +6,8 @@ import cssselect as _csel
@@ -35,7 +35,7 @@ index 1ccf715..24f914b 100644
  from .html import HtmlElement
  from .objectify import ObjectifiedElement
  
-@@ -48,7 +48,7 @@ class CSSSelector(XPath):
+@@ -55,7 +55,7 @@ class CSSSelector(XPath):
      # we handle the 2 built-in element families (HtmlElement
      # and ObjectifiedElement), but the rest is up to users.
      @overload
@@ -44,7 +44,7 @@ index 1ccf715..24f914b 100644
          self,
          _etree_or_element: _ElementOrTree[ObjectifiedElement],
          /,
-@@ -64,7 +64,7 @@ class CSSSelector(XPath):
+@@ -71,7 +71,7 @@ class CSSSelector(XPath):
      @overload
      def __call__(
          self,
@@ -55,7 +55,7 @@ index 1ccf715..24f914b 100644
 -    ) -> list[_ET]: ...
 +    ) -> list[_Element]: ...
 diff --git a/src/lxml-stubs/etree/_element.pyi b/src/lxml-stubs/etree/_element.pyi
-index 45dedde..6a2b3d4 100644
+index f114265..ff59370 100644
 --- a/src/lxml-stubs/etree/_element.pyi
 +++ b/src/lxml-stubs/etree/_element.pyi
 @@ -19,9 +19,9 @@ from ._parser import CustomTargetParser
@@ -355,7 +355,7 @@ index 45dedde..6a2b3d4 100644
  _ET2_co = TypeVar("_ET2_co", bound=_Element, default=_Element, covariant=True)
  
 diff --git a/src/lxml-stubs/etree/_factory_func.pyi b/src/lxml-stubs/etree/_factory_func.pyi
-index 3525354..243383f 100644
+index b417517..29d0261 100644
 --- a/src/lxml-stubs/etree/_factory_func.pyi
 +++ b/src/lxml-stubs/etree/_factory_func.pyi
 @@ -14,7 +14,7 @@ from .._types import (
@@ -381,8 +381,8 @@ index 3525354..243383f 100644
 -) -> _ET: ...
 +) -> _Element: ...
  @overload  # from element, parser ignored
- def ElementTree(element: _ET) -> _ElementTree[_ET]:
-     """ElementTree wrapper class for Element objects.
+ def ElementTree(
+     element: _ET,
 diff --git a/src/lxml-stubs/html/_element.pyi b/src/lxml-stubs/html/_element.pyi
 index b00bfb3..8cda2b3 100644
 --- a/src/lxml-stubs/html/_element.pyi
@@ -474,7 +474,7 @@ index b00bfb3..8cda2b3 100644
          expr: str,
          *,
 diff --git a/src/lxml-stubs/objectify/_element.pyi b/src/lxml-stubs/objectify/_element.pyi
-index 070b659..3185db1 100644
+index 0de70a8..1e7885e 100644
 --- a/src/lxml-stubs/objectify/_element.pyi
 +++ b/src/lxml-stubs/objectify/_element.pyi
 @@ -50,7 +50,7 @@ class ObjectifiedElement(ElementBase):
