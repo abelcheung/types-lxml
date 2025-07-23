@@ -133,6 +133,7 @@ def XPathEvaluator(
     regexp: bool = True,
     smart_strings: bool = True,
 ) -> XPathDocumentEvaluator: ...
+
 @final
 class _ElementUnicodeResult(str, Generic[_ET]):
     """Smart string is a private str subclass documented in
@@ -173,6 +174,7 @@ def Extension(
     - [User documentation](https://lxml.de/extensions.html#evaluator-local-extensions)
     - [API documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree.Extension)
     """
+
 @overload  # no namespace
 def Extension(
     module: object | ModuleType,
