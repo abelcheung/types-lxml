@@ -81,12 +81,12 @@ rt-test = [
     {include-group = "mypy"},
     {include-group = "pyright"},
 ]
-lxml49 = ["lxml == 4.9.4"]
 lxml50 = ["lxml == 5.0.2"]
 lxml51 = ["lxml == 5.1.1"]
 lxml52 = ["lxml == 5.2.2"]
 lxml53 = ["lxml == 5.3.2"]
 lxml54 = ["lxml == 5.4.0"]
+lxml60 = ["lxml == 6.0.0"]
 dev = [
     'tox ~= 4.22',
     # microsoft/pyright#9412, microsoft/pyright#9984
@@ -96,7 +96,7 @@ dev = [
     'urllib3 >= 2.0',
     'pytest-mypy-plugins >= 2.0',
     'pytest-revealtype-injector >= 0.5.0',
-    'lxml >= 4.9',
+    'lxml >= 5.0',
     'rnc2rng',
     # HypothesisWorks/hypothesis#4269
     'hypothesis[zoneinfo] >= 6.127.7',
@@ -232,26 +232,27 @@ static = [
     'py313-stub',
 ]
 runtime = [
-    'py310-rt-lxml49',
     'py310-rt-lxml50',
     'py310-rt-lxml51',
     'py310-rt-lxml52',
     'py310-rt-lxml53',
     'py310-rt-lxml54',
-    'py311-rt-lxml49',
+    'py310-rt-lxml60',
     'py311-rt-lxml50',
     'py311-rt-lxml51',
     'py311-rt-lxml52',
     'py311-rt-lxml53',
     'py311-rt-lxml54',
-    'py312-rt-lxml49',
+    'py311-rt-lxml60',
     'py312-rt-lxml50',
     'py312-rt-lxml51',
     'py312-rt-lxml52',
     'py312-rt-lxml53',
     'py312-rt-lxml54',
+    'py312-rt-lxml60',
     'py313-rt-lxml53',
     'py313-rt-lxml54',
+    'py313-rt-lxml60',
 ]
 
 # HACK Taking advantage of tox-gh-actions using
@@ -327,9 +328,6 @@ commands = [
     ]
 ]
 
-[tool.tox._env_lxml49]
-dependency_groups = ['basic', 'rt-test', 'lxml49']
-
 [tool.tox._env_lxml50]
 dependency_groups = ['basic', 'rt-test', 'lxml50']
 
@@ -345,6 +343,9 @@ dependency_groups = ['basic', 'rt-test', 'lxml53']
 [tool.tox._env_lxml54]
 dependency_groups = ['basic', 'rt-test', 'lxml54']
 
+[tool.tox._env_lxml60]
+dependency_groups = ['basic', 'rt-test', 'lxml60']
+
 [tool.tox.env]
 py38-stub  = {base = ['_env_stub']}
 py39-stub  = {base = ['_env_stub']}
@@ -352,26 +353,27 @@ py310-stub = {base = ['_env_stub']}
 py311-stub = {base = ['_env_stub']}
 py312-stub = {base = ['_env_stub']}
 py313-stub = {base = ['_env_stub']}
-py310-rt-lxml49 = {base = ['_env_rt', '_env_lxml49']}
 py310-rt-lxml50 = {base = ['_env_rt', '_env_lxml50']}
 py310-rt-lxml51 = {base = ['_env_rt', '_env_lxml51']}
 py310-rt-lxml52 = {base = ['_env_rt', '_env_lxml52']}
 py310-rt-lxml53 = {base = ['_env_rt', '_env_lxml53']}
 py310-rt-lxml54 = {base = ['_env_rt', '_env_lxml54']}
-py311-rt-lxml49 = {base = ['_env_rt', '_env_lxml49']}
+py310-rt-lxml60 = {base = ['_env_rt', '_env_lxml60']}
 py311-rt-lxml50 = {base = ['_env_rt', '_env_lxml50']}
 py311-rt-lxml51 = {base = ['_env_rt', '_env_lxml51']}
 py311-rt-lxml52 = {base = ['_env_rt', '_env_lxml52']}
 py311-rt-lxml53 = {base = ['_env_rt', '_env_lxml53']}
 py311-rt-lxml54 = {base = ['_env_rt', '_env_lxml54']}
-py312-rt-lxml49 = {base = ['_env_rt', '_env_lxml49']}
+py311-rt-lxml60 = {base = ['_env_rt', '_env_lxml60']}
 py312-rt-lxml50 = {base = ['_env_rt', '_env_lxml50']}
 py312-rt-lxml51 = {base = ['_env_rt', '_env_lxml51']}
 py312-rt-lxml52 = {base = ['_env_rt', '_env_lxml52']}
 py312-rt-lxml53 = {base = ['_env_rt', '_env_lxml53']}
 py312-rt-lxml54 = {base = ['_env_rt', '_env_lxml54']}
+py312-rt-lxml60 = {base = ['_env_rt', '_env_lxml60']}
 py313-rt-lxml53 = {base = ['_env_rt', '_env_lxml53']}
 py313-rt-lxml54 = {base = ['_env_rt', '_env_lxml54']}
+py313-rt-lxml60 = {base = ['_env_rt', '_env_lxml60']}
 
 [tool.tox.env.build-normal]
 pass_env = ['PDM_BUILD_SCM_VERSION']

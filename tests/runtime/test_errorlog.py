@@ -12,7 +12,6 @@ from typing import Any, cast
 import pytest
 from hypothesis import HealthCheck, assume, given, settings
 from lxml.etree import (
-    LXML_VERSION,
     ErrorDomains,
     ErrorLevels,
     ErrorTypes,
@@ -49,14 +48,6 @@ else:
 # - Not testing _RotatingErrorLog, which is only used in
 # global lxml logging, and doesn't expose any attributes
 # other than those already present in _ListErrorLog
-
-
-def _method_no_kwarg() -> bool:
-    # Param for some methods (filter_levels, receive)
-    # is strictly positional in lxml 4.9.
-    # Source code doesn't reveal anything abnormal,
-    # is it some sort of problem with cython?
-    return LXML_VERSION < (5, 0)
 
 
 class TestListLog:
@@ -186,10 +177,7 @@ class TestListLogMethods:
         del new_log
 
         levels = iter([ErrorLevels.ERROR, ErrorLevels.FATAL])
-        if _method_no_kwarg():
-            new_log = list_log.filter_levels(levels)
-        else:
-            new_log = list_log.filter_levels(levels=levels)
+        new_log = list_log.filter_levels(levels=levels)
         reveal_type(new_log)
         assert len(new_log) > 0
 
@@ -208,10 +196,7 @@ class TestListLogMethods:
         (("level", Parameter.POSITIONAL_OR_KEYWORD, Parameter.empty),),
     )
     def test_filter_from_level_arg_ok(self, list_log: _ListErrorLog) -> None:
-        if _method_no_kwarg():
-            new_log = list_log.filter_from_level(ErrorLevels.NONE)
-        else:
-            new_log = list_log.filter_from_level(level=ErrorLevels.NONE)
+        new_log = list_log.filter_from_level(level=ErrorLevels.NONE)
         reveal_type(new_log)
         assert len(new_log) > 0
 
@@ -242,10 +227,7 @@ class TestListLogMethods:
         (("entry", Parameter.POSITIONAL_OR_KEYWORD, Parameter.empty),),
     )
     def test_receive(self, list_log: _ListErrorLog) -> None:
-        if _method_no_kwarg():
-            assert list_log.receive(list_log[0]) is None
-        else:
-            assert list_log.receive(entry=list_log[0]) is None
+        assert list_log.receive(entry=list_log[0]) is None
         with pytest.raises(TypeError, match=r"expected .+\._LogEntry, got int"):
             list_log.receive(cast(Any, 1))
 
