@@ -296,14 +296,10 @@ pass_env = [
     'CI',
     'TF_BUILD',
 ]
-deps = [
-    'lxml',
-]
 package = 'wheel'
 wheel_build_env = '{package_env}'
 dependency_groups = ['basic', 'stub-test']
 commands = [
-    ['python', '-m', 'mypy.stubtest', 'lxml', '--allowlist', 'tests/stubtest_allowlist.txt'],
     [
         'pytest',
         '--mypy-ini-file=tests/static/mypy-pytest.ini',
@@ -318,11 +314,18 @@ pass_env = [
 ]
 package = 'wheel'
 wheel_build_env = '{package_env}'
-commands = [[
-    'pytest',
-    '--revealtype-mypy-config=tests/runtime/mypy.ini',
-    {replace = 'posargs', default = ['tests/runtime'], extend = true}
-]]
+commands = [
+    [
+        'python', '-m', 'mypy.stubtest', 'lxml',
+        '--ignore-unused-allowlist',
+        '--allowlist', 'tests/runtime/allowlist.txt'
+    ],
+    [
+        'pytest',
+        '--revealtype-mypy-config=tests/runtime/mypy.ini',
+        {replace = 'posargs', default = ['tests/runtime'], extend = true}
+    ]
+]
 
 [tool.tox._env_lxml49]
 dependency_groups = ['basic', 'rt-test', 'lxml49']
