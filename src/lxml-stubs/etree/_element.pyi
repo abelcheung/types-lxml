@@ -256,6 +256,14 @@ class _ElementTree(Generic[_t._ET_co]):
         file: _t._FileReadSource,
         parser: _t._DefEtreeParsers[_t._ET_co],
     ) -> _ElementTree[_t._ET_co]: ...
+    @overload  # from file source, custom target parser
+    def __new__(  # type: ignore[misc]
+        cls,
+        element: None = ...,
+        *,
+        file: _t._FileReadSource,
+        parser: CustomTargetParser[_T],
+    ) -> _T: ...
     @overload  # from file source, default parser
     def __new__(
         cls,
