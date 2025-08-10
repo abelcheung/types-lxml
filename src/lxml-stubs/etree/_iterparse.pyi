@@ -206,7 +206,7 @@ class iterparse(Iterator[_T_co]):
         self,
         lookup: ElementClassLookup | None = None,
     ) -> None: ...
-    makeelement: type[_T_co]
+    makeelement: type[_Element]
 
 class iterwalk(Iterator[_T_co]):
     """Tree walker that generates events from an existing tree as if it
