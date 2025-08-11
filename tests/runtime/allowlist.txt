@@ -105,6 +105,16 @@ lxml\.objectify\.Element
 lxml\.objectify\.SubElement
 lxml\.objectify\.annotate
 
+# Cannot inspect elements of virtual subclasses
+lxml.etree.Element.*
+lxml.etree.ElementTree.*
+
+# Generic classes do not need explicit __class_getitem__
+lxml.builder.ElementMaker.__class_getitem__
+lxml.etree.HTMLParser.__class_getitem__
+lxml.etree.XMLParser.__class_getitem__
+lxml.sax.ElementTreeContentHandler.__class_getitem__
+
 # Cython class __init__ clobbered by generic signature
 lxml\.builder\.ElementMaker\.__init__
 lxml\.etree\.ETCompatXMLParser\.__init__
