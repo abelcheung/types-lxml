@@ -7,6 +7,7 @@ from typing import (
     Iterator,
     Literal,
     Mapping,
+    TypeAlias,
     TypeVar,
     final,
     overload,
@@ -40,6 +41,16 @@ class _Element:
     --------
     - [API Documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree._Element)
     """
+
+    def __init__(  # Args identical to Element.makeelement
+        self,
+        _tag: _t._TagName,
+        /,
+        attrib: _t._AttrMapping | None = ...,
+        nsmap: _t._NSMapArg | None = ...,
+        **_extra: _t._AttrVal,
+    ) -> None: ...
+
     #
     # Common properties
     #
@@ -557,7 +568,7 @@ class _Element:
         - [API Documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree._Element.itertext)
         - [Possible tag values in `iter()`](https://lxml.de/apidoc/lxml.etree.html#lxml.etree._Element.iter)
         """
-    makeelement: _t._ElementFactory[Self]
+    makeelement: type[Self]
     """Creates a new element associated with the same document.
 
     See Also
@@ -663,6 +674,8 @@ class _Element:
         self, tag: _t._TagSelector | None = None, *tags: _t._TagSelector
     ) -> Iterator[Self]: ...
 
+Element: TypeAlias = _Element
+
 _ET2_co = TypeVar("_ET2_co", bound=_Element, default=_Element, covariant=True)
 
 # ET class notation is specialized, indicating the type of element
@@ -673,6 +686,38 @@ _ET2_co = TypeVar("_ET2_co", bound=_Element, default=_Element, covariant=True)
 # It is considered harmful to support such corner case, which
 # adds much complexity without any benefit.
 class _ElementTree(Generic[_t._ET_co]):
+
+    @overload  # from element, parser ignored
+    def __new__(
+        cls,
+        element: _t._ET_co,
+        *,
+        file: None = None,
+    ) -> _ElementTree[_t._ET_co]: ...
+    @overload  # from file source, standard parser
+    def __new__(
+        cls,
+        element: None = None,
+        *,
+        file: _t._FileReadSource,
+        parser: _t._DefEtreeParsers[_t._ET_co],
+    ) -> _ElementTree[_t._ET_co]: ...
+    @overload  # from file source, custom target parser
+    def __new__(  # type: ignore[misc]
+        cls,
+        element: None = None,
+        *,
+        file: _t._FileReadSource,
+        parser: CustomTargetParser[_T],
+    ) -> _T: ...
+    @overload  # from file source, no parser supplied
+    def __new__(
+        cls,
+        element: None = None,
+        *,
+        file: _t._FileReadSource,
+        parser: None = None,
+    ) -> _ElementTree[_t._ET_co]: ...
     @property
     def parser(self) -> _t._DefEtreeParsers[_t._ET_co] | None: ...
     @property
@@ -943,6 +988,8 @@ class _ElementTree(Generic[_t._ET_co]):
         compression: int | None = 0,
         inclusive_ns_prefixes: Iterable[str | bytes] | None = None,
     ) -> None: ...
+
+ElementTree: TypeAlias = _ElementTree
 
 # Behaves like MutableMapping but deviates a lot in details
 @final

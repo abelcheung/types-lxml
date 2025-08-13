@@ -11,7 +11,6 @@ from typing import (
 
 from .._types import (
     _DefEtreeParsers,
-    _ElementFactory,
     _ET_co,
     _SaxEventNames,
     _TagSelector,
@@ -75,7 +74,7 @@ class CustomTargetParser(Generic[_T]):
         """The version of the underlying XML parser."""
     def copy(self) -> Self:
         """Create a new parser with the same configuration."""
-    makeelement: _ElementFactory[_Element]
+    makeelement: type[_Element]
     """Creates a new element associated with this parser."""
     @property
     def feed_error_log(self) -> _ListErrorLog:
@@ -185,7 +184,7 @@ class XMLParser(Generic[_ET_co]):
         """The version of the underlying XML parser."""
     def copy(self) -> Self:
         """Create a new parser with the same configuration."""
-    makeelement: _ElementFactory[_ET_co]
+    makeelement: type[_ET_co]
     """Creates a new element associated with this parser."""
     def set_element_class_lookup(
         self, lookup: ElementClassLookup | None = None
@@ -389,7 +388,7 @@ class HTMLParser(Generic[_ET_co]):
         """The version of the underlying XML parser."""
     def copy(self) -> Self:
         """Create a new parser with the same configuration."""
-    makeelement: _ElementFactory[_ET_co]
+    makeelement: type[_ET_co]
     """Creates a new element associated with this parser."""
     def set_element_class_lookup(
         self, lookup: ElementClassLookup | None = None

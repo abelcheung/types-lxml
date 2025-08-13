@@ -1,14 +1,14 @@
  pyproject.toml                         |  2 +-
  src/lxml-stubs/cssselect.pyi           | 10 ++---
  src/lxml-stubs/etree/_element.pyi      | 74 +++++++++++++++++-----------------
- src/lxml-stubs/etree/_factory_func.pyi |  6 +--
+ src/lxml-stubs/etree/_factory_func.pyi |  7 ++--
  src/lxml-stubs/html/_element.pyi       | 26 ++++++------
  src/lxml-stubs/objectify/_element.pyi  |  6 +--
  tests/runtime/_testutils/common.py     |  2 +-
- 7 files changed, 63 insertions(+), 63 deletions(-)
+ 7 files changed, 63 insertions(+), 64 deletions(-)
 
 diff --git a/pyproject.toml b/pyproject.toml
-index 86ed27d..57b9561 100644
+index fde935a..ab3da97 100644
 --- a/pyproject.toml
 +++ b/pyproject.toml
 @@ -5,7 +5,7 @@ requires = ['pdm-backend ~= 2.4']
@@ -55,10 +55,10 @@ index 51e7c0f..f4e4072 100644
 -    ) -> list[_ET]: ...
 +    ) -> list[_Element]: ...
 diff --git a/src/lxml-stubs/etree/_element.pyi b/src/lxml-stubs/etree/_element.pyi
-index f114265..ff59370 100644
+index bcb5d96..8425502 100644
 --- a/src/lxml-stubs/etree/_element.pyi
 +++ b/src/lxml-stubs/etree/_element.pyi
-@@ -19,9 +19,9 @@ from ._parser import CustomTargetParser
+@@ -20,9 +20,9 @@ from ._parser import CustomTargetParser
  from ._xslt import XSLTAccessControl, XSLTExtension, _Stylesheet_Param, _XSLTResultTree
  
  if sys.version_info >= (3, 11):
@@ -70,7 +70,7 @@ index f114265..ff59370 100644
  
  if sys.version_info >= (3, 13):
      from warnings import deprecated
-@@ -170,11 +170,11 @@ class _Element:
+@@ -181,11 +181,11 @@ class _Element:
      #
      def __delitem__(self, __k: int | slice) -> None: ...
      @overload
@@ -85,7 +85,7 @@ index f114265..ff59370 100644
      # An element itself can be treated as container of other elements. When used
      # like elem[:] = new_elem, only subelements within new_elem will be
      # inserted, but not new_elem itself. If there is none, the whole slice would
-@@ -184,13 +184,13 @@ class _Element:
+@@ -195,13 +195,13 @@ class _Element:
      # doesn't apply to magic methods, at least for Pylance. Thus we create
      # additional overload for extend() but not here.
      @overload
@@ -102,7 +102,7 @@ index f114265..ff59370 100644
      def set(self, key: _t._AttrName, value: _t._AttrVal) -> None:
          """Sets an element attribute.
  
-@@ -198,7 +198,7 @@ class _Element:
+@@ -209,7 +209,7 @@ class _Element:
          --------
          - [API Documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree._Element.set)
          """
@@ -111,7 +111,7 @@ index f114265..ff59370 100644
          """Adds a subelement to the end of this element.
  
          See Also
-@@ -220,7 +220,7 @@ class _Element:
+@@ -231,7 +231,7 @@ class _Element:
          - [API Documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree._Element.extend)
          """
      @overload
@@ -120,7 +120,7 @@ index f114265..ff59370 100644
          """Extends the current children by the elements in the iterable.
  
          See Also
-@@ -234,14 +234,14 @@ class _Element:
+@@ -245,14 +245,14 @@ class _Element:
          --------
          - [API Documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree._Element.clear)
          """
@@ -137,7 +137,7 @@ index f114265..ff59370 100644
          """Removes a matching subelement.
  
          See Also
-@@ -250,7 +250,7 @@ class _Element:
+@@ -261,7 +261,7 @@ class _Element:
          """
      def index(
          self,
@@ -146,7 +146,7 @@ index f114265..ff59370 100644
          start: int | None = None,
          stop: int | None = None,
      ) -> int:
-@@ -308,49 +308,49 @@ class _Element:
+@@ -319,49 +319,49 @@ class _Element:
      #
      # extra Element / ET methods
      #
@@ -203,7 +203,7 @@ index f114265..ff59370 100644
          """Return an ElementTree for the root node of the document that
          contains this element.
  
-@@ -361,7 +361,7 @@ class _Element:
+@@ -372,7 +372,7 @@ class _Element:
      @overload
      def itersiblings(
          self, *tags: _t._TagSelector, preceding: bool = False
@@ -212,7 +212,7 @@ index f114265..ff59370 100644
          """Iterate over the following or preceding siblings of this element.
  
          Annotation
-@@ -380,7 +380,7 @@ class _Element:
+@@ -391,7 +391,7 @@ class _Element:
          tag: _t._TagSelector | Iterable[_t._TagSelector] | None = None,
          *,
          preceding: bool = False,
@@ -221,7 +221,7 @@ index f114265..ff59370 100644
          """Iterate over the following or preceding siblings of this element.
  
          Annotation
-@@ -395,7 +395,7 @@ class _Element:
+@@ -406,7 +406,7 @@ class _Element:
          - [Possible tag values in `iter()`](https://lxml.de/apidoc/lxml.etree.html#lxml.etree._Element.iter)
          """
      @overload
@@ -230,7 +230,7 @@ index f114265..ff59370 100644
          """Iterate over the ancestors of this element (from parent to parent).
  
          Annotation
-@@ -411,7 +411,7 @@ class _Element:
+@@ -422,7 +422,7 @@ class _Element:
      @overload
      def iterancestors(
          self, tag: _t._TagSelector | Iterable[_t._TagSelector] | None = None
@@ -239,7 +239,7 @@ index f114265..ff59370 100644
          """Iterate over the ancestors of this element (from parent to parent).
  
          Annotation
-@@ -426,7 +426,7 @@ class _Element:
+@@ -437,7 +437,7 @@ class _Element:
          - [Possible tag values in `iter()`](https://lxml.de/apidoc/lxml.etree.html#lxml.etree._Element.iter)
          """
      @overload
@@ -248,7 +248,7 @@ index f114265..ff59370 100644
          """Iterate over the descendants of this element in document order.
  
          Annotation
-@@ -442,7 +442,7 @@ class _Element:
+@@ -453,7 +453,7 @@ class _Element:
      @overload
      def iterdescendants(
          self, tag: _t._TagSelector | Iterable[_t._TagSelector] | None = None
@@ -257,7 +257,7 @@ index f114265..ff59370 100644
          """Iterate over the descendants of this element in document order.
  
          Annotation
-@@ -459,7 +459,7 @@ class _Element:
+@@ -470,7 +470,7 @@ class _Element:
      @overload
      def iterchildren(
          self, *tags: _t._TagSelector, reversed: bool = False
@@ -266,7 +266,7 @@ index f114265..ff59370 100644
          """Iterate over the children of this element.
  
          Annotation
-@@ -478,7 +478,7 @@ class _Element:
+@@ -489,7 +489,7 @@ class _Element:
          tag: _t._TagSelector | Iterable[_t._TagSelector] | None = None,
          *,
          reversed: bool = False,
@@ -275,7 +275,7 @@ index f114265..ff59370 100644
          """Iterate over the children of this element.
  
          Annotation
-@@ -493,7 +493,7 @@ class _Element:
+@@ -504,7 +504,7 @@ class _Element:
          - [Possible tag values in `iter()`](https://lxml.de/apidoc/lxml.etree.html#lxml.etree._Element.iter)
          """
      @overload
@@ -284,7 +284,7 @@ index f114265..ff59370 100644
          """Iterate over all elements in the subtree in document order (depth
          first pre-order), starting with this element.
  
-@@ -509,7 +509,7 @@ class _Element:
+@@ -520,7 +520,7 @@ class _Element:
      @overload
      def iter(
          self, tag: _t._TagSelector | Iterable[_t._TagSelector] | None = None
@@ -293,16 +293,16 @@ index f114265..ff59370 100644
          """Iterate over all elements in the subtree in document order (depth
          first pre-order), starting with this element.
  
-@@ -557,7 +557,7 @@ class _Element:
+@@ -568,7 +568,7 @@ class _Element:
          - [API Documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree._Element.itertext)
          - [Possible tag values in `iter()`](https://lxml.de/apidoc/lxml.etree.html#lxml.etree._Element.iter)
          """
--    makeelement: _t._ElementFactory[Self]
-+    makeelement: _t._ElementFactory[_Element]
+-    makeelement: type[Self]
++    makeelement: type[_Element]
      """Creates a new element associated with the same document.
  
      See Also
-@@ -566,7 +566,7 @@ class _Element:
+@@ -577,7 +577,7 @@ class _Element:
      """
      def find(
          self, path: _t._ElemPathArg, namespaces: _t._StrOnlyNSMap | None = None
@@ -311,7 +311,7 @@ index f114265..ff59370 100644
          """Creates a new element associated with the same document.
  
          See Also
-@@ -609,7 +609,7 @@ class _Element:
+@@ -620,7 +620,7 @@ class _Element:
          """
      def findall(
          self, path: _t._ElemPathArg, namespaces: _t._StrOnlyNSMap | None = None
@@ -320,7 +320,7 @@ index f114265..ff59370 100644
          """Finds all matching subelements, by tag name or path.
  
          See Also
-@@ -618,7 +618,7 @@ class _Element:
+@@ -629,7 +629,7 @@ class _Element:
          """
      def iterfind(
          self, path: _t._ElemPathArg, namespaces: _t._StrOnlyNSMap | None = None
@@ -329,7 +329,7 @@ index f114265..ff59370 100644
          """Iterates over all matching subelements, by tag name or path.
  
          See Also
-@@ -646,7 +646,7 @@ class _Element:
+@@ -657,7 +657,7 @@ class _Element:
          expr: str,
          *,
          translator: _CSSTransArg = "xml",
@@ -338,7 +338,7 @@ index f114265..ff59370 100644
          """Run the CSS expression on this element and its children,
          returning a list of the results.
  
-@@ -655,13 +655,13 @@ class _Element:
+@@ -666,13 +666,13 @@ class _Element:
          - [API Documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree._Entity.cssselect)
          """
      @deprecated("Since v2.0 (2008); use list(element) or iterate over element")
@@ -352,22 +352,30 @@ index f114265..ff59370 100644
 -    ) -> Iterator[Self]: ...
 +    ) -> Iterator[_Element]: ...
  
- _ET2_co = TypeVar("_ET2_co", bound=_Element, default=_Element, covariant=True)
+ Element: TypeAlias = _Element
  
 diff --git a/src/lxml-stubs/etree/_factory_func.pyi b/src/lxml-stubs/etree/_factory_func.pyi
-index b417517..29d0261 100644
+index 3dd52b8..d692fb7 100644
 --- a/src/lxml-stubs/etree/_factory_func.pyi
 +++ b/src/lxml-stubs/etree/_factory_func.pyi
-@@ -14,7 +14,7 @@ from .._types import (
+@@ -1,7 +1,6 @@
+ from typing import TypeVar, overload
+ 
+ from .._types import (
+-    _ET,
+     _AttrMapping,
+     _AttrVal,
+     _NSMapArg,
+@@ -10,7 +9,7 @@ from .._types import (
  )
  from ..html import HtmlElement
  from ..objectify import ObjectifiedElement, StringElement
--from ._element import _Comment, _ElementTree, _Entity, _ProcessingInstruction
-+from ._element import _Comment, _Element, _ElementTree, _Entity, _ProcessingInstruction
- from ._parser import CustomTargetParser
+-from ._element import _Comment, _Entity, _ProcessingInstruction
++from ._element import _Comment, _Element, _Entity, _ProcessingInstruction
  
  _T = TypeVar("_T")
-@@ -64,13 +64,13 @@ def SubElement(
+ 
+@@ -57,10 +56,10 @@ def SubElement(
  ) -> HtmlElement: ...
  @overload
  def SubElement(
@@ -380,14 +388,11 @@ index b417517..29d0261 100644
      **_extra: _AttrVal,
 -) -> _ET: ...
 +) -> _Element: ...
- @overload  # from element, parser ignored
- def ElementTree(
-     element: _ET,
 diff --git a/src/lxml-stubs/html/_element.pyi b/src/lxml-stubs/html/_element.pyi
-index b00bfb3..8cda2b3 100644
+index d46fbc3..d327fb5 100644
 --- a/src/lxml-stubs/html/_element.pyi
 +++ b/src/lxml-stubs/html/_element.pyi
-@@ -124,7 +124,7 @@ class HtmlElement(etree.ElementBase):
+@@ -126,7 +126,7 @@ class HtmlElement(etree.ElementBase):
      # Subclassing of _Element should not go beyond HtmlElement. For example,
      # while children of HtmlElement are mostly HtmlElement, FormElement never
      # contains FormElement as child.
@@ -396,7 +401,7 @@ index b00bfb3..8cda2b3 100644
      def __getitem__(
          self,
          __x: int,
-@@ -134,7 +134,7 @@ class HtmlElement(etree.ElementBase):
+@@ -136,7 +136,7 @@ class HtmlElement(etree.ElementBase):
          self,
          __x: slice,
      ) -> list[HtmlElement]: ...
@@ -405,7 +410,7 @@ index b00bfb3..8cda2b3 100644
      def __setitem__(
          self,
          __x: int,
-@@ -150,9 +150,9 @@ class HtmlElement(etree.ElementBase):
+@@ -152,9 +152,9 @@ class HtmlElement(etree.ElementBase):
      def __reversed__(self) -> Iterator[HtmlElement]: ...
      def append(  # pyright: ignore[reportIncompatibleMethodOverride]
          self,
@@ -417,7 +422,7 @@ index b00bfb3..8cda2b3 100644
      @deprecated("Expects iterable of elements as value, not single element")
      def extend(
          self,
-@@ -166,30 +166,30 @@ class HtmlElement(etree.ElementBase):
+@@ -168,30 +168,30 @@ class HtmlElement(etree.ElementBase):
      def insert(  # pyright: ignore[reportIncompatibleMethodOverride]
          self,
          index: int,
@@ -455,7 +460,7 @@ index b00bfb3..8cda2b3 100644
      ) -> None: ...
      def getparent(self) -> HtmlElement | None: ...
      def getnext(self) -> HtmlElement | None: ...
-@@ -270,7 +270,7 @@ class HtmlElement(etree.ElementBase):
+@@ -272,7 +272,7 @@ class HtmlElement(etree.ElementBase):
          path: _ElemPathArg,
          namespaces: _StrOnlyNSMap | None = None,
      ) -> HtmlElement | None: ...
@@ -464,7 +469,7 @@ index b00bfb3..8cda2b3 100644
          self,
          path: _ElemPathArg,
          namespaces: _StrOnlyNSMap | None = None,
-@@ -280,7 +280,7 @@ class HtmlElement(etree.ElementBase):
+@@ -282,7 +282,7 @@ class HtmlElement(etree.ElementBase):
          path: _ElemPathArg,
          namespaces: _StrOnlyNSMap | None = None,
      ) -> Iterator[HtmlElement]: ...
