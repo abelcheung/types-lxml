@@ -1,11 +1,11 @@
  pyproject.toml                         |  2 +-
  src/lxml-stubs/cssselect.pyi           | 10 ++---
  src/lxml-stubs/etree/_element.pyi      | 74 +++++++++++++++++-----------------
- src/lxml-stubs/etree/_factory_func.pyi |  6 +--
+ src/lxml-stubs/etree/_factory_func.pyi |  7 ++--
  src/lxml-stubs/html/_element.pyi       | 26 ++++++------
  src/lxml-stubs/objectify/_element.pyi  |  6 +--
  tests/runtime/_testutils/common.py     |  2 +-
- 7 files changed, 63 insertions(+), 63 deletions(-)
+ 7 files changed, 63 insertions(+), 64 deletions(-)
 
 diff --git a/pyproject.toml b/pyproject.toml
 index fde935a..ab3da97 100644
@@ -355,21 +355,27 @@ index bcb5d96..8425502 100644
  Element: TypeAlias = _Element
  
 diff --git a/src/lxml-stubs/etree/_factory_func.pyi b/src/lxml-stubs/etree/_factory_func.pyi
-index 3dd52b8..1dfdf67 100644
+index 3dd52b8..d692fb7 100644
 --- a/src/lxml-stubs/etree/_factory_func.pyi
 +++ b/src/lxml-stubs/etree/_factory_func.pyi
-@@ -1,9 +1,9 @@
+@@ -1,7 +1,6 @@
  from typing import TypeVar, overload
  
  from .._types import (
 -    _ET,
      _AttrMapping,
      _AttrVal,
-+    _Element,
      _NSMapArg,
-     _TagName,
-     _TextArg,
-@@ -57,10 +57,10 @@ def SubElement(
+@@ -10,7 +9,7 @@ from .._types import (
+ )
+ from ..html import HtmlElement
+ from ..objectify import ObjectifiedElement, StringElement
+-from ._element import _Comment, _Entity, _ProcessingInstruction
++from ._element import _Comment, _Element, _Entity, _ProcessingInstruction
+ 
+ _T = TypeVar("_T")
+ 
+@@ -57,10 +56,10 @@ def SubElement(
  ) -> HtmlElement: ...
  @overload
  def SubElement(
