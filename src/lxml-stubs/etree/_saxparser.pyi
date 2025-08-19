@@ -1,7 +1,7 @@
 from abc import abstractmethod
 from typing import Callable, Protocol, TypeVar
 
-from .._types import _DefEtreeParsers, _ElementFactory
+from .._types import _DefEtreeParsers
 from ._element import _Comment, _Element, _ProcessingInstruction
 from ._parser import XMLSyntaxError
 
@@ -60,7 +60,7 @@ class TreeBuilder(ParserTarget[_Element]):
     def __init__(
         self,
         *,
-        element_factory: _ElementFactory[_Element] | None = None,
+        element_factory: type[_Element] | None = None,
         parser: _DefEtreeParsers | None = None,
         comment_factory: Callable[..., _Comment] | None = None,
         pi_factory: Callable[..., _ProcessingInstruction] | None = None,

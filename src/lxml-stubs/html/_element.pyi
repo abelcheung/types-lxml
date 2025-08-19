@@ -11,11 +11,13 @@ from typing import (
 
 from .. import etree
 from .._types import (
+    _AttrMapping,
     _AttrName,
     _AttrVal,
-    _ElementFactory,
     _ElemPathArg,
+    _NSMapArg,
     _StrOnlyNSMap,
+    _TagName,
     _TagSelector,
 )
 from ..cssselect import _CSSTransArg
@@ -264,7 +266,7 @@ class HtmlElement(etree.ElementBase):
         *,
         with_tail: bool = True,
     ) -> Iterator[str]: ...
-    makeelement: _ElementFactory[HtmlElement]  # pyright: ignore[reportIncompatibleVariableOverride]
+    makeelement: type[HtmlElement]  # pyright: ignore[reportIncompatibleVariableOverride]
     def find(
         self,
         path: _ElemPathArg,
@@ -331,4 +333,10 @@ class HtmlEntity(etree.EntityBase, HtmlElement): ...  # type: ignore[misc]  # py
 # Factory func, there is no counterpart for SubElement though
 # (use etree.SubElement())
 #
-Element: _ElementFactory[HtmlElement]
+def Element(
+        _tag: _TagName,
+        /,
+        attrib: _AttrMapping | None = None,
+        nsmap: _NSMapArg | None = None,
+        **_extra: _AttrVal,
+    ) -> HtmlElement: ...

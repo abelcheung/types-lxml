@@ -1,7 +1,6 @@
 from typing import Any, Callable, Generic, Mapping, Protocol, overload
 
 from ._types import (
-    _ElementFactory,
     _ET_co,
     _NSMapArg,
     _NSTuples,
@@ -58,7 +57,7 @@ class ElementMaker(Generic[_ET_co]):
         namespace: str | None = None,
         nsmap: _NSMapArg | _NSTuples | None = None,  # dict()
         *,
-        makeelement: _ElementFactory[_ET_co],
+        makeelement: type[_ET_co],
     ) -> ElementMaker[_ET_co]: ...
     @overload  # makeelement is positional
     def __new__(
@@ -66,7 +65,7 @@ class ElementMaker(Generic[_ET_co]):
         typemap: _TypeMapArg | None,
         namespace: str | None,
         nsmap: _NSMapArg | _NSTuples | None,
-        makeelement: _ElementFactory[_ET_co],
+        makeelement: type[_ET_co],
     ) -> ElementMaker[_ET_co]: ...
     @overload  # makeelement is default or absent
     def __new__(
@@ -104,7 +103,7 @@ class ElementMaker(Generic[_ET_co]):
     # invariance has posed some challenge to typing. We can afford
     # some more restriction as return value or attribute.
     @property
-    def _makeelement(self) -> _ElementFactory[_ET_co]: ...
+    def _makeelement(self) -> type[_ET_co]: ...
     @property
     def _namespace(self) -> str | None: ...
     @property
@@ -112,4 +111,4 @@ class ElementMaker(Generic[_ET_co]):
     @property
     def _typemap(self) -> dict[type[Any], Callable[[_ET_co, Any], None]]: ...
 
-E: ElementMaker
+E: ElementMaker[_Element]

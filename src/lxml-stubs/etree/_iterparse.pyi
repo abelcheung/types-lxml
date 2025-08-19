@@ -3,7 +3,6 @@ from _typeshed import SupportsRead
 from typing import Iterable, Iterator, Literal, TypeVar, overload
 
 from .._types import (
-    _ElementFactory,
     _ElementOrTree,
     _ET_co,
     _FilePath,
@@ -181,7 +180,7 @@ class iterparse(Iterator[_T_co]):
         self,
         lookup: ElementClassLookup | None = None,
     ) -> None: ...
-    makeelement: _ElementFactory
+    makeelement: type[_T_co]
 
 class iterwalk(Iterator[_T_co]):
     """Tree walker that generates events from an existing tree as if it
