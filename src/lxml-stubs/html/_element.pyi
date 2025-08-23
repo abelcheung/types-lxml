@@ -334,9 +334,9 @@ class HtmlEntity(etree.EntityBase, HtmlElement): ...  # type: ignore[misc]  # py
 # (use etree.SubElement())
 #
 def Element(
-        _tag: _TagName,
-        /,
-        attrib: _AttrMapping | None = None,
-        nsmap: _NSMapArg | None = None,
-        **_extra: _AttrVal,
-    ) -> HtmlElement: ...
+    _tag: _TagName,
+    /,
+    attrib: _AttrMapping | None = None,
+    nsmap: _NSMapArg | None = None,
+    **_extra: _AttrVal,
+) -> HtmlElement: ...

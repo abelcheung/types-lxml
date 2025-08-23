@@ -16,9 +16,7 @@ class ElementTreeContentHandler(Generic[_ET], ContentHandler):
     _new_mappings: dict[str | None, str]
     # Not adding _get_etree(), already available as public property
     @overload
-    def __new__(
-        cls, makeelement: type[_ET]
-    ) -> ElementTreeContentHandler[_ET]: ...
+    def __new__(cls, makeelement: type[_ET]) -> ElementTreeContentHandler[_ET]: ...
     @overload
     def __new__(cls, makeelement: None = None) -> ElementTreeContentHandler[_ET]: ...
     @property

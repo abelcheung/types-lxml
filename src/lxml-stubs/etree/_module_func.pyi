@@ -574,6 +574,7 @@ def register_namespace(prefix: _TextArg, uri: _TextArg) -> None: ...
 def dump(
     elem: _Element, *, pretty_print: bool = True, with_tail: bool = True
 ) -> None: ...
+
 @final
 class _MemDebug:
     """Debugging support for the memory allocation in libxml2"""
