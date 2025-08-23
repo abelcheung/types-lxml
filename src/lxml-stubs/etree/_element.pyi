@@ -686,7 +686,6 @@ _ET2_co = TypeVar("_ET2_co", bound=_Element, default=_Element, covariant=True)
 # It is considered harmful to support such corner case, which
 # adds much complexity without any benefit.
 class _ElementTree(Generic[_t._ET_co]):
-
     @overload  # from element, parser ignored
     def __new__(
         cls,
