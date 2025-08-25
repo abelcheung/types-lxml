@@ -5,6 +5,9 @@
 
 ## Important note
 
+- Since `2025.08.25`:
+  - Supports `lxml` 6.0 and 5.4, while `lxml` 4.9 will not be tested anymore
+
 - Since `2025.03.04`:
   - `BeautifulSoup4` package is added as dependency to utilise its inline annotation, thus dropping `types-beautifulsoup4` dependency.
   - Fixes compatibility with older versions of type checkers, as well as `mypy` 1.14+.
