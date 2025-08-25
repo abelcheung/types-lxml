@@ -16,7 +16,7 @@ dependencies = [
     'typing_extensions ~= 4.10; python_version < "3.13"',
     'cssselect ~= 1.2',  # inline annotation
     'beautifulsoup4 ~= 4.13',  # inline annotation
-    'types-html5lib ~= 1.1.11.20241018',
+    'types-html5lib ~= 1.1.11, != 1.1.11.20250516',  # breaks pyright
 ]
 keywords = ['lxml', 'typing', 'stubs', 'annotation']
 authors = [
@@ -49,21 +49,21 @@ basedpyright = ['basedpyright >= 1.4.0']
 [dependency-groups]
 basic = [
     # pyright unhappy with 20250516 Incomplete change
-    "types-html5lib == 1.1.11.20241018",
-    "typing_extensions == 4.12.2; python_version < '3.13'",
+    "types-html5lib == 1.1.11.20250809",
+    "typing_extensions == 4.15.0; python_version < '3.13'",
     "cssselect == 1.2.0; python_version <= '3.8'",
     "cssselect == 1.3.0; python_version >= '3.9'",
-    "beautifulsoup4 == 4.13.3",
+    "beautifulsoup4 == 4.13.5",
 ]
 mypy    = [
-    "mypy == 1.15.0; python_version >= '3.9'",
+    "mypy == 1.16.1; python_version >= '3.9'",
     "mypy == 1.14.0; python_version <= '3.8'",
 ]
 pyright = [
     # RobertCraigie/pyright-python/#318
-    "pyright == 1.1.397",
+    "pyright == 1.1.404",
     # 1.28.1 broke hypothesis the same way pyright 1.1.395 did
-    "basedpyright == 1.28.2",
+    "basedpyright == 1.31.3",
 ]
 format  = ["ruff ~= 0.6"]
 stub-test = [
@@ -73,9 +73,9 @@ stub-test = [
 ]
 rt-test = [
     "html5lib == 1.1",
-    "pook == 2.1.3",
-    "urllib3 == 2.3.0",
-    "hypothesis[zoneinfo] == 6.129.4",
+    "pook == 2.1.4",
+    "urllib3 == 2.5.0",
+    "hypothesis[zoneinfo] == 6.138.3",
     "pytest-revealtype-injector == 0.5.1",
     "rnc2rng == 2.7.0",
     {include-group = "mypy"},
@@ -86,7 +86,7 @@ lxml51 = ["lxml == 5.1.1"]
 lxml52 = ["lxml == 5.2.2"]
 lxml53 = ["lxml == 5.3.2"]
 lxml54 = ["lxml == 5.4.0"]
-lxml60 = ["lxml == 6.0.0"]
+lxml60 = ["lxml == 6.0.1"]
 dev = [
     'tox ~= 4.22',
     # microsoft/pyright#9412, microsoft/pyright#9984
