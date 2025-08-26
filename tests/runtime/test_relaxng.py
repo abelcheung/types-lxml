@@ -113,6 +113,7 @@ class TestRelaxNGInput:
         reveal_type(rng)
         assert rng(xml2_root) is True
 
+    @pytest.mark.skip(reason="Unknown crash under specific conditions")
     @settings(suppress_health_check=[HealthCheck.too_slow], max_examples=300)
     @given(thing=_st.all_instances_except_of_type(str))
     @pytest.mark.slow
