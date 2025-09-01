@@ -22,7 +22,7 @@ jobs:
           - '1.10.0'
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - uses: astral-sh/setup-uv@v6
         with:
@@ -94,7 +94,7 @@ jobs:
           - 1.1.396
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - uses: astral-sh/setup-uv@v6
         with:
@@ -221,7 +221,7 @@ jobs:
 
     runs-on: 'ubuntu-24.04'
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - uses: actions/setup-node@v4
         with:
