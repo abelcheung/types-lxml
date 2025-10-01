@@ -114,7 +114,7 @@ jobs:
       # make sure pyright compatibility check is not
       # hindered by config issues.
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v5
         with:
           node-version: '20'
 
@@ -122,7 +122,7 @@ jobs:
         run: npm install 'smol-toml@1.3.1'
 
       - name: Generate pyright config
-        uses: actions/github-script@v7
+        uses: actions/github-script@v8
         with:
           script: |
             const fs = require('fs');
@@ -223,7 +223,7 @@ jobs:
     steps:
       - uses: actions/checkout@v5
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v5
         with:
           node-version: '20'
 
@@ -231,7 +231,7 @@ jobs:
         run: npm install 'smol-toml@1.3.1'
 
       - name: Generate pyright config
-        uses: actions/github-script@v7
+        uses: actions/github-script@v8
         with:
           script: |
             const fs = require('fs');
