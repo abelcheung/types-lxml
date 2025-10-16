@@ -34,6 +34,7 @@ classifiers = [
     'Programming Language :: Python :: 3.11',
     'Programming Language :: Python :: 3.12',
     'Programming Language :: Python :: 3.13',
+    'Programming Language :: Python :: 3.14',
     'Typing :: Stubs Only',
     'Operating System :: OS Independent',
 ]
@@ -89,7 +90,7 @@ lxml51 = ["lxml == 5.1.1"]
 lxml52 = ["lxml == 5.2.2"]
 lxml53 = ["lxml == 5.3.2"]
 lxml54 = ["lxml == 5.4.0"]
-lxml60 = ["lxml == 6.0.1"]
+lxml60 = ["lxml == 6.0.2"]
 dev = [
     'tox ~= 4.22',
     # microsoft/pyright#9412, microsoft/pyright#9984
@@ -233,6 +234,7 @@ static = [
     'py311-stub',
     'py312-stub',
     'py313-stub',
+    'py314-stub',
 ]
 runtime = [
     'py310-rt-lxml50',
@@ -256,6 +258,7 @@ runtime = [
     'py313-rt-lxml53',
     'py313-rt-lxml54',
     'py313-rt-lxml60',
+    'py314-rt-lxml60',
 ]
 
 # HACK Taking advantage of tox-gh-actions using
@@ -272,6 +275,7 @@ python = """
     3.11: py311
     3.12: py312
     3.13: py313
+    3.14: py314
     """
 
 [tool.tox.env_run_base.set_env]
@@ -356,6 +360,7 @@ py310-stub = {base = ['_env_stub']}
 py311-stub = {base = ['_env_stub']}
 py312-stub = {base = ['_env_stub']}
 py313-stub = {base = ['_env_stub']}
+py314-stub = {base = ['_env_stub']}
 py310-rt-lxml50 = {base = ['_env_rt', '_env_lxml50']}
 py310-rt-lxml51 = {base = ['_env_rt', '_env_lxml51']}
 py310-rt-lxml52 = {base = ['_env_rt', '_env_lxml52']}
@@ -377,6 +382,7 @@ py312-rt-lxml60 = {base = ['_env_rt', '_env_lxml60']}
 py313-rt-lxml53 = {base = ['_env_rt', '_env_lxml53']}
 py313-rt-lxml54 = {base = ['_env_rt', '_env_lxml54']}
 py313-rt-lxml60 = {base = ['_env_rt', '_env_lxml60']}
+py314-rt-lxml60 = {base = ['_env_rt', '_env_lxml60']}
 
 [tool.tox.env.build-normal]
 pass_env = ['PDM_BUILD_SCM_VERSION']
