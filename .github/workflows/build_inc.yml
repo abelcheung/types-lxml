@@ -37,8 +37,7 @@ jobs:
         uvx
         --python-preference only-system
         --with tox-uv
-        tox@4.23.2
-        run -v
+        tox run -v
         -e build-${{ matrix.flavor }}
 
     - name: Build tagged flavor ${{ matrix.flavor }}
@@ -49,8 +48,7 @@ jobs:
         uvx
         --python-preference only-system
         --with tox-uv
-        tox@4.23.2
-        run -v
+        tox run -v
         -e build-${{ matrix.flavor }}
 
     - uses: actions/upload-artifact@v4
@@ -90,7 +88,6 @@ jobs:
         uvx
         --python-preference only-system
         --with tox-uv
-        tox@4.23.2
-        run-parallel -vv
+        tox run-parallel -vv
         -m typecheck
 

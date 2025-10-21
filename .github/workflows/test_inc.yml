@@ -59,7 +59,7 @@ jobs:
         --python-preference only-managed
         --with "tox-gh-actions == 3.2.0"
         --with tox-uv
-        tox@4.23.2 run -v
+        tox run -v
         --skip-env='.*-rt-.*'
         --installpkg ${{ steps.wheel-name.outputs.filename }}
         --result-json test-${{ inputs.flavor }}-stub-py${{ matrix.pyver }}.json
@@ -110,7 +110,7 @@ jobs:
         --python-preference only-managed
         --with "tox-gh-actions == 3.2.0"
         --with tox-uv
-        tox@4.23.2
+        tox
 
     # Glob not supported under default windows env
     - name: Determine wheel file name
