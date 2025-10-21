@@ -59,8 +59,7 @@ basic = [
     "beautifulsoup4 == 4.13.5",
 ]
 mypy    = [
-    # 1.17 breaks union syntax
-    "mypy == 1.16.1; python_version >= '3.9'",
+    "mypy == 1.18.2; python_version >= '3.9'",
     "mypy == 1.14.0; python_version <= '3.8'",
 ]
 pyright = [
@@ -93,8 +92,10 @@ lxml54 = ["lxml == 5.4.0"]
 lxml60 = ["lxml == 6.0.2"]
 dev = [
     'tox ~= 4.22',
+    'mypy >= 1.17.0',
     # microsoft/pyright#9412, microsoft/pyright#9984
     'pyright >=1.1.389,!=1.1.395',
+    'basedpyright >= 1.28.2',
     'html5lib == 1.1',
     'pook >= 2.0',
     'urllib3 >= 2.0',
