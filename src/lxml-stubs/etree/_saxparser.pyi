@@ -1,5 +1,6 @@
 from abc import abstractmethod
 from typing import Callable, Protocol, TypeVar
+from typing_extensions import disjoint_base
 
 from .._types import _DefEtreeParsers
 from ._element import _Comment, _Element, _ProcessingInstruction
@@ -56,6 +57,7 @@ class ParserTarget(Protocol[_T_co]):
         /,
     ) -> None: ...
 
+@disjoint_base
 class TreeBuilder(ParserTarget[_Element]):
     def __init__(
         self,

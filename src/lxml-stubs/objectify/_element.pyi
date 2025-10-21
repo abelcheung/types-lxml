@@ -109,6 +109,7 @@ class ObjectifiedDataElement(ObjectifiedElement):
         doing.
         """
 
+# NOT marking as disjoint_base
 class NumberElement(ObjectifiedDataElement, metaclass=abc.ABCMeta):
     @property  # type: ignore[misc]
     def text(self) -> str: ...  # type: ignore[override]
@@ -129,11 +130,11 @@ class NumberElement(ObjectifiedDataElement, metaclass=abc.ABCMeta):
 #
 # Not doing the same for StringElement and BoolElement though,
 # each for different reason.
-class IntElement(NumberElement, int):
+class IntElement(NumberElement, int):  # type: ignore[misc]
     @property
     def pyval(self) -> int: ...
 
-class FloatElement(NumberElement, float):
+class FloatElement(NumberElement, float):  # type: ignore[misc]
     @property
     def pyval(self) -> float: ...
 

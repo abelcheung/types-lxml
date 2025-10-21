@@ -1,4 +1,5 @@
 from typing import overload
+from typing_extensions import disjoint_base
 
 from .._types import _ElementOrTree, _FileReadSource
 from ._module_misc import LxmlError, _Validator
@@ -7,6 +8,7 @@ class XMLSchemaError(LxmlError): ...
 class XMLSchemaParseError(XMLSchemaError): ...
 class XMLSchemaValidateError(XMLSchemaError): ...
 
+@disjoint_base
 class XMLSchema(_Validator):
     # file arg only useful when etree arg is None
     @overload

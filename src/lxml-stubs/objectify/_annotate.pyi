@@ -3,10 +3,12 @@
 #
 
 from typing import Any, Callable, Iterable
+from typing_extensions import disjoint_base
 
 from .._types import _ElementOrTree
 from ._element import ObjectifiedDataElement
 
+@disjoint_base
 class PyType:
     """User defined type
 

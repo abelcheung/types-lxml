@@ -1,4 +1,5 @@
 from typing import Any, Callable, Generic, Mapping, Protocol, overload
+from typing_extensions import disjoint_base
 
 from ._types import (
     _ET_co,
@@ -49,6 +50,7 @@ class _EMakerCallProtocol(Protocol[_ET_co]):
 # makeelement. However all element creation attempt
 # would fail, as 'nsmap' keyword argument is expected
 # to be usable in the makeelement function call.
+@disjoint_base
 class ElementMaker(Generic[_ET_co]):
     @overload  # makeelement is keyword
     def __new__(

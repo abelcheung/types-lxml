@@ -12,6 +12,7 @@ from typing import (
     final,
     overload,
 )
+from typing_extensions import disjoint_base
 
 from .. import _types as _t
 from ..cssselect import _CSSTransArg
@@ -34,6 +35,7 @@ _T = TypeVar("_T")
 # The base of _Element is *almost* an amalgam of MutableSequence[_Element]
 # plus mixin methods for _Attrib.
 # Extra methods follow the order of _Element source approximately
+@disjoint_base
 class _Element:
     """Element class. References a document object and a libxml node.
 
@@ -685,6 +687,7 @@ _ET2_co = TypeVar("_ET2_co", bound=_Element, default=_Element, covariant=True)
 # element, the absolute majority of lxml API will fail to work.
 # It is considered harmful to support such corner case, which
 # adds much complexity without any benefit.
+@disjoint_base
 class _ElementTree(Generic[_t._ET_co]):
     @overload  # from element, parser ignored
     def __new__(

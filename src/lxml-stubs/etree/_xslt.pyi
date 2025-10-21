@@ -2,8 +2,6 @@
 # Includes both xslt.pxi and xsltext.pxi
 #
 
-from __future__ import annotations
-
 import abc
 import sys
 from typing import (
@@ -14,6 +12,7 @@ from typing import (
     final,
     overload,
 )
+from typing_extensions import disjoint_base
 
 from .._types import (
     SupportsLaxItems,
@@ -83,6 +82,7 @@ class __AccessControlConfig(TypedDict):
     read_network: bool | None
     write_network: bool | None
 
+@disjoint_base
 class XSLTAccessControl:
     """Access control for XSLT: reading/writing files, directories and
     network I/O.
@@ -118,6 +118,7 @@ class XSLTAccessControl:
     @property
     def options(self) -> __AccessControlConfig: ...
 
+@disjoint_base
 class XSLT:
     """Turn an XSL document into an XSLT object.
 
@@ -186,6 +187,7 @@ class _XSLTProcessingInstruction(PIBase):
 # We replace argument types with close-enough public types. It is a disservice
 # to require users to include whole bunch of stub-only internal types just to
 # satisfy annotation requirement.
+@disjoint_base
 class XSLTExtension(metaclass=abc.ABCMeta):
     """Base class of an XSLT extension element"""
 

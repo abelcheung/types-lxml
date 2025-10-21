@@ -5,6 +5,7 @@
 import sys
 from abc import ABCMeta, abstractmethod
 from typing import Final, overload
+from typing_extensions import disjoint_base
 
 from .._types import (
     _ElementOrTree,
@@ -29,6 +30,7 @@ LIBXML_VERSION: Final[tuple[int, int, int]]
 LXML_VERSION: Final[tuple[int, int, int, int]]
 __version__: Final[LiteralString]
 
+@disjoint_base
 class DocInfo:
     """Document information provided by parser and DTD"""
     # Can't be empty, otherwise it means tree contains no element
@@ -88,6 +90,7 @@ class DocInfo:
     def clear(self) -> None:
         """Removes DOCTYPE and internal subset from the document."""
 
+@disjoint_base
 class QName:
     """QName wrapper for qualified XML names.
 
@@ -120,6 +123,7 @@ class QName:
     def __le__(self, other: _TagName) -> bool: ...
     def __lt__(self, other: _TagName) -> bool: ...
 
+@disjoint_base
 class CDATA:
     """CDATA factory.  This factory creates an opaque data object that
     can be used to set Element text.  The usual way to use it is:
@@ -157,6 +161,7 @@ class LxmlSyntaxError(LxmlError, SyntaxError):
 class C14NError(LxmlError):
     """Error during C14N serialisation."""
 
+@disjoint_base
 class _Validator(metaclass=ABCMeta):
     def assert_(self, etree: _ElementOrTree) -> None: ...
     def assertValid(self, etree: _ElementOrTree) -> None: ...

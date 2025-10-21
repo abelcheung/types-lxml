@@ -10,6 +10,7 @@ from typing import (
     final,
     overload,
 )
+from typing_extensions import disjoint_base
 
 from .._types import (
     _AttrMapping,
@@ -40,6 +41,7 @@ class SerialisationError(LxmlError): ...
 
 # Usage identical to custom target parser, but canonicalized output
 # is written during various stages before calling .close()
+# Not marking disjoint_base, overload unsupported
 class C14NWriterTarget(ParserTarget[None]):
     """Canonicalization writer target for the XMLParser. Serialises parse events
     to XML C14N 2.0.
@@ -297,6 +299,7 @@ class _AsyncIncrementalFileWriter:
         **_extra: _AttrVal,
     ) -> AsyncContextManager[None]: ...
 
+@disjoint_base
 class xmlfile(
     AsyncContextManager[_AsyncIncrementalFileWriter],
     ContextManager[_IncrementalFileWriter],

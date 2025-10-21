@@ -1,4 +1,5 @@
 from typing import overload
+from typing_extensions import disjoint_base
 
 from .._types import _ElementOrTree, _FileReadSource
 from ._module_misc import LxmlError, _Validator
@@ -7,6 +8,7 @@ class RelaxNGError(LxmlError): ...
 class RelaxNGParseError(RelaxNGError): ...
 class RelaxNGValidateError(RelaxNGError): ...
 
+@disjoint_base
 class RelaxNG(_Validator):
     @overload
     def __init__(self, etree: _ElementOrTree) -> None: ...

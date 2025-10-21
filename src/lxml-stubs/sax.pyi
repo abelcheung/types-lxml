@@ -1,4 +1,5 @@
 from typing import Generic, overload
+from typing_extensions import disjoint_base
 from xml.sax.handler import ContentHandler
 
 from ._types import _ET, SupportsLaxItems, Unused, _ElementOrTree
@@ -46,6 +47,7 @@ class ElementTreeContentHandler(Generic[_ET], ContentHandler):
     ) -> None: ...
     ignorableWhitespace = characters  # type: ignore[assignment]  # pyright: ignore[reportAssignmentType]
 
+@disjoint_base
 class ElementTreeProducer(Generic[_ET]):
     _element: _ET
     _content_handler: ContentHandler

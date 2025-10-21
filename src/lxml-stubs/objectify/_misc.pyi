@@ -3,6 +3,7 @@
 #
 
 from typing import Iterable, Literal, TypeVar, overload
+from typing_extensions import disjoint_base
 
 from .. import etree
 from .._types import (
@@ -25,6 +26,7 @@ def enable_recursive_str(on: bool = True) -> None:
 def dump(element: ObjectifiedElement) -> str:
     """Return a recursively generated string representation of an element"""
 
+@disjoint_base
 class ObjectifyElementClassLookup(etree.ElementClassLookup):
     """Element class lookup method that uses the objectify classes"""
 
@@ -141,6 +143,7 @@ _ET = TypeVar("_ET", bound=etree._Element)
 # lxml's own invention that behaves somewhat like Element Path
 # https://lxml.de/objectify.html#objectpath
 #
+@disjoint_base
 class ObjectPath:
     """`objectify`'s own path language
 

@@ -3,6 +3,7 @@
 #
 
 from typing import Any, Literal, Protocol, TypeVar, overload
+from typing_extensions import disjoint_base
 
 from .._types import (
     _AttrMapping,
@@ -281,6 +282,7 @@ class _OEMakerCallProtocol(Protocol):
         **_attrib: _AttrVal,
     ) -> _e.ObjectifiedElement: ...
 
+@disjoint_base
 class ElementMaker:
     """Used for constructing trees
 

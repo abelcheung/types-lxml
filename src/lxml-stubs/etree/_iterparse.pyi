@@ -1,6 +1,7 @@
 import sys
 from _typeshed import SupportsRead
 from typing import Iterable, Iterator, Literal, TypeVar, overload
+from typing_extensions import disjoint_base
 
 from .._types import (
     _ElementOrTree,
@@ -28,6 +29,7 @@ _T_co = TypeVar("_T_co", covariant=True)
 _NoNSEventNames = Literal["start", "end", "comment", "pi"]
 _SaxNsEventValues = tuple[str, str] | None  # for start-ns & end-ns event
 
+@disjoint_base
 class iterparse(Iterator[_T_co]):
     """Incremental parser. Parses XML into a tree and generates tuples (event, element) in a
     SAX-like fashion.
@@ -182,6 +184,7 @@ class iterparse(Iterator[_T_co]):
     ) -> None: ...
     makeelement: type[_T_co]
 
+@disjoint_base
 class iterwalk(Iterator[_T_co]):
     """Tree walker that generates events from an existing tree as if it
     was parsing XML data with ``iterparse()``

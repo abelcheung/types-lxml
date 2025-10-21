@@ -1,5 +1,6 @@
 import sys
 from typing import Collection, Generic, Iterator, overload
+from typing_extensions import disjoint_base
 
 if sys.version_info >= (3, 11):
     from typing import Self
@@ -62,6 +63,7 @@ def parseid(
     base_url: str | bytes | None = None,
 ) -> tuple[_ElementTree, _IDDict]: ...
 
+@disjoint_base
 class _IDDict(Collection[str], Generic[_ET]):
     """Dictionary-like proxy class that maps ID attributes to elements
 

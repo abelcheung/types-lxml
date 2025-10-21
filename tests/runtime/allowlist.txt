@@ -81,6 +81,7 @@ lxml\.etree\.LIBXML_FEATURES
 
 # Implementation intentionally differs
 lxml\.etree\._ErrorLog
+lxml\.etree\._Element\.__init__
 lxml\.etree\.__all__
 lxml\.html\.builder\.[A-Z0-9]+
 lxml\.html\.find_class
@@ -90,24 +91,25 @@ lxml\.html\.make_links_absolute
 lxml\.html\.resolve_base_href
 lxml\.html\.rewrite_links
 lxml\.objectify\.__all__
+lxml\.objectify\.NumberElement
 
 # Stub contains refined signature
 lxml\.etree\._Element\.xpath
 lxml\.etree\._ElementTree\.xpath
 lxml\.etree\._ElementTree\.xslt
+lxml\.etree\.C14NWriterTarget
 lxml\.etree\.SubElement
 lxml\.etree\.TreeBuilder\.[a-z]+
 lxml\.html\.HtmlElement\.cssselect
 lxml\.html\.tostring
 lxml\.objectify\.DataElement
 lxml\.objectify\.Element
-#lxml\.objectify\.ElementMaker\.__init__
 lxml\.objectify\.SubElement
 lxml\.objectify\.annotate
 
 # Cannot inspect elements of virtual subclasses
-lxml.etree.Element.*
-lxml.etree.ElementTree.*
+lxml\.etree\.Element(\..+)?
+lxml\.etree\.ElementTree(\..+)?
 
 # Generic classes do not need explicit __class_getitem__
 lxml.builder.ElementMaker.__class_getitem__
@@ -117,6 +119,7 @@ lxml.sax.ElementTreeContentHandler.__class_getitem__
 
 # Cython class __init__ clobbered by generic signature
 lxml\.builder\.ElementMaker\.__init__
+lxml\.etree\.CDATA\.__init__
 lxml\.etree\.ETCompatXMLParser\.__init__
 lxml\.etree\.HTMLParser\.__init__
 lxml\.etree\.TreeBuilder\.__init__
@@ -135,11 +138,7 @@ lxml\.html\.defs
 
 # mypy.stubtest f*cked up in following cases
 lxml\.cssselect\.CSSSelector\.css
-lxml\.etree\._Attrib\.pop
 lxml\.etree\._ElementTree.write
-lxml\.etree\.strip_attributes
-lxml\.etree\.strip_elements
-lxml\.etree\.strip_tags
 lxml\.html\.soupparser\.fromstring
 lxml\.html\.soupparser\.parse
 lxml\.sax\.ElementTreeContentHandler\.__init__

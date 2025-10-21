@@ -8,6 +8,7 @@ from decimal import Decimal
 from logging import Logger, LoggerAdapter
 from numbers import Real
 from typing import Collection, Iterable, Iterator, final, overload
+from typing_extensions import disjoint_base
 
 @final
 class _LogEntry:
@@ -55,6 +56,7 @@ class _LogEntry:
     @property
     def path(self) -> str | None: ...
 
+@disjoint_base
 class _BaseErrorLog(metaclass=ABCMeta):
     """The base class of all other error logs"""
 
@@ -67,6 +69,7 @@ class _BaseErrorLog(metaclass=ABCMeta):
     @abstractmethod
     def receive(self, entry: _LogEntry) -> None: ...
 
+@disjoint_base
 class _ListErrorLog(_BaseErrorLog, Collection[_LogEntry]):
     """Immutable base version of a list based error log"""
 
@@ -114,6 +117,7 @@ def _ErrorLog() -> _ListErrorLog:
     is seldom instantiated by itself.
     """
 
+@disjoint_base
 class _RotatingErrorLog(_ListErrorLog):
     """Error log that has entry limit and uses FIFO rotation"""
 
@@ -124,6 +128,7 @@ class _RotatingErrorLog(_ListErrorLog):
 # the class in open source lxml is entirely broken and not touched
 # since 2006.
 
+@disjoint_base
 class PyErrorLog(_BaseErrorLog):
     """Global error log that connects to the Python stdlib logging package
 
