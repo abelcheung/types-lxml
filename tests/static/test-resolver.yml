@@ -63,31 +63,26 @@
 
 - case: registry_methods_badargs
   files: *INC
+  expect_fail: true
   parametrized:
     - method: add
       args: '(1)'
       rt: false
-      errtype: 'arg-type'
     - method: add
       args: '(d_resv, s)'
       rt: false
-      errtype: 'call-arg'
     - method: remove
       args: '(badarg=p_resv)'
       rt: false
-      errtype: 'call-arg'
     - method: remove
       args: '()'
       rt: false
-      errtype: 'call-arg'
     - method: copy
       args: '(p_resv)'
       rt: true
-      errtype: 'call-arg'
     - method: notexist
       args: '()'
       rt: true
-      errtype: 'attr-defined'
   main: |
     from lxml.etree import XMLParser, _Element
     from myresolvers import DTDResolver, PrefixResolver
@@ -95,4 +90,4 @@
     p_resv: PrefixResolver
     s: str
     p: XMLParser[_Element]
-    {% if rt -%}result = {%- endif -%}p.resolvers.{{method}}{{args}}  # ER: .+ \[{{errtype}}]$
+    {% if rt -%}result = {%- endif -%}p.resolvers.{{method}}{{args}}

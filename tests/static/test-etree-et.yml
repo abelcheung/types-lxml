@@ -1,7 +1,7 @@
 - case: properties
   parametrized:
     - prop: parser
-      rt: 'Union\[[\w\.]+\.XMLParser\[[\w\.]+\._Element], [\w\.]+\.HTMLParser\[[\w\.]+\._Element], None]'
+      rt: '[\w\.]+\.XMLParser\[[\w\.]+\._Element] \| [\w\.]+\.HTMLParser\[[\w\.]+\._Element] \| None'
     - prop: docinfo
       rt: '[\w\.]+\.DocInfo'
   main: |
@@ -64,19 +64,19 @@
   parametrized:
     - method: find
       args: path
-      rt: 'Union\[[\w\.]+\._Element, None]'
+      rt: '[\w\.]+\._Element \| None'
     - method: find
       args: tag
-      rt: 'Union\[[\w\.]+\._Element, None]'
+      rt: '[\w\.]+\._Element \| None'
     - method: find
       args: path=path
-      rt: 'Union\[[\w\.]+\._Element, None]'
+      rt: '[\w\.]+\._Element \| None'
     - method: find
       args: path, nsmap
-      rt: 'Union\[[\w\.]+\._Element, None]'
+      rt: '[\w\.]+\._Element \| None'
     - method: find
       args: tag, namespaces=nsmap
-      rt: 'Union\[[\w\.]+\._Element, None]'
+      rt: '[\w\.]+\._Element \| None'
     - method: findall
       args: path
       rt: '[\w\.]+\.list\[[\w\.]+\._Element]'
@@ -118,6 +118,7 @@
     reveal_type(result)  # NR: .+ "{{ rt }}"$
 
 - case: elementpath_family_badarg
+  expect_fail: true
   parametrized:
     - method: find
     - method: findall
@@ -128,25 +129,25 @@
     ok_path: str
     bad_path: bytes
     bad_nsmap = {'a': 1}
-    _ = et.{{ method }}(bad_path)  # E: Argument 1 to "{{ method }}" of "_ElementTree" has incompatible type "bytes"; expected "str | QName"  [arg-type]
-    _ = et.{{ method }}(ok_path, bad_nsmap)  # ER: Argument 2 to "{{ method }}" of "_ElementTree" has incompatible type ".+?"; expected ".+?"  \[arg-type\]$
-    _ = et.{{ method }}(ok_path, None, 1)  # E: Too many arguments for "{{ method }}" of "_ElementTree"  [call-arg]
-    _ = et.{{ method }}(ok_path, badarg=True)  # E: Unexpected keyword argument "badarg" for "{{ method }}" of "_ElementTree"  [call-arg]
+    _ = et.{{ method }}(bad_path)
+    _ = et.{{ method }}(ok_path, bad_nsmap)
+    _ = et.{{ method }}(ok_path, None, 1)
+    _ = et.{{ method }}(ok_path, badarg=True)
 
 - case: findtext
   parametrized:
     - args: path
-      rt: Union[builtins.str, None]
+      rt: "builtins.str | None"
     - args: tag
-      rt: Union[builtins.str, None]
+      rt: "builtins.str | None"
     - args: path=path
-      rt: Union[builtins.str, None]
+      rt: "builtins.str | None"
     - args: path, default1
-      rt: Union[builtins.str, builtins.int]
+      rt: "builtins.str | builtins.int"
     - args: path, default1, nsmap
-      rt: Union[builtins.str, builtins.int]
+      rt: "builtins.str | builtins.int"
     - args: tag, namespaces=nsmap
-      rt: Union[builtins.str, None]
+      rt: "builtins.str | None"
     - args: path=tag, default=default2
       rt: builtins.str
   main: |

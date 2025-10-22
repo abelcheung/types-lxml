@@ -98,7 +98,7 @@
   main: |
     from lxml.etree import DocInfo
     d: DocInfo
-    reveal_type(d.{{ prop }})  # NR: Revealed type is "{%- if optional -%}Union\[{{rt}}, None\]{%- else -%}{{rt}}{%- endif -%}"
+    reveal_type(d.{{ prop }})  # NR: .+ "{%- if optional -%}{{rt}} \| None{%- else -%}{{rt}}{%- endif -%}"
 
 - case: docinfo_properties_write
   parametrized:
@@ -122,7 +122,7 @@
     - prop: is_text
       rt: builtins.bool
     - prop: attrname
-      rt: Union[builtins.str, None]
+      rt: "builtins.str | None"
   main: |
     from lxml.etree import _ElementUnicodeResult
     s: _ElementUnicodeResult
@@ -148,4 +148,4 @@
     from lxml.etree import _ElementUnicodeResult, _Element
     s: _ElementUnicodeResult[_Element]
     p1 = s.getparent()
-    reveal_type(p1)  # NR: Revealed type is "Union\[[\w\.]+\._Element, None]"
+    reveal_type(p1)  # NR: .+ "[\w\.]+\._Element \| None"

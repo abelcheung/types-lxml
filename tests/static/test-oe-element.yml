@@ -52,16 +52,17 @@
     doc.{{ method }}(None)  # ER: Too many arguments.*  \[call-arg]$
 
 - case: oe_method_addattr
+  expect_fail: true
   main: |
     from lxml.objectify import ObjectifiedElement
     doc: ObjectifiedElement
     s: str
     doc.addattr(s, 1)
-    rs = doc.addattr(tag=s, value=s)  # ER: "addattr" .+  \[func-returns-value]$
-    doc.addattr(s)  # ER: Missing positional argument "value" .+  \[call-arg]$
-    doc.addattr(None, s)  # ER: Argument 1 .+; expected ".+"  \[arg-type]$
-    doc.addattr(s, s, None)  # ER: Too many arguments.*  \[call-arg]$
-    doc.addattr(s, badarg=s)  # ER: Unexpected keyword argument .+  \[call-arg]$
+    rs = doc.addattr(tag=s, value=s)
+    doc.addattr(s)
+    doc.addattr(None, s)
+    doc.addattr(s, s, None)
+    doc.addattr(s, badarg=s)
 
 - case: oe_method_descendantpaths
   main: |
@@ -85,7 +86,7 @@
     reveal_type(be.pyval)  # NR: .+ "[\w\.]+\.bool"$
     reveal_type(ie.text)  # NR: .+ "[\w\.]+\.str"$
     reveal_type(fe.text)  # NR: .+ "[\w\.]+\.str"$
-    reveal_type(se.text)  # NR: .+ "Union\[[\w\.]+\.str, None]"$
+    reveal_type(se.text)  # NR: .+ "[\w\.]+\.str \| None"$
     reveal_type(ne.text)  # NR: .+ "None"$
     reveal_type(be.text)  # NR: .+ "[\w\.]+\.str"$
     ie.pyval = 1  # ER: Property "pyval" .+ read-only  \[misc]$

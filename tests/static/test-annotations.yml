@@ -38,7 +38,7 @@
     from lxml import etree as e
 
     def get_element(el: e._Element) -> None:
-        reveal_type(el.tag)  # NR: .+ "Union\[[\w\.]+\.str, [\w\.]+\.bytes, [\w\.]+\.bytearray, [\w\.]+\.QName\]"
+        reveal_type(el.tag)  # NR: .+ "[\w\.]+\.str \| [\w\.]+\.bytes \| [\w\.]+\.bytearray \| [\w\.]+\.QName"
 
     def get_comment(comm: e._Comment) -> None:
         reveal_type(comm)  # NR: .+ "[\w\.]+\._Comment"
@@ -103,7 +103,7 @@
     from lxml import etree as e
 
     def get_element(el: e.Element) -> None:
-        reveal_type(el.tag)  # NR: .+ "Union\[[\w\.]+\.str, [\w\.]+\.bytes, [\w\.]+\.bytearray, [\w\.]+\.QName\]"
+        reveal_type(el.tag)  # NR: .+ "[\w\.]+\.str \| [\w\.]+\.bytes \| [\w\.]+\.bytearray \| [\w\.]+\.QName"
 
     def get_comment(comm: e._Comment) -> None:
         reveal_type(comm)  # NR: .+ "[\w\.]+\._Comment"

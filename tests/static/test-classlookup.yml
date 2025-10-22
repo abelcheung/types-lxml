@@ -73,7 +73,7 @@
     lookup = FallbackElementClassLookup()
     fallback: ParserBasedElementClassLookup
     lookup.set_fallback(fallback)
-    reveal_type(lookup.fallback)  # NR: .+ "Union\[[\w\.]+\.ElementClassLookup, None]"$
+    reveal_type(lookup.fallback)  # NR: .+ "[\w\.]+\.ElementClassLookup \| None"$
 
 - case: fallback_lookup_badargs
   main: |
