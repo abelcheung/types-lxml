@@ -32,7 +32,7 @@ jobs:
 
       - uses: astral-sh/setup-uv@v6
         with:
-          version: '0.6.2'
+          version: '0.9.5'
           enable-cache: true
           cache-dependency-glob: |
             ./pyproject.toml
@@ -114,7 +114,7 @@ jobs:
 
       - uses: astral-sh/setup-uv@v6
         with:
-          version: '0.6.2'
+          version: '0.9.5'
           enable-cache: true
           cache-dependency-glob: |
             ./pyproject.toml
@@ -295,7 +295,7 @@ jobs:
 
       - uses: astral-sh/setup-uv@v6
         with:
-          version: '0.6.2'
+          version: '0.9.5'
           cache-dependency-glob: |
             ./pyproject.toml
 
