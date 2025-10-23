@@ -111,7 +111,7 @@ class TestIterfind:
     def test_namespaces_arg_bad_1(
         self, disposable_element: _Element, thing: Any
     ) -> None:
-        assume(thing is NotImplemented or bool(thing))
+        assume(thing is not NotImplemented and bool(thing))
         if not hasattr(thing, "__iter__"):
             raise_cm = raise_non_iterable
         else:
@@ -179,7 +179,7 @@ class TestFind:
     def test_namespaces_arg_bad_1(
         self, disposable_element: _Element, thing: Any
     ) -> None:
-        assume(thing is NotImplemented or bool(thing))
+        assume(thing is not NotImplemented and bool(thing))
         if not hasattr(thing, "__iter__"):
             raise_cm = raise_non_iterable
         else:
@@ -247,7 +247,7 @@ class TestFindall:
     def test_namespaces_arg_bad_1(
         self, disposable_element: _Element, thing: Any
     ) -> None:
-        assume(thing is NotImplemented or bool(thing))
+        assume(thing is not NotImplemented and bool(thing))
         if not hasattr(thing, "__iter__"):
             raise_cm = raise_non_iterable
         else:
@@ -338,7 +338,7 @@ class TestFindtext:
     def test_namespaces_arg_bad_1(
         self, disposable_element: _Element, thing: Any
     ) -> None:
-        assume(thing is NotImplemented or bool(thing))
+        assume(thing is not NotImplemented and bool(thing))
         if not hasattr(thing, "__iter__"):
             raise_cm = raise_non_iterable
         else:

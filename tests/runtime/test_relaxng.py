@@ -146,7 +146,7 @@ class TestRelaxNGInput:
     @pytest.mark.slow
     def test_from_rnc_baseurl_bad_1(self, rnc_str: str, thing: Any) -> None:
         # Falsy values evaluated as None in _parseDocFromFileLike
-        assume(thing is NotImplemented or bool(thing))
+        assume(thing is not NotImplemented and bool(thing))
         with raise_invalid_filename_type:
             _ = RelaxNG.from_rnc_string(rnc_str, base_url=thing)
 

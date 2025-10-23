@@ -366,7 +366,7 @@ class TestMakeLinksAbsoluteArg:
         self, disposable_html_with_base_href: HtmlElement, thing: Any
     ) -> None:
         # Falsy values short circuited by urljoin() and never raises
-        assume(thing is NotImplemented or bool(thing))
+        assume(thing is not NotImplemented and bool(thing))
         with pytest.raises(TypeError, match="Cannot mix str and non-str arguments"):
             _ = make_links_absolute(disposable_html_with_base_href, base_url=thing)
 
@@ -429,7 +429,7 @@ class TestRewriteLinksArg:
         self, disposable_html_with_base_href: HtmlElement, thing: Any
     ) -> None:
         # Falsy values got short circuited by urljoin() and never raises
-        assume(thing is NotImplemented or bool(thing))
+        assume(thing is not NotImplemented and bool(thing))
         with pytest.raises(TypeError, match="Cannot mix str and non-str arguments"):
             _ = rewrite_links(disposable_html_with_base_href, str, base_href=thing)
 

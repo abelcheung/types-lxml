@@ -80,7 +80,7 @@ class TestIter:
     )
     @pytest.mark.slow
     def test_input_bad_1(self, xml2_root: _Element, thing: Any) -> None:
-        assume(thing is NotImplemented or bool(thing))
+        assume(thing is not NotImplemented and bool(thing))
         with raise_non_iterable:
             xml2_root.iter(thing)
 
@@ -161,7 +161,7 @@ class TestIterDescendants:
     )
     @pytest.mark.slow
     def test_input_bad_1(self, xml2_root: _Element, thing: Any) -> None:
-        assume(thing is NotImplemented or bool(thing))
+        assume(thing is not NotImplemented and bool(thing))
         with raise_non_iterable:
             xml2_root.iterdescendants(thing)
 
@@ -241,7 +241,7 @@ class TestIterAncestors:
     )
     @pytest.mark.slow
     def test_input_bad_1(self, xml2_root: _Element, thing: Any) -> None:
-        assume(thing is NotImplemented or bool(thing))
+        assume(thing is not NotImplemented and bool(thing))
         with raise_non_iterable:
             xml2_root.iterancestors(thing)
 
@@ -326,7 +326,7 @@ class TestIterSiblings:
     )
     @pytest.mark.slow
     def test_input_bad_1(self, xml2_root: _Element, thing: Any) -> None:
-        assume(thing is NotImplemented or bool(thing))
+        assume(thing is not NotImplemented and bool(thing))
         child = xml2_root[1]
         with raise_non_iterable:
             child.itersiblings(thing)
@@ -412,7 +412,7 @@ class TestIterChildren:
     )
     @pytest.mark.slow
     def test_input_bad_1(self, xml2_root: _Element, thing: Any) -> None:
-        assume(thing is NotImplemented or bool(thing))
+        assume(thing is not NotImplemented and bool(thing))
         with raise_non_iterable:
             xml2_root.iterchildren(thing)
 
@@ -499,7 +499,7 @@ class TestIterText:
     )
     @pytest.mark.slow
     def test_input_bad_1(self, xml2_root: _Element, thing: Any) -> None:
-        assume(thing is NotImplemented or bool(thing))
+        assume(thing is not NotImplemented and bool(thing))
         with raise_non_iterable:
             xml2_root.itertext(thing)
 

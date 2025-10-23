@@ -138,7 +138,7 @@ class TestXmlid:
     @given(thing=_st.all_instances_except_of_type(str, bytes, NoneType))
     @pytest.mark.slow
     def test_baseurl_arg_bad_1(self, xml2_bytes: bytes, thing: Any) -> None:
-        assume(thing is NotImplemented or bool(thing))
+        assume(thing is not NotImplemented and bool(thing))
         with raise_invalid_filename_type:
             _ = XMLID(xml2_bytes, base_url=thing)
 
@@ -266,7 +266,7 @@ class TestXmldtdid:
     @given(thing=_st.all_instances_except_of_type(str, bytes, NoneType))
     @pytest.mark.slow
     def test_baseurl_arg_bad_1(self, xml2_bytes: bytes, thing: Any) -> None:
-        assume(thing is NotImplemented or bool(thing))
+        assume(thing is not NotImplemented and bool(thing))
         with raise_invalid_filename_type:
             _ = XMLDTDID(xml2_bytes, base_url=thing)
 
@@ -410,7 +410,7 @@ class TestParseid:
     @given(thing=_st.all_instances_except_of_type(str, bytes, NoneType))
     @pytest.mark.slow
     def test_baseurl_arg_bad_1(self, xml2_filepath: Path, thing: Any) -> None:
-        assume(thing is NotImplemented or bool(thing))
+        assume(thing is not NotImplemented and bool(thing))
         with raise_invalid_filename_type:
             _ = parseid(xml2_filepath, base_url=thing)
 

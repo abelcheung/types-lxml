@@ -77,7 +77,7 @@ class TestIndexMethod:
     @given(thing=_st.all_instances_except_of_type(NoneType, int, Decimal))
     @pytest.mark.slow
     def test_start_arg_bad_1(self, xml2_root: _Element, thing: Any) -> None:
-        assume(thing is NotImplemented or bool(thing))
+        assume(thing is not NotImplemented and bool(thing))
         with raise_lxml_non_integer:
             _ = xml2_root.index(xml2_root[0], start=thing)
 
@@ -97,7 +97,7 @@ class TestIndexMethod:
     @given(thing=_st.all_instances_except_of_type(NoneType, int, Decimal))
     @pytest.mark.slow
     def test_stop_arg_bad_1(self, xml2_root: _Element, thing: Any) -> None:
-        assume(thing is NotImplemented or bool(thing))
+        assume(thing is not NotImplemented and bool(thing))
         with raise_lxml_non_integer:
             _ = xml2_root.index(xml2_root[0], stop=thing)
 

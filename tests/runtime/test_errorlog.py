@@ -317,7 +317,7 @@ class TestPyErrorLog:
     @given(thing=_st.all_instances_except_of_type(str))
     @pytest.mark.slow
     def test_init_name_arg_bad_1(self, thing: Any) -> None:
-        assume(thing is NotImplemented or bool(thing))
+        assume(thing is not NotImplemented and bool(thing))
         with pytest.raises(TypeError, match="logger name must be a string"):
             _ = PyErrorLog(logger_name=thing)
 
