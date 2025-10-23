@@ -141,3 +141,8 @@ cython_debug/
 .*.sw?
 .vscode/
 .idea/
+
+# Node.js stuff
+/node_modules
+package.json
+package-lock.json
