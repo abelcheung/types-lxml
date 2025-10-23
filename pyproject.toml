@@ -71,7 +71,7 @@ rt-test = [
     "pook == 2.1.4",
     "urllib3 == 2.5.0",
     "hypothesis[zoneinfo] == 6.138.3",
-    "pytest-revealtype-injector == 0.5.1",
+    "pytest-revealtype-injector == 0.6.1",
     "rnc2rng == 2.7.0",
     {include-group = "mypy"},
     {include-group = "pyright"},
