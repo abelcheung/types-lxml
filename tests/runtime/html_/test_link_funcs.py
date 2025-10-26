@@ -256,7 +256,7 @@ class TestFindClassArg:
     # yet they will never ever match class names
     def test_wrong_type_no_raise(self, disposable_html_element: HtmlElement) -> None:
         arg: Any
-        for arg in (
+        for arg in (  # pyright: ignore[reportUnknownVariableType]
             None,
             tuple(),
             True,
