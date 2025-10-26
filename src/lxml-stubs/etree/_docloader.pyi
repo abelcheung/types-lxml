@@ -1,7 +1,6 @@
 # Resolver documented at https://lxml.de/resolvers.html
 
 import sys
-from _typeshed import SupportsRead
 from abc import ABCMeta, abstractmethod
 from typing import Any, final, type_check_only
 
@@ -9,6 +8,11 @@ if sys.version_info >= (3, 11):
     from typing import Self
 else:
     from typing_extensions import Self
+
+if sys.version_info >= (3, 14):
+    from io import Reader
+else:
+    from typing_extensions import Reader
 
 # Keep its usage in Resolver, making sure resolve() method
 # always return one of the resolve_*() results.
@@ -46,7 +50,7 @@ class Resolver(metaclass=ABCMeta):
     ) -> _InputDocument: ...
     def resolve_file(
         self,
-        f: SupportsRead[Any],
+        f: Reader[Any],
         context: object,  # _ResolverContext
         *,
         base_url: str | bytes | None = None,

@@ -1,5 +1,4 @@
 import sys
-from _typeshed import SupportsRead
 from collections.abc import (
     Iterable,
     Iterator,
@@ -25,6 +24,11 @@ if sys.version_info >= (3, 11):
     from typing import LiteralString
 else:
     from typing_extensions import LiteralString
+
+if sys.version_info >= (3, 14):
+    from io import Reader
+else:
+    from typing_extensions import Reader
 
 _T_co = TypeVar("_T_co", covariant=True)
 
@@ -57,7 +61,7 @@ class iterparse(Iterator[_T_co]):
     @overload  # html mode -> namespace events suppressed
     def __new__(  # type: ignore[overload-overlap]  # pyright: ignore[reportOverlappingOverload]
         cls,
-        source: _FilePath | SupportsRead[bytes],
+        source: _FilePath | Reader[bytes],
         events: Iterable[_SaxEventNames] = ("end",),
         *,
         tag: _TagSelector | Iterable[_TagSelector] | None = None,
@@ -74,7 +78,7 @@ class iterparse(Iterator[_T_co]):
     @overload  # element-only events
     def __new__(
         cls,
-        source: _FilePath | SupportsRead[bytes],
+        source: _FilePath | Reader[bytes],
         events: Iterable[_NoNSEventNames],
         *,
         tag: _TagSelector | Iterable[_TagSelector] | None = None,
@@ -98,7 +102,7 @@ class iterparse(Iterator[_T_co]):
     @overload  # NS-only events
     def __new__(
         cls,
-        source: _FilePath | SupportsRead[bytes],
+        source: _FilePath | Reader[bytes],
         events: Iterable[Literal["start-ns", "end-ns"]],
         *,
         tag: _TagSelector | Iterable[_TagSelector] | None = None,
@@ -124,7 +128,7 @@ class iterparse(Iterator[_T_co]):
     @overload  # other mixed events
     def __new__(
         cls,
-        source: _FilePath | SupportsRead[bytes],
+        source: _FilePath | Reader[bytes],
         events: Iterable[_SaxEventNames],
         *,
         tag: _TagSelector | Iterable[_TagSelector] | None = None,
@@ -152,7 +156,7 @@ class iterparse(Iterator[_T_co]):
     @overload  # events absent -> only 'end' event emitted
     def __new__(
         cls,
-        source: _FilePath | SupportsRead[bytes],
+        source: _FilePath | Reader[bytes],
         *,
         tag: _TagSelector | Iterable[_TagSelector] | None = None,
         attribute_defaults: bool = False,

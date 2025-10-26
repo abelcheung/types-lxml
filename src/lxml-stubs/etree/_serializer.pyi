@@ -1,5 +1,4 @@
 import sys
-from _typeshed import SupportsWrite
 from collections.abc import (
     Callable,
     Iterable,
@@ -40,6 +39,11 @@ if sys.version_info >= (3, 13):
     from warnings import deprecated
 else:
     from typing_extensions import deprecated
+
+if sys.version_info >= (3, 14):
+    from io import Writer
+else:
+    from typing_extensions import Writer
 
 class SerialisationError(LxmlError): ...
 
@@ -186,7 +190,7 @@ class C14NWriterTarget(ParserTarget[None]):
 def canonicalize(
     xml_data: str | _ElementOrTree,
     *,
-    out: SupportsWrite[str],
+    out: Writer[str],
     from_file: None = None,
     with_comments: bool = False,
     strip_text: bool = False,
@@ -200,7 +204,7 @@ def canonicalize(
 def canonicalize(
     xml_data: None = None,
     *,
-    out: SupportsWrite[str],
+    out: Writer[str],
     from_file: _FileReadSource,
     with_comments: bool = False,
     strip_text: bool = False,

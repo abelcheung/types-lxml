@@ -1,4 +1,4 @@
-from _typeshed import SupportsRead, SupportsWrite
+import sys
 from collections.abc import (
     Callable,
     Collection,
@@ -14,6 +14,11 @@ from typing import (
 )
 
 from .etree import HTMLParser, QName, XMLParser, _Element, _ElementTree
+
+if sys.version_info >= (3, 14):
+    from io import Reader, Writer
+else:
+    from typing_extensions import Reader, Writer
 
 _KT_co = TypeVar("_KT_co", covariant=True)
 _VT_co = TypeVar("_VT_co", covariant=True)
@@ -188,7 +193,7 @@ _FilePath = str | bytes | PathLike[str] | PathLike[bytes]
 # _parseDocument() from parser.pxi
 _FileReadSource = (
     _FilePath
-    | SupportsRead[str]
-    | SupportsRead[bytes]
+    | Reader[str]
+    | Reader[bytes]
 )  # fmt: skip
-_FileWriteSource = _FilePath | SupportsWrite[bytes]
+_FileWriteSource = _FilePath | Writer[bytes]

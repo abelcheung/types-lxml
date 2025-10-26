@@ -3,7 +3,6 @@
 # See https://github.com/html5lib/html5lib-python/issues/102
 #
 import sys
-from _typeshed import SupportsRead
 from typing import Literal, overload
 
 import html5lib as _html5lib
@@ -19,6 +18,11 @@ if sys.version_info >= (3, 13):
     from warnings import deprecated
 else:
     from typing_extensions import deprecated
+
+if sys.version_info >= (3, 14):
+    from io import Reader
+else:
+    from typing_extensions import Reader
 
 # Beware that tree arg is dropped, because the sole purpose of using this parser
 # is to generate lxml element tree with html5lib parser. Other arguments good
@@ -267,7 +271,7 @@ def fromstring(
     "guess_charset=True with file object that generate str content causes exception"
 )
 def parse(
-    filename_url_or_file: SupportsRead[str],
+    filename_url_or_file: Reader[str],
     guess_charset: Literal[True],
     parser: HTMLParser | None = None,
 ) -> Never:
@@ -286,7 +290,7 @@ def parse(
 
 @overload
 def parse(
-    filename_url_or_file: str | bytes | SupportsRead[str] | SupportsRead[bytes],
+    filename_url_or_file: str | bytes | Reader[str] | Reader[bytes],
     guess_charset: bool | None = None,
     parser: HTMLParser | None = None,
 ) -> _ElementTree:
