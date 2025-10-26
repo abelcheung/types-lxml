@@ -352,7 +352,7 @@ def generate_input_file_arguments(
     def _wrapped(
         path: Path,
         *,
-        exclude_type: tuple[type[Any]] = tuple(),
+        exclude_type: tuple[type[Any], ...] = tuple(),
         include: Collection[Callable[[Path], Any]] = tuple(),
     ) -> Iterator[Any]:
         assert path.is_file()
