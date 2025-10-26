@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 from typing import Literal, overload
 
 import cssselect as _csel

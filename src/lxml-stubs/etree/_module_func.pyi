@@ -1,8 +1,10 @@
 import sys
-from typing import (
-    Any,
+from collections.abc import (
     Collection,
     Iterable,
+)
+from typing import (
+    Any,
     Literal,
     TypeVar,
     final,

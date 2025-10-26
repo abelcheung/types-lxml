@@ -1,6 +1,10 @@
 import sys
 from _typeshed import SupportsRead
-from typing import Iterable, Iterator, Literal, TypeVar, overload
+from collections.abc import (
+    Iterable,
+    Iterator,
+)
+from typing import Literal, TypeVar, overload
 from typing_extensions import disjoint_base
 
 from .._types import (

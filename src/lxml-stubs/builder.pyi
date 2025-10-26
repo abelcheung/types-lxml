@@ -1,4 +1,13 @@
-from typing import Any, Callable, Generic, Mapping, Protocol, overload
+from collections.abc import (
+    Callable,
+    Mapping,
+)
+from typing import (
+    Any,
+    Generic,
+    Protocol,
+    overload,
+)
 from typing_extensions import disjoint_base
 
 from ._types import (

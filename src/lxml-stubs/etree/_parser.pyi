@@ -1,9 +1,11 @@
 import sys
+from collections.abc import (
+    Iterable,
+    Iterator,
+)
 from typing import (
     Any,
     Generic,
-    Iterable,
-    Iterator,
     Literal,
     TypeVar,
     overload,

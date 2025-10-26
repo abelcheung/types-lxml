@@ -1,15 +1,15 @@
-from __future__ import annotations
-
 import sys
-from http.client import HTTPResponse
-from typing import (
+from collections.abc import (
     Callable,
     Collection,
     Iterable,
     Iterator,
-    Literal,
     MutableMapping,
     MutableSet,
+)
+from http.client import HTTPResponse
+from typing import (
+    Literal,
     TypeVar,
     overload,
 )

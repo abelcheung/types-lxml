@@ -1,4 +1,5 @@
-from typing import Iterator, Literal, final, overload
+from collections.abc import Iterator
+from typing import Literal, final, overload
 from typing_extensions import disjoint_base
 
 from .._types import _ElementOrTree, _FileReadSource, _TextArg

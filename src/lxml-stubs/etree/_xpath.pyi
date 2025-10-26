@@ -5,12 +5,14 @@
 
 import sys
 from abc import abstractmethod
+from collections.abc import (
+    Callable,
+    Iterable,
+)
 from types import ModuleType
 from typing import (
     Any,
-    Callable,
     Generic,
-    Iterable,
     Protocol,
     final,
     overload,

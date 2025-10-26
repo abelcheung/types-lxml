@@ -1,10 +1,12 @@
 import sys
-from typing import (
+from collections.abc import (
     Callable,
     Iterable,
     Iterator,
-    Literal,
     MutableSet,
+)
+from typing import (
+    Literal,
     TypeVar,
     overload,
 )

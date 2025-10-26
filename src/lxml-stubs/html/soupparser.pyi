@@ -1,5 +1,9 @@
 import sys
-from typing import IO, Any, Collection, Iterable, Literal, overload
+from collections.abc import (
+    Collection,
+    Iterable,
+)
+from typing import IO, Any, Literal, overload
 
 from bs4 import BeautifulSoup
 from bs4.builder import TreeBuilder

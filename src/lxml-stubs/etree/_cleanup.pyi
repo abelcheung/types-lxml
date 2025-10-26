@@ -1,5 +1,6 @@
 import sys
-from typing import Iterable, overload
+from collections.abc import Iterable
+from typing import overload
 
 if sys.version_info >= (3, 13):
     from warnings import deprecated

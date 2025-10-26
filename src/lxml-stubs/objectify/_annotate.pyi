@@ -2,7 +2,11 @@
 # PyType management and annotation
 #
 
-from typing import Any, Callable, Iterable
+from collections.abc import (
+    Callable,
+    Iterable,
+)
+from typing import Any
 from typing_extensions import disjoint_base
 
 from .._types import _ElementOrTree

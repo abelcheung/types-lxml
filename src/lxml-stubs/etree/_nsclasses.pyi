@@ -1,9 +1,11 @@
 import sys
-from typing import (
-    Any,
+from collections.abc import (
     Callable,
     Iterable,
     Iterator,
+)
+from typing import (
+    Any,
     TypeVar,
     final,
     overload,

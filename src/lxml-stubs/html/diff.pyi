@@ -1,4 +1,8 @@
-from typing import Callable, Iterable, TypeVar
+from collections.abc import (
+    Callable,
+    Iterable,
+)
+from typing import TypeVar
 
 from ..etree import _Element
 

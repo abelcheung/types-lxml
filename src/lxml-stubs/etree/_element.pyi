@@ -1,12 +1,14 @@
 import sys
-from typing import (
-    Any,
+from collections.abc import (
     Callable,
-    Generic,
     Iterable,
     Iterator,
-    Literal,
     Mapping,
+)
+from typing import (
+    Any,
+    Generic,
+    Literal,
     TypeAlias,
     TypeVar,
     final,

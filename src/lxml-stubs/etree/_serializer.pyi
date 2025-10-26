@@ -1,12 +1,16 @@
 import sys
 from _typeshed import SupportsWrite
+from collections.abc import (
+    Callable,
+    Iterable,
+)
+from contextlib import (
+    AbstractAsyncContextManager,
+    AbstractContextManager,
+)
 from types import TracebackType
 from typing import (
     Any,
-    AsyncContextManager,
-    Callable,
-    ContextManager,
-    Iterable,
     final,
     overload,
 )
@@ -262,7 +266,9 @@ class _IncrementalFileWriter:
         method: _OutputMethodArg | None = None,
     ) -> None: ...
     def flush(self) -> None: ...
-    def method(self, method: _OutputMethodArg | None) -> ContextManager[None]: ...
+    def method(
+        self, method: _OutputMethodArg | None
+    ) -> AbstractContextManager[None]: ...
     def element(
         self,
         tag: _TagName,
@@ -270,7 +276,7 @@ class _IncrementalFileWriter:
         nsmap: _NSMapArg | None = None,
         method: _OutputMethodArg | None = None,
         **_extra: _AttrVal,
-    ) -> ContextManager[None]: ...
+    ) -> AbstractContextManager[None]: ...
 
 @final
 class _AsyncIncrementalFileWriter:
@@ -289,7 +295,9 @@ class _AsyncIncrementalFileWriter:
         method: _OutputMethodArg | None = None,
     ) -> None: ...
     async def flush(self) -> None: ...
-    def method(self, method: _OutputMethodArg | None) -> AsyncContextManager[None]: ...
+    def method(
+        self, method: _OutputMethodArg | None
+    ) -> AbstractAsyncContextManager[None]: ...
     def element(
         self,
         tag: _TagName,
@@ -297,12 +305,12 @@ class _AsyncIncrementalFileWriter:
         nsmap: _NSMapArg | None = None,
         method: _OutputMethodArg | None = None,
         **_extra: _AttrVal,
-    ) -> AsyncContextManager[None]: ...
+    ) -> AbstractAsyncContextManager[None]: ...
 
 @disjoint_base
 class xmlfile(
-    AsyncContextManager[_AsyncIncrementalFileWriter],
-    ContextManager[_IncrementalFileWriter],
+    AbstractAsyncContextManager[_AsyncIncrementalFileWriter],
+    AbstractContextManager[_IncrementalFileWriter],
 ):
     def __init__(
         self,

@@ -2,7 +2,8 @@
 # Parsing and other module level functions
 #
 
-from typing import Iterable, Literal, TypeVar, overload
+from collections.abc import Iterable
+from typing import Literal, TypeVar, overload
 from typing_extensions import disjoint_base
 
 from .. import etree

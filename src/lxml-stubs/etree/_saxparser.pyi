@@ -1,5 +1,6 @@
 from abc import abstractmethod
-from typing import Callable, Protocol, TypeVar
+from collections.abc import Callable
+from typing import Protocol, TypeVar
 from typing_extensions import disjoint_base
 
 from .._types import _DefEtreeParsers

@@ -1,5 +1,9 @@
 import sys
-from typing import Collection, Generic, Iterator, overload
+from collections.abc import (
+    Collection,
+    Iterator,
+)
+from typing import Generic, overload
 from typing_extensions import disjoint_base
 
 if sys.version_info >= (3, 11):

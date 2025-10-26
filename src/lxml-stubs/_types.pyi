@@ -1,14 +1,14 @@
-from __future__ import annotations
-
 from _typeshed import SupportsRead, SupportsWrite
-from os import PathLike
-from typing import (
-    Any,
+from collections.abc import (
     Callable,
     Collection,
     Iterable,
-    Literal,
     Mapping,
+)
+from os import PathLike
+from typing import (
+    Any,
+    Literal,
     Protocol,
     TypeVar,
 )

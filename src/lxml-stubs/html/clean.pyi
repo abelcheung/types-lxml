@@ -12,7 +12,16 @@
 #
 
 import sys
-from typing import Collection, Iterable, Literal, Pattern, TypeVar, overload
+from collections.abc import (
+    Collection,
+    Iterable,
+)
+from re import Pattern
+from typing import (
+    Literal,
+    TypeVar,
+    overload,
+)
 
 from .._types import _ElementOrTree
 from ..etree import _ElementTree

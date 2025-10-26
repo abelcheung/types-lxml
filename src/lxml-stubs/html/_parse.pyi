@@ -1,5 +1,13 @@
 import sys
-from typing import Any, Iterable, Literal, MutableMapping, overload
+from collections.abc import (
+    Iterable,
+    MutableMapping,
+)
+from typing import (
+    Any,
+    Literal,
+    overload,
+)
 
 from .. import etree
 from .._types import (

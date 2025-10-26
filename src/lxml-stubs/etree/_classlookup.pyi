@@ -3,7 +3,8 @@
 #
 
 from abc import ABCMeta, abstractmethod
-from typing import Literal, Mapping, final
+from collections.abc import Mapping
+from typing import Literal, final
 from typing_extensions import disjoint_base
 
 from .._types import (

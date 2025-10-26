@@ -4,10 +4,15 @@
 
 import enum
 from abc import ABCMeta, abstractmethod
+from collections.abc import (
+    Collection,
+    Iterable,
+    Iterator,
+)
 from decimal import Decimal
 from logging import Logger, LoggerAdapter
 from numbers import Real
-from typing import Collection, Iterable, Iterator, final, overload
+from typing import final, overload
 from typing_extensions import disjoint_base
 
 @final
