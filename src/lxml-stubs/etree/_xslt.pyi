@@ -221,7 +221,7 @@ class XSLTExtension(metaclass=abc.ABCMeta):
         output_parent: _Element,  # _AppendOnlyElementProxy
     ) -> None: ...
     @overload
-    def apply_templates(  # type: ignore[overload-overlap]  # pyright: ignore[reportOverlappingOverload]
+    def apply_templates(  # pyright: ignore[reportOverlappingOverload]
         self,
         context: object,  # _XSLTContext
         node: _Element,  # _ReadOnlyElementProxy
@@ -267,7 +267,7 @@ class XSLTExtension(metaclass=abc.ABCMeta):
         output_parent: _Element,  # _AppendOnlyElementProxy
     ) -> None: ...
     @overload
-    def process_children(  # type: ignore[overload-overlap]  # pyright: ignore[reportOverlappingOverload]
+    def process_children(  # pyright: ignore[reportOverlappingOverload]
         self,
         context: object,  # _XSLTContext
         output_parent: None = None,

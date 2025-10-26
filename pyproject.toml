@@ -127,7 +127,7 @@ reportDeprecated = false
 # Newer and older pyright versions may need different
 # type-ignore locations, and we want to support a wider
 # range of pyright versions.
-reportUnnecessaryTypeIgnoreComment = false
+reportUnnecessaryTypeIgnoreComment = true
 # Follows typeshed practice, separate mypy and pyright
 # type-ignores
 # See https://github.com/python/mypy/issues/12358
@@ -144,7 +144,7 @@ packages = "lxml-stubs"
 strict = true
 show_error_context = true
 pretty = true
-warn_unused_ignores = false
+warn_unused_ignores = true
 
 [tool.ruff]
 target-version = "py312"

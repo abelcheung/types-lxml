@@ -123,7 +123,7 @@ def fragments_fromstring(
     """
 
 @overload  # no_leading_text=true
-def fragments_fromstring(  # type: ignore[overload-overlap]  # pyright: ignore[reportOverlappingOverload]
+def fragments_fromstring(  # pyright: ignore[reportOverlappingOverload]
     html: str | bytes,
     no_leading_text: Literal[True],
     guess_charset: bool | None = None,

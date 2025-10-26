@@ -91,7 +91,7 @@ def make_links_absolute(
 ) -> Never: ...
 @overload
 @deprecated("Raises exception if keyword argument is used while input is str or bytes")
-def make_links_absolute(  # pyright: ignore[reportOverlappingOverload]
+def make_links_absolute(
     doc: str | bytes,
     *arg: Any,
     handle_failures: Any,
@@ -138,7 +138,7 @@ def rewrite_links(
 ) -> Never: ...
 @overload
 @deprecated("Raises exception if keyword argument is used while input is str or bytes")
-def rewrite_links(  # pyright: ignore[reportOverlappingOverload]
+def rewrite_links(
     doc: str | bytes,
     link_repl_func: Callable[[str], _AttrVal | None],
     *,

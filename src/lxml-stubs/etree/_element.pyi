@@ -1086,7 +1086,7 @@ class __ContentOnlyElement(_Element):
 class _Comment(__ContentOnlyElement):
     @property  # type: ignore[misc]
     def tag(self) -> Callable[..., _Comment]: ...  # type: ignore[override]  # pyright: ignore[reportIncompatibleMethodOverride]
-    @property  # type: ignore[override]
+    @property
     def text(self) -> str: ...
     @text.setter  # type: ignore[override]
     def text(  # pyright: ignore[reportIncompatibleMethodOverride]
@@ -1097,7 +1097,7 @@ class _Comment(__ContentOnlyElement):
 class _ProcessingInstruction(__ContentOnlyElement):
     @property  # type: ignore[misc]
     def tag(self) -> Callable[..., _ProcessingInstruction]: ...  # type: ignore[override]  # pyright: ignore[reportIncompatibleMethodOverride]
-    @property  # type: ignore[override]
+    @property
     def text(self) -> str: ...
     @text.setter  # type: ignore[override]
     def text(  # pyright: ignore[reportIncompatibleMethodOverride]
@@ -1114,7 +1114,7 @@ class _Entity(__ContentOnlyElement):
     @property  # type: ignore[misc]
     def tag(self) -> Callable[..., _Entity]: ...  # type: ignore[override]  # pyright: ignore[reportIncompatibleMethodOverride]
     @property  # type: ignore[misc]
-    def text(self) -> str: ...  # type: ignore[override]  # pyright: ignore[reportIncompatibleMethodOverride]
+    def text(self) -> str: ...  # pyright: ignore[reportIncompatibleMethodOverride]
     @property
     def name(self) -> str: ...
     @name.setter

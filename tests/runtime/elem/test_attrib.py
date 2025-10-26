@@ -295,7 +295,7 @@ class TestUpdateMethod:
         if isinstance(inserted, Mapping):
             iterable_pairs = inserted.items()  # pyright: ignore[reportUnknownVariableType]
         else:
-            iterable_pairs = inserted  # pyright: ignore[reportUnknownVariableType]
+            iterable_pairs = inserted
         iterable_pairs = cast(Iterable[tuple[Any, Any]], iterable_pairs)
         all_norm_keys = [self._normalized_key(k) for k, _ in iterable_pairs]
         blacklist_keys = {k for k, c in Counter(all_norm_keys).items() if c > 1}
