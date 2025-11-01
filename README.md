@@ -6,8 +6,8 @@
 ## Important note
 
 - Upcoming version:
-  - [PEP 800 support](https://peps.python.org/pep-0800/)
-  - Only supports newest type checkers
+  - [PEP 800 support](https://peps.python.org/pep-0800/), thus only compatible with newest type checkers as of Oct 2025
+  - Declare and make use of Python 3.14 support
 
 - Since `2025.08.25`:
   - Supports `lxml` 6.0 and 5.4, while `lxml` 4.9 will not be tested anymore
