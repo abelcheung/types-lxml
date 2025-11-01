@@ -37,7 +37,7 @@ jobs:
           - "alt"
     steps:
 
-    - uses: actions/download-artifact@v5
+    - uses: actions/download-artifact@v6
       with:
         name: dist-${{ matrix.flavor }}
         path: dist
@@ -62,7 +62,7 @@ jobs:
       id-token: write
       attestations: write
     steps:
-    - uses: actions/download-artifact@v5
+    - uses: actions/download-artifact@v6
       with:
         pattern: dist-*
         path: dist

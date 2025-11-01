@@ -24,7 +24,7 @@ jobs:
         ref: ${{ inputs.gitref }}
         fetch-depth: 0  # detect tagged ver in repo
 
-    - uses: astral-sh/setup-uv@v6
+    - uses: astral-sh/setup-uv@v7
       with:
         version: '0.9.5'
         enable-cache: true
@@ -51,7 +51,7 @@ jobs:
         tox run -v
         -e build-${{ matrix.flavor }}
 
-    - uses: actions/upload-artifact@v4
+    - uses: actions/upload-artifact@v5
       with:
         name: dist-${{ matrix.flavor }}
         path: dist/*
@@ -66,7 +66,7 @@ jobs:
           - "alt"
     runs-on: ubuntu-24.04
     steps:
-    - uses: actions/download-artifact@v5
+    - uses: actions/download-artifact@v6
       with:
         name: dist-${{ matrix.flavor }}
         path: dist
@@ -76,7 +76,7 @@ jobs:
       run: >
         tar -zxf dist/*.tar.gz --strip-components=1
 
-    - uses: astral-sh/setup-uv@v6
+    - uses: astral-sh/setup-uv@v7
       with:
         version: '0.9.5'
         enable-cache: true
