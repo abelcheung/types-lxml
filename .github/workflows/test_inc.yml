@@ -25,7 +25,7 @@ jobs:
           - "ubuntu-24.04"
     runs-on: ${{ matrix.os }}
     steps:
-    - uses: actions/download-artifact@v5
+    - uses: actions/download-artifact@v6
       with:
         name: dist-${{ inputs.flavor }}
         path: dist
@@ -35,7 +35,7 @@ jobs:
       run: >
         tar -zxf dist/*.tar.gz --strip-components=1
 
-    - uses: astral-sh/setup-uv@v6
+    - uses: astral-sh/setup-uv@v7
       with:
         version: '0.9.5'
         enable-cache: true
@@ -61,7 +61,7 @@ jobs:
         --installpkg ${{ steps.wheel-name.outputs.filename }}
         --result-json test-${{ inputs.flavor }}-stub-py${{ matrix.pyver }}.json
 
-    - uses: actions/upload-artifact@v4
+    - uses: actions/upload-artifact@v5
       with:
         name: log-${{ inputs.flavor }}-stub-py${{ matrix.pyver }}
         path: test-${{ inputs.flavor }}-stub-*.json
@@ -83,7 +83,7 @@ jobs:
           - macos-14
     runs-on: ${{ matrix.os }}
     steps:
-    - uses: actions/download-artifact@v5
+    - uses: actions/download-artifact@v6
       with:
         name: dist-${{ inputs.flavor }}
         path: dist
@@ -93,7 +93,7 @@ jobs:
       run: >
         tar -zxf dist/*.tar.gz --strip-components=1
 
-    - uses: astral-sh/setup-uv@v6
+    - uses: astral-sh/setup-uv@v7
       with:
         version: '0.9.5'
         enable-cache: true
@@ -124,7 +124,7 @@ jobs:
         --installpkg ${{ steps.wheel-name.outputs.filename }}
         --result-json test-${{ inputs.flavor }}-rt-${{ matrix.os }}-py${{ matrix.pyver }}.json
 
-    - uses: actions/upload-artifact@v4
+    - uses: actions/upload-artifact@v5
       with:
         name: log-${{ inputs.flavor }}-rt-${{ matrix.os }}-py${{ matrix.pyver }}
         path: test-${{ inputs.flavor }}-rt-*.json
@@ -138,13 +138,13 @@ jobs:
       actions: write
     steps:
 
-    - uses: actions/download-artifact@v5
+    - uses: actions/download-artifact@v6
       with:
         path: all-logs
         pattern: log-${{ inputs.flavor }}-*
         merge-multiple: true
 
-    - uses: actions/upload-artifact@v4
+    - uses: actions/upload-artifact@v5
       with:
         name: alllogs-${{ inputs.flavor }}
         path: all-logs
