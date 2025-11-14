@@ -80,9 +80,11 @@ lxml\.etree\.LIBXML_COMPILED_FEATURES
 lxml\.etree\.LIBXML_FEATURES
 
 # Implementation intentionally differs
-lxml\.etree\._ErrorLog
 lxml\.etree\._Element\.__init__
+lxml\.etree\._ErrorLog
 lxml\.etree\.__all__
+lxml\.etree\.HTMLPullParser\.__init__
+lxml\.etree\.XMLPullParser\.__init__
 lxml\.html\.builder\.[A-Z0-9]+
 lxml\.html\.find_class
 lxml\.html\.find_rel_links
