@@ -42,8 +42,8 @@ homepage = 'https://github.com/abelcheung/types-lxml'
 
 [project.optional-dependencies]
 mypy = ['mypy >= 1.18.1']
-pyright = ['pyright >= 1.1.405']
-basedpyright = ['basedpyright >= 1.31.5']
+pyright = ['pyright >= 1.1.406']
+basedpyright = ['basedpyright >= 1.31.6']
 
 # mostly pinned for tox testing except dev group
 [dependency-groups]
