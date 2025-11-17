@@ -115,7 +115,7 @@ class TestIterfind:
         if not hasattr(thing, "__iter__"):
             raise_cm = raise_non_iterable
         else:
-            raise_cm = pytest.raises((TypeError, AttributeError))  # type: ignore[arg-type]
+            raise_cm = pytest.raises((TypeError, AttributeError))
         with raise_cm:
             _ = disposable_element.iterfind("foo", namespaces=thing)
 
@@ -183,7 +183,7 @@ class TestFind:
         if not hasattr(thing, "__iter__"):
             raise_cm = raise_non_iterable
         else:
-            raise_cm = pytest.raises((TypeError, AttributeError))  # type: ignore[arg-type]
+            raise_cm = pytest.raises((TypeError, AttributeError))
         with raise_cm:
             _ = disposable_element.find("foo", namespaces=thing)
 
@@ -251,7 +251,7 @@ class TestFindall:
         if not hasattr(thing, "__iter__"):
             raise_cm = raise_non_iterable
         else:
-            raise_cm = pytest.raises((TypeError, AttributeError))  # type: ignore[arg-type]
+            raise_cm = pytest.raises((TypeError, AttributeError))
         with raise_cm:
             _ = disposable_element.findall("foo", namespaces=thing)
 
@@ -342,7 +342,7 @@ class TestFindtext:
         if not hasattr(thing, "__iter__"):
             raise_cm = raise_non_iterable
         else:
-            raise_cm = pytest.raises((TypeError, AttributeError))  # type: ignore[arg-type]
+            raise_cm = pytest.raises((TypeError, AttributeError))
         with raise_cm:
             _ = disposable_element.findtext("foo", namespaces=thing)
 

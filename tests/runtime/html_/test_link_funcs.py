@@ -132,7 +132,7 @@ class TestInputOutputType:
         bightml_root: HtmlElement,
     ) -> None:
         for data in (html2_bytes, html2_str, bightml_root):
-            itr = iterlinks(data)  # type: ignore[type-var]
+            itr = iterlinks(data)
             reveal_type(itr)
             for link in itr:
                 reveal_type(link)
@@ -282,7 +282,7 @@ class TestResolveBaseHrefArg:
         for arg in ("discard", "ignore", None):
             new_root = resolve_base_href(
                 disposable_html_with_base_href,
-                arg,  # type: ignore[arg-type,call-overload]
+                arg,
             )
             new_links = [
                 cast(_ElementUnicodeResult, link)
@@ -332,7 +332,7 @@ class TestMakeLinksAbsoluteArg:
             new_root = make_links_absolute(
                 disposable_html_with_base_href,
                 _BASE_HREF,
-                handle_failures=arg,  # type: ignore[arg-type,call-overload]
+                handle_failures=arg,
             )
             new_links = [
                 cast(_ElementUnicodeResult, link)
@@ -465,7 +465,7 @@ class TestMethodFuncBug:
 
         for input in (str_content, bytes_content):
             with raise_unexpected_kwarg:
-                _ = make_links_absolute(  # type: ignore[call-overload]
+                _ = make_links_absolute(
                     input, _BASE_HREF, resolve_base_href=True
                 )
         _ = make_links_absolute(
@@ -474,7 +474,7 @@ class TestMethodFuncBug:
 
         for input in (str_content, bytes_content):
             with raise_unexpected_kwarg:
-                _ = make_links_absolute(  # type: ignore[call-overload]
+                _ = make_links_absolute(
                     input, _BASE_HREF, handle_failures=None
                 )
         _ = make_links_absolute(
@@ -488,7 +488,7 @@ class TestMethodFuncBug:
         for encoding in ("utf-8", str):
             content = tostring(disposable_html_with_base_href, encoding=encoding)
             with raise_unexpected_kwarg:
-                _ = resolve_base_href(  # type: ignore[call-overload]
+                _ = resolve_base_href(
                     content, handle_failures=None
                 )
         _ = resolve_base_href(disposable_html_with_base_href, handle_failures=None)
@@ -502,21 +502,21 @@ class TestMethodFuncBug:
 
         for input in (str_content, byte_content):
             with raise_unexpected_kwarg:
-                _ = rewrite_links(  # type: ignore[call-overload]
+                _ = rewrite_links(
                     input, link_repl_func=str
                 )
         _ = rewrite_links(disposable_html_with_base_href, link_repl_func=str)
 
         for input in (str_content, byte_content):
             with raise_unexpected_kwarg:
-                _ = rewrite_links(  # type: ignore[call-overload]
+                _ = rewrite_links(
                     input, str, resolve_base_href=False
                 )
         _ = rewrite_links(disposable_html_with_base_href, str, resolve_base_href=False)
 
         for input in (str_content, byte_content):
             with raise_unexpected_kwarg:
-                _ = rewrite_links(  # type: ignore[call-overload]
+                _ = rewrite_links(
                     input, str, base_href=_BASE_HREF
                 )
         _ = rewrite_links(disposable_html_with_base_href, str, base_href=_BASE_HREF)

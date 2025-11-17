@@ -20,7 +20,7 @@ _T = TypeVar("_T")
 def all_types_except(
     *excluded: type[Any], exact: bool = False
 ) -> st.SearchStrategy[type]:
-    if Any in excluded or object in excluded:  # type: ignore[comparison-overlap]
+    if Any in excluded or object in excluded:
         raise ValueError("Cannot exclude everything")
     # HACK The everything_except() receipe in hypothesis explicitly says
     # it excludes instances of types added via register_type_strategy().

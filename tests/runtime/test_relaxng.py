@@ -125,7 +125,7 @@ class TestRelaxNGInput:
             )
         else:
             # too diversified
-            raise_cm = pytest.raises((TypeError, AttributeError))  # type: ignore[arg-type]
+            raise_cm = pytest.raises((TypeError, AttributeError))
         with raise_cm:
             _ = RelaxNG.from_rnc_string(src=cast(Any, thing))
 

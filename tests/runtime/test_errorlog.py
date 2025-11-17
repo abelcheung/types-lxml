@@ -396,7 +396,7 @@ class TestPyErrorLogMethods:
     @pytest.mark.slow
     def test_receive_arg_bad_1(self, pylog: PyErrorLog, thing: Any) -> None:
         raise_cm = raise_no_attribute if thing is None else raise_wrong_arg_type
-        with raise_cm:  # type: ignore[attr-defined]
+        with raise_cm:
             pylog.receive(thing)
 
     @given(iterable_of=_st.fixed_item_iterables())
