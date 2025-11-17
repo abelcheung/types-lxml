@@ -64,13 +64,13 @@ class TestComment:
         with pytest.raises(IndexError, match=get_exc_mesg):
             comm[0]  # type: ignore[index]  # pyright: ignore[reportArgumentType]
         with pytest.raises(TypeError, match=set_exc_mesg):
-            comm[0] = "bar"  # type: ignore[index]  # pyright: ignore[reportArgumentType]
+            comm[0] = "bar"  # type: ignore[index,assignment]  # pyright: ignore[reportArgumentType]
         with pytest.raises(IndexError, match=get_exc_mesg):
             comm["foo"]  # type: ignore[index]  # pyright: ignore[reportArgumentType]
         with pytest.raises(TypeError, match=set_exc_mesg):
-            comm["foo"] = "bar"  # type: ignore[index]  # pyright: ignore[reportArgumentType]
+            comm["foo"] = "bar"  # type: ignore[index,assignment]  # pyright: ignore[reportArgumentType]
         with pytest.raises(TypeError, match=set_exc_mesg):
-            comm[:] = "bar"  # type: ignore[index]  # pyright: ignore[reportArgumentType]
+            comm[:] = "bar"  # type: ignore[index,assignment]  # pyright: ignore[reportArgumentType]
 
     # We only test methods explicitly banned in lxml source code.
     # For example, .append() is forbidden, yet one can use
@@ -153,13 +153,13 @@ class TestEntity:
         with pytest.raises(IndexError, match=get_exc_mesg):
             ent[0]  # type: ignore[index]  # pyright: ignore[reportArgumentType]
         with pytest.raises(TypeError, match=set_exc_mesg):
-            ent[0] = "bar"  # type: ignore[index]  # pyright: ignore[reportArgumentType]
+            ent[0] = "bar"  # type: ignore[index,assignment]  # pyright: ignore[reportArgumentType]
         with pytest.raises(IndexError, match=get_exc_mesg):
             ent["foo"]  # type: ignore[index]  # pyright: ignore[reportArgumentType]
         with pytest.raises(TypeError, match=set_exc_mesg):
-            ent["foo"] = "bar"  # type: ignore[index]  # pyright: ignore[reportArgumentType]
+            ent["foo"] = "bar"  # type: ignore[index,assignment]  # pyright: ignore[reportArgumentType]
         with pytest.raises(TypeError, match=set_exc_mesg):
-            ent[:] = "bar"  # type: ignore[index]  # pyright: ignore[reportArgumentType]
+            ent[:] = "bar"  # type: ignore[index,assignment]  # pyright: ignore[reportArgumentType]
 
     # We only test methods explicitly banned in lxml source code.
     # For example, .append() is forbidden, yet one can use
@@ -273,13 +273,13 @@ class TestPI:
         with pytest.raises(IndexError, match=get_exc_mesg):
             pi[0]  # type: ignore[index]  # pyright: ignore[reportArgumentType]
         with pytest.raises(TypeError, match=set_exc_mesg):
-            pi[0] = "bar"  # type: ignore[index]  # pyright: ignore[reportArgumentType]
+            pi[0] = "bar"  # type: ignore[index,assignment]  # pyright: ignore[reportArgumentType]
         with pytest.raises(IndexError, match=get_exc_mesg):
             pi["foo"]  # type: ignore[index]  # pyright: ignore[reportArgumentType]
         with pytest.raises(TypeError, match=set_exc_mesg):
-            pi["foo"] = "bar"  # type: ignore[index]  # pyright: ignore[reportArgumentType]
+            pi["foo"] = "bar"  # type: ignore[index,assignment]  # pyright: ignore[reportArgumentType]
         with pytest.raises(TypeError, match=set_exc_mesg):
-            pi[:] = "bar"  # type: ignore[index]  # pyright: ignore[reportArgumentType]
+            pi[:] = "bar"  # type: ignore[index,assignment]  # pyright: ignore[reportArgumentType]
 
     # We only test methods explicitly banned in lxml source code.
     # For example, .append() is forbidden, yet one can use
