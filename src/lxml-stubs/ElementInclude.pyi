@@ -1,4 +1,3 @@
-import sys
 from typing import (
     Final,
     Literal,
@@ -10,17 +9,12 @@ from typing import (
 from ._types import Unused, _ElementOrTree
 from .etree import LxmlSyntaxError, _Element
 
-if sys.version_info >= (3, 11):
-    from typing import LiteralString
-else:
-    from typing_extensions import LiteralString
-
 # exported constants
-XINCLUDE: Final[LiteralString]
-XINCLUDE_INCLUDE: Final[LiteralString]
-XINCLUDE_FALLBACK: Final[LiteralString]
-XINCLUDE_ITER_TAG: Final[LiteralString]
-DEFAULT_MAX_INCLUSION_DEPTH: Final[int]
+XINCLUDE: Final[Literal["{http://www.w3.org/2001/XInclude}"]]
+XINCLUDE_INCLUDE: Final[Literal["{http://www.w3.org/2001/XInclude}include"]]
+XINCLUDE_FALLBACK: Final[Literal["{http://www.w3.org/2001/XInclude}fallback"]]
+XINCLUDE_ITER_TAG: Final[Literal["{http://www.w3.org/2001/XInclude}*"]]
+DEFAULT_MAX_INCLUSION_DEPTH: Final[Literal[6]]
 
 class FatalIncludeError(LxmlSyntaxError): ...
 class LimitedRecursiveIncludeError(FatalIncludeError): ...

@@ -1,5 +1,4 @@
-import sys
-from typing import Final
+from typing import Final, Literal
 
 from ._element import (
     Classes as Classes,
@@ -48,12 +47,7 @@ from ._parse import (
     xhtml_parser as xhtml_parser,
 )
 
-if sys.version_info >= (3, 11):
-    from typing import LiteralString
-else:
-    from typing_extensions import LiteralString
-
-XHTML_NAMESPACE: Final[LiteralString]
+XHTML_NAMESPACE: Final[Literal["http://www.w3.org/1999/xhtml"]]
 
 __all__ = [
     "document_fromstring",

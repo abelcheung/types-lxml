@@ -1,14 +1,14 @@
-import sys
-from typing import Any, ClassVar, Final, Literal, overload
+from typing import (
+    Any,
+    ClassVar,
+    Final,
+    Literal,
+    overload,
+)
 
 from . import etree as _e
 from ._types import _ElementOrTree, _FileReadSource
 from .etree._xslt import _Stylesheet_Param
-
-if sys.version_info >= (3, 11):
-    from typing import LiteralString
-else:
-    from typing_extensions import LiteralString
 
 __all__ = [
     "extract_xsd",
@@ -22,10 +22,10 @@ __all__ = [
     "Schematron",
 ]
 
-XML_SCHEMA_NS: Final[LiteralString]
-RELAXNG_NS: Final[LiteralString]
-SCHEMATRON_NS: Final[LiteralString]
-SVRL_NS: Final[LiteralString]
+XML_SCHEMA_NS: Final[Literal["http://www.w3.org/2001/XMLSchema"]]
+RELAXNG_NS: Final[Literal["http://relaxng.org/ns/structure/1.0"]]
+SCHEMATRON_NS: Final[Literal["http://purl.oclc.org/dsdl/schematron"]]
+SVRL_NS: Final[Literal["http://purl.oclc.org/dsdl/svrl"]]
 
 extract_xsd: _e.XSLT
 extract_rng: _e.XSLT
