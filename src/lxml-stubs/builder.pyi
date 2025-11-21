@@ -7,6 +7,7 @@ from typing import (
     Generic,
     Protocol,
     overload,
+    type_check_only,
 )
 from typing_extensions import disjoint_base
 
@@ -24,6 +25,7 @@ from .etree import CDATA, _Element
 # with anything
 _TypeMapArg = Mapping[Any, Callable[[_Element, Any], None]]
 
+@type_check_only
 class _EMakerCallProtocol(Protocol[_ET_co]):
     def __call__(
         self,

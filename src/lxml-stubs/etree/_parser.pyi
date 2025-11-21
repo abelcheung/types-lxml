@@ -9,6 +9,7 @@ from typing import (
     Literal,
     TypeVar,
     overload,
+    type_check_only,
 )
 
 from .._types import (
@@ -56,6 +57,7 @@ class ParseError(LxmlSyntaxError):
 class XMLSyntaxError(ParseError): ...
 class ParserError(LxmlError): ...
 
+@type_check_only
 class _PullParserMixin:
     # The iterated items from pull parser events may return anything.
     # Even etree.TreeBuilder, which produce element nodes by default, allows
@@ -63,6 +65,7 @@ class _PullParserMixin:
     def read_events(self) -> Iterator[tuple[str, _Element | Any]]: ...
 
 # TODO Write wiki page and add link to this docstring
+@type_check_only
 class CustomTargetParser(Generic[_T]):
     """This is a stub-only class (docstring pending)"""
     @property

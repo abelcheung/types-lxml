@@ -1,6 +1,6 @@
 from abc import abstractmethod
 from collections.abc import Callable
-from typing import Protocol, TypeVar
+from typing import Protocol, TypeVar, type_check_only
 from typing_extensions import disjoint_base
 
 from .._types import _DefEtreeParsers
@@ -12,6 +12,7 @@ _T_co = TypeVar("_T_co", covariant=True)
 class XMLSyntaxAssertionError(XMLSyntaxError, AssertionError):
     def __init__(self, message: object) -> None: ...
 
+@type_check_only
 class ParserTarget(Protocol[_T_co]):
     """This is a stub-only class representing parser target interface.
 

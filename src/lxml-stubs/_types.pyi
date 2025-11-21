@@ -11,6 +11,7 @@ from typing import (
     Literal,
     Protocol,
     TypeVar,
+    type_check_only,
 )
 
 from .etree import HTMLParser, QName, XMLParser, _Element, _ElementTree
@@ -25,6 +26,19 @@ _VT_co = TypeVar("_VT_co", covariant=True)
 
 # Dup but deviate from recent _typeshed
 Unused = Any
+
+@type_check_only
+class SupportsLaxItems(Protocol[_KT_co, _VT_co]):
+    """Relaxed form of SupportsItems
+
+    Original `SupportsItems` from typeshed returns
+    generic set which is compatible with `ItemsView`.
+    However, `_Attrib.items()` returns `list` instead.
+    Here we find a common ground that satisfies both
+    and avoid the mapping invariance culprit.
+    """
+
+    def items(self) -> Collection[tuple[_KT_co, _VT_co]]: ...
 
 # ElementTree API is notable of canonicalizing byte / unicode input data.
 # This type alias should only be used for input arguments, while one would
@@ -46,7 +60,7 @@ mapping keys where unhashable type is not allowed."""
 # only unicode accepted for py3
 _ElemPathArg = str | QName
 
-_AttrMapping = SupportsLaxItems[_AttrNameKey, _AttrVal]  # noqa: F821
+_AttrMapping = SupportsLaxItems[_AttrNameKey, _AttrVal]
 """Attribute dict-like mapping
 
 Used in attrib argument of various factories and methods.
@@ -176,18 +190,6 @@ _ElementOrTree = _ET | _ElementTree[_ET]
 
 # The basic parsers bundled in lxml.etree
 _DefEtreeParsers = XMLParser[_ET_co] | HTMLParser[_ET_co]
-
-class SupportsLaxItems(Protocol[_KT_co, _VT_co]):
-    """Relaxed form of SupportsItems
-
-    Original `SupportsItems` from typeshed returns
-    generic set which is compatible with `ItemsView`.
-    However, `_Attrib.items()` returns `list` instead.
-    Here we find a common ground that satisfies both
-    and avoid the mapping invariance culprit.
-    """
-
-    def items(self) -> Collection[tuple[_KT_co, _VT_co]]: ...
 
 _FilePath = str | bytes | PathLike[str] | PathLike[bytes]
 # _parseDocument() from parser.pxi

@@ -1,5 +1,11 @@
 import sys
-from typing import Final, Literal, Protocol, overload
+from typing import (
+    Final,
+    Literal,
+    Protocol,
+    overload,
+    type_check_only,
+)
 
 from ._types import Unused, _ElementOrTree
 from .etree import LxmlSyntaxError, _Element
@@ -22,7 +28,8 @@ class LimitedRecursiveIncludeError(FatalIncludeError): ...
 # The default_loader() in lxml.ElementInclude is completely
 # retired (lxml uses its own internal loader)
 
-class LoaderProtocol(Protocol):
+@type_check_only
+class _LoaderProtocol(Protocol):
     """Protocol for loader func argument in `ElementInclude.include()`
 
     Annotation
@@ -54,7 +61,7 @@ class LoaderProtocol(Protocol):
 
 def include(
     elem: _ElementOrTree,
-    loader: LoaderProtocol | None = None,
+    loader: _LoaderProtocol | None = None,
     base_url: str | None = None,
     max_depth: int = 6,
 ) -> None:
@@ -64,7 +71,7 @@ def include(
     ----------
     - Source documentation above `include()` is outdated; this function
     does not return at all.
-    - Try using `from lxml.ElementInclude import LoaderProtocol` from
+    - Try using `from lxml.ElementInclude import _LoaderProtocol` from
     within IDEs to lookup its purpose and usage. This is annotation
     only and doesn't exist in lxml source.
     """
