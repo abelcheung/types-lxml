@@ -488,9 +488,7 @@ class TestMethodFuncBug:
         for encoding in ("utf-8", str):
             content = tostring(disposable_html_with_base_href, encoding=encoding)
             with raise_unexpected_kwarg:
-                _ = resolve_base_href(
-                    content, handle_failures=None
-                )
+                _ = resolve_base_href(content, handle_failures=None)
         _ = resolve_base_href(disposable_html_with_base_href, handle_failures=None)
 
     def test_rewrite_links(
@@ -502,9 +500,7 @@ class TestMethodFuncBug:
 
         for input in (str_content, byte_content):
             with raise_unexpected_kwarg:
-                _ = rewrite_links(
-                    input, link_repl_func=str
-                )
+                _ = rewrite_links(input, link_repl_func=str)
         _ = rewrite_links(disposable_html_with_base_href, link_repl_func=str)
 
         for input in (str_content, byte_content):
