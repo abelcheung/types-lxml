@@ -62,7 +62,8 @@ raise_wrong_arg_type = pytest.raises(
 # TypeError("'...' object is not iterable")
 # TypeError("argument of type '...' is not iterable / is not a container or iterable")
 raise_non_iterable = pytest.raises(
-    TypeError, match=r"(object|argument of type '.+?') is not (a container or )?iterable"
+    TypeError,
+    match=r"(object|argument of type '.+?') is not (a container or )?iterable",
 )
 
 # TypeError("'...' object cannot be interpreted as an integer")
