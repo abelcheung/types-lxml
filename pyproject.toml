@@ -73,7 +73,7 @@ rt-test = [
     "urllib3 == 2.5.0",
     "hypothesis[zoneinfo] == 6.148.1",
     "pytest >= 7.0, < 9",
-    "pytest-revealtype-injector == 0.6.1",
+    "pytest-revealtype-injector == 0.6.2",
     "rnc2rng == 2.7.0",
     {include-group = "mypy"},
     {include-group = "pyright"},
@@ -93,7 +93,7 @@ dev = [
     'pook >= 2.0',
     'urllib3 >= 2.0',
     'pytest-mypy-plugins >= 3.2.0',
-    'pytest-revealtype-injector >= 0.6.1',
+    'pytest-revealtype-injector >= 0.6.2',
     'lxml >= 5.0',
     'rnc2rng',
     # HypothesisWorks/hypothesis#4269
