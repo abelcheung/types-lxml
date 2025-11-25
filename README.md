@@ -7,7 +7,7 @@
 
 - Upcoming version:
   - [PEP 800 support](https://peps.python.org/pep-0800/), thus only compatible with newest type checkers as of Oct 2025
-  - Declare and make use of Python 3.14 support
+  - Declare and make use of Python 3.14 support; drops Python 3.8 support
 
 - Since `2025.08.25`:
   - Supports `lxml` 6.0 and 5.4, while `lxml` 4.9 will not be tested anymore
@@ -57,9 +57,9 @@ Check out [project page](https://github.com/abelcheung/types-lxml/projects) for 
 
 Currently the annotations are validated for following type checkers:
 
-- [`basedpyright`](https://github.com/DetachHead/basedpyright), version 1.4.0 or above
-- [`pyright`](https://github.com/microsoft/pyright), version 1.1.351 or above
-- [`mypy`](https://github.com/python/mypy), version 1.10.0 or above
+- [`basedpyright`](https://github.com/DetachHead/basedpyright), version 1.31.6 or above
+- [`pyright`](https://github.com/microsoft/pyright), version 1.1.406 or above
+- [`mypy`](https://github.com/python/mypy), version 1.18.1 or above
 
 `pyright` and `basedpyright` are recommended for their greater flexibility and early adoption of newer type checking features. In the future, there is plan to bring even more type checker support.
 
