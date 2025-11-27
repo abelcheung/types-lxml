@@ -58,7 +58,9 @@ mypy    = [
 ]
 pyright = [
     "pyright == 1.1.407",
-    "basedpyright == 1.33.0",
+]
+basedpyright = [
+    "basedpyright == 1.34.0",
 ]
 format  = ["ruff ~= 0.6"]
 stub-test = [
@@ -77,6 +79,7 @@ rt-test = [
     "rnc2rng == 2.7.0",
     {include-group = "mypy"},
     {include-group = "pyright"},
+    {include-group = "basedpyright"},
 ]
 lxml50 = ["lxml == 5.0.2"]
 lxml51 = ["lxml == 5.1.1"]
@@ -86,9 +89,6 @@ lxml54 = ["lxml == 5.4.0"]
 lxml60 = ["lxml == 6.0.2"]
 dev = [
     'tox ~= 4.22',
-    'mypy >= 1.18.1',
-    'pyright >= 1.1.405',
-    'basedpyright >= 1.31.5',
     'html5lib == 1.1',
     'pook >= 2.0',
     'urllib3 >= 2.0',
@@ -100,6 +100,9 @@ dev = [
     'hypothesis[zoneinfo] >= 6.127.7',
     {include-group = "format"},
     {include-group = "basic"},
+    {include-group = "mypy"},
+    {include-group = "pyright"},
+    {include-group = "basedpyright"},
 ]
 
 [tool.pdm.version]
@@ -280,7 +283,7 @@ dependency_groups = [
     'basic',
     'mypy',
 ]
-commands = [['mypy', {replace = 'posargs', extend = true}]]
+commands = [['mypy', {replace = 'posargs', extend = true}], 'src']
 
 [tool.tox.env.pyright]
 description = 'Use pyright to check annotation files for error'
@@ -290,6 +293,15 @@ dependency_groups = [
     'pyright',
 ]
 commands = [['pyright', {replace = 'posargs', extend = true}, 'src']]
+
+[tool.tox.env.basedpyright]
+description = 'Use basedpyright to check annotation files for error'
+package = 'skip'
+dependency_groups = [
+    'basic',
+    'basedpyright',
+]
+commands = [['basedpyright', {replace = 'posargs', extend = true}, 'src']]
 
 [tool.tox._env_stub]
 pass_env = [
