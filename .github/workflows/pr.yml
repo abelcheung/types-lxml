@@ -30,10 +30,10 @@ jobs:
 
     - name: Install prerequisites
       run: |
-        uv python install 3.10
+        uv python install 3.12
         uv venv --python-preference only-managed
         uv pip install -r pyproject.toml
-        uv pip install 'mypy == 1.11.2'
+        uv pip install mypy
 
     - name: Mypy review
       id: mypy

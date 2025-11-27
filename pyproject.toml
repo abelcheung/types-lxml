@@ -283,7 +283,7 @@ dependency_groups = [
     'basic',
     'mypy',
 ]
-commands = [['mypy', {replace = 'posargs', extend = true}], 'src']
+commands = [['mypy', {replace = 'posargs', extend = true}, 'src']]
 
 [tool.tox.env.pyright]
 description = 'Use pyright to check annotation files for error'
