@@ -19,7 +19,7 @@ jobs:
           - "alt"
     runs-on: ubuntu-24.04
     steps:
-    - uses: actions/checkout@v5
+    - uses: actions/checkout@v6
       with:
         ref: ${{ inputs.gitref }}
         fetch-depth: 0  # detect tagged ver in repo
