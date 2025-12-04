@@ -17,6 +17,7 @@ from mypy.plugin import (
 from mypy.types import (
     Instance,
     Type,
+    get_proper_type,
 )
 
 
@@ -64,7 +65,7 @@ def _set_class_lookup_method_hook(ctx: MethodContext) -> Type:
         return ctx.default_return_type
 
     assert len(ctx.arg_types[0]) == 1
-    lookup = ctx.arg_types[0][0]
+    lookup = get_proper_type(ctx.arg_types[0][0])
     assert isinstance(lookup, Instance)
 
     # FIXME Not handling custom ElementClassLookup subclass yet
