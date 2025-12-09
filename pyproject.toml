@@ -144,7 +144,6 @@ pretty = true
 warn_unused_ignores = true
 show_traceback = true
 plugins = [
-    "mypy_plugin_lxml.main",
     "mypy.plugins.proper_plugin",
 ]
 
@@ -288,6 +287,7 @@ description = 'Use pyright to check annotation files for error'
 package = 'skip'
 dependency_groups = [
     'basic',
+    'mypy',
     'pyright',
 ]
 commands = [['pyright', {replace = 'posargs', extend = true}, 'src']]
@@ -297,6 +297,7 @@ description = 'Use basedpyright to check annotation files for error'
 package = 'skip'
 dependency_groups = [
     'basic',
+    'mypy',
     'basedpyright',
 ]
 commands = [['basedpyright', {replace = 'posargs', extend = true}, 'src']]
