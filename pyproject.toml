@@ -41,6 +41,7 @@ classifiers = [
 homepage = 'https://github.com/abelcheung/types-lxml'
 
 [project.optional-dependencies]
+mypy = ['mypy >= 1.18.1']
 dev = [
     'tox ~= 4.24',
     'html5lib == 1.1',

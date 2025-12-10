@@ -52,7 +52,7 @@ jobs:
       - name: Install prerequisites
         run: |
           uv venv -p 3.12 --python-preference only-managed
-          uv pip install -r pyproject.toml
+          uv pip install .[mypy]
 
       - uses: jakebailey/pyright-action@v2
         with:
@@ -87,7 +87,7 @@ jobs:
       - name: Install prerequisite python packages
         run: |
           uv venv -p 3.12 --python-preference only-managed
-          uv pip install -r pyproject.toml
+          uv pip install .[mypy]
           uv pip install "basedpyright==${{ matrix.bpr-ver }}"
 
       - name: Run basedpyright
