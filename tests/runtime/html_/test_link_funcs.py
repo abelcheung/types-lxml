@@ -27,7 +27,6 @@ from lxml.etree import (
     XPathResultError,
     _Element,
     _ElementTree,
-    _ElementUnicodeResult,
     tostring,
 )
 from lxml.html import (
@@ -275,19 +274,13 @@ class TestResolveBaseHrefArg:
     def test_handle_failures_arg_ok(
         self, disposable_html_with_base_href: HtmlElement
     ) -> None:
-        old_links = [
-            cast(_ElementUnicodeResult, link)
-            for link in disposable_html_with_base_href.xpath("//a/@href")
-        ]
+        old_links: list[str] = disposable_html_with_base_href.xpath("//a/@href")
         for arg in ("discard", "ignore", None):
             new_root = resolve_base_href(
                 disposable_html_with_base_href,
                 arg,
             )
-            new_links = [
-                cast(_ElementUnicodeResult, link)
-                for link in new_root.xpath("//a/@href")
-            ]
+            new_links: list[str] = new_root.xpath("//a/@href")
             for old, new in zip(old_links, new_links):
                 if old.startswith("http"):
                     assert old == new
@@ -324,20 +317,14 @@ class TestMakeLinksAbsoluteArg:
     def test_handle_failures_valid_type(
         self, disposable_html_with_base_href: HtmlElement
     ) -> None:
-        old_links = [
-            cast(_ElementUnicodeResult, link)
-            for link in disposable_html_with_base_href.xpath("//a/@href")
-        ]
+        old_links: list[str] = disposable_html_with_base_href.xpath("//a/@href")
         for arg in ("discard", "ignore", None):
             new_root = make_links_absolute(
                 disposable_html_with_base_href,
                 _BASE_HREF,
                 handle_failures=arg,
             )
-            new_links = [
-                cast(_ElementUnicodeResult, link)
-                for link in new_root.xpath("//a/@href")
-            ]
+            new_links: list[str] = new_root.xpath("//a/@href")
             for old, new in zip(old_links, new_links):
                 if old.startswith("http"):
                     assert old == new
