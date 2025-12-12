@@ -71,7 +71,12 @@ class HtmlElement(etree.ElementBase):
     # HtmlMixin properties and methods
     #
     classes: Classes
-    label: LabelElement | None
+    @property
+    def label(self) -> LabelElement | None: ...
+    @label.setter
+    def label(self, __l: LabelElement) -> None: ...
+    @label.deleter
+    def label(self) -> None: ...
     @property
     def base_url(self) -> str | None: ...
     @property
