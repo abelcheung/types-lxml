@@ -15,35 +15,6 @@
         def extfunc2(context, a, b): return 0
   main: ""
 
-- case: mixin_properties_ro
-  files: *INC
-  main: |
-    from inc import el
-    reveal_type(el.classes)  # NR: .+ "[\w\.]+\.Classes"
-    reveal_type(el.label)  # NR: .+ "[\w\.]+\.LabelElement \| None"
-    reveal_type(el.base_url)  # NR: .+ "builtins\.str \| None"
-    reveal_type(el.forms)  # NR: .+ "builtins.list\[[\w\.]+\.FormElement]"
-    reveal_type(el.body)  # NR: .+ "[\w\.]+\.HtmlElement"
-    reveal_type(el.head)  # NR: .+ "[\w\.]+\.HtmlElement"
-
-- case: mixin_properties_rw
-  files: *INC
-  main: |
-    from inc import el, h
-    el.classes = el.classes
-    el.classes = {'cls1', 'cls2'}  # ER: Incompatible types .+  \[assignment]
-    label: h.LabelElement
-    el.label = label
-    el.label = el  # ER: Incompatible types .+  \[assignment]
-
-- case: mixin_properties_bad
-  files: *INC
-  main: |
-    from inc import el
-    el.head = el.head  # E: Property "head" defined in "HtmlElement" is read-only  [misc]
-    result = el.badprop  # E: "HtmlElement" has no attribute "badprop"  [attr-defined]
-    el.badprop = 'foobar'  # E: "HtmlElement" has no attribute "badprop"  [attr-defined]
-
 - case: mixin_method_set
   files: *INC
   main: |

@@ -33,3 +33,17 @@ def disposable_html_with_base_href() -> HtmlElement:
             b.A("Full Link", href="http://example.org"),
         ),
     )
+
+
+# Intended for LabelElement and .label property tests
+@pytest.fixture(scope="class")
+def disposable_html_input_label() -> HtmlElement:
+    import lxml.html.builder as b
+
+    return b.HTML(
+        b.BODY(
+            b.INPUT({'id': 'foo', 'type': 'email'}),
+            b.LABEL({'for': 'foo'}, "bar")
+        )
+    )
+

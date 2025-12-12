@@ -31,6 +31,11 @@ raise_no_attribute = pytest.raises(
     AttributeError, match=r"('.+?' object|type object '.+?') has no attribute "
 )
 
+# AttributeError("property '...' of '...' object has no setter")
+raise_prop_not_writable = pytest.raises(
+    AttributeError, match=r"property '.+?' of '.+?' object has no setter"
+)
+
 # TypeError("got an unexpected keyword argument '...'")
 raise_unexpected_kwarg = pytest.raises(
     TypeError, match=r"got an unexpected keyword argument"
