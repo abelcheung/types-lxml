@@ -56,10 +56,6 @@ def _set_class_lookup_method_hook(ctx: MethodContext) -> Type:
     assert len(ctx.arg_types) == 1
     assert isinstance(ctx.type, Instance)
 
-    # Don't need any check on class names (ctx.type.type), since only
-    # etree.XMLParser, etree.HTMLParser, iterparse and their subclasses
-    # can possibly have set_element_class_lookup method
-
     if len(ctx.arg_types[0]) == 0:  # no arg = reset element lookup to default
         ctx.type.args = (_create_instance_from('lxml.etree._element._Element'),)
         return ctx.default_return_type
@@ -68,16 +64,24 @@ def _set_class_lookup_method_hook(ctx: MethodContext) -> Type:
     lookup = get_proper_type(ctx.arg_types[0][0])
     assert isinstance(lookup, Instance)
 
-    # FIXME Not handling custom ElementClassLookup subclass yet
+    # Use stock class lookups -> check fullname
+    # Custom subclassed lookups -> check bases
     match lookup.type.fullname:
         case 'lxml.html._parse.HtmlElementClassLookup':
             ctx.type.args = (_create_instance_from('lxml.html._element.HtmlElement'),)
-            return ctx.default_return_type
         case 'lxml.objectify._misc.ObjectifyElementClassLookup':
             ctx.type.args = (_create_instance_from('lxml.objectify._element.ObjectifiedElement'),)
-            return ctx.default_return_type
-        case _:  # output vanilla _Element for other lookups
-            return ctx.default_return_type
+        case _:
+            pass
+    for base in lookup.type.bases:
+        match base.type.fullname:
+            case 'lxml.html._parse.HtmlElementClassLookup':
+                ctx.type.args = (_create_instance_from('lxml.html._element.HtmlElement'),)
+            case 'lxml.objectify._misc.ObjectifyElementClassLookup':
+                ctx.type.args = (_create_instance_from('lxml.objectify._element.ObjectifiedElement'),)
+            case _:
+                pass
+    return ctx.default_return_type
 
 def plugin(_: str) -> type[MypyLxmlPlugin]:
     return MypyLxmlPlugin
