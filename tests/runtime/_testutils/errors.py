@@ -32,8 +32,9 @@ raise_no_attribute = pytest.raises(
 )
 
 # AttributeError("property '...' of '...' object has no setter")
+# AttributeError("can't set attribute '.+?'")  # py3.10
 raise_prop_not_writable = pytest.raises(
-    AttributeError, match=r"property '.+?' of '.+?' object has no setter"
+    AttributeError, match=r"property '.+?' of '.+?' object has no setter|can't set attribute '.+?'"
 )
 
 # TypeError("got an unexpected keyword argument '...'")
