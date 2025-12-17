@@ -23,7 +23,6 @@ from hypothesis import (
     settings,
 )
 from lxml.etree import (
-    LXML_VERSION,
     XPathResultError,
     _Element,
     _ElementTree,
@@ -49,17 +48,13 @@ from .._testutils.errors import (
     raise_unexpected_kwarg,
     raise_wrong_pos_arg_count,
 )
+from .._testutils.marker import byte_bug_marker
 
 if sys.version_info >= (3, 11):
     from typing import reveal_type
 else:
     from typing_extensions import reveal_type
 
-
-byte_bug_marker = pytest.mark.xfail(
-    LXML_VERSION[:3] == (5, 1, 0),
-    reason="lxml 5.1.0 has bug in bytes support of html processing functions",
-)
 
 _BASE_HREF = "http://dummy.base"
 

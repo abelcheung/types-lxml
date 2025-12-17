@@ -27,6 +27,7 @@ from .._testutils.errors import (
     raise_no_attribute,
     raise_prop_not_writable,
 )
+from .._testutils.marker import github_fail_marker
 
 if sys.version_info >= (3, 11):
     from typing import reveal_type
@@ -100,7 +101,7 @@ class TestMixinProperties:
         with pytest.raises(AssertionError):
             disposable_html_element.classes = iterable_of(v)  # type: ignore[assignment]  # pyright: ignore[reportAttributeAccessIssue]
 
-    @pytest.mark.xfail(reason="failure in Github runners")
+    @github_fail_marker
     @pytest.mark.notypechecker("mypy")
     def test_label_property_rw_ok(
         self,
