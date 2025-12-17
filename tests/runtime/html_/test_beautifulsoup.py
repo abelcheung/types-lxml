@@ -287,6 +287,10 @@ class TestConvertTree:
         if not callable(thing):
             with pytest.raises(TypeError, match=r"object is not callable"):
                 _ = _soup.convert_tree(soup, makeelement=thing)
+        elif thing is dict:
+            # ValueError: dictionary update sequence element #0 has length 1; 2 is required
+            with pytest.raises(ValueError, match=r"2 is required"):
+                _ = _soup.convert_tree(soup, makeelement=cast(Any, thing))
         else:
             with pytest.raises(TypeError):
                 _ = _soup.convert_tree(soup, makeelement=cast(Any, thing))
