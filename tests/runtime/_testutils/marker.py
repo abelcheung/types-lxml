@@ -9,6 +9,6 @@ byte_bug_marker = pytest.mark.xfail(
 )
 
 github_fail_marker = pytest.mark.xfail(
-    condition=os.getenv("GITHUB_ACTIONS") is not None,
+    condition=os.getenv("GITHUB_ACTION") is not None,
     reason="Failures only on GitHub Actions CI",
 )
