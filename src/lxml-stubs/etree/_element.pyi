@@ -9,7 +9,6 @@ from typing import (
     Any,
     Generic,
     Literal,
-    TypeAlias,
     TypeVar,
     final,
     overload,
@@ -21,6 +20,11 @@ from ..cssselect import _CSSTransArg
 from ._module_misc import CDATA, DocInfo, QName
 from ._parser import CustomTargetParser
 from ._xslt import XSLTAccessControl, XSLTExtension, _Stylesheet_Param, _XSLTResultTree
+
+if sys.version_info >= (3, 10):
+    from typing import TypeAlias
+else:
+    from typing_extensions import TypeAlias
 
 if sys.version_info >= (3, 11):
     from typing import Never, Self
