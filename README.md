@@ -5,6 +5,9 @@
 
 ## Important note
 
+- Upcoming release:
+  - Support for [`ty` type checker from Astral](https://docs.astral.sh/ty/) in progress
+
 - Since `2025.11.25`:
   - [PEP 800 support](https://peps.python.org/pep-0800/), thus only compatible with newest type checkers as of Oct 2025
   - Declare and make use of Python 3.14 support; drops Python 3.8 support
