@@ -58,6 +58,7 @@ dev = [
     'mypy >= 1.18.1',
     'pyright >= 1.1.406',
     'basedpyright >= 1.31.6; platform_machine != "i686"',
+    'ty',
 ]
 
 # mostly pinned for tox testing except dev group
@@ -71,6 +72,7 @@ basic = [
 mypy = ["mypy == 1.19.0"]
 pyright = ["pyright == 1.1.407"]
 basedpyright = ["basedpyright == 1.35.0; platform_machine != 'i686'"]
+ty = ["ty"]
 format = ["ruff ~= 0.6"]
 stub-test = [
     # pytest 9.x disallow pytest_plugins in non-top conftest.py
@@ -230,6 +232,7 @@ typecheck = [
     'basedpyright',
     'pyright',
     'mypy',
+    'ty',
 ]
 static = [
     'py39-stub',
@@ -311,6 +314,23 @@ dependency_groups = [
     'basedpyright',
 ]
 commands = [['basedpyright', {replace = 'posargs', extend = true}, 'src']]
+
+[tool.tox.env.ty]
+description = 'Use ty to check annotation files for error'
+package = 'skip'
+dependency_groups = [
+    'basic',
+    'mypy',
+    'ty',
+]
+commands = [
+    ['ty', 'check', {replace = 'posargs', extend = true}, 'src/lxml-stubs'],
+    [
+        'ty', 'check', '--python-version=3.10',
+        {replace = 'posargs', extend = true},
+        'src/mypy_plugin_lxml',
+    ],
+]
 
 [tool.tox._env_stub]
 pass_env = [
