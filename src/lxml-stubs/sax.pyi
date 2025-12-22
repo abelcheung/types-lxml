@@ -31,16 +31,16 @@ class ElementTreeContentHandler(Generic[_ET], ContentHandler):
         qname: Unused,
         attributes: SupportsLaxItems[tuple[str | None, str], str] | None = None,
     ) -> None: ...
-    def endElementNS(  # pyright: ignore[reportIncompatibleMethodOverride]
+    def endElementNS(  # pyright: ignore[reportIncompatibleMethodOverride]  # ty: ignore[invalid-method-override]
         self,
         ns_name: tuple[str | None, str],
         qname: Unused,
     ) -> None: ...
-    def characters(  # pyright: ignore[reportIncompatibleMethodOverride]
+    def characters(  # pyright: ignore[reportIncompatibleMethodOverride]  # ty: ignore[invalid-method-override]
         self,
         data: str,
     ) -> None: ...
-    def startElement(  # pyright: ignore[reportIncompatibleMethodOverride]
+    def startElement(  # pyright: ignore[reportIncompatibleMethodOverride]  # ty: ignore[invalid-method-override]
         self,
         name: str,
         attributes: SupportsLaxItems[str, str] | None = None,

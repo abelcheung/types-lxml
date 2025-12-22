@@ -139,7 +139,7 @@ class HtmlElement(etree.ElementBase):
         __x: int,
     ) -> HtmlElement: ...
     @overload
-    def __getitem__(  # pyright: ignore[reportIncompatibleMethodOverride]
+    def __getitem__(  # pyright: ignore[reportIncompatibleMethodOverride]  # ty: ignore[invalid-method-override]
         self,
         __x: slice,
     ) -> list[HtmlElement]: ...
@@ -150,14 +150,14 @@ class HtmlElement(etree.ElementBase):
         __v: HtmlElement,
     ) -> None: ...
     @overload
-    def __setitem__(  # pyright: ignore[reportIncompatibleMethodOverride]
+    def __setitem__(  # pyright: ignore[reportIncompatibleMethodOverride]  # ty: ignore[invalid-method-override]
         self,
         __x: slice,
         __v: Iterable[HtmlElement],
     ) -> None: ...
     def __iter__(self) -> Iterator[HtmlElement]: ...
     def __reversed__(self) -> Iterator[HtmlElement]: ...
-    def append(  # pyright: ignore[reportIncompatibleMethodOverride]
+    def append(  # pyright: ignore[reportIncompatibleMethodOverride]  # ty: ignore[invalid-method-override]
         self,
         element: HtmlElement,
     ) -> None: ...
@@ -168,34 +168,34 @@ class HtmlElement(etree.ElementBase):
         elements: etree._Element,
     ) -> Never: ...
     @overload
-    def extend(  # pyright: ignore[reportIncompatibleMethodOverride]
+    def extend(  # pyright: ignore[reportIncompatibleMethodOverride]  # ty: ignore[invalid-method-override]
         self,
         elements: Iterable[HtmlElement],
     ) -> None: ...
-    def insert(  # pyright: ignore[reportIncompatibleMethodOverride]
+    def insert(  # pyright: ignore[reportIncompatibleMethodOverride]  # ty: ignore[invalid-method-override]
         self,
         index: int,
         element: HtmlElement,
     ) -> None: ...
-    def remove(  # pyright: ignore[reportIncompatibleMethodOverride]
+    def remove(  # pyright: ignore[reportIncompatibleMethodOverride]  # ty: ignore[invalid-method-override]
         self,
         element: HtmlElement,
     ) -> None: ...
-    def index(  # pyright: ignore[reportIncompatibleMethodOverride]
+    def index(  # pyright: ignore[reportIncompatibleMethodOverride]  # ty: ignore[invalid-method-override]
         self,
         child: HtmlElement,
         start: int | None = None,
         stop: int | None = None,
     ) -> int: ...
-    def addnext(  # pyright: ignore[reportIncompatibleMethodOverride]
+    def addnext(  # pyright: ignore[reportIncompatibleMethodOverride]  # ty: ignore[invalid-method-override]
         self,
         element: HtmlElement,
     ) -> None: ...
-    def addprevious(  # pyright: ignore[reportIncompatibleMethodOverride]
+    def addprevious(  # pyright: ignore[reportIncompatibleMethodOverride]  # ty: ignore[invalid-method-override]
         self,
         element: HtmlElement,
     ) -> None: ...
-    def replace(  # pyright: ignore[reportIncompatibleMethodOverride]
+    def replace(  # pyright: ignore[reportIncompatibleMethodOverride]  # ty: ignore[invalid-method-override]
         self,
         old_element: HtmlElement,
         new_element: HtmlElement,
@@ -279,7 +279,7 @@ class HtmlElement(etree.ElementBase):
         path: _ElemPathArg,
         namespaces: _StrOnlyNSMap | None = None,
     ) -> HtmlElement | None: ...
-    def findall(  # pyright: ignore[reportIncompatibleMethodOverride]
+    def findall(  # pyright: ignore[reportIncompatibleMethodOverride]  # ty: ignore[invalid-method-override]
         self,
         path: _ElemPathArg,
         namespaces: _StrOnlyNSMap | None = None,
@@ -289,7 +289,7 @@ class HtmlElement(etree.ElementBase):
         path: _ElemPathArg,
         namespaces: _StrOnlyNSMap | None = None,
     ) -> Iterator[HtmlElement]: ...
-    def cssselect(  # pyright: ignore[reportIncompatibleMethodOverride]
+    def cssselect(  # pyright: ignore[reportIncompatibleMethodOverride]  # ty: ignore[invalid-method-override]
         self,
         expr: str,
         *,

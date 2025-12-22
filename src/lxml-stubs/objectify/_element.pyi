@@ -59,7 +59,7 @@ class ObjectifiedElement(ElementBase):
     def addattr(self, tag: _TagName, value: object) -> None: ...
     def countchildren(self) -> int: ...
     def descendantpaths(self, prefix: str | list[str] | None = None) -> list[str]: ...
-    def getchildren(  # pyright: ignore[reportIncompatibleMethodOverride]
+    def getchildren(  # pyright: ignore[reportIncompatibleMethodOverride]  # ty: ignore[invalid-method-override]
         self,
     ) -> list[ObjectifiedElement]: ...
     def __iter__(self) -> Iterator[ObjectifiedElement]: ...
@@ -73,7 +73,7 @@ class ObjectifiedElement(ElementBase):
     @overload
     def __getitem__(self, key: int | str | bytes, /) -> ObjectifiedElement: ...
     @overload
-    def __getitem__(  # pyright: ignore[reportIncompatibleMethodOverride]
+    def __getitem__(  # pyright: ignore[reportIncompatibleMethodOverride]  # ty: ignore[invalid-method-override]
         self,
         key: slice,
         /,
@@ -86,7 +86,7 @@ class ObjectifiedElement(ElementBase):
     # TODO Check if _Element methods need overriding
     # CSS selector is not a normal use case for objectified
     # element (and unnecessary), but still usable nonetheless
-    def cssselect(  # pyright: ignore[reportIncompatibleMethodOverride]
+    def cssselect(  # pyright: ignore[reportIncompatibleMethodOverride]  # ty: ignore[invalid-method-override]
         self,
         expr: str,
         *,

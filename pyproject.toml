@@ -148,6 +148,15 @@ plugins = [
     "mypy.plugins.proper_plugin",
 ]
 
+[[tool.ty.overrides]]
+include = [
+    "src/lxml-stubs/etree/__init__.pyi",
+    "src/lxml-stubs/html/clean.pyi",
+]
+
+[tool.ty.overrides.rules]
+deprecated = "ignore"
+
 [tool.ruff]
 target-version = "py312"
 

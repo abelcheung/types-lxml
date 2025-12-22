@@ -176,7 +176,7 @@ class PyErrorLog(_BaseErrorLog):
     # copy() is disallowed, implementation chooses to fail in a
     # silent way by returning dummy _ListErrorLog. We skip it altogether.
     def log(self, log_entry: _LogEntry, message: str, *args: object) -> None: ...
-    def receive(  # pyright: ignore[reportIncompatibleMethodOverride]
+    def receive(  # pyright: ignore[reportIncompatibleMethodOverride]  # ty: ignore[invalid-method-override]
         self, log_entry: _LogEntry
     ) -> None: ...
 

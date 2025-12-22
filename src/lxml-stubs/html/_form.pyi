@@ -24,7 +24,7 @@ from ._element import HtmlElement
 
 _T = TypeVar("_T")
 
-_AnyInputElement = InputElement | SelectElement | TextareaElement  # noqa: F821
+_AnyInputElement = InputElement | SelectElement | TextareaElement  # noqa: F821  # ty: ignore[unresolved-reference]
 
 class FormElement(HtmlElement):
     @property
@@ -120,13 +120,13 @@ class MultipleSelectOptions(MutableSet[str]):
     def __contains__(self, x: object) -> bool: ...
     def __iter__(self) -> Iterator[str]: ...
     def __len__(self) -> int: ...
-    def add(  # pyright: ignore[reportIncompatibleMethodOverride]
+    def add(  # pyright: ignore[reportIncompatibleMethodOverride]  # ty: ignore[invalid-method-override]
         self, item: str
     ) -> None: ...
-    def remove(  # pyright: ignore[reportIncompatibleMethodOverride]
+    def remove(  # pyright: ignore[reportIncompatibleMethodOverride]  # ty: ignore[invalid-method-override]
         self, item: str
     ) -> None: ...
-    def discard(  # pyright: ignore[reportIncompatibleMethodOverride]
+    def discard(  # pyright: ignore[reportIncompatibleMethodOverride]  # ty: ignore[invalid-method-override]
         self, item: str
     ) -> None: ...
 
@@ -152,7 +152,7 @@ class CheckboxValues(MutableSet[str]):
     def __iter__(self) -> Iterator[str]: ...
     def __len__(self) -> int: ...
     def add(self, value: str) -> None: ...
-    def discard(  # pyright: ignore[reportIncompatibleMethodOverride]
+    def discard(  # pyright: ignore[reportIncompatibleMethodOverride]  # ty: ignore[invalid-method-override]
         self, item: str
     ) -> None: ...
 

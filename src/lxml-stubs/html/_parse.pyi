@@ -155,7 +155,7 @@ class HtmlElementClassLookup(etree.CustomElementClassLookup):
         # docstring says mixins is mapping, but implementation says otherwise
         mixins: Iterable[tuple[str, type[HtmlElement]]] | None = None,
     ) -> None: ...
-    def lookup(  # pyright: ignore[reportIncompatibleMethodOverride]
+    def lookup(  # pyright: ignore[reportIncompatibleMethodOverride]  # ty: ignore[invalid-method-override]
         self,
         node_type: Literal["element", "comment", "PI", "entity"] | None,
         document: Unused,

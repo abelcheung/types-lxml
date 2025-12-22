@@ -18,7 +18,9 @@ def is_cython_class_method(func: Callable[..., Any]) -> bool:
     glob = getattr(func, "func_globals", None)
     if not glob:
         return False
-    parent = func.__qualname__.rsplit(".", 1)[0]
+    if not hasattr(func, "__qualname__"):
+        return False
+    parent = func.__qualname__.rsplit(".", 1)[0]  # ty: ignore[unresolved-attribute]
     return isclass(glob[parent])
 
 
@@ -31,7 +33,7 @@ def signature_tester(
         def wrapped(*args: _P.args, **kw: _P.kwargs) -> None:
             sig = signature(func_to_check)
             param = list(sig.parameters.values())
-            funcname = func_to_check.__qualname__
+            funcname = func_to_check.__qualname__  # ty: ignore[unresolved-attribute]
 
             has_self = False
             if param[0].name == "self":
@@ -109,7 +111,7 @@ def empty_signature_tester(
                 if param:
                     raise FuncSignatureError(
                         "Signature expected to be empty but actually is not",
-                        func.__qualname__,
+                        func.__qualname__,  # ty: ignore[unresolved-attribute]
                     )
             f(*args, **kw)
 

@@ -250,7 +250,7 @@ class TestFindClassArg:
     # yet they will never ever match class names
     def test_wrong_type_no_raise(self, disposable_html_element: HtmlElement) -> None:
         arg: Any
-        for arg in (  # pyright: ignore[reportUnknownVariableType]
+        for arg in (
             None,
             tuple(),
             True,
@@ -261,7 +261,7 @@ class TestFindClassArg:
             range(1, 1),  # degenerates to nothing
             Decimal(1),
         ):
-            elems = find_class(disposable_html_element, arg)
+            elems = find_class(disposable_html_element, cast(Any, arg))  # pyright: ignore[reportUnnecessaryCast]
             assert len(elems) == 0
 
 

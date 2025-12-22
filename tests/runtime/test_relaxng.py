@@ -128,7 +128,7 @@ class TestRelaxNGInput:
             # too diversified
             raise_cm = pytest.raises((TypeError, AttributeError))
         with raise_cm:
-            _ = RelaxNG.from_rnc_string(src=cast(Any, thing))
+            _ = RelaxNG.from_rnc_string(src=cast(Any, thing))  # ty: ignore[redundant-cast]
 
     @settings(max_examples=5)
     @given(iterable_of=_st.fixed_item_iterables())

@@ -105,7 +105,7 @@ class TestIterparse:
             reveal_type(elem)
 
     def test_xml_more_event(self, svg_filepath: Path) -> None:
-        walker = iterparse(
+        walker = iterparse(  # ty: ignore[no-matching-overload]
             svg_filepath, ["start", "end", "start-ns", "end-ns", "comment"]
         )
         reveal_type(walker)

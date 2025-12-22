@@ -33,8 +33,6 @@ if sys.version_info >= (3, 13):
 else:
     from typing_extensions import deprecated
 
-_Stylesheet_Param = _XSLTQuotedStringParam | XPath | str  # noqa: F821
-
 # exported constants
 LIBXSLT_VERSION: Final[tuple[int, int, int]]
 LIBXSLT_COMPILED_VERSION: Final[tuple[int, int, int]]
@@ -74,6 +72,8 @@ class _XSLTQuotedStringParam:
     quote escaping"""
 
     strval: bytes
+
+_Stylesheet_Param = _XSLTQuotedStringParam | XPath | str
 
 class __AccessControlConfig(TypedDict):
     read_file: bool | None
