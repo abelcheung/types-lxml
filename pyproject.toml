@@ -49,7 +49,7 @@ dev = [
     'urllib3 >= 2.0',
     "pytest >= 7.0, < 9",
     'pytest-mypy-plugins >= 3.2.0',
-    'pytest-revealtype-injector >= 0.6.2',
+    'pytest-revealtype-injector >= 0.6.3',
     'lxml >= 5.0',
     'rnc2rng',
     'hypothesis >= 6.127.7',  # HypothesisWorks/hypothesis#4269
@@ -85,7 +85,7 @@ rt-test = [
     "hypothesis == 6.148.6",
     "tzdata",
     "pytest >= 7.0, < 9",
-    "pytest-revealtype-injector == 0.6.2",
+    "pytest-revealtype-injector == 0.6.3",
     "rnc2rng == 2.7.0",
     {include-group = "mypy"},
     {include-group = "pyright"},
