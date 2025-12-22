@@ -8,7 +8,7 @@
  7 files changed, 62 insertions(+), 63 deletions(-)
 
 diff --git a/pyproject.toml b/pyproject.toml
-index 54494f2..4cf9ee2 100644
+index bb3ff5c..7309657 100644
 --- a/pyproject.toml
 +++ b/pyproject.toml
 @@ -5,7 +5,7 @@ requires = ['pdm-backend ~= 2.4']
@@ -21,7 +21,7 @@ index 54494f2..4cf9ee2 100644
  description = 'Complete lxml external type annotation'
  readme = 'README.md'
 diff --git a/src/lxml-stubs/cssselect.pyi b/src/lxml-stubs/cssselect.pyi
-index d7845eb..9508ca4 100644
+index a37ec88..6ee9a2c 100644
 --- a/src/lxml-stubs/cssselect.pyi
 +++ b/src/lxml-stubs/cssselect.pyi
 @@ -4,8 +4,8 @@ import cssselect as _csel
@@ -55,11 +55,11 @@ index d7845eb..9508ca4 100644
 -    ) -> list[_ET]: ...
 +    ) -> list[_Element]: ...
 diff --git a/src/lxml-stubs/etree/_element.pyi b/src/lxml-stubs/etree/_element.pyi
-index fe25c07..6589b89 100644
+index f9e4b37..2e1f903 100644
 --- a/src/lxml-stubs/etree/_element.pyi
 +++ b/src/lxml-stubs/etree/_element.pyi
-@@ -23,9 +23,9 @@ from ._parser import CustomTargetParser
- from ._xslt import XSLTAccessControl, XSLTExtension, _Stylesheet_Param, _XSLTResultTree
+@@ -27,9 +27,9 @@ else:
+     from typing_extensions import TypeAlias
  
  if sys.version_info >= (3, 11):
 -    from typing import Never, Self
@@ -70,7 +70,7 @@ index fe25c07..6589b89 100644
  
  if sys.version_info >= (3, 13):
      from warnings import deprecated
-@@ -185,11 +185,11 @@ class _Element:
+@@ -189,11 +189,11 @@ class _Element:
      #
      def __delitem__(self, __k: int | slice) -> None: ...
      @overload
@@ -85,7 +85,7 @@ index fe25c07..6589b89 100644
      # An element itself can be treated as container of other elements. When used
      # like elem[:] = new_elem, only subelements within new_elem will be
      # inserted, but not new_elem itself. If there is none, the whole slice would
-@@ -199,13 +199,13 @@ class _Element:
+@@ -203,13 +203,13 @@ class _Element:
      # doesn't apply to magic methods, at least for Pylance. Thus we create
      # additional overload for extend() but not here.
      @overload
@@ -102,7 +102,7 @@ index fe25c07..6589b89 100644
      def set(self, key: _t._AttrName, value: _t._AttrVal) -> None:
          """Sets an element attribute.
  
-@@ -213,7 +213,7 @@ class _Element:
+@@ -217,7 +217,7 @@ class _Element:
          --------
          - [API Documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree._Element.set)
          """
@@ -111,7 +111,7 @@ index fe25c07..6589b89 100644
          """Adds a subelement to the end of this element.
  
          See Also
-@@ -235,7 +235,7 @@ class _Element:
+@@ -239,7 +239,7 @@ class _Element:
          - [API Documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree._Element.extend)
          """
      @overload
@@ -120,7 +120,7 @@ index fe25c07..6589b89 100644
          """Extends the current children by the elements in the iterable.
  
          See Also
-@@ -249,14 +249,14 @@ class _Element:
+@@ -253,14 +253,14 @@ class _Element:
          --------
          - [API Documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree._Element.clear)
          """
@@ -137,7 +137,7 @@ index fe25c07..6589b89 100644
          """Removes a matching subelement.
  
          See Also
-@@ -265,7 +265,7 @@ class _Element:
+@@ -269,7 +269,7 @@ class _Element:
          """
      def index(
          self,
@@ -146,7 +146,7 @@ index fe25c07..6589b89 100644
          start: int | None = None,
          stop: int | None = None,
      ) -> int:
-@@ -323,49 +323,49 @@ class _Element:
+@@ -327,49 +327,49 @@ class _Element:
      #
      # extra Element / ET methods
      #
@@ -203,7 +203,7 @@ index fe25c07..6589b89 100644
          """Return an ElementTree for the root node of the document that
          contains this element.
  
-@@ -376,7 +376,7 @@ class _Element:
+@@ -380,7 +380,7 @@ class _Element:
      @overload
      def itersiblings(
          self, *tags: _t._TagSelector, preceding: bool = False
@@ -212,7 +212,7 @@ index fe25c07..6589b89 100644
          """Iterate over the following or preceding siblings of this element.
  
          Annotation
-@@ -395,7 +395,7 @@ class _Element:
+@@ -399,7 +399,7 @@ class _Element:
          tag: _t._TagSelector | Iterable[_t._TagSelector] | None = None,
          *,
          preceding: bool = False,
@@ -221,7 +221,7 @@ index fe25c07..6589b89 100644
          """Iterate over the following or preceding siblings of this element.
  
          Annotation
-@@ -410,7 +410,7 @@ class _Element:
+@@ -414,7 +414,7 @@ class _Element:
          - [Possible tag values in `iter()`](https://lxml.de/apidoc/lxml.etree.html#lxml.etree._Element.iter)
          """
      @overload
@@ -230,7 +230,7 @@ index fe25c07..6589b89 100644
          """Iterate over the ancestors of this element (from parent to parent).
  
          Annotation
-@@ -426,7 +426,7 @@ class _Element:
+@@ -430,7 +430,7 @@ class _Element:
      @overload
      def iterancestors(
          self, tag: _t._TagSelector | Iterable[_t._TagSelector] | None = None
@@ -239,7 +239,7 @@ index fe25c07..6589b89 100644
          """Iterate over the ancestors of this element (from parent to parent).
  
          Annotation
-@@ -441,7 +441,7 @@ class _Element:
+@@ -445,7 +445,7 @@ class _Element:
          - [Possible tag values in `iter()`](https://lxml.de/apidoc/lxml.etree.html#lxml.etree._Element.iter)
          """
      @overload
@@ -248,7 +248,7 @@ index fe25c07..6589b89 100644
          """Iterate over the descendants of this element in document order.
  
          Annotation
-@@ -457,7 +457,7 @@ class _Element:
+@@ -461,7 +461,7 @@ class _Element:
      @overload
      def iterdescendants(
          self, tag: _t._TagSelector | Iterable[_t._TagSelector] | None = None
@@ -257,7 +257,7 @@ index fe25c07..6589b89 100644
          """Iterate over the descendants of this element in document order.
  
          Annotation
-@@ -474,7 +474,7 @@ class _Element:
+@@ -478,7 +478,7 @@ class _Element:
      @overload
      def iterchildren(
          self, *tags: _t._TagSelector, reversed: bool = False
@@ -266,7 +266,7 @@ index fe25c07..6589b89 100644
          """Iterate over the children of this element.
  
          Annotation
-@@ -493,7 +493,7 @@ class _Element:
+@@ -497,7 +497,7 @@ class _Element:
          tag: _t._TagSelector | Iterable[_t._TagSelector] | None = None,
          *,
          reversed: bool = False,
@@ -275,7 +275,7 @@ index fe25c07..6589b89 100644
          """Iterate over the children of this element.
  
          Annotation
-@@ -508,7 +508,7 @@ class _Element:
+@@ -512,7 +512,7 @@ class _Element:
          - [Possible tag values in `iter()`](https://lxml.de/apidoc/lxml.etree.html#lxml.etree._Element.iter)
          """
      @overload
@@ -284,7 +284,7 @@ index fe25c07..6589b89 100644
          """Iterate over all elements in the subtree in document order (depth
          first pre-order), starting with this element.
  
-@@ -524,7 +524,7 @@ class _Element:
+@@ -528,7 +528,7 @@ class _Element:
      @overload
      def iter(
          self, tag: _t._TagSelector | Iterable[_t._TagSelector] | None = None
@@ -293,7 +293,7 @@ index fe25c07..6589b89 100644
          """Iterate over all elements in the subtree in document order (depth
          first pre-order), starting with this element.
  
-@@ -572,7 +572,7 @@ class _Element:
+@@ -576,7 +576,7 @@ class _Element:
          - [API Documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree._Element.itertext)
          - [Possible tag values in `iter()`](https://lxml.de/apidoc/lxml.etree.html#lxml.etree._Element.iter)
          """
@@ -302,7 +302,7 @@ index fe25c07..6589b89 100644
      """Creates a new element associated with the same document.
  
      See Also
-@@ -581,7 +581,7 @@ class _Element:
+@@ -585,7 +585,7 @@ class _Element:
      """
      def find(
          self, path: _t._ElemPathArg, namespaces: _t._StrOnlyNSMap | None = None
@@ -311,7 +311,7 @@ index fe25c07..6589b89 100644
          """Creates a new element associated with the same document.
  
          See Also
-@@ -624,7 +624,7 @@ class _Element:
+@@ -628,7 +628,7 @@ class _Element:
          """
      def findall(
          self, path: _t._ElemPathArg, namespaces: _t._StrOnlyNSMap | None = None
@@ -320,7 +320,7 @@ index fe25c07..6589b89 100644
          """Finds all matching subelements, by tag name or path.
  
          See Also
-@@ -633,7 +633,7 @@ class _Element:
+@@ -637,7 +637,7 @@ class _Element:
          """
      def iterfind(
          self, path: _t._ElemPathArg, namespaces: _t._StrOnlyNSMap | None = None
@@ -329,7 +329,7 @@ index fe25c07..6589b89 100644
          """Iterates over all matching subelements, by tag name or path.
  
          See Also
-@@ -661,7 +661,7 @@ class _Element:
+@@ -665,7 +665,7 @@ class _Element:
          expr: str,
          *,
          translator: _CSSTransArg = "xml",
@@ -338,7 +338,7 @@ index fe25c07..6589b89 100644
          """Run the CSS expression on this element and its children,
          returning a list of the results.
  
-@@ -670,13 +670,13 @@ class _Element:
+@@ -674,13 +674,13 @@ class _Element:
          - [API Documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree._Entity.cssselect)
          """
      @deprecated("Since v2.0 (2008); use list(element) or iterate over element")
@@ -389,10 +389,10 @@ index 60f92a4..b670190 100644
 -) -> _ET: ...
 +) -> _Element: ...
 diff --git a/src/lxml-stubs/html/_element.pyi b/src/lxml-stubs/html/_element.pyi
-index 9d511a7..d2d5a58 100644
+index 77c1b61..6d37ab9 100644
 --- a/src/lxml-stubs/html/_element.pyi
 +++ b/src/lxml-stubs/html/_element.pyi
-@@ -128,7 +128,7 @@ class HtmlElement(etree.ElementBase):
+@@ -133,7 +133,7 @@ class HtmlElement(etree.ElementBase):
      # Subclassing of _Element should not go beyond HtmlElement. For example,
      # while children of HtmlElement are mostly HtmlElement, FormElement never
      # contains FormElement as child.
@@ -401,7 +401,7 @@ index 9d511a7..d2d5a58 100644
      def __getitem__(
          self,
          __x: int,
-@@ -138,7 +138,7 @@ class HtmlElement(etree.ElementBase):
+@@ -143,7 +143,7 @@ class HtmlElement(etree.ElementBase):
          self,
          __x: slice,
      ) -> list[HtmlElement]: ...
@@ -410,45 +410,45 @@ index 9d511a7..d2d5a58 100644
      def __setitem__(
          self,
          __x: int,
-@@ -154,7 +154,7 @@ class HtmlElement(etree.ElementBase):
+@@ -159,7 +159,7 @@ class HtmlElement(etree.ElementBase):
      def __reversed__(self) -> Iterator[HtmlElement]: ...
-     def append(  # pyright: ignore[reportIncompatibleMethodOverride]
+     def append(  # pyright: ignore[reportIncompatibleMethodOverride]  # ty: ignore[invalid-method-override]
          self,
 -        element: HtmlElement,
 +        element: HtmlElement,  # type: ignore[override]
      ) -> None: ...
      @overload
      @deprecated("Expects iterable of elements as value, not single element")
-@@ -170,30 +170,30 @@ class HtmlElement(etree.ElementBase):
-     def insert(  # pyright: ignore[reportIncompatibleMethodOverride]
+@@ -175,30 +175,30 @@ class HtmlElement(etree.ElementBase):
+     def insert(  # pyright: ignore[reportIncompatibleMethodOverride]  # ty: ignore[invalid-method-override]
          self,
          index: int,
 -        element: HtmlElement,
 +        element: HtmlElement,  # type: ignore[override]
      ) -> None: ...
-     def remove(  # pyright: ignore[reportIncompatibleMethodOverride]
+     def remove(  # pyright: ignore[reportIncompatibleMethodOverride]  # ty: ignore[invalid-method-override]
          self,
 -        element: HtmlElement,
 +        element: HtmlElement,  # type: ignore[override]
      ) -> None: ...
-     def index(  # pyright: ignore[reportIncompatibleMethodOverride]
+     def index(  # pyright: ignore[reportIncompatibleMethodOverride]  # ty: ignore[invalid-method-override]
          self,
 -        child: HtmlElement,
 +        child: HtmlElement,  # type: ignore[override]
          start: int | None = None,
          stop: int | None = None,
      ) -> int: ...
-     def addnext(  # pyright: ignore[reportIncompatibleMethodOverride]
+     def addnext(  # pyright: ignore[reportIncompatibleMethodOverride]  # ty: ignore[invalid-method-override]
          self,
 -        element: HtmlElement,
 +        element: HtmlElement,  # type: ignore[override]
      ) -> None: ...
-     def addprevious(  # pyright: ignore[reportIncompatibleMethodOverride]
+     def addprevious(  # pyright: ignore[reportIncompatibleMethodOverride]  # ty: ignore[invalid-method-override]
          self,
 -        element: HtmlElement,
 +        element: HtmlElement,  # type: ignore[override]
      ) -> None: ...
-     def replace(  # pyright: ignore[reportIncompatibleMethodOverride]
+     def replace(  # pyright: ignore[reportIncompatibleMethodOverride]  # ty: ignore[invalid-method-override]
          self,
 -        old_element: HtmlElement,
 -        new_element: HtmlElement,
@@ -457,34 +457,34 @@ index 9d511a7..d2d5a58 100644
      ) -> None: ...
      def getparent(self) -> HtmlElement | None: ...
      def getnext(self) -> HtmlElement | None: ...
-@@ -274,7 +274,7 @@ class HtmlElement(etree.ElementBase):
+@@ -279,7 +279,7 @@ class HtmlElement(etree.ElementBase):
          path: _ElemPathArg,
          namespaces: _StrOnlyNSMap | None = None,
      ) -> HtmlElement | None: ...
--    def findall(  # pyright: ignore[reportIncompatibleMethodOverride]
-+    def findall(  # type: ignore[override]  # pyright: ignore[reportIncompatibleMethodOverride]
+-    def findall(  # pyright: ignore[reportIncompatibleMethodOverride]  # ty: ignore[invalid-method-override]
++    def findall(  # type: ignore[override]  # pyright: ignore[reportIncompatibleMethodOverride]  # ty: ignore[invalid-method-override]
          self,
          path: _ElemPathArg,
          namespaces: _StrOnlyNSMap | None = None,
-@@ -284,7 +284,7 @@ class HtmlElement(etree.ElementBase):
+@@ -289,7 +289,7 @@ class HtmlElement(etree.ElementBase):
          path: _ElemPathArg,
          namespaces: _StrOnlyNSMap | None = None,
      ) -> Iterator[HtmlElement]: ...
--    def cssselect(  # pyright: ignore[reportIncompatibleMethodOverride]
-+    def cssselect(  # type: ignore[override]  # pyright: ignore[reportIncompatibleMethodOverride]
+-    def cssselect(  # pyright: ignore[reportIncompatibleMethodOverride]  # ty: ignore[invalid-method-override]
++    def cssselect(  # type: ignore[override]  # pyright: ignore[reportIncompatibleMethodOverride]  # ty: ignore[invalid-method-override]
          self,
          expr: str,
          *,
 diff --git a/src/lxml-stubs/objectify/_element.pyi b/src/lxml-stubs/objectify/_element.pyi
-index c9b1404..96d23d9 100644
+index 0a18dc8..c8c6c26 100644
 --- a/src/lxml-stubs/objectify/_element.pyi
 +++ b/src/lxml-stubs/objectify/_element.pyi
 @@ -59,7 +59,7 @@ class ObjectifiedElement(ElementBase):
      def addattr(self, tag: _TagName, value: object) -> None: ...
      def countchildren(self) -> int: ...
      def descendantpaths(self, prefix: str | list[str] | None = None) -> list[str]: ...
--    def getchildren(  # pyright: ignore[reportIncompatibleMethodOverride]
-+    def getchildren(  # type: ignore[override]  # pyright: ignore[reportIncompatibleMethodOverride]
+-    def getchildren(  # pyright: ignore[reportIncompatibleMethodOverride]  # ty: ignore[invalid-method-override]
++    def getchildren(  # type: ignore[override]  # pyright: ignore[reportIncompatibleMethodOverride]  # ty: ignore[invalid-method-override]
          self,
      ) -> list[ObjectifiedElement]: ...
      def __iter__(self) -> Iterator[ObjectifiedElement]: ...
@@ -496,13 +496,13 @@ index c9b1404..96d23d9 100644
 +    @overload  # type: ignore[override]
      def __getitem__(self, key: int | str | bytes, /) -> ObjectifiedElement: ...
      @overload
-     def __getitem__(  # pyright: ignore[reportIncompatibleMethodOverride]
+     def __getitem__(  # pyright: ignore[reportIncompatibleMethodOverride]  # ty: ignore[invalid-method-override]
 @@ -86,7 +86,7 @@ class ObjectifiedElement(ElementBase):
      # TODO Check if _Element methods need overriding
      # CSS selector is not a normal use case for objectified
      # element (and unnecessary), but still usable nonetheless
--    def cssselect(  # pyright: ignore[reportIncompatibleMethodOverride]
-+    def cssselect(  # type: ignore[override]  # pyright: ignore[reportIncompatibleMethodOverride]
+-    def cssselect(  # pyright: ignore[reportIncompatibleMethodOverride]  # ty: ignore[invalid-method-override]
++    def cssselect(  # type: ignore[override]  # pyright: ignore[reportIncompatibleMethodOverride]  # ty: ignore[invalid-method-override]
          self,
          expr: str,
          *,
