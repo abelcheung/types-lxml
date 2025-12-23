@@ -39,6 +39,7 @@ if TYPE_CHECKING:
         _AttrVal,
     )
 
+
 class TestMixinProperties:
     def test_property_ro(
         self,
@@ -60,7 +61,6 @@ class TestMixinProperties:
         with raise_prop_not_writable:
             bightml_root.base_url = bightml_root.base_url  # type: ignore[misc]  # pyright: ignore[reportAttributeAccessIssue]
 
-
     def test_classes_property_rw_good(
         self,
         disposable_html_element: HtmlElement,
@@ -69,7 +69,7 @@ class TestMixinProperties:
         assert len(disposable_html_element.classes) == 1
         disposable_html_element.classes = disposable_html_element.classes
 
-        disposable_html_element.classes |= {'dummy'}
+        disposable_html_element.classes |= {"dummy"}
         assert len(disposable_html_element.classes) == 2
 
     @settings(suppress_health_check=[HealthCheck.too_slow], max_examples=300)
@@ -107,8 +107,8 @@ class TestMixinProperties:
         self,
         disposable_html_input_label: HtmlElement,
     ) -> None:
-        label: LabelElement = disposable_html_input_label.xpath('//label')[0]
-        input: InputElement = disposable_html_input_label.xpath('//input')[0]
+        label: LabelElement = disposable_html_input_label.xpath("//label")[0]
+        input: InputElement = disposable_html_input_label.xpath("//input")[0]
 
         reveal_type(disposable_html_input_label.label)
         reveal_type(input.label)
@@ -128,14 +128,16 @@ class TestMixinProperties:
         disposable_html_input_label: HtmlElement,
         thing: Any,
     ) -> None:
-        input: InputElement = disposable_html_input_label.xpath('//input')[0]
+        input: InputElement = disposable_html_input_label.xpath("//input")[0]
         try:
             _ = getattr(thing, "tag")
         except AttributeError:
             with raise_no_attribute:
                 input.label = thing
         else:
-            with pytest.raises(TypeError, match=r"can only assign label to a label element"):
+            with pytest.raises(
+                TypeError, match=r"can only assign label to a label element"
+            ):
                 input.label = thing
 
     @settings(max_examples=5)
@@ -145,9 +147,8 @@ class TestMixinProperties:
         disposable_html_input_label: HtmlElement,
         iterable_of: Callable[[LabelElement], Iterable[LabelElement]],
     ) -> None:
-        label: LabelElement = disposable_html_input_label.xpath('//label')[0]
-        input: InputElement = disposable_html_input_label.xpath('//input')[0]
+        label: LabelElement = disposable_html_input_label.xpath("//label")[0]
+        input: InputElement = disposable_html_input_label.xpath("//input")[0]
 
         with raise_no_attribute:
             input.label = iterable_of(label)  # type: ignore[assignment]  # pyright: ignore[reportAttributeAccessIssue]
-
