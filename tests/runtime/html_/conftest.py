@@ -10,7 +10,9 @@ from lxml.html import Element, HtmlElement
 
 @pytest.fixture(scope="class")
 def disposable_html_element(request: FixtureRequest) -> HtmlElement:
-    input_args: Sequence[Any] = getattr(request, "param", ["div", {"class": "disposable"}])
+    input_args: Sequence[Any] = getattr(
+        request, "param", ["div", {"class": "disposable"}]
+    )
     if isinstance(input_args, str):
         input_args = [input_args]
     return Element(*input_args)
@@ -41,9 +43,5 @@ def disposable_html_input_label() -> HtmlElement:
     import lxml.html.builder as b
 
     return b.HTML(
-        b.BODY(
-            b.INPUT({'id': 'foo', 'type': 'email'}),
-            b.LABEL({'for': 'foo'}, "bar")
-        )
+        b.BODY(b.INPUT({"id": "foo", "type": "email"}), b.LABEL({"for": "foo"}, "bar"))
     )
-

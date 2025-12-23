@@ -27,15 +27,15 @@ class MypyLxmlPlugin(Plugin):
         match method_name:
             # Delegate class name checking to the hook, because we want to
             # support user custom subclasses
-            case ('set_element_class_lookup' | 'setElementClassLookup'):
+            case "set_element_class_lookup" | "setElementClassLookup":
                 return _set_class_lookup_method_hook
             case _:
                 return None
 
 
 def _set_class_lookup_method_hook(ctx: MethodContext) -> Type:
-    """Set subscript element type when changing class lookup for parsers
-    """
+    """Set subscript element type when changing class lookup for parsers"""
+
     def _get_typeinfo_from(fullname: str) -> TypeInfo:
         module_fullname, _, klass = fullname.rpartition(".")
         assert isinstance(ctx.api, TypeChecker)
@@ -49,15 +49,14 @@ def _set_class_lookup_method_hook(ctx: MethodContext) -> Type:
     def _create_instance_from(fullname: str) -> Instance:
         return Instance(_get_typeinfo_from(fullname), [])
 
-
-    if len(ctx.arg_types) == 0: # Non-generic class like html.HTMLParser
+    if len(ctx.arg_types) == 0:  # Non-generic class like html.HTMLParser
         return ctx.default_return_type
 
     assert len(ctx.arg_types) == 1
     assert isinstance(ctx.type, Instance)
 
     if len(ctx.arg_types[0]) == 0:  # no arg = reset element lookup to default
-        ctx.type.args = (_create_instance_from('lxml.etree._element._Element'),)
+        ctx.type.args = (_create_instance_from("lxml.etree._element._Element"),)
         return ctx.default_return_type
 
     assert len(ctx.arg_types[0]) == 1
@@ -67,21 +66,28 @@ def _set_class_lookup_method_hook(ctx: MethodContext) -> Type:
     # Use stock class lookups -> check fullname
     # Custom subclassed lookups -> check bases
     match lookup.type.fullname:
-        case 'lxml.html._parse.HtmlElementClassLookup':
-            ctx.type.args = (_create_instance_from('lxml.html._element.HtmlElement'),)
-        case 'lxml.objectify._misc.ObjectifyElementClassLookup':
-            ctx.type.args = (_create_instance_from('lxml.objectify._element.ObjectifiedElement'),)
+        case "lxml.html._parse.HtmlElementClassLookup":
+            ctx.type.args = (_create_instance_from("lxml.html._element.HtmlElement"),)
+        case "lxml.objectify._misc.ObjectifyElementClassLookup":
+            ctx.type.args = (
+                _create_instance_from("lxml.objectify._element.ObjectifiedElement"),
+            )
         case _:
             pass
     for base in lookup.type.bases:
         match base.type.fullname:
-            case 'lxml.html._parse.HtmlElementClassLookup':
-                ctx.type.args = (_create_instance_from('lxml.html._element.HtmlElement'),)
-            case 'lxml.objectify._misc.ObjectifyElementClassLookup':
-                ctx.type.args = (_create_instance_from('lxml.objectify._element.ObjectifiedElement'),)
+            case "lxml.html._parse.HtmlElementClassLookup":
+                ctx.type.args = (
+                    _create_instance_from("lxml.html._element.HtmlElement"),
+                )
+            case "lxml.objectify._misc.ObjectifyElementClassLookup":
+                ctx.type.args = (
+                    _create_instance_from("lxml.objectify._element.ObjectifiedElement"),
+                )
             case _:
                 pass
     return ctx.default_return_type
+
 
 def plugin(_: str) -> type[MypyLxmlPlugin]:
     return MypyLxmlPlugin
