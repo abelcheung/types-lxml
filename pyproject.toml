@@ -157,6 +157,7 @@ deprecated = "ignore"
 
 [tool.pyrefly]
 project-includes = ["src"]
+search-path = ["tests/runtime"]
 python-version = "3.9"
 enabled-ignores = ["pyrefly"]
 
