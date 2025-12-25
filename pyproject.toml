@@ -124,10 +124,6 @@ reportPrivateUsage = false
 # They are for user consumption, we don't want to
 # trip over it ourselves.
 reportDeprecated = false
-# Newer and older pyright versions may need different
-# type-ignore locations, and we want to support a wider
-# range of pyright versions.
-reportUnnecessaryTypeIgnoreComment = false
 # Follows typeshed practice, separate mypy and pyright
 # type-ignores
 # See https://github.com/python/mypy/issues/12358
