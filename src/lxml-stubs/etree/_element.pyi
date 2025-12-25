@@ -1067,16 +1067,24 @@ class __ContentOnlyElement(_Element):
     # .text and .tag are overridden in each concrete class below
     #
     @property
+    # pyrefly: ignore[bad-override]
     def attrib(self) -> Mapping[_t.Unused, _t.Unused]: ...  # type: ignore[override]  # pyright: ignore[reportIncompatibleMethodOverride]
+    # pyrefly: ignore[bad-override]
     def get(self, key: _t.Unused, default: _t.Unused = None) -> None: ...  # type: ignore[override]
+    # pyrefly: ignore[bad-override]
     def set(self, key: Never, value: Never) -> Never: ...  # type: ignore[override]  # pyright: ignore[reportIncompatibleMethodOverride]
+    # pyrefly: ignore[bad-override]
     def append(self, element: Never) -> Never: ...  # type: ignore[override]  # pyright: ignore[reportIncompatibleMethodOverride]
+    # pyrefly: ignore[bad-override]
     def insert(self, index: Never, value: Never) -> Never: ...  # type: ignore[override]  # pyright: ignore[reportIncompatibleMethodOverride]
+    # pyrefly: ignore[bad-override]
     def __setitem__(self, __k: Never, __v: Never) -> Never: ...  # type: ignore[override]  # pyright: ignore[reportIncompatibleMethodOverride]
     # The intention is to discourage elem.__getitem__, allowing slice
     # argument in runtime doesn't make any sense
+    # pyrefly: ignore[bad-override]
     def __getitem__(self, __k: Never) -> Never: ...  # type: ignore[override]  # pyright: ignore[reportIncompatibleMethodOverride]
     # Methods above are explicitly defined in source, while those below aren't
+    # pyrefly: ignore[bad-override]
     def __delitem__(self, __k: Never) -> Never: ...  # type: ignore[override]  # pyright: ignore[reportIncompatibleMethodOverride]
     def __iter__(self) -> Never: ...
 
@@ -1091,8 +1099,10 @@ class __ContentOnlyElement(_Element):
 
 class _Comment(__ContentOnlyElement):
     @property  # type: ignore[misc]
+    # pyrefly: ignore[bad-override]
     def tag(self) -> Callable[..., _Comment]: ...  # type: ignore[override]  # pyright: ignore[reportIncompatibleMethodOverride]
     @property
+    # pyrefly: ignore[bad-override]
     def text(self) -> str: ...
     @text.setter  # type: ignore[override]
     def text(  # pyright: ignore[reportIncompatibleMethodOverride]
@@ -1102,8 +1112,10 @@ class _Comment(__ContentOnlyElement):
 # signature of .get() for _PI and _Element are the same
 class _ProcessingInstruction(__ContentOnlyElement):
     @property  # type: ignore[misc]
+    # pyrefly: ignore[bad-override]
     def tag(self) -> Callable[..., _ProcessingInstruction]: ...  # type: ignore[override]  # pyright: ignore[reportIncompatibleMethodOverride]
     @property
+    # pyrefly: ignore[bad-override]
     def text(self) -> str: ...
     @text.setter  # type: ignore[override]
     def text(  # pyright: ignore[reportIncompatibleMethodOverride]
@@ -1118,8 +1130,10 @@ class _ProcessingInstruction(__ContentOnlyElement):
 
 class _Entity(__ContentOnlyElement):
     @property  # type: ignore[misc]
+    # pyrefly: ignore[bad-override]
     def tag(self) -> Callable[..., _Entity]: ...  # type: ignore[override]  # pyright: ignore[reportIncompatibleMethodOverride]
     @property  # type: ignore[misc]
+    # pyrefly: ignore[bad-override]
     def text(self) -> str: ...  # pyright: ignore[reportIncompatibleMethodOverride]
     @property
     def name(self) -> str: ...

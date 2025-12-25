@@ -107,6 +107,7 @@ class Cleaner:
     def clean_html(self, html: _DT) -> _DT: ...
 
 clean: Cleaner
+# pyrefly: ignore[deprecated]
 clean_html = clean.clean_html
 
 @deprecated("Removed from lxml 5.2.0; use lxml_html_clean project instead")

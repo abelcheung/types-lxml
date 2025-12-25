@@ -55,8 +55,8 @@ from ._module_func import (
     parse as parse,
     register_namespace as register_namespace,
     tostring as tostring,
-    tostringlist as tostringlist,
-    tounicode as tounicode,
+    tostringlist as tostringlist,  # pyrefly: ignore[deprecated]
+    tounicode as tounicode,  # pyrefly: ignore[deprecated]
 )
 from ._module_misc import (
     CDATA as CDATA,

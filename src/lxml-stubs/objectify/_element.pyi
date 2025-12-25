@@ -49,6 +49,7 @@ class ObjectifiedElement(ElementBase):
 
     # Readonly, unlike _Element counterpart
     @property  # type: ignore[misc]
+    # pyrefly: ignore[bad-override]
     def text(  # pyright: ignore[reportIncompatibleMethodOverride]
         self,
     ) -> str | None: ...

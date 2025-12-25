@@ -182,6 +182,7 @@ class XSLT:
 
 class _XSLTProcessingInstruction(PIBase):
     def parseXSL(self, parser: _DefEtreeParsers | None = None) -> _ElementTree: ...
+    # pyrefly: ignore[bad-override]
     def set(self, key: Literal["href"], value: str) -> None: ...  # type: ignore[override]  # pyright: ignore[reportIncompatibleMethodOverride]
 
 # We replace argument types with close-enough public types. It is a disservice

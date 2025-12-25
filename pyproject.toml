@@ -159,6 +159,11 @@ include = [
 [tool.ty.overrides.rules]
 deprecated = "ignore"
 
+[tool.pyrefly]
+project-includes = ["src"]
+python-version = "3.9"
+enabled-ignores = ["pyrefly"]
+
 [tool.ruff]
 target-version = "py312"
 
