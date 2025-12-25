@@ -24,13 +24,12 @@ from mypy.types import (
 class MypyLxmlPlugin(Plugin):
     def get_method_hook(self, fullname: str) -> Callable[[MethodContext], Type] | None:
         _, _, method_name = fullname.rpartition(".")
-        match method_name:
+        if method_name in {"set_element_class_lookup", "setElementClassLookup"} :
             # Delegate class name checking to the hook, because we want to
             # support user custom subclasses
-            case "set_element_class_lookup" | "setElementClassLookup":
-                return _set_class_lookup_method_hook
-            case _:
-                return None
+            return _set_class_lookup_method_hook
+        else:
+            return None
 
 
 def _set_class_lookup_method_hook(ctx: MethodContext) -> Type:
@@ -65,27 +64,22 @@ def _set_class_lookup_method_hook(ctx: MethodContext) -> Type:
 
     # Use stock class lookups -> check fullname
     # Custom subclassed lookups -> check bases
-    match lookup.type.fullname:
-        case "lxml.html._parse.HtmlElementClassLookup":
-            ctx.type.args = (_create_instance_from("lxml.html._element.HtmlElement"),)
-        case "lxml.objectify._misc.ObjectifyElementClassLookup":
+    if lookup.type.fullname == "lxml.html._parse.HtmlElementClassLookup":
+        ctx.type.args = (_create_instance_from("lxml.html._element.HtmlElement"),)
+    elif lookup.type.fullname == "lxml.objectify._misc.ObjectifyElementClassLookup":
+        ctx.type.args = (
+            _create_instance_from("lxml.objectify._element.ObjectifiedElement"),
+        )
+
+    for base in lookup.type.bases:
+        if base.type.fullname == "lxml.html._parse.HtmlElementClassLookup":
+            ctx.type.args = (
+                _create_instance_from("lxml.html._element.HtmlElement"),
+            )
+        elif base.type.fullname == "lxml.objectify._misc.ObjectifyElementClassLookup":
             ctx.type.args = (
                 _create_instance_from("lxml.objectify._element.ObjectifiedElement"),
             )
-        case _:
-            pass
-    for base in lookup.type.bases:
-        match base.type.fullname:
-            case "lxml.html._parse.HtmlElementClassLookup":
-                ctx.type.args = (
-                    _create_instance_from("lxml.html._element.HtmlElement"),
-                )
-            case "lxml.objectify._misc.ObjectifyElementClassLookup":
-                ctx.type.args = (
-                    _create_instance_from("lxml.objectify._element.ObjectifiedElement"),
-                )
-            case _:
-                pass
     return ctx.default_return_type
 
 
