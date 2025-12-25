@@ -58,7 +58,8 @@ dev = [
     'mypy >= 1.18.1',
     'pyright >= 1.1.406',
     'basedpyright >= 1.31.6; platform_machine != "i686"',
-    'ty',
+    'ty >= 0.0.7',
+    'pyrefly >= 0.46.1',
 ]
 
 # mostly pinned for tox testing except dev group
@@ -72,7 +73,8 @@ basic = [
 mypy = ["mypy == 1.19.0"]
 pyright = ["pyright == 1.1.407"]
 basedpyright = ["basedpyright == 1.35.0; platform_machine != 'i686'"]
-ty = ["ty"]
+ty = ["ty == 0.0.7"]
+pyrefly = ["pyrefly == 0.46.1"]
 format = ["ruff ~= 0.6"]
 stub-test = [
     # pytest 9.x disallow pytest_plugins in non-top conftest.py
@@ -92,6 +94,8 @@ rt-test = [
     {include-group = "mypy"},
     {include-group = "pyright"},
     {include-group = "basedpyright"},
+    {include-group = "ty"},
+    {include-group = "pyrefly"},
 ]
 lxml50 = ["lxml == 5.0.2"]
 lxml51 = ["lxml == 5.1.1"]
@@ -129,13 +133,14 @@ reportDeprecated = false
 # See https://github.com/python/mypy/issues/12358
 enableTypeIgnoreComments = false
 executionEnvironments = [
-    { root = 'src' },
+    { root = 'src', pythonVersion = '3.9' },
     # basedpyright doesn't understand stubPath
-    { root = 'tests/runtime', extraPaths = ['src'] },
+    { root = 'tests/runtime', pythonVersion = '3.10', extraPaths = ['src'] },
 ]
 
 [tool.mypy]
 mypy_path = '$MYPY_CONFIG_FILE_DIR/src'
+python_version = "3.9"
 packages = "lxml-stubs"
 strict = true
 show_error_context = true
@@ -145,6 +150,9 @@ show_traceback = true
 plugins = [
     "mypy.plugins.proper_plugin",
 ]
+
+[tool.ty.environment]
+python-version = "3.9"
 
 [[tool.ty.overrides]]
 include = [
@@ -325,14 +333,17 @@ dependency_groups = [
     'mypy',
     'ty',
 ]
-commands = [
-    ['ty', 'check', {replace = 'posargs', extend = true}, 'src/lxml-stubs'],
-    [
-        'ty', 'check', '--python-version=3.10',
-        {replace = 'posargs', extend = true},
-        'src/mypy_plugin_lxml',
-    ],
+commands = [['ty', 'check', {replace = 'posargs', extend = true}, 'src']]
+
+[tool.tox.env.pyrefly]
+description = 'Use pyrefly to check annotation files for error'
+package = 'skip'
+dependency_groups = [
+    'basic',
+    'mypy',
+    'pyrefly',
 ]
+commands = [['pyrefly', 'check', {replace = 'posargs', extend = true}, 'src']]
 
 [tool.tox._env_stub]
 pass_env = [
