@@ -2,13 +2,13 @@
  src/lxml-stubs/cssselect.pyi           | 10 ++---
  src/lxml-stubs/etree/_element.pyi      | 74 +++++++++++++++++-----------------
  src/lxml-stubs/etree/_factory_func.pyi |  7 ++--
- src/lxml-stubs/html/_element.pyi       | 24 +++++------
- src/lxml-stubs/objectify/_element.pyi  |  6 +--
+ src/lxml-stubs/html/_element.pyi       | 36 +++++++++++------
+ src/lxml-stubs/objectify/_element.pyi  |  9 +++--
  tests/runtime/_testutils/common.py     |  2 +-
- 7 files changed, 62 insertions(+), 63 deletions(-)
+ 7 files changed, 77 insertions(+), 63 deletions(-)
 
 diff --git a/pyproject.toml b/pyproject.toml
-index bb3ff5c..7309657 100644
+index c638ef7..0f5bfa3 100644
 --- a/pyproject.toml
 +++ b/pyproject.toml
 @@ -5,7 +5,7 @@ requires = ['pdm-backend ~= 2.4']
@@ -55,7 +55,7 @@ index a37ec88..6ee9a2c 100644
 -    ) -> list[_ET]: ...
 +    ) -> list[_Element]: ...
 diff --git a/src/lxml-stubs/etree/_element.pyi b/src/lxml-stubs/etree/_element.pyi
-index f9e4b37..2e1f903 100644
+index 98dba20..7357598 100644
 --- a/src/lxml-stubs/etree/_element.pyi
 +++ b/src/lxml-stubs/etree/_element.pyi
 @@ -27,9 +27,9 @@ else:
@@ -389,29 +389,34 @@ index 60f92a4..b670190 100644
 -) -> _ET: ...
 +) -> _Element: ...
 diff --git a/src/lxml-stubs/html/_element.pyi b/src/lxml-stubs/html/_element.pyi
-index 77c1b61..6d37ab9 100644
+index 77c1b61..9284edd 100644
 --- a/src/lxml-stubs/html/_element.pyi
 +++ b/src/lxml-stubs/html/_element.pyi
-@@ -133,7 +133,7 @@ class HtmlElement(etree.ElementBase):
+@@ -133,7 +133,8 @@ class HtmlElement(etree.ElementBase):
      # Subclassing of _Element should not go beyond HtmlElement. For example,
      # while children of HtmlElement are mostly HtmlElement, FormElement never
      # contains FormElement as child.
 -    @overload
 +    @overload  # type: ignore[override]
++    # pyrefly: ignore[bad-override]
      def __getitem__(
          self,
          __x: int,
-@@ -143,7 +143,7 @@ class HtmlElement(etree.ElementBase):
+@@ -143,7 +144,8 @@ class HtmlElement(etree.ElementBase):
          self,
          __x: slice,
      ) -> list[HtmlElement]: ...
 -    @overload
 +    @overload  # type: ignore[override]
++    # pyrefly: ignore[bad-override]
      def __setitem__(
          self,
          __x: int,
-@@ -159,7 +159,7 @@ class HtmlElement(etree.ElementBase):
+@@ -157,12 +159,14 @@ class HtmlElement(etree.ElementBase):
+     ) -> None: ...
+     def __iter__(self) -> Iterator[HtmlElement]: ...
      def __reversed__(self) -> Iterator[HtmlElement]: ...
++    # pyrefly: ignore[bad-override]
      def append(  # pyright: ignore[reportIncompatibleMethodOverride]  # ty: ignore[invalid-method-override]
          self,
 -        element: HtmlElement,
@@ -419,18 +424,28 @@ index 77c1b61..6d37ab9 100644
      ) -> None: ...
      @overload
      @deprecated("Expects iterable of elements as value, not single element")
-@@ -175,30 +175,30 @@ class HtmlElement(etree.ElementBase):
++    # pyrefly: ignore[bad-override]
+     def extend(
+         self,
+         elements: etree._Element,
+@@ -172,33 +176,39 @@ class HtmlElement(etree.ElementBase):
+         self,
+         elements: Iterable[HtmlElement],
+     ) -> None: ...
++    # pyrefly: ignore[bad-override]
      def insert(  # pyright: ignore[reportIncompatibleMethodOverride]  # ty: ignore[invalid-method-override]
          self,
          index: int,
 -        element: HtmlElement,
 +        element: HtmlElement,  # type: ignore[override]
      ) -> None: ...
++    # pyrefly: ignore[bad-override]
      def remove(  # pyright: ignore[reportIncompatibleMethodOverride]  # ty: ignore[invalid-method-override]
          self,
 -        element: HtmlElement,
 +        element: HtmlElement,  # type: ignore[override]
      ) -> None: ...
++    # pyrefly: ignore[bad-override]
      def index(  # pyright: ignore[reportIncompatibleMethodOverride]  # ty: ignore[invalid-method-override]
          self,
 -        child: HtmlElement,
@@ -438,16 +453,19 @@ index 77c1b61..6d37ab9 100644
          start: int | None = None,
          stop: int | None = None,
      ) -> int: ...
++    # pyrefly: ignore[bad-override]
      def addnext(  # pyright: ignore[reportIncompatibleMethodOverride]  # ty: ignore[invalid-method-override]
          self,
 -        element: HtmlElement,
 +        element: HtmlElement,  # type: ignore[override]
      ) -> None: ...
++    # pyrefly: ignore[bad-override]
      def addprevious(  # pyright: ignore[reportIncompatibleMethodOverride]  # ty: ignore[invalid-method-override]
          self,
 -        element: HtmlElement,
 +        element: HtmlElement,  # type: ignore[override]
      ) -> None: ...
++    # pyrefly: ignore[bad-override]
      def replace(  # pyright: ignore[reportIncompatibleMethodOverride]  # ty: ignore[invalid-method-override]
          self,
 -        old_element: HtmlElement,
@@ -457,51 +475,62 @@ index 77c1b61..6d37ab9 100644
      ) -> None: ...
      def getparent(self) -> HtmlElement | None: ...
      def getnext(self) -> HtmlElement | None: ...
-@@ -279,7 +279,7 @@ class HtmlElement(etree.ElementBase):
+@@ -273,13 +283,15 @@ class HtmlElement(etree.ElementBase):
+         *,
+         with_tail: bool = True,
+     ) -> Iterator[str]: ...
++    # pyrefly: ignore[bad-override]
+     makeelement: type[HtmlElement]  # pyright: ignore[reportIncompatibleVariableOverride]
+     def find(
+         self,
          path: _ElemPathArg,
          namespaces: _StrOnlyNSMap | None = None,
      ) -> HtmlElement | None: ...
 -    def findall(  # pyright: ignore[reportIncompatibleMethodOverride]  # ty: ignore[invalid-method-override]
++    # pyrefly: ignore[bad-override]
 +    def findall(  # type: ignore[override]  # pyright: ignore[reportIncompatibleMethodOverride]  # ty: ignore[invalid-method-override]
          self,
          path: _ElemPathArg,
          namespaces: _StrOnlyNSMap | None = None,
-@@ -289,7 +289,7 @@ class HtmlElement(etree.ElementBase):
+@@ -289,7 +301,7 @@ class HtmlElement(etree.ElementBase):
          path: _ElemPathArg,
          namespaces: _StrOnlyNSMap | None = None,
      ) -> Iterator[HtmlElement]: ...
 -    def cssselect(  # pyright: ignore[reportIncompatibleMethodOverride]  # ty: ignore[invalid-method-override]
-+    def cssselect(  # type: ignore[override]  # pyright: ignore[reportIncompatibleMethodOverride]  # ty: ignore[invalid-method-override]
++    def cssselect(  # type: ignore[override]  # pyright: ignore[reportIncompatibleMethodOverride]  # ty: ignore[invalid-method-override]  # pyrefly: ignore[bad-override]
          self,
          expr: str,
          *,
 diff --git a/src/lxml-stubs/objectify/_element.pyi b/src/lxml-stubs/objectify/_element.pyi
-index 0a18dc8..c8c6c26 100644
+index 58a59fa..c6f04ee 100644
 --- a/src/lxml-stubs/objectify/_element.pyi
 +++ b/src/lxml-stubs/objectify/_element.pyi
-@@ -59,7 +59,7 @@ class ObjectifiedElement(ElementBase):
+@@ -60,7 +60,8 @@ class ObjectifiedElement(ElementBase):
      def addattr(self, tag: _TagName, value: object) -> None: ...
      def countchildren(self) -> int: ...
      def descendantpaths(self, prefix: str | list[str] | None = None) -> list[str]: ...
 -    def getchildren(  # pyright: ignore[reportIncompatibleMethodOverride]  # ty: ignore[invalid-method-override]
++      # pyrefly: ignore[bad-override]
 +    def getchildren(  # type: ignore[override]  # pyright: ignore[reportIncompatibleMethodOverride]  # ty: ignore[invalid-method-override]
          self,
      ) -> list[ObjectifiedElement]: ...
      def __iter__(self) -> Iterator[ObjectifiedElement]: ...
-@@ -70,7 +70,7 @@ class ObjectifiedElement(ElementBase):
+@@ -71,7 +72,8 @@ class ObjectifiedElement(ElementBase):
      def __delattr__(self, __name: str) -> None: ...
      # elem['foo'] is equivalent to elem.foo, but allows for
      # special attribute names (like 'text' or 'tail')
 -    @overload
 +    @overload  # type: ignore[override]
++    # pyrefly: ignore[bad-override]
      def __getitem__(self, key: int | str | bytes, /) -> ObjectifiedElement: ...
      @overload
      def __getitem__(  # pyright: ignore[reportIncompatibleMethodOverride]  # ty: ignore[invalid-method-override]
-@@ -86,7 +86,7 @@ class ObjectifiedElement(ElementBase):
+@@ -87,7 +89,8 @@ class ObjectifiedElement(ElementBase):
      # TODO Check if _Element methods need overriding
      # CSS selector is not a normal use case for objectified
      # element (and unnecessary), but still usable nonetheless
 -    def cssselect(  # pyright: ignore[reportIncompatibleMethodOverride]  # ty: ignore[invalid-method-override]
++    # pyrefly: ignore[bad-override]
 +    def cssselect(  # type: ignore[override]  # pyright: ignore[reportIncompatibleMethodOverride]  # ty: ignore[invalid-method-override]
          self,
          expr: str,
