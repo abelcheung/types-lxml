@@ -213,7 +213,7 @@ class TestPopMethod:
         # Verify 'default' parameter being VAR_POSITIONAL is actually
         # superfluous, as only one 'default' parameter is expected.
         with pytest.raises(TypeError, match="pop expected at most 2 arguments"):
-            xml2_root.attrib.pop("foo", 0, 1)  # type: ignore[call-overload]  # pyright: ignore[reportCallIssue]
+            xml2_root.attrib.pop("foo", 0, 1)  # type: ignore[call-overload]  # pyright: ignore[reportCallIssue]  # pyrefly: ignore[no-matching-overload]
 
     @settings(suppress_health_check=[HealthCheck.too_slow], max_examples=300)
     @given(k=_st.all_instances_except_of_type(
@@ -248,7 +248,7 @@ class TestPopMethod:
         self, disposable_attrib: _Attrib, default: object
     ) -> None:
         with pytest.MonkeyPatch().context() as m:
-            m.setitem(disposable_attrib, "fakekey", "fakevalue")  # type: ignore[arg-type]  # pyright: ignore[reportArgumentType]
+            m.setitem(disposable_attrib, "fakekey", "fakevalue")  # type: ignore[arg-type]  # pyright: ignore[reportArgumentType]  # pyrefly: ignore[bad-argument-type]
             val = disposable_attrib.pop("fakekey", default)
             # No reveal_type test, result typevar (str | object) is too generic
             assert type(val) is str
@@ -363,7 +363,7 @@ class TestUpdateMethod:
     def test_input_other_mapping_1(
         self, disposable_attrib: _Attrib, atts: dict[Any, Any]
     ) -> None:
-        with pytest.raises((TypeError, ValueError, AssertionError)):
+        with pytest.raises((TypeError, ValueError, AssertionError)):  # pyrefly: ignore[no-matching-overload]
             self._verify_key_val_present(disposable_attrib, MappingProxyType(atts))
 
     @given(atts=st.dictionaries(
@@ -375,7 +375,7 @@ class TestUpdateMethod:
     def test_input_other_mapping_2(
         self, disposable_attrib: _Attrib, atts: dict[Any, Any]
     ) -> None:
-        with pytest.raises((TypeError, ValueError, AssertionError)):
+        with pytest.raises((TypeError, ValueError, AssertionError)):  # pyrefly: ignore[no-matching-overload]
             self._verify_key_val_present(disposable_attrib, ChainMap(atts))
 
     @given(

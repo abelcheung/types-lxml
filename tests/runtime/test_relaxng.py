@@ -126,7 +126,7 @@ class TestRelaxNGInput:
             )
         else:
             # too diversified
-            raise_cm = pytest.raises((TypeError, AttributeError))
+            raise_cm = pytest.raises((TypeError, AttributeError))  # pyrefly: ignore[no-matching-overload]
         with raise_cm:
             _ = RelaxNG.from_rnc_string(src=cast(Any, thing))  # ty: ignore[redundant-cast]
 

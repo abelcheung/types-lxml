@@ -24,6 +24,7 @@ class TestIterwalk:
             reveal_type(event)
             reveal_type(elem)
 
+    @pytest.mark.notypechecker("pyrefly")
     def test_xml_more_event(self, xml2_tree: _ElementTree) -> None:
         walker = iterwalk(xml2_tree, ["start", "end", "start-ns", "end-ns", "comment"])
         reveal_type(walker)
@@ -45,6 +46,7 @@ class TestIterwalk:
             reveal_type(event)
             reveal_type(elem)
 
+    @pytest.mark.notypechecker("pyrefly")
     @pytest.mark.slow
     def test_html_more_event(self, bightml_tree: _ElementTree[HtmlElement]) -> None:
         # Since HtmlComment is pretended as HtmlElement subclass
@@ -104,6 +106,7 @@ class TestIterparse:
             reveal_type(event)
             reveal_type(elem)
 
+    @pytest.mark.notypechecker("pyrefly")
     def test_xml_more_event(self, svg_filepath: Path) -> None:
         walker = iterparse(  # ty: ignore[no-matching-overload]
             svg_filepath, ["start", "end", "start-ns", "end-ns", "comment"]
@@ -119,6 +122,7 @@ class TestIterparse:
             else:
                 reveal_type(item[1])
 
+    @pytest.mark.notypechecker("pyrefly")
     def test_html_mode(self, svg_filepath: Path) -> None:
         walker = iterparse(
             source=svg_filepath,

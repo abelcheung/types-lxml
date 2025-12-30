@@ -52,7 +52,7 @@ class TestProperties:
     def test_errorlog(self, dtd: DTD, xml2_root: _Element) -> None:
         reveal_type(dtd.error_log)
         with raise_attr_not_writable:
-            dtd.error_log = dtd.error_log  # type: ignore[misc]  # pyright: ignore[reportAttributeAccessIssue]
+            dtd.error_log = dtd.error_log  # type: ignore[misc]  # pyright: ignore[reportAttributeAccessIssue]  # pyrefly: ignore[read-only]
         with raise_attr_not_writable:
             del dtd.error_log  # pyright: ignore[reportAttributeAccessIssue]
         new_root = copy.deepcopy(xml2_root)

@@ -41,12 +41,12 @@ class TestXInclude:
     def test_init_and_prop(self) -> None:
         # Cython generic signature
         with raise_wrong_pos_arg_count:
-            xinc = XInclude(None)  # type: ignore[call-arg]  # pyright: ignore[reportCallIssue]
+            xinc = XInclude(None)  # type: ignore[call-arg]  # pyright: ignore[reportCallIssue]  # pyrefly: ignore[bad-argument-count]
         xinc = XInclude()
         reveal_type(xinc)
         reveal_type(xinc.error_log)
         with raise_attr_not_writable:
-            xinc.error_log = xinc.error_log  # type: ignore[misc]  # pyright: ignore[reportAttributeAccessIssue]
+            xinc.error_log = xinc.error_log  # type: ignore[misc]  # pyright: ignore[reportAttributeAccessIssue]  # pyrefly: ignore[read-only]
 
     def test_xinclude_as_method(self, xinc_sample_data: str) -> None:
         elem = fromstring(xinc_sample_data)
@@ -137,7 +137,7 @@ class TestElementInclude:
         elem = fromstring(xinc_sample_data)
 
         temp_el = copy.deepcopy(elem)
-        EI.include(temp_el, good_loader)
+        EI.include(temp_el, good_loader)  # pyrefly: ignore[bad-argument-type]
         del temp_el
 
         # It's actually ok to ignore 3rd param in XML mode

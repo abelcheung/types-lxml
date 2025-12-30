@@ -3,7 +3,7 @@ from __future__ import annotations
 import sys
 from inspect import Parameter
 from types import NoneType
-from typing import Any
+from typing import Any, no_type_check
 
 import pytest
 from hypothesis import HealthCheck, given, settings
@@ -55,44 +55,46 @@ class TestComment:
         with raise_invalid_utf8_type:
             _ = Comment(iterable_of("foo"))
 
+    @no_type_check
     def test_dummy_dunders(self) -> None:
         comm = Comment()
         assert len(comm) == 0
-        assert comm[:] == []  # type: ignore[index]  # pyright: ignore[reportArgumentType]
+        assert comm[:] == []
         get_exc_mesg = r"list index out of range"
         set_exc_mesg = r"this element does not have children or attributes"
         with pytest.raises(IndexError, match=get_exc_mesg):
-            comm[0]  # type: ignore[index]  # pyright: ignore[reportArgumentType]
+            comm[0]
         with pytest.raises(TypeError, match=set_exc_mesg):
-            comm[0] = "bar"  # type: ignore[index,assignment]  # pyright: ignore[reportArgumentType]
+            comm[0] = "bar"
         with pytest.raises(IndexError, match=get_exc_mesg):
-            comm["foo"]  # type: ignore[index]  # pyright: ignore[reportArgumentType]
+            comm["foo"]
         with pytest.raises(TypeError, match=set_exc_mesg):
-            comm["foo"] = "bar"  # type: ignore[index,assignment]  # pyright: ignore[reportArgumentType]
+            comm["foo"] = "bar"
         with pytest.raises(TypeError, match=set_exc_mesg):
-            comm[:] = "bar"  # type: ignore[index,assignment]  # pyright: ignore[reportArgumentType]
+            comm[:] = "bar"
 
     # We only test methods explicitly banned in lxml source code.
     # For example, .append() is forbidden, yet one can use
     # .extend() to circumvent and mess it up.
+    @no_type_check
     def test_dummy_methods(self) -> None:
         comm = Comment()
         assert len(comm.attrib) == 0
         set_exc_mesg = r"this element does not have children or attributes"
         with pytest.raises(TypeError, match=set_exc_mesg):
-            comm.set("foo", "bar")  # type: ignore[arg-type]  # pyright: ignore[reportArgumentType]
+            comm.set("foo", "bar")
         assert comm.get("foo") is None
         with pytest.raises(TypeError, match=set_exc_mesg):
-            comm.append(comm)  # type: ignore[arg-type]  # pyright: ignore[reportArgumentType]
+            comm.append(comm)
         with pytest.raises(TypeError, match=set_exc_mesg):
-            comm.insert(0, comm)  # type: ignore[arg-type]  # pyright: ignore[reportArgumentType]
+            comm.insert(0, comm)
 
     def test_tag_property(self) -> None:
         comm = Comment()
         # TODO: reveal_type on function object not supported yet
         assert comm.tag == Comment
         with raise_attr_not_writable:
-            comm.tag = comm.tag  # type: ignore[misc]  # pyright: ignore[reportAttributeAccessIssue]
+            comm.tag = comm.tag  # type: ignore[misc]  # pyright: ignore[reportAttributeAccessIssue]  # pyrefly: ignore[read-only]
         with raise_attr_not_writable:
             del comm.tag  # pyright: ignore[reportAttributeAccessIssue]
 
@@ -144,52 +146,55 @@ class TestEntity:
         with raise_invalid_utf8_type:
             _ = Entity(iterable_of("foo"))
 
+    @no_type_check
     def test_dummy_dunders(self) -> None:
         ent = Entity("baz")
         assert len(ent) == 0
-        assert ent[:] == []  # type: ignore[index]  # pyright: ignore[reportArgumentType]
+        assert ent[:] == []
         get_exc_mesg = r"list index out of range"
         set_exc_mesg = r"this element does not have children or attributes"
         with pytest.raises(IndexError, match=get_exc_mesg):
-            ent[0]  # type: ignore[index]  # pyright: ignore[reportArgumentType]
+            ent[0]
         with pytest.raises(TypeError, match=set_exc_mesg):
-            ent[0] = "bar"  # type: ignore[index,assignment]  # pyright: ignore[reportArgumentType]
+            ent[0] = "bar"
         with pytest.raises(IndexError, match=get_exc_mesg):
-            ent["foo"]  # type: ignore[index]  # pyright: ignore[reportArgumentType]
+            ent["foo"]
         with pytest.raises(TypeError, match=set_exc_mesg):
-            ent["foo"] = "bar"  # type: ignore[index,assignment]  # pyright: ignore[reportArgumentType]
+            ent["foo"] = "bar"
         with pytest.raises(TypeError, match=set_exc_mesg):
-            ent[:] = "bar"  # type: ignore[index,assignment]  # pyright: ignore[reportArgumentType]
+            ent[:] = "bar"
 
     # We only test methods explicitly banned in lxml source code.
     # For example, .append() is forbidden, yet one can use
     # .extend() to circumvent and mess it up.
+    @no_type_check
     def test_dummy_methods(self) -> None:
         ent = Entity("baz")
         assert len(ent.attrib) == 0
         set_exc_mesg = r"this element does not have children or attributes"
         with pytest.raises(TypeError, match=set_exc_mesg):
-            ent.set("foo", "bar")  # type: ignore[arg-type]  # pyright: ignore[reportArgumentType]
+            ent.set("foo", "bar")
         assert ent.get("foo") is None
         with pytest.raises(TypeError, match=set_exc_mesg):
-            ent.append(ent)  # type: ignore[arg-type]  # pyright: ignore[reportArgumentType]
+            ent.append(ent)
         with pytest.raises(TypeError, match=set_exc_mesg):
-            ent.insert(0, ent)  # type: ignore[arg-type]  # pyright: ignore[reportArgumentType]
+            ent.insert(0, ent)
 
+    @no_type_check
     def test_tag_property(self) -> None:
         ent = Entity("baz")
         # TODO: reveal_type on function object not supported yet
         assert ent.tag == Entity
         with raise_attr_not_writable:
-            ent.tag = ent.tag  # type: ignore[misc]  # pyright: ignore[reportAttributeAccessIssue]
+            ent.tag = ent.tag
         with raise_attr_not_writable:
-            del ent.tag  # pyright: ignore[reportAttributeAccessIssue]
+            del ent.tag
 
     def test_text_property(self) -> None:
         ent = Entity("baz")
         reveal_type(ent.text)
         with raise_attr_not_writable:
-            ent.text = ent.text  # type: ignore[misc]  # pyright: ignore[reportAttributeAccessIssue]
+            ent.text = ent.text  # type: ignore[misc]  # pyright: ignore[reportAttributeAccessIssue]  # pyrefly: ignore[read-only]
         with raise_attr_not_writable:
             del ent.text  # pyright: ignore[reportAttributeAccessIssue]
 
@@ -264,36 +269,38 @@ class TestPI:
         with raise_invalid_utf8_type:
             _ = ProcessingInstruction("foo", iterable_of("bar"))
 
+    @no_type_check
     def test_dummy_dunders(self) -> None:
         pi = ProcessingInstruction("baz")
         assert len(pi) == 0
-        assert pi[:] == []  # type: ignore[index]  # pyright: ignore[reportArgumentType]
+        assert pi[:] == []
         get_exc_mesg = r"list index out of range"
         set_exc_mesg = r"this element does not have children or attributes"
         with pytest.raises(IndexError, match=get_exc_mesg):
-            pi[0]  # type: ignore[index]  # pyright: ignore[reportArgumentType]
+            pi[0]
         with pytest.raises(TypeError, match=set_exc_mesg):
-            pi[0] = "bar"  # type: ignore[index,assignment]  # pyright: ignore[reportArgumentType]
+            pi[0] = "bar"
         with pytest.raises(IndexError, match=get_exc_mesg):
-            pi["foo"]  # type: ignore[index]  # pyright: ignore[reportArgumentType]
+            pi["foo"]
         with pytest.raises(TypeError, match=set_exc_mesg):
-            pi["foo"] = "bar"  # type: ignore[index,assignment]  # pyright: ignore[reportArgumentType]
+            pi["foo"] = "bar"
         with pytest.raises(TypeError, match=set_exc_mesg):
-            pi[:] = "bar"  # type: ignore[index,assignment]  # pyright: ignore[reportArgumentType]
+            pi[:] = "bar"
 
     # We only test methods explicitly banned in lxml source code.
     # For example, .append() is forbidden, yet one can use
     # .extend() to circumvent and mess it up.
+    @no_type_check
     def test_dummy_methods(self) -> None:
         pi = ProcessingInstruction("baz")
         set_exc_mesg = r"this element does not have children or attributes"
         with pytest.raises(TypeError, match=set_exc_mesg):
-            pi.set("foo", "bar")  # type: ignore[arg-type]  # pyright: ignore[reportArgumentType]
+            pi.set("foo", "bar")
         assert pi.get("foo") is None
         with pytest.raises(TypeError, match=set_exc_mesg):
-            pi.append(pi)  # type: ignore[arg-type]  # pyright: ignore[reportArgumentType]
+            pi.append(pi)
         with pytest.raises(TypeError, match=set_exc_mesg):
-            pi.insert(0, pi)  # type: ignore[arg-type]  # pyright: ignore[reportArgumentType]
+            pi.insert(0, pi)
 
     def test_attrib_property(self) -> None:
         pi = ProcessingInstruction("xml-stylesheet", "type='text/xsl' href='style.xsl'")
@@ -301,7 +308,7 @@ class TestPI:
         reveal_type(pi.attrib.get("type"))
         reveal_type(pi.attrib["href"])
         with raise_attr_not_writable:
-            pi.attrib = {"foo": "bar"}  # type: ignore[misc]  # pyright: ignore[reportAttributeAccessIssue]
+            pi.attrib = {"foo": "bar"}  # type: ignore[misc]  # pyright: ignore[reportAttributeAccessIssue]  # pyrefly: ignore[read-only]
         with raise_attr_not_writable:
             del pi.attrib  # pyright: ignore[reportAttributeAccessIssue]
 
@@ -310,7 +317,7 @@ class TestPI:
         # TODO: reveal_type on function object not supported yet
         assert pi.tag == ProcessingInstruction
         with raise_attr_not_writable:
-            pi.tag = pi.tag  # type: ignore[misc]  # pyright: ignore[reportAttributeAccessIssue]
+            pi.tag = pi.tag  # type: ignore[misc]  # pyright: ignore[reportAttributeAccessIssue]  # pyrefly: ignore[read-only]
         with raise_attr_not_writable:
             del pi.tag  # pyright: ignore[reportAttributeAccessIssue]
 

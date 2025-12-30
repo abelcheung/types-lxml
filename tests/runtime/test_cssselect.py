@@ -158,7 +158,7 @@ class TestCSSSelectorArgs:
         if not isinstance(thing, Iterable):
             raise_cm = raise_non_iterable
         else:
-            raise_cm = pytest.raises((TypeError, ValueError))
+            raise_cm = pytest.raises((TypeError, ValueError))  # pyrefly: ignore[no-matching-overload]
         with raise_cm:
             _ = CSSSelector("li", namespaces=thing)  # pyright: ignore[reportUnknownArgumentType]
 

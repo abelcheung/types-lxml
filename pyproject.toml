@@ -49,7 +49,7 @@ dev = [
     'urllib3 >= 2.0',
     "pytest >= 7.0, < 9",
     'pytest-mypy-plugins >= 3.2.0',
-    'pytest-revealtype-injector >= 0.6.3',
+    'pytest-revealtype-injector >= 0.7.0',
     'lxml >= 5.0',
     'rnc2rng',
     'hypothesis >= 6.127.7',  # HypothesisWorks/hypothesis#4269
@@ -59,7 +59,7 @@ dev = [
     'pyright >= 1.1.406',
     'basedpyright >= 1.31.6; platform_machine != "i686"',
     'ty >= 0.0.7',
-    'pyrefly >= 0.46.1',
+    'pyrefly >= 0.46.2',
 ]
 
 # mostly pinned for tox testing except dev group
@@ -74,7 +74,7 @@ mypy = ["mypy == 1.19.0"]
 pyright = ["pyright == 1.1.407"]
 basedpyright = ["basedpyright == 1.35.0; platform_machine != 'i686'"]
 ty = ["ty == 0.0.7"]
-pyrefly = ["pyrefly == 0.46.1"]
+pyrefly = ["pyrefly == 0.46.2"]
 format = ["ruff ~= 0.6"]
 stub-test = [
     # pytest 9.x disallow pytest_plugins in non-top conftest.py
@@ -89,7 +89,7 @@ rt-test = [
     "hypothesis == 6.148.6",
     "tzdata",
     "pytest >= 7.0, < 9",
-    "pytest-revealtype-injector == 0.6.3",
+    "pytest-revealtype-injector == 0.7.0",
     "rnc2rng == 2.7.0",
     {include-group = "mypy"},
     {include-group = "pyright"},
@@ -166,7 +166,7 @@ deprecated = "ignore"
 [tool.pyrefly]
 project-includes = ["src"]
 search-path = ["tests/runtime"]
-python-version = "3.9"
+python-version = "3.11"  # facebook/pyrefly#1952
 enabled-ignores = ["pyrefly"]
 
 [tool.ruff]

@@ -1,0 +1,11 @@
+enabled-ignores = [
+    "pyrefly",
+]
+search-path = [
+    ".",
+    "../../src",
+]
+python-version = "3.11"  # facebook/pyrefly#1952
+
+[errors]
+deprecated = false

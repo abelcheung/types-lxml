@@ -89,11 +89,11 @@ class TestInputOutputType:
                 _ = iterlinks(bad_input)
             # _MethodFunc performs deepcopy on input for following functions,
             # which raises TypeError on non-pickerable objects
-            with pytest.raises((AttributeError, TypeError)):
+            with pytest.raises((AttributeError, TypeError)):  # pyrefly: ignore[no-matching-overload]
                 _ = make_links_absolute(bad_input, _BASE_HREF)
-            with pytest.raises((AttributeError, TypeError)):
+            with pytest.raises((AttributeError, TypeError)):  # pyrefly: ignore[no-matching-overload]
                 _ = resolve_base_href(bad_input)
-            with pytest.raises((AttributeError, TypeError)):
+            with pytest.raises((AttributeError, TypeError)):  # pyrefly: ignore[no-matching-overload]
                 _ = rewrite_links(bad_input, lambda _: None)
 
     @byte_bug_marker
@@ -199,7 +199,7 @@ class TestFindRelLinksArg:
         # Besides instances of str, bytes and bytearray, the aforementioned
         # types themselves also has 'lower' attribute, so using them as
         # input raises TypeError instead (unbound method needs argument)
-        with pytest.raises((AttributeError, TypeError)):
+        with pytest.raises((AttributeError, TypeError)):  # pyrefly: ignore[no-matching-overload]
             _ = find_rel_links(disposable_html_element, t)
 
 
@@ -243,7 +243,7 @@ class TestFindClassArg:
         self, disposable_html_element: HtmlElement, t: Any
     ) -> None:
         # _wrapXPathObject can produce different exceptions
-        with pytest.raises((XPathResultError, TypeError)):
+        with pytest.raises((XPathResultError, TypeError)):  # pyrefly: ignore[no-matching-overload]
             _ = find_class(disposable_html_element, t)
 
     # Several basic types are acceptable as XPathObject and thus stringified,
@@ -291,7 +291,7 @@ class TestResolveBaseHrefArg:
         assume(thing not in ("ignore", "discard"))
         # collection raises TypeError instead
         # because of error in constructing exception
-        with pytest.raises((ValueError, TypeError)):
+        with pytest.raises((ValueError, TypeError)):  # pyrefly: ignore[no-matching-overload]
             _ = resolve_base_href(disposable_html_with_base_href, handle_failures=thing)
 
     @settings(max_examples=5)
@@ -333,7 +333,7 @@ class TestMakeLinksAbsoluteArg:
         self, disposable_html_with_base_href: HtmlElement, thing: Any
     ) -> None:
         assume(thing not in ("ignore", "discard"))
-        with pytest.raises((ValueError, TypeError)):
+        with pytest.raises((ValueError, TypeError)):  # pyrefly: ignore[no-matching-overload]
             _ = make_links_absolute(
                 disposable_html_with_base_href, _BASE_HREF, handle_failures=thing
             )

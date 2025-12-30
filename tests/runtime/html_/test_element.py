@@ -5,7 +5,7 @@ from collections.abc import (
     Callable,
     Iterable,
 )
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, cast
 
 import pytest
 from hypothesis import (
@@ -47,19 +47,19 @@ class TestMixinProperties:
     ) -> None:
         reveal_type(bightml_root.head)
         with raise_prop_not_writable:
-            bightml_root.head = bightml_root.head  # type: ignore[misc]  # pyright: ignore[reportAttributeAccessIssue]
+            bightml_root.head = bightml_root.head  # type: ignore[misc]  # pyright: ignore[reportAttributeAccessIssue]  # pyrefly: ignore[read-only]
 
         reveal_type(bightml_root.body)
         with raise_prop_not_writable:
-            bightml_root.body = bightml_root.body  # type: ignore[misc]  # pyright: ignore[reportAttributeAccessIssue]
+            bightml_root.body = bightml_root.body  # type: ignore[misc]  # pyright: ignore[reportAttributeAccessIssue]  # pyrefly: ignore[read-only]
 
         reveal_type(bightml_root.forms)
         with raise_prop_not_writable:
-            bightml_root.forms = bightml_root.forms  # type: ignore[misc]  # pyright: ignore[reportAttributeAccessIssue]
+            bightml_root.forms = bightml_root.forms  # type: ignore[misc]  # pyright: ignore[reportAttributeAccessIssue]  # pyrefly: ignore[read-only]
 
         reveal_type(bightml_root.base_url)
         with raise_prop_not_writable:
-            bightml_root.base_url = bightml_root.base_url  # type: ignore[misc]  # pyright: ignore[reportAttributeAccessIssue]
+            bightml_root.base_url = bightml_root.base_url  # type: ignore[misc]  # pyright: ignore[reportAttributeAccessIssue]  # pyrefly: ignore[read-only]
 
     def test_classes_property_rw_good(
         self,
@@ -99,7 +99,7 @@ class TestMixinProperties:
             and v.__hash__ is None
         ))  # fmt: skip
         with pytest.raises(AssertionError):
-            disposable_html_element.classes = iterable_of(v)  # type: ignore[assignment]  # pyright: ignore[reportAttributeAccessIssue]
+            disposable_html_element.classes = cast(Any, iterable_of(v))
 
     @github_fail_marker
     @pytest.mark.notypechecker("mypy")
@@ -151,4 +151,4 @@ class TestMixinProperties:
         input: InputElement = disposable_html_input_label.xpath("//input")[0]
 
         with raise_no_attribute:
-            input.label = iterable_of(label)  # type: ignore[assignment]  # pyright: ignore[reportAttributeAccessIssue]
+            input.label = cast(Any, iterable_of(label))

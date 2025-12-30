@@ -122,7 +122,7 @@ class TestFromstring:
     @given(thing=_st.all_instances_except_of_type(NoneType))
     @pytest.mark.slow
     def test_makeelement_arg_bad_1(self, html2_str: str, thing: Any) -> None:
-        with pytest.raises((TypeError, ValueError)):
+        with pytest.raises((TypeError, ValueError)):  # pyrefly: ignore[no-matching-overload]
             _ = _soup.fromstring(html2_str, makeelement=thing)
 
     @settings(max_examples=5)
@@ -143,7 +143,7 @@ class TestFromstring:
         del result
 
         with raise_unexpected_kwarg:
-            _ = _soup.fromstring(html2_bytes, badarg=None)  # type: ignore[call-overload]  # pyright: ignore[reportCallIssue,reportUnknownVariableType]
+            _ = _soup.fromstring(html2_bytes, badarg=None)  # type: ignore[call-overload]  # pyright: ignore[reportCallIssue,reportUnknownVariableType]  # pyrefly: ignore[no-matching-overload]
 
 
 class TestParse:
@@ -213,7 +213,7 @@ class TestParse:
     @given(thing=_st.all_instances_except_of_type(NoneType))
     @pytest.mark.slow
     def test_makeelement_arg_bad_1(self, html2_filepath: Path, thing: Any) -> None:
-        with pytest.raises((TypeError, ValueError)):
+        with pytest.raises((TypeError, ValueError)):  # pyrefly: ignore[no-matching-overload]
             _ = _soup.parse(html2_filepath, makeelement=thing)
 
     @settings(max_examples=5)
@@ -237,7 +237,7 @@ class TestParse:
         del result
 
         with raise_unexpected_kwarg:
-            _ = _soup.parse(fh, badarg=None)  # type: ignore[call-overload]  # pyright: ignore[reportCallIssue,reportUnknownVariableType]
+            _ = _soup.parse(fh, badarg=None)  # type: ignore[call-overload]  # pyright: ignore[reportCallIssue,reportUnknownVariableType]  # pyrefly: ignore[no-matching-overload]
 
         fh.close()
 
@@ -264,7 +264,7 @@ class TestConvertTree:
         # it generates TypeError uncatchable by pytest.raises.
         # Thus not included in the test.
         for input in generate_input_file_arguments(html2_filepath):
-            with pytest.raises((TypeError, AttributeError)):
+            with pytest.raises((TypeError, AttributeError)):  # pyrefly: ignore[no-matching-overload]
                 _ = _soup.convert_tree(input)
 
     def test_makeelement_arg_ok(self, html2_str: str) -> None:
