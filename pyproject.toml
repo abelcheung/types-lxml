@@ -376,6 +376,7 @@ commands = [
     ],
     [
         'pytest',
+        '--revealtype-disable-adapter=ty',
         '--revealtype-mypy-config=tests/runtime/mypy.ini',
         {replace = 'posargs', default = ['tests/runtime'], extend = true}
     ]
