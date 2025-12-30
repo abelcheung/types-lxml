@@ -59,7 +59,7 @@ dev = [
     'pyright >= 1.1.406',
     'basedpyright >= 1.31.6; platform_machine != "i686"',
     'ty >= 0.0.7',
-    'pyrefly >= 0.46.2',
+    'pyrefly >= 0.45.2',
 ]
 
 # mostly pinned for tox testing except dev group
