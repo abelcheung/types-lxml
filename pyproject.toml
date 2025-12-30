@@ -242,7 +242,7 @@ typecheck = [
     'basedpyright',
     'pyright',
     'mypy',
-    'ty',
+    'pyrefly',
 ]
 static = [
     'py39-stub',
