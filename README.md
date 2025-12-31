@@ -6,7 +6,8 @@
 ## Important note
 
 - Upcoming release:
-  - Support for [`ty` type checker from Astral](https://docs.astral.sh/ty/) in progress
+  - Support for [`pyrefly` type checker](https://pyrefly.org/)
+  - New `mypy` plugin that mimics [`XMLParser.set_element_class_lookup()` behavior](https://github.com/abelcheung/types-lxml/wiki/Using-specialised-class-directly#no-automatic-change-of-subscript)
 
 - Since `2025.11.25`:
   - [PEP 800 support](https://peps.python.org/pep-0800/), thus only compatible with newest type checkers as of Oct 2025
@@ -19,52 +20,32 @@
   - `BeautifulSoup4` package is added as dependency to utilise its inline annotation, thus dropping `types-beautifulsoup4` dependency.
   - Fixes compatibility with older versions of type checkers, as well as `mypy` 1.14+.
 
-- Since `2025.02.24`:
-  - Add [`basedpyright`](https://github.com/DetachHead/basedpyright) type checker support (an enhanced fork of `pyright`)
-
-- Since `2024.11.08`:
-  - `pyright` and `vscode` users will [receive warnings](#warnings-for-exception-and-wrong-code) if certain `lxml` API usage would result in exception or undesirable runtime behavior.
-  - It is possible to [verify release files](#release-file-attestation) indeed come from GitHub and not maliciously altered.
 
 ## Introduction
 
-This repository contains [external type annotations](https://peps.python.org/pep-0561/) for [`lxml`](http://lxml.de/). It can be used by [type-checking tools](#goal---support-multiple-type-checkers) to check code that uses `lxml`, or used within IDEs like [VSCode](https://code.visualstudio.com/) to facilitate development.
+This repository contains [external type annotations](https://peps.python.org/pep-0561/) for [`lxml`](http://lxml.de/). It can be used by [type-checking tools](#goal---support-multiple-type-checkers) to check code that uses `lxml`, or used within IDEs like [Visual Studio Code](https://code.visualstudio.com/) to facilitate development.
 
 ## Goal ① : Completion
 
-Now the coverage of `lxml` submodules is complete (unless intentionally rejected, see further below), thus no more [considered as `partial`](https://peps.python.org/pep-0561/#partial-stub-packages):
-  - [x] `lxml.etree`
-  - [x] `lxml.html`
-    - [x] `lxml.html.builder`
-    - [x] `lxml.html.clean` (already removed in lxml 5.2.0, this project will follow suite in future)
-    - [x] `lxml.html.diff`
-    - [x] `lxml.html.html5parser`
-    - [x] `lxml.html.soupparser`
-  - [x] `lxml.isoschematron`
-  - [x] `lxml.objectify`
-  - [x] `lxml.builder`
-  - [x] `lxml.cssselect`
-  - [x] `lxml.sax`
-  - [x] `lxml.ElementInclude`
-
-Following submodules will not be implemented due to irrelevance to type checking or other reasons:
+Implementation is complete since 1Q 2003, thus no more [considered as `partial`](https://peps.python.org/pep-0561/#partial-stub-packages). Following submodules intentionally not implemented due to irrelevance to type checking or other reasons:
 
   - `lxml.etree.Schematron` (obsolete and superseded by `lxml.isoschematron`)
-  - `lxml.usedoctest`
-  - `lxml.html.usedoctest`
+  - `lxml.usedoctest` (for testing only)
+  - `lxml.html.usedoctest` (for testing only)
   - `lxml.html.formfill` (shouldn't have existed, this would belong to HTTP libraries like `requests` or `httpx`)
-
-Check out [project page](https://github.com/abelcheung/types-lxml/projects) for future plans and progress.
 
 ## Goal ② : Support multiple type checkers
 
 Currently the annotations are validated for following type checkers:
 
-- [`basedpyright`](https://github.com/DetachHead/basedpyright), version 1.31.6 or above
-- [`pyright`](https://github.com/microsoft/pyright), version 1.1.406 or above
-- [`mypy`](https://github.com/python/mypy), version 1.18.1 or above
+| Name | Version |
+| --- | :-- |
+| [`basedpyright`](https://github.com/DetachHead/basedpyright) | ≥ 1.31.6 |
+| [`mypy`](https://github.com/python/mypy) | ≥ 1.18.1 |
+| [`pyrefly`](https://pyrefly.org/) | ≥ 0.46.3 |
+| [`pyright`](https://github.com/microsoft/pyright) | ≥ 1.1.406 |
 
-`pyright` and `basedpyright` are recommended for their greater flexibility and early adoption of newer type checking features. In the future, there is plan to bring even more type checker support.
+`pyright` and `basedpyright` are recommended for their greater flexibility, maturity and early adoption of newer type checking features. In the future, there is plan to bring even more type checker support (such as `ty` or `zuban`).
 
 ## Goal ③: Review and test suite
 
@@ -83,14 +64,16 @@ This package tries to bring type annotation specific docstrings for some classes
 
 #### Warnings for exception and wrong code
 
-`pyright` (and therefore `vscode`) users receive additional benefit of being forewarned when their lxml code will likely cause undesirable runtime behavior or outright exception.
+![image showing deprecation warning](https://github.com/user-attachments/assets/6ab30a54-60e7-4e34-932a-2ac2e253c669)
+
+`pyright` and `basedpyright` users receive additional benefit of being forewarned when their lxml code will likely cause undesirable runtime behavior or outright exception.
 - [#64](https://github.com/abelcheung/types-lxml/issues/64) covers one such example where such warnings are warrented.
 - Another example is `html.html5parser` submodule functions causing exception when `str` input and `guess_charset` parameter are used together.
 
+Similarly their corresponding Visual Studio Code extensions would display visual cue when such problematic usage is encountered, as shown in above screenshot.
+
 > [!NOTE]
 > This feature makes use of [`@deprecated` decorator](https://typing.python.org/en/latest/spec/directives.html#deprecated) from Python 3.13. `mypy` disables such warnings by default, and need to be [turned on explicitly](https://mypy.readthedocs.io/en/stable/error_code_list2.html#check-that-imported-or-used-feature-is-deprecated-deprecated).
-
-![image showing deprecation warning](https://github.com/user-attachments/assets/6ab30a54-60e7-4e34-932a-2ac2e253c669)
 
 #### Class inheritance change
 
@@ -107,10 +90,27 @@ The normal choice for most people is to fetch package from PyPI, like:
 
 In the unlikely case PyPI is down, one can directly download wheel from [latest release in GitHub](https://github.com/abelcheung/types-lxml/releases/latest), and then perform installation as local file.
 
-As convenience, it is possible to pull type checker directly [with extras](https://peps.python.org/pep-0508/#extras):
+As convenience, it is possible to [pull development related packages](https://peps.python.org/pep-0508/#extras). This helps when you want to submit PR on bugs or features:
 
-    uv pip install -U types-lxml[pyright]
-    pip install -U types-lxml[mypy]
+    uv pip install -U types-lxml[dev]
+    pip install -U types-lxml[dev]
+
+The stub package supports all Python versions since 3.9. But if you want to create PR and test your changes, Python 3.10 is needed.
+
+### Mypy plugin usage
+
+Mypy plugin bundled with this stub package needs to be explicitly turned on from config. Add these two lines under `[mypy]` global section if you're using INI file:
+
+```ini
+plugins =
+    mypy_plugin_lxml.main
+```
+
+Alternatively, add this under `[tool.mypy]` section for `pyproject.toml`:
+
+```toml
+plugins = ["mypy_plugin_lxml.main"]
+```
 
 ### Choosing the build
 
