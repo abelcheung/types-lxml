@@ -5,7 +5,7 @@
 
 ## Important note
 
-- Upcoming release:
+- Since `2026.01.01`:
   - Support for [`pyrefly` type checker](https://pyrefly.org/)
   - New `mypy` plugin that mimics [`XMLParser.set_element_class_lookup()` behavior](https://github.com/abelcheung/types-lxml/wiki/Using-specialised-class-directly#no-automatic-change-of-subscript)
 
