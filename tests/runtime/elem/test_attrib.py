@@ -363,7 +363,12 @@ class TestUpdateMethod:
     def test_input_other_mapping_1(
         self, disposable_attrib: _Attrib, atts: dict[Any, Any]
     ) -> None:
-        with pytest.raises((TypeError, ValueError, AssertionError)):  # pyrefly: ignore[no-matching-overload]
+        # pyrefly: ignore[no-matching-overload]
+        with pytest.raises((
+            TypeError,
+            ValueError,
+            AssertionError,
+        )):
             self._verify_key_val_present(disposable_attrib, MappingProxyType(atts))
 
     @given(atts=st.dictionaries(
@@ -375,7 +380,12 @@ class TestUpdateMethod:
     def test_input_other_mapping_2(
         self, disposable_attrib: _Attrib, atts: dict[Any, Any]
     ) -> None:
-        with pytest.raises((TypeError, ValueError, AssertionError)):  # pyrefly: ignore[no-matching-overload]
+        # pyrefly: ignore[no-matching-overload]
+        with pytest.raises((
+            TypeError,
+            ValueError,
+            AssertionError,
+        )):
             self._verify_key_val_present(disposable_attrib, ChainMap(atts))
 
     @given(

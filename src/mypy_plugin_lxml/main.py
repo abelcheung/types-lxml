@@ -24,7 +24,7 @@ from mypy.types import (
 class MypyLxmlPlugin(Plugin):
     def get_method_hook(self, fullname: str) -> Callable[[MethodContext], Type] | None:
         _, _, method_name = fullname.rpartition(".")
-        if method_name in {"set_element_class_lookup", "setElementClassLookup"} :
+        if method_name in {"set_element_class_lookup", "setElementClassLookup"}:
             # Delegate class name checking to the hook, because we want to
             # support user custom subclasses
             return _set_class_lookup_method_hook
@@ -73,9 +73,7 @@ def _set_class_lookup_method_hook(ctx: MethodContext) -> Type:
 
     for base in lookup.type.bases:
         if base.type.fullname == "lxml.html._parse.HtmlElementClassLookup":
-            ctx.type.args = (
-                _create_instance_from("lxml.html._element.HtmlElement"),
-            )
+            ctx.type.args = (_create_instance_from("lxml.html._element.HtmlElement"),)
         elif base.type.fullname == "lxml.objectify._misc.ObjectifyElementClassLookup":
             ctx.type.args = (
                 _create_instance_from("lxml.objectify._element.ObjectifiedElement"),

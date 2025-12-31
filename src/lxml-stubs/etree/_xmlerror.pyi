@@ -171,7 +171,9 @@ class PyErrorLog(_BaseErrorLog):
     def __init__(
         self,
         *,
-        logger: Logger | LoggerAdapter[Logger] | None = None,  # pyrefly: ignore[not-a-type]
+        logger: Logger
+        | LoggerAdapter[Logger]
+        | None = None,  # pyrefly: ignore[not-a-type]
     ) -> None: ...
     # copy() is disallowed, implementation chooses to fail in a
     # silent way by returning dummy _ListErrorLog. We skip it altogether.

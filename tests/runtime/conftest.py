@@ -400,7 +400,8 @@ def generate_input_file_arguments(
                 i = i(path)
             if pytestconfig.get_verbosity() >= 2:
                 _logger.debug(f"Testing file input {i!r}")
-            if isinstance(i, AbstractContextManager) and not isinstance(i, Path):  # pyrefly: ignore[unsafe-overlap]
+            # pyrefly: ignore[unsafe-overlap]
+            if isinstance(i, AbstractContextManager) and not isinstance(i, Path):
                 cm = i
             else:
                 cm = nullcontext(i)
