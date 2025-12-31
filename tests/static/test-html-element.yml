@@ -15,25 +15,6 @@
         def extfunc2(context, a, b): return 0
   main: ""
 
-- case: mixin_method_set
-  files: *INC
-  main: |
-    from inc import s, b, i, qn, el
-    o: object
-    el.set(s, s)
-    el.set(s, b)
-    el.set(s, None)
-    el.set(s, qn)
-    el.set(s)
-    el.set(b, s)
-    el.set(b, b)
-    el.set(b)
-    el.set(qn, s)
-    el.set(qn, qn)
-    el.set(qn)
-    el.set(s, i)  # ER: Argument 2 to "set" .+; expected ".+"  \[arg-type]
-    el.set(o, s)  # ER: Argument 1 to "set" .+; expected ".+"  \[arg-type]
-
 - case: mixin_method_drop_
   parametrized:
   - func: drop_tree

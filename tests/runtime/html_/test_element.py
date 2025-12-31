@@ -13,6 +13,7 @@ from hypothesis import (
     assume,
     given,
     settings,
+    strategies as st,
 )
 from lxml.html import (
     Classes as Classes,
@@ -23,11 +24,14 @@ from lxml.html import (
 )
 
 from .._testutils import strategy as _st
+from .._testutils.common import (
+    attr_name_types,
+    attr_value_types,
+)
 from .._testutils.errors import (
     raise_no_attribute,
     raise_prop_not_writable,
 )
-from .._testutils.marker import github_fail_marker
 
 if sys.version_info >= (3, 11):
     from typing import reveal_type
@@ -101,7 +105,6 @@ class TestMixinProperties:
         with pytest.raises(AssertionError):
             disposable_html_element.classes = cast(Any, iterable_of(v))
 
-    @github_fail_marker
     @pytest.mark.notypechecker("mypy")
     def test_label_property_rw_ok(
         self,
@@ -152,3 +155,49 @@ class TestMixinProperties:
 
         with raise_no_attribute:
             input.label = cast(Any, iterable_of(label))
+
+
+class TestSetMethod:
+    @settings(
+        suppress_health_check=[HealthCheck.too_slow], deadline=None, max_examples=300
+    )
+    @given(key=_st.xml_name_arg(), value=st.one_of(st.none(), _st.xml_attr_value_arg()))
+    @pytest.mark.slow
+    def test_set_method_ok(
+        self,
+        disposable_html_element: HtmlElement,
+        key: Any,
+        value: Any,
+    ) -> None:
+        disposable_html_element.set(key, value)
+        reveal_type(disposable_html_element.get(key))
+
+    @settings(suppress_health_check=[HealthCheck.too_slow], max_examples=300)
+    @given(
+        value=_st.all_instances_except_of_type(
+            *attr_value_types.allow, *attr_value_types.skip, type(None)
+        )
+    )
+    @pytest.mark.slow
+    def test_set_method_bad_1(
+        self,
+        disposable_html_element: HtmlElement,
+        value: Any,
+    ) -> None:
+        with pytest.raises(TypeError):
+            disposable_html_element.set("key", value)
+
+    @settings(suppress_health_check=[HealthCheck.too_slow], max_examples=300)
+    @given(
+        key=_st.all_instances_except_of_type(
+            *attr_name_types.allow, *attr_name_types.skip
+        )
+    )
+    @pytest.mark.slow
+    def test_set_method_bad_2(
+        self,
+        disposable_html_element: HtmlElement,
+        key: Any,
+    ) -> None:
+        with pytest.raises(TypeError):
+            disposable_html_element.set(key, "value")
