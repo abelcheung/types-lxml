@@ -5,7 +5,7 @@ search-path = [
     ".",
     "../../src",
 ]
-python-version = "3.11"  # facebook/pyrefly#1952
+python-version = "3.10"
 
 [errors]
 deprecated = false
