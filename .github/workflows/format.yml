@@ -40,7 +40,7 @@ jobs:
           tox run-parallel -vv
           -m typecheck
 
-      - uses: peter-evans/create-pull-request@v7
+      - uses: peter-evans/create-pull-request@v8
         with:
           branch: create-pull-request/formatting
           delete-branch: true
