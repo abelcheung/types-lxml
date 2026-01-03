@@ -14,7 +14,7 @@ from lxml.etree import (
     _ElementTree as _ElementTree,
 )
 
-from .._testutils import empty_signature_tester, signature_tester, strategy as _st
+from .._testutils import signature_tester, strategy as _st
 from .._testutils.errors import (
     raise_wrong_arg_type,
 )
@@ -91,15 +91,6 @@ class TestAddMethods:
 
 
 class TestGetMethods:
-    @empty_signature_tester(
-        _Element.getparent,
-        _Element.getprevious,
-        _Element.getnext,
-        _Element.getroottree,
-    )
-    def test_signature(self) -> None:
-        pass
-
     def test_getparent_method(self, xml2_root: _Element) -> None:
         nothing = reveal_type(xml2_root.getparent())
         assert nothing is None

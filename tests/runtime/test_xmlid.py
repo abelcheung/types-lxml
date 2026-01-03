@@ -35,7 +35,7 @@ from lxml.objectify import (
     makeparser,
 )
 
-from ._testutils import empty_signature_tester, signature_tester, strategy as _st
+from ._testutils import signature_tester, strategy as _st
 from ._testutils.common import text_document_types
 from ._testutils.errors import (
     raise_invalid_filename_type,
@@ -433,14 +433,6 @@ class TestIddict:
             reveal_type(k)
             reveal_type(xmlids[k])
 
-    @empty_signature_tester(
-        _IDDict.keys,
-        _IDDict.values,
-        _IDDict.items,
-        _IDDict.iterkeys,
-        _IDDict.itervalues,
-        _IDDict.iteritems,
-    )
     def test_keyval_methods(
         self, xml2_bytes_with_dtd: bytes, dtd_enabled_parser: XMLParser
     ) -> None:

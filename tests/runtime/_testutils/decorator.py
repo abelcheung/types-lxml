@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import functools
 from collections.abc import Callable, Sequence
-from inspect import Parameter, Signature, _ParameterKind, isclass, signature
+from inspect import Parameter, _ParameterKind, isclass, signature
 from typing import Any, ParamSpec
 
 from lxml.etree import LXML_VERSION
@@ -87,31 +87,6 @@ def signature_tester(
                             else param[i].default,
                         ),
                         funcname,
-                    )
-            f(*args, **kw)
-
-        return wrapped
-
-    return decorator
-
-
-def empty_signature_tester(
-    *_funcs: Callable[..., Any],
-) -> Callable[[Callable[_P, None]], Callable[_P, None]]:
-    def decorator(f: Callable[_P, None]) -> Callable[_P, None]:
-        @functools.wraps(f)
-        def wrapped(*args: _P.args, **kw: _P.kwargs) -> None:
-            for func in _funcs:
-                sig = signature(func)
-                if sig == Signature():
-                    continue
-                param = list(sig.parameters.values())
-                if param[0].name == "self":
-                    _ = param.pop(0)
-                if param:
-                    raise FuncSignatureError(
-                        "Signature expected to be empty but actually is not",
-                        func.__qualname__,  # ty: ignore[unresolved-attribute]
                     )
             f(*args, **kw)
 

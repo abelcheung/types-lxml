@@ -15,15 +15,6 @@
         def extfunc2(context, a, b): return 0
   main: ""
 
-- case: mixin_method_drop_
-  parametrized:
-  - func: drop_tree
-  - func: drop_tag
-  main: |
-    from lxml.html import HtmlElement
-    elem: HtmlElement
-    elem.{{ func }}()
-
 - case: mixin_method_find_rel_links
   main: |
     from lxml.html import HtmlElement

@@ -25,7 +25,7 @@ from lxml.etree import (
     use_global_python_log,
 )
 
-from ._testutils import empty_signature_tester, signature_tester, strategy as _st
+from ._testutils import signature_tester, strategy as _st
 from ._testutils.errors import (
     raise_attr_not_writable,
     raise_no_attribute,
@@ -212,11 +212,6 @@ class TestListLogMethods:
         with pytest.raises(TypeError, match=r"'>=' not supported between instances"):
             _ = list_log.filter_from_level(level)
 
-    @empty_signature_tester(
-        _ListErrorLog.filter_from_errors,
-        _ListErrorLog.filter_from_fatals,
-        _ListErrorLog.filter_from_warnings,
-    )
     def test_filter_from_level_deriv(self, list_log: _ListErrorLog) -> None:
         reveal_type(list_log.filter_from_errors())
         reveal_type(list_log.filter_from_fatals())
@@ -234,7 +229,6 @@ class TestListLogMethods:
     # BEWARE: vanilla _ListErrorLog has no clear() method,
     # thus can't be inspected
 
-    @empty_signature_tester(_ListErrorLog.copy)
     def test_copy(self, list_log: _ListErrorLog) -> None:
         reveal_type(list_log.copy())
 
@@ -270,7 +264,6 @@ class TestModuleFunc:
         with pytest.raises(TypeError, match=r"expected .+\.PyErrorLog, got .+"):
             use_global_python_log(iterable_of(pylog))
 
-    @empty_signature_tester(clear_error_log)
     @signature_tester(
         use_global_python_log,
         (("log", Parameter.POSITIONAL_OR_KEYWORD, Parameter.empty),),

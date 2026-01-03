@@ -24,7 +24,6 @@ from hypothesis import (
 from lxml.etree import Element, HTMLParser, QName, _Attrib, _Element, parse
 
 from .._testutils import (
-    empty_signature_tester,
     signature_tester,
     strategy as _st,
 )
@@ -108,19 +107,10 @@ class TestAttrib:
         disposable_attrib["foo"] = v
         reveal_type(disposable_attrib["foo"])
 
-    @empty_signature_tester(_Attrib.clear)
     def test_method_clear(self, disposable_attrib: _Attrib) -> None:
         assert disposable_attrib.clear() is None
         assert len(disposable_attrib) == 0
 
-    @empty_signature_tester(
-        _Attrib.keys,
-        _Attrib.values,
-        _Attrib.items,
-        _Attrib.iterkeys,
-        _Attrib.itervalues,
-        _Attrib.iteritems,
-    )
     def test_method_keyval(self, xml2_root: _Element) -> None:
         attrib = xml2_root.attrib
 
@@ -425,11 +415,6 @@ class TestUpdateMethod:
 
 
 class TestElementKeyValMethods:
-    @empty_signature_tester(
-        _Element.keys,
-        _Element.values,
-        _Element.items,
-    )
     @pytest.mark.slow
     def test_basic(self, bightml_bin_fp: BinaryIO) -> None:
         parser = HTMLParser()

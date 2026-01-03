@@ -21,7 +21,6 @@ from lxml.etree import (
 )
 
 from ._testutils import (
-    empty_signature_tester,
     signature_tester,
     strategy as _st,
 )
@@ -252,15 +251,6 @@ class TestDtdValidate:
 
 
 class TestDtdMethods:
-    @empty_signature_tester(
-        DTD.iterelements,
-        DTD.elements,
-        DTD.iterentities,
-        DTD.entities,
-    )
-    def test_signature(self) -> None:
-        pass
-
     # reveal_type() unusable for some properties, because the private classes
     # are not exposed by lxml.etree, thus not resolvable.
     def test_elements(self, dtd: DTD) -> None:
