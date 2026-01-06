@@ -88,7 +88,6 @@ class TestIterparse:
 
             walker = iterparse(input)
             if should_support:
-                print(f"Good input being tested: {input!r}")
                 reveal_type(walker)
                 for event, elem in walker:
                     reveal_type(event)
