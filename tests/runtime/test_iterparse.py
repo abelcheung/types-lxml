@@ -24,7 +24,7 @@ class TestIterwalk:
             reveal_type(event)
             reveal_type(elem)
 
-    #pytest.mark.notypechecker("pyrefly")
+    @pytest.mark.notypechecker("pyrefly")
     def test_xml_more_event(self, xml2_tree: _ElementTree) -> None:
         walker = iterwalk(xml2_tree, ["start", "end", "start-ns", "end-ns", "comment"])
         reveal_type(walker)
