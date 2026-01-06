@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import bz2
+import functools
 import gzip
 import io
 import logging
@@ -333,12 +334,11 @@ def _get_compressed_fp_from(zmode: str) -> Any:
 
     def _wrapped(path: Path, /) -> Any:
         buffer = io.BytesIO()
-        comp_type, param = param_name[zmode]
-        with path.open("rb") as f, comp_type(**{param: buffer, "mode": "wb"}) as z:  # pyright: ignore  # pyrefly: ignore
+        zobj = functools.partial(param_name[zmode][0], **{param_name[zmode][1]: buffer})
+        with path.open("rb") as f, zobj(mode="wb") as z:
             z.write(f.read())
-
         buffer.seek(0, io.SEEK_SET)
-        return comp_type(**{param: buffer, "mode": "rb"})  # pyright: ignore  # pyrefly: ignore
+        return zobj(mode="rb")
 
     return _wrapped
 
