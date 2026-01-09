@@ -1,6 +1,8 @@
 # For inclusion in another workflow only
 
 name: Reusable test workflow
+permissions:
+  contents: read
 
 on:
   workflow_call:
