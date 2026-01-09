@@ -2,6 +2,9 @@
 
 name: Reusable build workflow
 
+permissions:
+  contents: read
+
 on:
   workflow_call:
     inputs:
