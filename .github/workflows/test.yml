@@ -19,6 +19,7 @@ jobs:
   all_tests:
     needs: build
     permissions:
+      contents: read
       actions: write
     strategy:
       matrix:
