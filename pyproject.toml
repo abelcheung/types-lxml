@@ -71,10 +71,10 @@ basic = [
     "beautifulsoup4 == 4.14.3",
 ]
 mypy = ["mypy == 1.19.1"]
-pyright = ["pyright == 1.1.407"]
-basedpyright = ["basedpyright == 1.36.2; platform_machine != 'i686'"]
-ty = ["ty == 0.0.8"]
-pyrefly = ["pyrefly == 0.46.3"]
+pyright = ["pyright == 1.1.408"]
+basedpyright = ["basedpyright == 1.37.1; platform_machine != 'i686'"]
+ty = ["ty == 0.0.11"]
+pyrefly = ["pyrefly == 0.47.0"]
 format = ["ruff ~= 0.6"]
 stub-test = [
     # pytest 9.x disallow pytest_plugins in non-top conftest.py
@@ -153,6 +153,12 @@ plugins = [
 
 [tool.ty.environment]
 python-version = "3.9"
+
+[[tool.ty.overrides]]
+include = [ "*" ]
+
+[tool.ty.overrides.rules]
+unused-ignore-comment = "ignore"
 
 [[tool.ty.overrides]]
 include = [

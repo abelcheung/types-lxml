@@ -334,6 +334,7 @@ def _get_compressed_fp_from(zmode: str) -> Any:
 
     def _wrapped(path: Path, /) -> Any:
         buffer = io.BytesIO()
+        # pyrefly: ignore[bad-argument-type]
         zobj = functools.partial(param_name[zmode][0], **{param_name[zmode][1]: buffer})
         with path.open("rb") as f, zobj(mode="wb") as z:
             z.write(f.read())
