@@ -26,7 +26,7 @@ class ElementTreeContentHandler(Generic[_ET], ContentHandler):
     # Incompatible method overrides; some args are similar
     # but use other structures or names
     # pyrefly: ignore[bad-param-name-override]
-    def startElementNS(  # type: ignore[override]  # pyright: ignore[reportIncompatibleMethodOverride]
+    def startElementNS(  # type: ignore[override]  # pyright: ignore[reportIncompatibleMethodOverride]  # ty: ignore[invalid-method-override]
         self,
         ns_name: tuple[str, str],
         qname: Unused,
@@ -50,7 +50,7 @@ class ElementTreeContentHandler(Generic[_ET], ContentHandler):
         attributes: SupportsLaxItems[str, str] | None = None,
     ) -> None: ...
     # pyrefly: ignore[bad-param-name-override]
-    ignorableWhitespace = characters  # type: ignore[assignment]  # pyright: ignore[reportAssignmentType]
+    ignorableWhitespace = characters  # type: ignore[assignment]  # pyright: ignore[reportAssignmentType]  # ty: ignore[invalid-method-override]
 
 @disjoint_base
 class ElementTreeProducer(Generic[_ET]):

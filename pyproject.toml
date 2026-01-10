@@ -154,6 +154,9 @@ plugins = [
 [tool.ty.environment]
 python-version = "3.9"
 
+[tool.ty.analysis]
+respect-type-ignore-comments = false
+
 [[tool.ty.overrides]]
 include = [ "*" ]
 

@@ -1072,20 +1072,20 @@ class __ContentOnlyElement(_Element):
     # pyrefly: ignore[bad-override]
     def get(self, key: _t.Unused, default: _t.Unused = None) -> None: ...  # type: ignore[override]
     # pyrefly: ignore[bad-override]
-    def set(self, key: Never, value: Never) -> Never: ...  # type: ignore[override]  # pyright: ignore[reportIncompatibleMethodOverride]
+    def set(self, key: Never, value: Never) -> Never: ...  # type: ignore[override]  # pyright: ignore[reportIncompatibleMethodOverride]  # ty: ignore[invalid-method-override]
     # pyrefly: ignore[bad-override]
-    def append(self, element: Never) -> Never: ...  # type: ignore[override]  # pyright: ignore[reportIncompatibleMethodOverride]
+    def append(self, element: Never) -> Never: ...  # type: ignore[override]  # pyright: ignore[reportIncompatibleMethodOverride]  # ty: ignore[invalid-method-override]
     # pyrefly: ignore[bad-override]
-    def insert(self, index: Never, value: Never) -> Never: ...  # type: ignore[override]  # pyright: ignore[reportIncompatibleMethodOverride]
+    def insert(self, index: Never, value: Never) -> Never: ...  # type: ignore[override]  # pyright: ignore[reportIncompatibleMethodOverride]  # ty: ignore[invalid-method-override]
     # pyrefly: ignore[bad-override]
-    def __setitem__(self, __k: Never, __v: Never) -> Never: ...  # type: ignore[override]  # pyright: ignore[reportIncompatibleMethodOverride]
+    def __setitem__(self, __k: Never, __v: Never) -> Never: ...  # type: ignore[override]  # pyright: ignore[reportIncompatibleMethodOverride]  # ty: ignore[invalid-method-override]
     # The intention is to discourage elem.__getitem__, allowing slice
     # argument in runtime doesn't make any sense
     # pyrefly: ignore[bad-override]
-    def __getitem__(self, __k: Never) -> Never: ...  # type: ignore[override]  # pyright: ignore[reportIncompatibleMethodOverride]
+    def __getitem__(self, __k: Never) -> Never: ...  # type: ignore[override]  # pyright: ignore[reportIncompatibleMethodOverride]  # ty: ignore[invalid-method-override]
     # Methods above are explicitly defined in source, while those below aren't
     # pyrefly: ignore[bad-override]
-    def __delitem__(self, __k: Never) -> Never: ...  # type: ignore[override]  # pyright: ignore[reportIncompatibleMethodOverride]
+    def __delitem__(self, __k: Never) -> Never: ...  # type: ignore[override]  # pyright: ignore[reportIncompatibleMethodOverride]  # ty: ignore[invalid-method-override]
     def __iter__(self) -> Never: ...
 
     # TODO (low priority) There are many, many more methods that
