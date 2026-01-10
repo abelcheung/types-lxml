@@ -16,13 +16,13 @@ from .._types import (
     _AttrMapping,
     _AttrName,
     _AttrVal,
+    _CSSTransArg,
     _ElemPathArg,
     _NSMapArg,
     _StrOnlyNSMap,
     _TagName,
     _TagSelector,
 )
-from ..cssselect import _CSSTransArg
 from ._form import FormElement, LabelElement
 
 if sys.version_info >= (3, 11):

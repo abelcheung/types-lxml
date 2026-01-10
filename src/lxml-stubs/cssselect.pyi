@@ -1,10 +1,16 @@
-from typing import Literal, overload
+from typing import overload
 
 import cssselect as _csel
 from cssselect.parser import Function
 from cssselect.xpath import XPathExpr
 
-from ._types import _ET, _ElementOrTree, _XPathNSArg, _XPathVarArg
+from ._types import (
+    _ET,
+    _CSSTransArg,
+    _ElementOrTree,
+    _XPathNSArg,
+    _XPathVarArg,
+)
 from .etree import XPath
 from .html import HtmlElement
 from .objectify import ObjectifiedElement
@@ -24,8 +30,6 @@ class LxmlTranslator(_csel.GenericTranslator):
     def xpath_contains_function(
         self, xpath: XPathExpr, function: Function
     ) -> XPathExpr: ...
-
-_CSSTransArg = LxmlTranslator | Literal["xml", "html", "xhtml"]
 
 class LxmlHTMLTranslator(LxmlTranslator, _csel.HTMLTranslator):
     pass

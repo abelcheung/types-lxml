@@ -16,14 +16,18 @@ from typing import (
 )
 from typing_extensions import SupportsIndex
 
+from .._types import (
+    _CSSTransArg,
+    _TagName,
+    _TextArg,
+)
+from ..etree import CDATA, ElementBase
+
 if sys.version_info >= (3, 11):
     from typing import LiteralString, Self
 else:
     from typing_extensions import LiteralString, Self
 
-from .._types import _TagName, _TextArg
-from ..cssselect import _CSSTransArg
-from ..etree import CDATA, ElementBase
 
 class ObjectifiedElement(ElementBase):
     """Main XML Element class

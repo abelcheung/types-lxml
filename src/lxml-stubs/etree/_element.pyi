@@ -16,7 +16,7 @@ from typing import (
 from typing_extensions import disjoint_base
 
 from .. import _types as _t
-from ..cssselect import _CSSTransArg
+from .._types import _CSSTransArg
 from ._module_misc import CDATA, DocInfo, QName
 from ._parser import CustomTargetParser
 from ._xslt import XSLTAccessControl, XSLTExtension, _Stylesheet_Param, _XSLTResultTree

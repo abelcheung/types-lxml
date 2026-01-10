@@ -14,6 +14,7 @@ from typing import (
     type_check_only,
 )
 
+from .cssselect import LxmlTranslator
 from .etree import HTMLParser, QName, XMLParser, _Element, _ElementTree
 
 if sys.version_info >= (3, 14):
@@ -199,3 +200,6 @@ _FileReadSource = (
     | Reader[bytes]
 )  # fmt: skip
 _FileWriteSource = _FilePath | Writer[bytes]
+
+# Shared across cssselect methods from multiple places
+_CSSTransArg = LxmlTranslator | Literal["xml", "html", "xhtml"]

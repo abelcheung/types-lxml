@@ -32,10 +32,6 @@ else:
 
 _T_co = TypeVar("_T_co", covariant=True)
 
-# See https://lxml.de/parsing.html#event-types
-# Undocumented: 'comment' and 'pi' are actually supported!
-_NoNSEventNames = Literal["start", "end", "comment", "pi"]
-_SaxNsEventValues = tuple[str, str] | None  # for start-ns & end-ns event
 
 @disjoint_base
 class iterparse(Iterator[_T_co]):
@@ -74,12 +70,12 @@ class iterparse(Iterator[_T_co]):
         html: Literal[True],
         recover: bool | None = None,
         schema: XMLSchema | None = None,
-    ) -> iterparse[tuple[_NoNSEventNames, _Element]]: ...
+    ) -> iterparse[tuple[Literal["start", "end", "comment", "pi"], _Element]]: ...
     @overload  # element-only events
     def __new__(
         cls,
         source: _FilePath | Reader[bytes],
-        events: Iterable[_NoNSEventNames],
+        events: Iterable[Literal["start", "end", "comment", "pi"]],
         *,
         tag: _TagSelector | Iterable[_TagSelector] | None = None,
         attribute_defaults: bool = False,
@@ -98,7 +94,7 @@ class iterparse(Iterator[_T_co]):
         huge_tree: bool = False,
         collect_ids: bool = True,
         schema: XMLSchema | None = None,
-    ) -> iterparse[tuple[_NoNSEventNames, _Element]]: ...
+    ) -> iterparse[tuple[Literal["start", "end", "comment", "pi"], _Element]]: ...
     @overload  # NS-only events
     def __new__(
         cls,
@@ -149,7 +145,7 @@ class iterparse(Iterator[_T_co]):
         collect_ids: bool = True,
         schema: XMLSchema | None = None,
     ) -> iterparse[
-        tuple[_NoNSEventNames, _Element]
+        tuple[Literal["start", "end", "comment", "pi"], _Element]
         | tuple[Literal["start-ns"], tuple[str, str]]
         | tuple[Literal["end-ns"], None]
     ]: ...
@@ -224,9 +220,9 @@ class iterwalk(Iterator[_T_co]):
     def __new__(
         cls,
         element_or_tree: _ElementOrTree[_ET_co],
-        events: Iterable[_NoNSEventNames],
+        events: Iterable[Literal["start", "end", "comment", "pi"]],
         tag: _TagSelector | Iterable[_TagSelector] | None = None,
-    ) -> iterwalk[tuple[_NoNSEventNames, _ET_co]]: ...
+    ) -> iterwalk[tuple[Literal["start", "end", "comment", "pi"], _ET_co]]: ...
     @overload  # namespace-only events
     def __new__(
         cls,
@@ -243,7 +239,7 @@ class iterwalk(Iterator[_T_co]):
         events: Iterable[_SaxEventNames],
         tag: _TagSelector | Iterable[_TagSelector] | None = None,
     ) -> iterwalk[
-        tuple[_NoNSEventNames, _ET_co]
+        tuple[Literal["start", "end", "comment", "pi"], _ET_co]
         | tuple[Literal["start-ns"], tuple[str, str]]
         | tuple[Literal["end-ns"], None]
     ]: ...
