@@ -1,14 +1,14 @@
  pyproject.toml                         |  2 +-
- src/lxml-stubs/cssselect.pyi           | 10 ++---
+ src/lxml-stubs/cssselect.pyi           |  9 ++---
  src/lxml-stubs/etree/_element.pyi      | 74 +++++++++++++++++-----------------
  src/lxml-stubs/etree/_factory_func.pyi |  7 ++--
  src/lxml-stubs/html/_element.pyi       | 36 +++++++++++------
  src/lxml-stubs/objectify/_element.pyi  |  9 +++--
  tests/runtime/_testutils/common.py     |  2 +-
- 7 files changed, 77 insertions(+), 63 deletions(-)
+ 7 files changed, 76 insertions(+), 63 deletions(-)
 
 diff --git a/pyproject.toml b/pyproject.toml
-index c638ef7..0f5bfa3 100644
+index 518d35f..30f695d 100644
 --- a/pyproject.toml
 +++ b/pyproject.toml
 @@ -5,7 +5,7 @@ requires = ['pdm-backend ~= 2.4']
@@ -21,21 +21,25 @@ index c638ef7..0f5bfa3 100644
  description = 'Complete lxml external type annotation'
  readme = 'README.md'
 diff --git a/src/lxml-stubs/cssselect.pyi b/src/lxml-stubs/cssselect.pyi
-index a37ec88..6ee9a2c 100644
+index f7aa86f..c084c9f 100644
 --- a/src/lxml-stubs/cssselect.pyi
 +++ b/src/lxml-stubs/cssselect.pyi
-@@ -4,8 +4,8 @@ import cssselect as _csel
- from cssselect.parser import Function
+@@ -5,13 +5,12 @@ from cssselect.parser import Function
  from cssselect.xpath import XPathExpr
  
--from ._types import _ET, _ElementOrTree, _XPathNSArg, _XPathVarArg
+ from ._types import (
+-    _ET,
+     _CSSTransArg,
+     _ElementOrTree,
+     _XPathNSArg,
+     _XPathVarArg,
+ )
 -from .etree import XPath
-+from ._types import _ElementOrTree, _XPathNSArg, _XPathVarArg
 +from .etree import XPath, _Element
  from .html import HtmlElement
  from .objectify import ObjectifiedElement
  
-@@ -53,7 +53,7 @@ class CSSSelector(XPath):
+@@ -57,7 +56,7 @@ class CSSSelector(XPath):
      # we handle the 2 built-in element families (HtmlElement
      # and ObjectifiedElement), but the rest is up to users.
      @overload
@@ -44,7 +48,7 @@ index a37ec88..6ee9a2c 100644
          self,
          _etree_or_element: _ElementOrTree[ObjectifiedElement],
          /,
-@@ -69,7 +69,7 @@ class CSSSelector(XPath):
+@@ -73,7 +72,7 @@ class CSSSelector(XPath):
      @overload
      def __call__(
          self,
@@ -55,7 +59,7 @@ index a37ec88..6ee9a2c 100644
 -    ) -> list[_ET]: ...
 +    ) -> list[_Element]: ...
 diff --git a/src/lxml-stubs/etree/_element.pyi b/src/lxml-stubs/etree/_element.pyi
-index 98dba20..7357598 100644
+index c8e3c32..e4bff8a 100644
 --- a/src/lxml-stubs/etree/_element.pyi
 +++ b/src/lxml-stubs/etree/_element.pyi
 @@ -27,9 +27,9 @@ else:
@@ -389,7 +393,7 @@ index 60f92a4..b670190 100644
 -) -> _ET: ...
 +) -> _Element: ...
 diff --git a/src/lxml-stubs/html/_element.pyi b/src/lxml-stubs/html/_element.pyi
-index 77c1b61..9284edd 100644
+index 9ad3186..56348af 100644
 --- a/src/lxml-stubs/html/_element.pyi
 +++ b/src/lxml-stubs/html/_element.pyi
 @@ -133,7 +133,8 @@ class HtmlElement(etree.ElementBase):
@@ -502,10 +506,10 @@ index 77c1b61..9284edd 100644
          expr: str,
          *,
 diff --git a/src/lxml-stubs/objectify/_element.pyi b/src/lxml-stubs/objectify/_element.pyi
-index 58a59fa..c6f04ee 100644
+index 3175f6d..88df410 100644
 --- a/src/lxml-stubs/objectify/_element.pyi
 +++ b/src/lxml-stubs/objectify/_element.pyi
-@@ -60,7 +60,8 @@ class ObjectifiedElement(ElementBase):
+@@ -64,7 +64,8 @@ class ObjectifiedElement(ElementBase):
      def addattr(self, tag: _TagName, value: object) -> None: ...
      def countchildren(self) -> int: ...
      def descendantpaths(self, prefix: str | list[str] | None = None) -> list[str]: ...
@@ -515,7 +519,7 @@ index 58a59fa..c6f04ee 100644
          self,
      ) -> list[ObjectifiedElement]: ...
      def __iter__(self) -> Iterator[ObjectifiedElement]: ...
-@@ -71,7 +72,8 @@ class ObjectifiedElement(ElementBase):
+@@ -75,7 +76,8 @@ class ObjectifiedElement(ElementBase):
      def __delattr__(self, __name: str) -> None: ...
      # elem['foo'] is equivalent to elem.foo, but allows for
      # special attribute names (like 'text' or 'tail')
@@ -525,7 +529,7 @@ index 58a59fa..c6f04ee 100644
      def __getitem__(self, key: int | str | bytes, /) -> ObjectifiedElement: ...
      @overload
      def __getitem__(  # pyright: ignore[reportIncompatibleMethodOverride]  # ty: ignore[invalid-method-override]
-@@ -87,7 +89,8 @@ class ObjectifiedElement(ElementBase):
+@@ -91,7 +93,8 @@ class ObjectifiedElement(ElementBase):
      # TODO Check if _Element methods need overriding
      # CSS selector is not a normal use case for objectified
      # element (and unnecessary), but still usable nonetheless
