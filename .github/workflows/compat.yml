@@ -36,11 +36,13 @@ jobs:
         run: >
           .venv/bin/mypy src
 
+
   pyright_compat:
     strategy:
       fail-fast: false
       matrix:
         prver:
+          - '1.1.408'
           - '1.1.407'
           - '1.1.406'
     runs-on: ubuntu-24.04
@@ -70,6 +72,8 @@ jobs:
       fail-fast: false
       matrix:
         bpr-ver:
+          - '1.37.1'
+          - '1.37.0'
           - '1.36.2'
           - '1.36.1'
           - '1.36.0'
@@ -108,6 +112,8 @@ jobs:
       fail-fast: false
       matrix:
         pyr-ver:
+          - '0.47.0'
+          - '0.46.3'
           - '0.46.2'
           - '0.46.1'
           - '0.46.0'
@@ -133,3 +139,37 @@ jobs:
         run: |
           source .venv/bin/activate
           pyrefly check src
+
+
+  ty_compat:
+    strategy:
+      fail-fast: false
+      matrix:
+        ty-ver:
+          - '0.0.11'
+          - '0.0.10'
+          - '0.0.9'
+          - '0.0.8'
+          - '0.0.7'
+
+    runs-on: 'ubuntu-24.04'
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: astral-sh/setup-uv@v7
+        with:
+          version: '0.9.5'
+          cache-dependency-glob: |
+            ./pyproject.toml
+
+      - name: Install prerequisite python packages
+        run: |
+          uv venv -p 3.12 --python-preference only-managed
+          uv pip install .[mypy]
+          uv pip install "ty==${{ matrix.ty-ver }}"
+
+      - name: Run ty
+        run: |
+          source .venv/bin/activate
+          ty check src
+
