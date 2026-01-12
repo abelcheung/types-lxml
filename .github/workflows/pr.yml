@@ -4,9 +4,10 @@ on:
   pull_request_target:
     paths-ignore:
       - '**/dependabot.yml'
+      - '**/bandit.yml'
       - '.editorconfig'
-      - '**/.gitignore'
-      - '**/.gitattributes'
+      - '.gitignore'
+      - '.gitattributes'
       - '**.md'
       - 'LICENSE'
 

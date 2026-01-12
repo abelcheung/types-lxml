@@ -14,23 +14,13 @@ name: Bandit
 on:
   push:
     branches: [ "main" ]
-    paths-ignore:
-      - '**/dependabot.yml'
-      - '.editorconfig'
-      - '**.gitignore'
-      - '**.gitattributes'
-      - '**.md'
-      - 'LICENSE*'
+    paths:
+      - '**/*.py'
   pull_request:
     # The branches below must be a subset of the branches above
     branches: [ "main" ]
-    paths-ignore:
-      - '**/dependabot.yml'
-      - '.editorconfig'
-      - '**.gitignore'
-      - '**.gitattributes'
-      - '**.md'
-      - 'LICENSE*'
+    paths:
+      - '**/*.py'
   schedule:
     - cron: '45 3 * * 3'
 
