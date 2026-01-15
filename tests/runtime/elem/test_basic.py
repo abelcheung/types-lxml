@@ -38,9 +38,6 @@ if sys.version_info >= (3, 11):
 else:
     from typing_extensions import reveal_type
 
-# See mypy.ini in testsuite for explanation
-TC_HONORS_REVERSED = True
-
 
 class TestBasicBehavior:
     def test_sequence_read(self, xml2_root: _Element) -> None:
@@ -58,16 +55,6 @@ class TestBasicBehavior:
         assert elem.index(item) == 0
         del itr, item
 
-        if TC_HONORS_REVERSED:
-            rev = reversed(elem)
-        else:
-            rev = elem.__reversed__()
-        reveal_type(rev)
-        item = next(rev)
-        reveal_type(item)
-        assert elem.index(item) == length - 1
-        del rev, item
-
         for sub in elem:
             reveal_type(sub)
 
@@ -80,6 +67,20 @@ class TestBasicBehavior:
             _ = elem[cast(int, "0")]
 
         del elem, subelem
+
+    # mypy and ty don't support magic method and always treat
+    # reversed(...) as `reversed` object
+    @pytest.mark.notypechecker("mypy", "ty")
+    def test_reversed_seq_read_1(self, xml2_root: _Element) -> None:
+        rev = reversed(xml2_root)
+        reveal_type(rev)
+        reveal_type(list(rev))
+
+    @pytest.mark.onlytypechecker("mypy", "ty")
+    def test_reversed_seq_read_2(self, xml2_root: _Element) -> None:
+        rev = xml2_root.__reversed__()
+        reveal_type(rev)
+        reveal_type(list(rev))
 
     def test_sequence_modify(self, xml2_root: _Element) -> None:
         elem = deepcopy(xml2_root)
