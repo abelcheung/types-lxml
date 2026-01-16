@@ -15,12 +15,14 @@ from hypothesis import (
     settings,
     strategies as st,
 )
+from lxml.etree import LXML_VERSION
 from lxml.html import (
     Classes as Classes,
     FormElement as FormElement,
     HtmlElement,
     InputElement,
     LabelElement,
+    fragment_fromstring,
 )
 
 from .._testutils import strategy as _st
@@ -45,25 +47,30 @@ if TYPE_CHECKING:
 
 
 class TestMixinProperties:
-    def test_property_ro(
+    def test_property_ro_1(
         self,
         bightml_root: HtmlElement,
     ) -> None:
         reveal_type(bightml_root.head)
-        with raise_prop_not_writable:
-            bightml_root.head = bightml_root.head  # type: ignore[misc]  # pyright: ignore[reportAttributeAccessIssue]  # pyrefly: ignore[read-only]
-
         reveal_type(bightml_root.body)
-        with raise_prop_not_writable:
-            bightml_root.body = bightml_root.body  # type: ignore[misc]  # pyright: ignore[reportAttributeAccessIssue]  # pyrefly: ignore[read-only]
-
         reveal_type(bightml_root.forms)
-        with raise_prop_not_writable:
-            bightml_root.forms = bightml_root.forms  # type: ignore[misc]  # pyright: ignore[reportAttributeAccessIssue]  # pyrefly: ignore[read-only]
-
         reveal_type(bightml_root.base_url)
-        with raise_prop_not_writable:
-            bightml_root.base_url = bightml_root.base_url  # type: ignore[misc]  # pyright: ignore[reportAttributeAccessIssue]  # pyrefly: ignore[read-only]
+
+        for a in ["head", "body", "forms", "base_url"]:
+            with raise_prop_not_writable:
+                setattr(bightml_root, a, getattr(bightml_root, a))
+
+    def test_property_ro_2(self) -> None:
+        root = fragment_fromstring("<div>")
+        if LXML_VERSION > (6, 0):
+            reveal_type(root.head)
+        else:
+            with pytest.raises(IndexError, match=r"list index out of range"):
+                _ = root.head
+
+        reveal_type(root.body)
+        reveal_type(root.forms)
+        reveal_type(root.base_url)
 
     def test_classes_property_rw_good(
         self,
