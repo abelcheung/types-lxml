@@ -41,6 +41,7 @@
 - Lightweight fixtures: use fixtures from `tests/runtime/conftest.py` (e.g. `disposable_element`, `generate_input_file_arguments`) to keep Hypothesis tests fast and to exercise many IO input forms (paths, bytes, file-like, compressed streams, urlopen wrappers).
 - Signature & runtime validators: tests use helpers in `tests/runtime/_testutils/` such as `decorator.signature_tester()` to assert actual runtime C-extension signatures and `errors.py` for common pytest.raises contexts.
 - Allowlist & multi-version: CI runs `mypy.stubtest` against multiple installed `lxml` versions; update `tests/runtime/allowlist.txt` to suppress warnings when introducing intentional runtime/static mismatches.
+- Docstrings only apply to stubs: when adding docstrings, only add them to `.pyi` files in `src/lxml-stubs/`. Runtime test files should not have docstrings unless absolutely necessary.
 
 ## How tests & CI run (examples)
 - CI builds and tests via `uv` + `tox` (see `.github/workflows/*.yml`). To reproduce CI locally:
@@ -73,6 +74,18 @@ tox run-parallel -v --skip-env='.*-stub$'
 - `README.md` — release/build notes and special build explanation.
 - `tests/runtime/mypy.ini` — runtime mypy settings used in tests.
 - `tests/runtime/allowlist.txt` — mypy.stubtest allowlist for runtime mismatches.
+
+## Docstring notes
+- NumPy format is preferred for docstrings in stubs.
+- There are 2 different layouts used for docstrings:
+  - Old layout contains leading summary, then followed by an optional "Annotation" section. Finally there is "Original Docstring" section which is imported from `lxml` C sources.
+  - New layout contains leading summary, followed by an optional "Annotation" section. Finally there is "See Also" section which only contains a link named "API Documentation" to official API webpage. "Original Docstring" section is removed in new layout.
+- Migration from old to new layout is preferred when editing docstrings where applicable.
+- If section named "Annotation" exists, it should describe type annotation details only, not general usage. Such section might occur in both old and new layouts. Keep this section when converting from old to new layout. Agent doesn't need to create or modify this section unless requested by user.
+- Local underscored file names should be ignored when determining the correct API webpage to link to. For example, the `C14NWriterTarget` class is located in src/lxml-stubs/etree/_serializer.pyi, but corresponding API webpage is https://lxml.de/apidoc/lxml.etree.html#lxml.etree.C14NWriterTarget.
+- Leading summary is copied from official API documentation where possible. Find the corresponding API webpage and copy the leading summary paragraph from there.
+- If there is no official API documentation for a specific function, method, or class, create a dummy docstring with a leading summary that states "TBD".
+- When applying docstring to overloaded functions or methods, make sure the docstring applies to all overloads. User will create additional notes afterwards to differentiate overloads if necessary.
 
 ## If unclear
 - Ask for which checker(s) to optimize for (mypy, pyright, basedpyright, pyrefly). Suggest a preferred strategy and I will update instructions.
