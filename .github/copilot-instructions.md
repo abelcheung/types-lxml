@@ -77,11 +77,8 @@ tox run-parallel -v --skip-env='.*-stub$'
 
 ## Docstring notes
 - NumPy format is preferred for docstrings in stubs.
-- There are 2 different layouts used for docstrings:
-  - Old layout contains leading summary, then followed by an optional "Annotation" section. Finally there is "Original Docstring" section which is imported from `lxml` C sources.
-  - New layout contains leading summary, followed by an optional "Annotation" section. Finally there is "See Also" section which only contains a link named "API Documentation" to official API webpage. "Original Docstring" section is removed in new layout.
-- Migration from old to new layout is preferred when editing docstrings where applicable.
-- If section named "Annotation" exists, it should describe type annotation details only, not general usage. Such section might occur in both old and new layouts. Keep this section when converting from old to new layout. Agent doesn't need to create or modify this section unless requested by user.
+- Layout of docstring contains a leading summary, followed by an optional "Annotation" section. Finally there is "See Also" section which only contains a link named "API Documentation" to official API webpage.
+- If section named "Annotation" exists, it should describe type annotation details only, not general usage. Agent doesn't need to create or modify this section unless requested by user.
 - Local underscored file names should be ignored when determining the correct API webpage to link to. For example, the `C14NWriterTarget` class is located in src/lxml-stubs/etree/_serializer.pyi, but corresponding API webpage is https://lxml.de/apidoc/lxml.etree.html#lxml.etree.C14NWriterTarget.
 - Leading summary is copied from official API documentation where possible. Find the corresponding API webpage and copy the leading summary paragraph from there.
 - If there is no official API documentation for a specific function, method, or class, create a dummy docstring with a leading summary that states "TBD".
