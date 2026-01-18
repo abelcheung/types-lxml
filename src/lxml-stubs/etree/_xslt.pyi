@@ -57,14 +57,23 @@ class _XSLTResultTree(_ElementTree):
     """The result of an XSLT evaluation"""
 
     def write_output(self, file: _FileWriteSource, *, compression: int = 0) -> None:
-        """Serialise the XSLT output to a file or file-like object
+        """Serialise the XSLT output to a file or file-like object.
 
         As opposed to the generic ``.write()`` method, ``.write_output()`` serialises
         the result as defined by the ``<xsl:output>`` tag.
+
+        See Also
+        --------
+        - [API Documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree._XSLTResultTree.write_output)
         """
     @property
     def xslt_profile(self) -> _ElementTree | None:
-        """Return an ElementTree with profiling data for the stylesheet run"""
+        """Return an ElementTree with profiling data for the stylesheet run.
+
+        See Also
+        --------
+        - [API Documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree._XSLTResultTree.xslt_profile)
+        """
 
 @final
 class _XSLTQuotedStringParam:
@@ -114,9 +123,23 @@ class XSLTAccessControl:
         create_dir: bool = True,
         read_network: bool = True,
         write_network: bool = True,
-    ) -> None: ...
+    ) -> None:
+        """Initialize XSLTAccessControl with access permissions for resources.
+
+        All parameters default to True to allow access to resources.
+
+        See Also
+        --------
+        - [API Documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree.XSLTAccessControl)
+        """
     @property
-    def options(self) -> __AccessControlConfig: ...
+    def options(self) -> __AccessControlConfig:
+        """The access control configuration as a map of options.
+
+        See Also
+        --------
+        - [API Documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree.XSLTAccessControl.options)
+        """
 
 @disjoint_base
 class XSLT:
@@ -161,11 +184,36 @@ class XSLT:
         **__kw: _Stylesheet_Param,
     ) -> _XSLTResultTree: ...
     @property
-    def error_log(self) -> _ListErrorLog: ...
+    def error_log(self) -> _ListErrorLog:
+        """The log of errors and warnings of an XSLT execution.
+
+        See Also
+        --------
+        - [API Documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree.XSLT.error_log)
+        """
     @staticmethod
-    def strparam(strval: _TextArg) -> _XSLTQuotedStringParam: ...
+    def strparam(strval: _TextArg) -> _XSLTQuotedStringParam:
+        """Mark an XSLT string parameter that requires quote escaping.
+
+        Use this to escape XSLT string parameters before passing them into a
+        transformation to handle values that contain quotes properly.
+
+        See Also
+        --------
+        - [API Documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree.XSLT.strparam)
+        """
     @staticmethod
-    def set_global_max_depth(max_depth: int) -> None: ...
+    def set_global_max_depth(max_depth: int) -> None:
+        """Set the maximum traversal depth for the stylesheet engine.
+
+        This limits both template recursion depth and the number of
+        variables/parameters. This is a global module-wide setting because
+        libxslt does not support it at a per-stylesheet level.
+
+        See Also
+        --------
+        - [API Documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree.XSLT.set_global_max_depth)
+        """
     @deprecated("Removed since 5.0; call instance directly instead")
     def apply(
         self,
@@ -181,7 +229,17 @@ class XSLT:
     ) -> str: ...
 
 class _XSLTProcessingInstruction(PIBase):
-    def parseXSL(self, parser: _DefEtreeParsers | None = None) -> _ElementTree: ...
+    def parseXSL(self, parser: _DefEtreeParsers | None = None) -> _ElementTree:
+        """Parse the stylesheet referenced by this processing instruction.
+
+        Returns an ElementTree for the referenced stylesheet. If the stylesheet
+        is embedded in the same document (referenced via xml:id), finds and
+        returns an ElementTree for the stylesheet Element.
+
+        See Also
+        --------
+        - [API Documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree._XSLTProcessingInstruction.parseXSL)
+        """
     # pyrefly: ignore[bad-override]
     def set(self, key: Literal["href"], value: str) -> None: ...  # type: ignore[override]  # pyright: ignore[reportIncompatibleMethodOverride]  # ty: ignore[invalid-method-override]
 
@@ -200,19 +258,21 @@ class XSLTExtension(metaclass=abc.ABCMeta):
         input_node: _Element,  # _ReadOnlyElementProxy
         output_parent: _Element | None,  # _AppendOnlyElementProxy
     ) -> None:
-        """Execute this extension element
+        """Execute this extension element.
 
-        Original Docstring
-        ------------------
-        Subclasses must override this method.  They may append
-        elements to the `output_parent` element here, or set its text
-        content.  To this end, the `input_node` provides read-only
-        access to the current node in the input document, and the
-        `self_node` points to the extension element in the stylesheet.
+        Subclasses must override this method. They may append elements to the
+        `output_parent` element here, or set its text content. To this end, the
+        `input_node` provides read-only access to the current node in the input
+        document, and the `self_node` points to the extension element in the
+        stylesheet.
 
-        Note that the `output_parent` parameter may be `None` if there
-        is no parent element in the current context (e.g. no content
-        was added to the output tree yet).
+        Note that the `output_parent` parameter may be `None` if there is no
+        parent element in the current context (e.g. no content was added to the
+        output tree yet).
+
+        See Also
+        --------
+        - [API Documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree.XSLTExtension.execute)
         """
     @overload
     def apply_templates(
@@ -241,25 +301,24 @@ class XSLTExtension(metaclass=abc.ABCMeta):
         elements_only: bool = False,
         remove_blank_text: bool = False,
     ) -> list[str | _Element]:
-        """Call this method to retrieve the result of applying templates
-        to an element
+        """Call this method to retrieve the result of applying templates to an element.
 
-        Original Docstring
-        ------------------
-        The return value is a list of elements or text strings that
-        were generated by the XSLT processor.  If you pass
-        ``elements_only=True``, strings will be discarded from the result
-        list.  The option ``remove_blank_text=True`` will only discard
-        strings that consist entirely of whitespace (e.g. formatting).
+        The return value is a list of elements or text strings that were generated
+        by the XSLT processor. If you pass ``elements_only=True``, strings will be
+        discarded from the result list. The option ``remove_blank_text=True`` will
+        only discard strings that consist entirely of whitespace (e.g. formatting).
         These options do not apply to Elements, only to bare string results.
 
-        If you pass an Element as `output_parent` parameter, the result
-        will instead be appended to the element (including attributes
-        etc.) and the return value will be `None`.  This is a safe way
-        to generate content into the output document directly, without
-        having to take care of special values like text or attributes.
-        Note that the string discarding options will be ignored in this
-        case.
+        If you pass an Element as `output_parent` parameter, the result will instead
+        be appended to the element (including attributes etc.) and the return value
+        will be `None`. This is a safe way to generate content into the output
+        document directly, without having to take care of special values like text
+        or attributes. Note that the string discarding options will be ignored in
+        this case.
+
+        See Also
+        --------
+        - [API Documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree.XSLTExtension.apply_templates)
         """
     @overload
     def process_children(
@@ -285,23 +344,22 @@ class XSLTExtension(metaclass=abc.ABCMeta):
         elements_only: bool = False,
         remove_blank_text: bool = False,
     ) -> list[str | _Element]:
-        """Call this method to process the XSLT content of the extension
-        element itself.
+        """Call this method to process the XSLT content of the extension element itself.
 
-        Original Docstring
-        ------------------
-        The return value is a list of elements or text strings that
-        were generated by the XSLT processor.  If you pass
-        ``elements_only=True``, strings will be discarded from the result
-        list.  The option ``remove_blank_text=True`` will only discard
-        strings that consist entirely of whitespace (e.g. formatting).
+        The return value is a list of elements or text strings that were generated
+        by the XSLT processor. If you pass ``elements_only=True``, strings will be
+        discarded from the result list. The option ``remove_blank_text=True`` will
+        only discard strings that consist entirely of whitespace (e.g. formatting).
         These options do not apply to Elements, only to bare string results.
 
-        If you pass an Element as `output_parent` parameter, the result
-        will instead be appended to the element (including attributes
-        etc.) and the return value will be `None`.  This is a safe way
-        to generate content into the output document directly, without
-        having to take care of special values like text or attributes.
-        Note that the string discarding options will be ignored in this
-        case.
+        If you pass an Element as `output_parent` parameter, the result will instead
+        be appended to the element (including attributes etc.) and the return value
+        will be `None`. This is a safe way to generate content into the output
+        document directly, without having to take care of special values like text
+        or attributes. Note that the string discarding options will be ignored in
+        this case.
+
+        See Also
+        --------
+        - [API Documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree.XSLTExtension.process_children)
         """

@@ -35,29 +35,18 @@ def Element(
     _pytype: str | None = None,
     **_attributes: _AttrVal,
 ) -> _e.ObjectifiedElement:
-    """Objectify specific version of `lxml.etree` `Element()` factory
+    """Objectify specific version of `lxml.etree` `Element()` factory.
 
-    Original Docstring
-    ------------------
     Requires parser based element class lookup activated in `lxml.etree`!
-
-    Parameters
-    ----------
-    _tag : str, bytes or QName
-        Element tag name
-    attrib : mapping of string key/value, optional
-        Attributes to be added to element. Default is None.
-    nsmap : mapping of namespace prefix/URI, optional
-        Extra namespaces added to element. Default is None.
-    _pytype : str | None, optional
-        The `pytype` to be used for this element. Default is None, which implies
-        no pytype annotation would be added to inner tree element. See `PyType`
-        class docstring for more info.
 
     Returns
     -------
     ObjectifiedElement
         The generated element.
+
+    See Also
+    --------
+    - [API Documentation](https://lxml.de/apidoc/lxml.objectify.html#lxml.objectify.Element)
     """
 
 def SubElement(
@@ -206,62 +195,21 @@ def DataElement(
     _xsi: str | None = None,
     **__attr: _AttrVal,
 ) -> _e.ObjectifiedElement:
-    """Create a new element from a Python value and XML attributes taken
-    from keyword arguments or a dictionary passed as second argument.
+    """Create a new element from a Python value and XML attributes.
 
-    Annotation notice
-    -----------------
-    1. Current DataElement stub overloads only represent cases where
+    Annotation
+    ----------
+    Current DataElement stub overloads only represent cases where
     data type is inferred from value or from lxml's own PyType arg.
     If XMLSchema Interface types are involved, the overload list
-    will become unbearably long (well, it already is), which is
-    both a nightmare for maintainer and users alike. As a result,
-    please read description of `_xsi` parameter carefully
-    before using, which is not covered in original docstring.
-
-    2. `DataElement()` allows a special case handling: if value
-    is an `ObjectifiedElement` (not data element), AND no other
-    arguments are supplied, simply return a copy of itself.
-    Such silly usage is ignored here, when `copy.copy(element)`
-    already suffices.
-
-    Original Docstring
-    ------------------
-    Automatically guesses `py:pytype` attribute from basic Python data type of
-    the value if it can be identified.  If `_pytype` or `_xsi` are among the
-    keyword arguments, they will be used instead of auto detection.
-
-    If the `_value` argument is an `ObjectifiedDataElement` instance,
-    its `py:pytype`, `xsi:type`, `nsmap` and other attributes are
-    reused unless redefined in attrib and/or keyword arguments.
+    becomes very large. The `_xsi` parameter can accept XSI data types
+    with the optional `xsd:` namespace prefix.
 
     See Also
     --------
+    - [API Documentation](https://lxml.de/apidoc/lxml.objectify.html#lxml.objectify.DataElement)
     - [XMLSchema Instances data types](https://www.w3.org/TR/2004/REC-xmlschema-2-20041028/datatypes.html)
     - [How lxml determines data type](https://lxml.de/objectify.html#how-data-types-are-matched)
-
-    Parameters
-    ----------
-    _value : Any
-        The value to be used in new element
-    attrib : mapping of str to str, optional
-        Attributes to be added to element, by default `None`.
-        Usually specified as a `dict` or lxml's own `_Attrib`.
-    nsmap : mapping of str to str, optional
-        Mapping of namespace prefixes to URI. Default is `None`, which uses
-        lxml's internal mapping.
-    _pytype : str, keyword, optional
-        Coerce value into specified data type, such as `"int"` or `"bool"`.
-        Default is `None`, which means data type is autodetected by other
-        mechanisms.
-    _xsi : str, keyword, optional
-        lxml can use XMLSchema Instances data types to help guessing correct
-        pytype (see previous parameter). Some of the XSI data types
-        can be used, and the `nsd:` namespace prefix is optional.
-        Beware that this argument becomes a dummy if `_pytype` argument
-        is specified, yet still would be present in element, even if it's
-        wrong or can't be resolved. Default is `None`, which means
-        XSI data type is not involved in type determination.
     """
 
 @type_check_only
@@ -292,33 +240,13 @@ class _OEMakerCallProtocol(Protocol):
 
 @disjoint_base
 class ElementMaker:
-    """Used for constructing trees
+    """Used for constructing element trees.
 
     Note that this module has a predefined `ElementMaker` instance called `E`.
 
-    Example
-    -------
-
-    ```python-console
-    >>> M = ElementMaker(annotate=False)
-    >>> attributes = {'class': 'par'}
-    >>> html = M.html( M.body( M.p('hello', attributes, M.br, 'objectify', style="font-weight: bold") ) )
-
-    >>> from lxml.etree import tostring
-    >>> print(tostring(html, method='html').decode('ascii'))
-    <html><body><p style="font-weight: bold" class="par">hello<br>objectify</p></body></html>
-    ```
-
-    To create tags that are not valid Python identifiers, call the factory
-    directly and pass the tag name as first argument::
-
-    ```python-console
-    >>> root = M('tricky-tag', 'some text')
-    >>> print(root.tag)
-    tricky-tag
-    >>> print(root.text)
-    some text
-    ```
+    See Also
+    --------
+    - [API Documentation](https://lxml.de/apidoc/lxml.objectify.html#lxml.objectify.ElementMaker)
     """
 
     def __init__(

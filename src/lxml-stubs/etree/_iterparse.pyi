@@ -191,7 +191,7 @@ class iterparse(Iterator[_T_co]):
 @disjoint_base
 class iterwalk(Iterator[_T_co]):
     """Tree walker that generates events from an existing tree as if it
-    was parsing XML data with ``iterparse()``
+    was parsing XML data with ``iterparse()``.
 
     Annotation
     ----------
@@ -203,15 +203,9 @@ class iterwalk(Iterator[_T_co]):
       namespace tuple (for `start-ns`) or nothing (`end-ns`)
     - Final catch-all for custom events combination
 
-
-    Original Docstring
-    ------------------
-    Just as for ``iterparse()``, the ``tag`` argument can be a single tag or a
-    sequence of tags.
-
-    After receiving a 'start' or 'start-ns' event, the children and
-    descendants of the current element can be excluded from iteration
-    by calling the ``skip_subtree()`` method.
+    See Also
+    --------
+    - [API Documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree.iterwalk)
     """
 
     # There is no concept of html mode in iterwalk(); namespace events

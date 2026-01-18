@@ -69,13 +69,11 @@ def parseid(
 
 @disjoint_base
 class _IDDict(Collection[str], Generic[_ET]):
-    """Dictionary-like proxy class that maps ID attributes to elements
+    """Dictionary-like proxy class that maps ID attributes to elements.
 
-    Original Docstring
-    ------------------
-    The dictionary must be instantiated with the root element of a parsed XML
-    document, otherwise the behaviour is undefined.  Elements and XML trees
-    that were created or modified 'by hand' are not supported.
+    See Also
+    --------
+    - [API Documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree._IDDict)
     """
 
     # Key normalisation happens inside __contains__

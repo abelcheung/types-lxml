@@ -27,14 +27,39 @@ SelectorSyntaxError = _csel.SelectorSyntaxError
 ExpressionError = _csel.ExpressionError
 
 class LxmlTranslator(_csel.GenericTranslator):
+    """CSS to XPath translator for lxml with extended support.
+
+    See Also
+    --------
+    - [API Documentation](https://lxml.de/cssselect.html)
+    """
     def xpath_contains_function(
         self, xpath: XPathExpr, function: Function
     ) -> XPathExpr: ...
 
 class LxmlHTMLTranslator(LxmlTranslator, _csel.HTMLTranslator):
+    """CSS to XPath translator for HTML documents with lxml support.
+
+    See Also
+    --------
+    - [API Documentation](https://lxml.de/cssselect.html)
+    """
     pass
 
 class CSSSelector(XPath):
+    """A compiled CSS selector expression for querying elements.
+
+    This class provides the same interface as the XPath class, but accepts a
+    CSS selector expression as input. The selector is compiled to XPath 1.0
+    expression internally for evaluation.
+
+    The translator parameter can be 'xml' (the default), 'xhtml', 'html' or
+    a Translator object.
+
+    See Also
+    --------
+    - [API Documentation](https://lxml.de/cssselect.html)
+    """
     # Although 'css' is implemented as plain attribute, it is
     # meaningless to modify it, because instance is initialized
     # with translated XPath expression, not the CSS expression.

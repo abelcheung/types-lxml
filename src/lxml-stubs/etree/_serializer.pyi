@@ -180,9 +180,7 @@ class C14NWriterTarget(ParserTarget[None]):
     def pi(self, target: str, data: str | None) -> None: ...
     def close(self) -> None: ...
 
-# totally 8 canonicalize() overloads, first 4 are guards against
-# string argument where iterable is expected
-# latter 4 are 2x2 combinations of:
+# totally 4 canonicalize() overloads of 2x2 combinations:
 #   - input: via xml_data, via from_file
 #   - output: None, .write()
 # keyword arguments come from C14NWriterTarget.__init__
@@ -199,7 +197,18 @@ def canonicalize(
     qname_aware_attrs: Iterable[str] | None = None,
     exclude_attrs: Iterable[str] | None = None,
     exclude_tags: Iterable[str] | None = None,
-) -> None: ...
+) -> None:
+    """Canonicalize an XML document to XML C14N 2.0 format.
+
+    Annotation
+    ----------
+    This overload signature deals with the case where input data is supplied by `xml_data`
+    argument. `out` parameter is given, implying writing to file.
+
+    See Also
+    --------
+    - [API Documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree.canonicalize)
+    """
 @overload
 def canonicalize(
     xml_data: None = None,
@@ -213,7 +222,18 @@ def canonicalize(
     qname_aware_attrs: Iterable[str] | None = None,
     exclude_attrs: Iterable[str] | None = None,
     exclude_tags: Iterable[str] | None = None,
-) -> None: ...
+) -> None:
+    """Canonicalize an XML document to XML C14N 2.0 format.
+
+    Annotation
+    ----------
+    This overload signature deals with the case where input data is supplied by `from_file`
+    argument. `out` parameter is given, implying writing to file.
+
+    See Also
+    --------
+    - [API Documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree.canonicalize)
+    """
 @overload
 def canonicalize(
     xml_data: str | _ElementOrTree,
@@ -227,7 +247,18 @@ def canonicalize(
     qname_aware_attrs: Iterable[str] | None = None,
     exclude_attrs: Iterable[str] | None = None,
     exclude_tags: Iterable[str] | None = None,
-) -> str: ...
+) -> str:
+    """Canonicalize an XML document to XML C14N 2.0 format.
+
+    Annotation
+    ----------
+    This overload signature deals with the case where input data is supplied by `xml_data`
+    argument. `out` parameter is not given, so it is returned as function result.
+
+    See Also
+    --------
+    - [API Documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree.canonicalize)
+    """
 @overload
 def canonicalize(
     xml_data: None = None,
@@ -241,7 +272,18 @@ def canonicalize(
     qname_aware_attrs: Iterable[str] | None = None,
     exclude_attrs: Iterable[str] | None = None,
     exclude_tags: Iterable[str] | None = None,
-) -> str: ...
+) -> str:
+    """Canonicalize an XML document to XML C14N 2.0 format.
+
+    Annotation
+    ----------
+    This overload signature deals with the case where input data is supplied by `from_file`
+    argument. `out` parameter is not given, so it is returned as function result.
+
+    See Also
+    --------
+    - [API Documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree.canonicalize)
+    """
 
 #
 # Incremental serializers
@@ -316,6 +358,12 @@ class xmlfile(
     AbstractAsyncContextManager[_AsyncIncrementalFileWriter],
     AbstractContextManager[_IncrementalFileWriter],
 ):
+    """A simple mechanism for incremental XML serialisation.
+
+    See Also
+    --------
+    - [API Documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree.xmlfile)
+    """
     def __init__(
         self,
         output_file: _FileWriteSource,
@@ -337,4 +385,12 @@ class xmlfile(
         exc_tb: TracebackType | None,
     ) -> None: ...
 
-class htmlfile(xmlfile): ...
+class htmlfile(xmlfile):
+    """A simple mechanism for incremental HTML serialisation.
+
+    Works the same as xmlfile.
+
+    See Also
+    --------
+    - [API Documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree.htmlfile)
+    """

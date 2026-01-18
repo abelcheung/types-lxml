@@ -611,29 +611,13 @@ class _MemDebug:
     def dump(
         self, output_file: str | bytes | None = None, byte_count: int | None = None
     ) -> None:
-        """Dumps the current memory blocks allocated by libxml2 to a file
-
-        Parameters
-        ----------
-        output_file : str or bytes, optional
-            Output file path, default is ".memorylist" under current directory
-        byte_count : int, optional
-            Limits number of bytes in the dump, default is None (unlimited)
-        """
+        """Dumps the current memory blocks allocated by libxml2 to a file"""
     @deprecated("Removed since 6.0, due to corresponding removal in libxml2")
     def show(
         self, output_file: str | bytes | None = None, block_count: int | None = None
     ) -> None:
         """Dumps the current memory blocks allocated by libxml2 to a file
-        The output file format is suitable for line diffing.
-
-        Parameters
-        ----------
-        output_file : str or bytes, optional
-            Output file path, default is ".memorydump" under current directory
-        block_count : int, optional
-            Limits number of blocks in the dump, default is None (unlimited)
-        """
+        The output file format is suitable for line diffing."""
 
 memory_debugger: _MemDebug
 """Debugging support for the memory allocation in libxml2"""

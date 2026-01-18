@@ -17,26 +17,7 @@ from typing_extensions import disjoint_base
 
 @final
 class _LogEntry:
-    """Log message entry from an error log
-
-    Attributes
-    ----------
-    message: str
-        the message text
-    domain: ErrorDomains
-        domain ID
-    type: ErrorTypes
-        message type ID
-    level: ErrorLevels
-        log level ID
-    line: int
-        the line at which the message originated, if applicable
-    column: int
-        the character column at which the message originated, if applicable
-    filename: str, optional
-        the name of the file in which the message originated, if applicable
-    path: str, optional
-        the location in which the error was found, if available"""
+    """Log message entry from an error log"""
 
     @property
     def domain(self) -> ErrorDomains: ...
@@ -135,27 +116,11 @@ class _RotatingErrorLog(_ListErrorLog):
 
 @disjoint_base
 class PyErrorLog(_BaseErrorLog):
-    """Global error log that connects to the Python stdlib logging package
+    """Global error log that connects to the Python stdlib logging package.
 
-    Original Docstring
-    ------------------
-    The constructor accepts an optional logger name or a readily
-    instantiated logger instance.
-
-    If you want to change the mapping between libxml2's ErrorLevels and Python
-    logging levels, you can modify the level_map dictionary from a subclass.
-
-    The default mapping is::
-
-    ```python
-    ErrorLevels.WARNING = logging.WARNING
-    ErrorLevels.ERROR   = logging.ERROR
-    ErrorLevels.FATAL   = logging.CRITICAL
-    ```
-
-    You can also override the method ``receive()`` that takes a LogEntry
-    object and calls ``self.log(log_entry, format_string, arg1, arg2, ...)``
-    with appropriate data.
+    See Also
+    --------
+    - [API Documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree.PyErrorLog)
     """
 
     @property

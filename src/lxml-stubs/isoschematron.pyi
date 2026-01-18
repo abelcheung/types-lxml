@@ -1,3 +1,11 @@
+"""The lxml.isoschematron package implements ISO Schematron support on top of
+the pure-xslt 'skeleton' implementation.
+
+See Also
+--------
+- [API Documentation](https://lxml.de/apidoc/lxml.isoschematron.html)
+"""
+
 from typing import (
     Any,
     ClassVar,
@@ -36,9 +44,22 @@ svrl_validation_errors: _e.XPath
 schematron_schema_valid: _e.RelaxNG
 schematron_schema_valid_supported: bool
 
-def stylesheet_params(**__kw: str | _e.XPath | Any) -> dict[str, _Stylesheet_Param]: ...
+def stylesheet_params(**__kw: str | _e.XPath | Any) -> dict[str, _Stylesheet_Param]:
+    """Convert keyword args to a dictionary of stylesheet parameters.
+
+    See Also
+    --------
+    - [API Documentation](https://lxml.de/apidoc/lxml.isoschematron.html#stylesheet_params)
+    """
 
 class Schematron(_e._Validator):
+    """An ISO Schematron validator.
+
+    See Also
+    --------
+    - [API Documentation](https://lxml.de/apidoc/lxml.isoschematron.html#lxml.isoschematron.Schematron)
+    """
+
     _domain: ClassVar[Literal[28]]
     _level: ClassVar[Literal[2]]
     _error_type: ClassVar[Literal[4000]]
@@ -51,7 +72,17 @@ class Schematron(_e._Validator):
     _compile: ClassVar[_e.XSLT]
     _validation_errors: ClassVar[_e.XPath]
     # _extract() can be a mean of customisation like some of the vars above
-    def _extract(self, element: _e._Element) -> _e._ElementTree | None: ...
+    def _extract(self, element: _e._Element) -> _e._ElementTree | None:
+        """Extract embedded schematron schema from a non-schematron host schema.
+
+        This method is called by ``__init__`` if the given schema document is
+        not a schematron schema by itself. It must return a schematron schema
+        document tree or ``None`` if no embedded schema could be extracted.
+
+        See Also
+        --------
+        - [API Documentation](https://lxml.de/apidoc/lxml.isoschematron.html#lxml.isoschematron.Schematron._extract)
+        """
 
     # The overload arg matrix would have been daunting (3 * 2**3):
     # - etree / file
@@ -114,10 +145,34 @@ class Schematron(_e._Validator):
         error_finder: _e.XPath = ...,  # keep ellipsis
         validate_schema: bool = ...,  # keep ellipsis  # lxml 5 only
     ) -> None: ...
-    def __call__(self, etree: _ElementOrTree) -> bool: ...
+    def __call__(self, etree: _ElementOrTree) -> bool:
+        """Validate the given document; return True if valid, False otherwise.
+
+        See Also
+        --------
+        - [API Documentation](https://lxml.de/apidoc/lxml.isoschematron.html#lxml.isoschematron.Schematron.validate)
+        """
     @property
-    def schematron(self) -> _e._XSLTResultTree | None: ...
+    def schematron(self) -> _e._XSLTResultTree | None:
+        """ISO-schematron schema document (None if not stored).
+
+        See Also
+        --------
+        - [API Documentation](https://lxml.de/apidoc/lxml.isoschematron.html#lxml.isoschematron.Schematron.schematron)
+        """
     @property
-    def validator_xslt(self) -> _e._XSLTResultTree | None: ...
+    def validator_xslt(self) -> _e._XSLTResultTree | None:
+        """ISO-schematron skeleton implementation XSLT document (None if not stored).
+
+        See Also
+        --------
+        - [API Documentation](https://lxml.de/apidoc/lxml.isoschematron.html#lxml.isoschematron.Schematron.validator_xslt)
+        """
     @property
-    def validation_report(self) -> _e._XSLTResultTree | None: ...
+    def validation_report(self) -> _e._XSLTResultTree | None:
+        """ISO-schematron validation result report (None if result-storing is off).
+
+        See Also
+        --------
+        - [API Documentation](https://lxml.de/apidoc/lxml.isoschematron.html#lxml.isoschematron.Schematron.validation_report)
+        """

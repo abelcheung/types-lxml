@@ -63,6 +63,21 @@ class _EMakerCallProtocol(Protocol[_ET_co]):
 # to be usable in the makeelement function call.
 @disjoint_base
 class ElementMaker(Generic[_ET_co]):
+    """Element generator factory.
+
+    Unlike the ordinary Element factory, the E factory allows you to pass in more
+    than just a tag and some optional attributes; you can also pass in text and
+    other elements. The text is added as either text or tail attributes, and
+    elements are inserted at the right spot.
+
+    For namespace support, you can pass a namespace map (`nsmap`) and/or a
+    specific target `namespace` to the ElementMaker class.
+
+    See Also
+    --------
+    - [API Documentation](https://lxml.de/apidoc/lxml.builder.html)
+    """
+
     @overload  # makeelement is keyword
     def __new__(
         cls,

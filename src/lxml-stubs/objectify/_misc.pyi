@@ -21,32 +21,37 @@ _T = TypeVar("_T")
 #
 
 def enable_recursive_str(on: bool = True) -> None:
-    """Enable a recursively generated tree representation for
-    `str(element)`, based on `objectify.dump(element)`"""
+    """Enable a recursively generated tree representation for `str(element)`.
+
+    This uses `objectify.dump(element)` for the tree representation.
+
+    See Also
+    --------
+    - [API Documentation](https://lxml.de/apidoc/lxml.objectify.html#lxml.objectify.enable_recursive_str)
+    """
 
 def dump(element: ObjectifiedElement) -> str:
-    """Return a recursively generated string representation of an element"""
+    """Return a recursively generated string representation of an element.
+
+    See Also
+    --------
+    - [API Documentation](https://lxml.de/apidoc/lxml.objectify.html#lxml.objectify.dump)
+    """
 
 @disjoint_base
 class ObjectifyElementClassLookup(etree.ElementClassLookup):
-    """Element class lookup method that uses the objectify classes"""
+    """Element class lookup method that uses the objectify classes.
+
+    See Also
+    --------
+    - [API Documentation](https://lxml.de/apidoc/lxml.objectify.html#lxml.objectify.ObjectifyElementClassLookup)
+    """
 
     def __init__(
         self,
         tree_class: type[ObjectifiedElement] | None = None,
         empty_data_class: type[ObjectifiedDataElement] | None = None,
-    ) -> None:
-        """
-        Parameters
-        ----------
-        tree_class : `type[ObjectifiedElement]`, optional
-            Defines inner tree classes; it can be replaced by subclass of
-            `ObjectifiedElement`. Default is None, which implies `ObjectifiedElement`.
-        empty_data_class : `type[ObjectifiedDataElement]`, optional
-            Defines the default class for empty data elements. Any existing
-            or custom `ObjectifiedDataElement` subclass can be used.
-            Default is `None`, which implies `StringElement`.
-        """
+    ) -> None: ...
 
 #
 # Parser and parsing
@@ -56,15 +61,11 @@ def set_default_parser(
     # Not joking, it uses isinstance check
     new_parser: etree.XMLParser[ObjectifiedElement] | None = None,
 ) -> None:
-    """Replace the default parser used by objectify's `Element()`
-    and `fromstring()` functions.
+    """Replace the default parser used by objectify's `Element()` and `fromstring()` functions.
 
-    Parameters
-    ----------
-    new_parser: `etree.XMLParser`, optional
-        The new parser intended to replace the default one. If not
-        specified, defaults to `None`, which means reverting to
-        original parser.
+    See Also
+    --------
+    - [API Documentation](https://lxml.de/apidoc/lxml.objectify.html#lxml.objectify.set_default_parser)
     """
 
 # All XMLParser() arguments, except that remove_black_text
@@ -90,12 +91,13 @@ def makeparser(
 ) -> etree.XMLParser[ObjectifiedElement]:
     """Create a new XML parser for objectify trees.
 
-    Original Docstring
-    ------------------
-    You can pass all keyword arguments that are supported by
-    `etree.XMLParser()`.  Note that this parser defaults to
-    removing blank text.  You can disable this by passing the
-    `remove_blank_text` boolean keyword option yourself.
+    You can pass all keyword arguments that are supported by `etree.XMLParser()`.
+    Note that this parser defaults to removing blank text. You can disable this
+    by passing the `remove_blank_text` boolean keyword option.
+
+    See Also
+    --------
+    - [API Documentation](https://lxml.de/apidoc/lxml.objectify.html#lxml.objectify.makeparser)
     """
 
 def parse(
@@ -104,11 +106,11 @@ def parse(
     *,
     base_url: str | bytes | None = None,
 ) -> etree._ElementTree[ObjectifiedElement]:
-    """Parse a file or file-like object with objectify parser
+    """Parse a file or file-like object with objectify parser.
 
     See Also
     --------
-    - [API documentation](https://lxml.de/apidoc/lxml.objectify.html#lxml.objectify.parse)
+    - [API Documentation](https://lxml.de/apidoc/lxml.objectify.html#lxml.objectify.parse)
     """
 
 def fromstring(
@@ -117,18 +119,11 @@ def fromstring(
     *,
     base_url: str | bytes | None = None,
 ) -> ObjectifiedElement:
-    """Variant of corresponding `lxml.etree` function that uses objectify parser
+    """Variant of corresponding `lxml.etree` function that uses objectify parser.
 
-    Parameters
-    ----------
-    parser: `etree.XMLParser` or `etree.HTMLParser`, optional
-        Using different parser is allowed. If not specified, default
-        value is `None`, which means using `objectify` module's internal
-        default parser.
-    base_url: str or bytes, optional
-        Allows setting a URL for the document when parsing from a file-like
-        object. This is needed when looking up external entities
-        (DTD, XInclude, ...) with relative paths.
+    See Also
+    --------
+    - [API Documentation](https://lxml.de/apidoc/lxml.objectify.html#lxml.objectify.fromstring)
     """
 
 XML = fromstring
@@ -146,19 +141,15 @@ _ET = TypeVar("_ET", bound=etree._Element)
 #
 @disjoint_base
 class ObjectPath:
-    """`objectify`'s own path language
+    """Objectify's own path language.
 
     This path language is modelled similar to lxml's `ETXPath`,
     but with object-like notation. Instances of this class represent
     a compiled object path.
 
-    Example
-    -------
-    `root.child[1].{other}child[25]`
-
     See Also
     --------
-    - [Web documentation](https://lxml.de/objectify.html#objectpath)
+    - [API Documentation](https://lxml.de/apidoc/lxml.objectify.html#lxml.objectify.ObjectPath)
     """
 
     def __init__(self, path: str | Iterable[str]) -> None: ...
