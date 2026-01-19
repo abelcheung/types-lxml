@@ -18,11 +18,11 @@ from hypothesis import (
 from lxml.etree import LXML_VERSION
 from lxml.html import (
     Classes as Classes,
+    Element,
     FormElement as FormElement,
     HtmlElement,
     InputElement,
     LabelElement,
-    fragment_fromstring,
 )
 
 from .._testutils import strategy as _st
@@ -61,16 +61,18 @@ class TestMixinProperties:
                 setattr(bightml_root, a, getattr(bightml_root, a))
 
     def test_property_ro_2(self) -> None:
-        root = fragment_fromstring("<div>")
+        el = Element("div")
         if LXML_VERSION > (6, 0):
-            reveal_type(root.head)
+            reveal_type(el.head)
+            reveal_type(el.body)
         else:
             with pytest.raises(IndexError, match=r"list index out of range"):
-                _ = root.head
+                _ = el.head
+            with pytest.raises(IndexError, match=r"list index out of range"):
+                _ = el.body
 
-        reveal_type(root.body)
-        reveal_type(root.forms)
-        reveal_type(root.base_url)
+        reveal_type(el.forms)
+        reveal_type(el.base_url)
 
     def test_classes_property_rw_good(
         self,
