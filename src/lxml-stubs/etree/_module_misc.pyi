@@ -32,7 +32,12 @@ __version__: Final[LiteralString]
 
 @disjoint_base
 class DocInfo:
-    """Document information provided by parser and DTD"""
+    """Document information provided by parser and DTD.
+
+    See Also
+    --------
+    - [API Documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree.DocInfo)
+    """
     # Can't be empty, otherwise it means tree contains no element
     @property
     def root_name(self) -> str:

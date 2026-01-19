@@ -75,7 +75,7 @@ class ElementMaker(Generic[_ET_co]):
 
     See Also
     --------
-    - [API Documentation](https://lxml.de/apidoc/lxml.builder.html)
+    - [API Documentation](https://lxml.de/apidoc/lxml.builder.html#lxml.builder.ElementMaker)
     """
 
     @overload  # makeelement is keyword

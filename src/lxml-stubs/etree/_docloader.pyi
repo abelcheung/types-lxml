@@ -25,6 +25,15 @@ class _InputDocument:
 #     """An internal opaque object used in resolve methods"""
 
 class Resolver(metaclass=ABCMeta):
+    """Base class for custom document resolvers.
+
+    Resolvers handle loading of external documents referenced in XML input.
+    Subclasses must implement the abstract `resolve()` method.
+
+    See Also
+    --------
+    - [API Documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree.Resolver)
+    """
     @abstractmethod
     def resolve(
         self,

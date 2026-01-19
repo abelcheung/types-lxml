@@ -27,24 +27,12 @@ SelectorSyntaxError = _csel.SelectorSyntaxError
 ExpressionError = _csel.ExpressionError
 
 class LxmlTranslator(_csel.GenericTranslator):
-    """CSS to XPath translator for lxml with extended support.
-
-    See Also
-    --------
-    - [API Documentation](https://lxml.de/cssselect.html)
-    """
     def xpath_contains_function(
         self, xpath: XPathExpr, function: Function
     ) -> XPathExpr: ...
 
 class LxmlHTMLTranslator(LxmlTranslator, _csel.HTMLTranslator):
-    """CSS to XPath translator for HTML documents with lxml support.
-
-    See Also
-    --------
-    - [API Documentation](https://lxml.de/cssselect.html)
-    """
-    pass
+    ...
 
 class CSSSelector(XPath):
     """A compiled CSS selector expression for querying elements.
@@ -58,7 +46,7 @@ class CSSSelector(XPath):
 
     See Also
     --------
-    - [API Documentation](https://lxml.de/cssselect.html)
+    - [Official Documentation](https://lxml.de/cssselect.html)
     """
     # Although 'css' is implemented as plain attribute, it is
     # meaningless to modify it, because instance is initialized

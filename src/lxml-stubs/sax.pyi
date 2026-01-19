@@ -1,3 +1,14 @@
+"""SAX-related utilities for `lxml`.
+
+This module provides SAX integration helpers such as a content handler
+that builds an `ElementTree` as well as utilities to produce SAX events
+from an existing tree.
+
+See Also
+--------
+- [API Documentation](https://lxml.de/apidoc/lxml.sax.html)
+"""
+
 from typing import Generic, overload
 from typing_extensions import disjoint_base
 from xml.sax.handler import ContentHandler
@@ -5,10 +16,27 @@ from xml.sax.handler import ContentHandler
 from ._types import _ET, SupportsLaxItems, Unused, _ElementOrTree
 from .etree import LxmlError, _ElementTree, _ProcessingInstruction
 
-class SaxError(LxmlError): ...
+class SaxError(LxmlError):
+    """Base exception for SAX-related errors.
+
+    See Also
+    --------
+    - [API Documentation](https://lxml.de/apidoc/lxml.sax.html#lxml.sax.SaxError)
+    """
 
 # xml.sax.handler is annotated in typeshed since Sept 2023.
 class ElementTreeContentHandler(Generic[_ET], ContentHandler):
+    """A SAX `ContentHandler` that builds an `ElementTree`.
+
+    Instances of this handler receive SAX events and construct an
+    `ElementTree` root element. It is useful when parsing SAX streams
+    into `lxml` element trees.
+
+    See Also
+    --------
+    - [API Documentation](https://lxml.de/apidoc/lxml.sax.html#lxml.sax.ElementTreeContentHandler)
+    """
+
     _root: _ET | None
     _root_siblings: list[_ProcessingInstruction]
     _element_stack: list[_ET]
@@ -54,6 +82,16 @@ class ElementTreeContentHandler(Generic[_ET], ContentHandler):
 
 @disjoint_base
 class ElementTreeProducer(Generic[_ET]):
+    """Produce SAX events from an `ElementTree` or element.
+
+    This helper wraps an element or tree and drives a SAX `ContentHandler`
+    with corresponding SAX events representing the tree structure.
+
+    See Also
+    --------
+    - [API Documentation](https://lxml.de/apidoc/lxml.sax.html#lxml.sax.ElementTreeProducer)
+    """
+
     _element: _ET
     _content_handler: ContentHandler
     # The purpose of _attr_class and _empty_attributes is

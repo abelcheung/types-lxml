@@ -61,6 +61,12 @@ class ParserTarget(Protocol[_T_co]):
 
 @disjoint_base
 class TreeBuilder(ParserTarget[_Element]):
+    """Build an ElementTree from SAX events.
+
+    See Also
+    --------
+    - [API Documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree.TreeBuilder)
+    """
     def __init__(
         self,
         *,

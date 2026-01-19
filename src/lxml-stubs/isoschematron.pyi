@@ -49,7 +49,7 @@ def stylesheet_params(**__kw: str | _e.XPath | Any) -> dict[str, _Stylesheet_Par
 
     See Also
     --------
-    - [API Documentation](https://lxml.de/apidoc/lxml.isoschematron.html#stylesheet_params)
+    - [API Documentation](https://lxml.de/apidoc/lxml.isoschematron.html#lxml.isoschematron.stylesheet_params)
     """
 
 class Schematron(_e._Validator):

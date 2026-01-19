@@ -66,6 +66,12 @@ class _XPathEvaluatorBase(Protocol):
 
 @disjoint_base
 class XPath(_XPathEvaluatorBase):
+    """Compiled XPath expression for evaluating element trees.
+
+    See Also
+    --------
+    - [API Documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree.XPath)
+    """
     def __init__(
         self,
         path: _TextArg,
@@ -82,6 +88,14 @@ class XPath(_XPathEvaluatorBase):
     def path(self) -> str: ...
 
 class ETXPath(XPath):
+    """Compiled ElementTree XPath expression.
+
+    Simplified XPath for ElementTree compatibility.
+
+    See Also
+    --------
+    - [API Documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree.ETXPath)
+    """
     def __init__(
         self,
         path: _TextArg,
@@ -93,6 +107,12 @@ class ETXPath(XPath):
 
 @disjoint_base
 class XPathElementEvaluator(_XPathEvaluatorBase):
+    """XPath evaluator for a single element.
+
+    See Also
+    --------
+    - [API Documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree.XPathElementEvaluator)
+    """
     def __init__(
         self,
         element: _Element,
@@ -111,6 +131,12 @@ class XPathElementEvaluator(_XPathEvaluatorBase):
     ) -> None: ...
 
 class XPathDocumentEvaluator(XPathElementEvaluator):
+    """XPath evaluator for an ElementTree document.
+
+    See Also
+    --------
+    - [API Documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree.XPathDocumentEvaluator)
+    """
     def __init__(
         self,
         etree: _ElementTree,
@@ -142,12 +168,19 @@ def XPathEvaluator(
 
 @final
 class _ElementUnicodeResult(str, Generic[_ET]):
-    """Smart string is a private str subclass documented in
-    [return types](https://lxml.de/xpathxslt.html#xpath-return-values)
-    of XPath evaluation result.
+    """Smart string subclass for XPath string results.
 
+    Smart strings are private str subclasses that track whether the
+    string came from text, tail, or attribute content of an element.
+
+    Annotation
+    ----------
     Please [visit wiki page](https://github.com/abelcheung/types-lxml/wiki/Smart-string-usage)
     on description and how to use it in you code.
+
+    See Also
+    --------
+    - [API Documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree._ElementUnicodeResult)
     """
 
     @property

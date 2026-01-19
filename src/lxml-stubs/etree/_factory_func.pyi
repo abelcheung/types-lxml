@@ -14,14 +14,33 @@ from ._element import _Comment, _Entity, _ProcessingInstruction
 
 _T = TypeVar("_T")
 
-def Comment(text: _TextArg | None = None) -> _Comment: ...
+def Comment(text: _TextArg | None = None) -> _Comment:
+    """Create a comment element.
+
+    See Also
+    --------
+    - [API Documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree.Comment)
+    """
+
 def ProcessingInstruction(
     target: _TextArg, text: _TextArg | None = None
-) -> _ProcessingInstruction: ...
+) -> _ProcessingInstruction:
+    """Create a processing instruction element.
+
+    See Also
+    --------
+    - [API Documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree.ProcessingInstruction)
+    """
 
 PI = ProcessingInstruction
 
-def Entity(name: _TextArg) -> _Entity: ...
+def Entity(name: _TextArg) -> _Entity:
+    """Create an entity element.
+
+    See Also
+    --------
+    - [API Documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree.Entity)
+    """
 
 # SubElement is a bit more complex than expected, as it
 # handles other kinds of element, like HtmlElement

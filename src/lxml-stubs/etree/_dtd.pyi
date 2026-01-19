@@ -5,9 +5,28 @@ from typing_extensions import disjoint_base
 from .._types import _ElementOrTree, _FileReadSource, _TextArg
 from ._module_misc import LxmlError, _Validator
 
-class DTDError(LxmlError): ...
-class DTDParseError(DTDError): ...
-class DTDValidateError(DTDError): ...
+class DTDError(LxmlError):
+    """Base class for DTD errors.
+
+    See Also
+    --------
+    - [API Documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree.DTDError)
+    """
+class DTDParseError(DTDError):
+    """Error while parsing a DTD.
+
+    See Also
+    --------
+    - [API Documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree.DTDParseError)
+    """
+
+class DTDValidateError(DTDError):
+    """Error while validating an XML document with a DTD.
+
+    See Also
+    --------
+    - [API Documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree.DTDValidateError)
+    """
 
 @final
 class _DTDElementContentDecl:
@@ -83,6 +102,12 @@ class _DTDEntityDecl:
 
 @disjoint_base
 class DTD(_Validator):
+    """DTD validator.
+
+    See Also
+    --------
+    - [API Documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree.DTD)
+    """
     # external_id is effective only when file is None, and
     # native string raises exception
     @overload

@@ -8,6 +8,12 @@ class XIncludeError(LxmlError): ...
 
 @disjoint_base
 class XInclude:
+    """XInclude processor for applying XInclude directives to a tree.
+
+    See Also
+    --------
+    - [API Documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree.XInclude)
+    """
     def __init__(self) -> None: ...
     @property
     def error_log(self) -> _ListErrorLog: ...

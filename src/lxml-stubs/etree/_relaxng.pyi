@@ -10,6 +10,12 @@ class RelaxNGValidateError(RelaxNGError): ...
 
 @disjoint_base
 class RelaxNG(_Validator):
+    """RelaxNG validator.
+
+    See Also
+    --------
+    - [API Documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree.RelaxNG)
+    """
     @overload
     def __init__(self, etree: _ElementOrTree) -> None: ...
     @overload
