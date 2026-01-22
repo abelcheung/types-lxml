@@ -1,6 +1,8 @@
 from __future__ import annotations
 
+import ipaddress
 import sys
+from collections.abc import Callable, Iterable, Iterator
 from copy import deepcopy
 from random import randrange
 from types import NoneType
@@ -9,11 +11,13 @@ from typing import Any, cast
 import pytest
 from hypothesis import (
     HealthCheck,
+    assume,
     given,
     settings,
 )
 from lxml import etree
 from lxml.etree import (
+    Element,
     QName,
     _Attrib as _Attrib,
     _Comment as _Comment,
@@ -25,7 +29,7 @@ from lxml.etree import (
 from lxml.html import Element as h_Element
 
 from .._testutils import strategy as _st
-from .._testutils.common import tag_name_types
+from .._testutils.common import is_hashable, tag_name_types
 from .._testutils.errors import (
     raise_attr_not_writable,
     raise_invalid_filename_type,
@@ -40,7 +44,16 @@ else:
 
 
 class TestBasicBehavior:
-    def test_sequence_read(self, xml2_root: _Element) -> None:
+    @settings(suppress_health_check=[HealthCheck.too_slow], max_examples=300)
+    @given(thing=_st.all_instances_except_of_type(int, slice))
+    @pytest.mark.slow
+    def test_sequence_read_bad(
+        self, disposable_element: _Element, thing: Any
+    ) -> None:
+        with raise_non_integer:
+            _ = cast(Any, disposable_element[thing])
+
+    def test_sequence_read_ok(self, xml2_root: _Element) -> None:
         elem = deepcopy(xml2_root)
 
         reveal_type(len(elem))
@@ -82,7 +95,7 @@ class TestBasicBehavior:
         reveal_type(rev)
         reveal_type(list(rev))
 
-    def test_sequence_modify(self, xml2_root: _Element) -> None:
+    def test_sequence_modify_ok(self, xml2_root: _Element) -> None:
         elem = deepcopy(xml2_root)
 
         subelem = elem[3]
@@ -119,23 +132,72 @@ class TestBasicBehavior:
         assert len(elem) == 0
 
     @settings(suppress_health_check=[HealthCheck.too_slow], max_examples=300)
-    @given(thing=_st.all_instances_except_of_type(NoneType, _Element))
+    @given(thing=_st.all_instances_except_of_type(_Element))
     @pytest.mark.slow
-    def test_insert_bad_elem_1(self, disposable_element: _Element, thing: Any) -> None:
-        with pytest.raises(
-            TypeError, match=r"Cannot convert \w+(\.\w+)* to .+\._Element"
-        ):
-            disposable_element[0] = thing
+    def test_sequence_modify_bad_1(self, disposable_element: _Element, thing: Any) -> None:
+        if thing is None:
+            with pytest.raises(ValueError, match="cannot assign None"):
+                disposable_element[0] = cast(Any, thing)  # pyright: ignore[reportUnnecessaryCast]
+        else:
+            with pytest.raises(
+                TypeError, match=r"Cannot convert \w+(\.\w+)* to .+\._Element"
+            ):
+                disposable_element[0] = thing
+
+    # some iterables may cause indefinite hang when lxml diligently try inserting
+    # items into element tree (e.g. huge ranges)
+    @settings(suppress_health_check=[HealthCheck.too_slow], max_examples=300)
+    @given(thing=_st.all_instances_except_of_type(
+        _Element,
+        Iterator,
+        range,
+        ipaddress.IPv4Network,
+        ipaddress.IPv6Network,
+    ).filter(lambda x: x is not NotImplemented and bool(x)))
+    @pytest.mark.slow
+    def test_sequence_modify_bad_2(
+        self, disposable_element: _Element, thing: Any
+    ) -> None:
+        if isinstance(thing, (Iterable)):
+            with pytest.raises(
+                TypeError, match=r"^Cannot convert \S+ to \S+\._Element$"
+            ):
+                disposable_element[:] = cast(Any, thing)
+        else:
+            with pytest.raises(TypeError, match=r"object is not iterable$"):
+                disposable_element[:] = thing
 
     @settings(max_examples=5)
     @given(iterable_of=_st.fixed_item_iterables())
-    def test_insert_bad_elem_2(
-        self, disposable_element: _Element, iterable_of: Any
+    def test_sequence_modify_bad_3(
+        self,
+        disposable_element: _Element,
+        iterable_of: Callable[[_Element], Iterable[_Element]]
     ) -> None:
+        el = Element("foo")
         with pytest.raises(
             TypeError, match=r"Cannot convert \w+(\.\w+)* to .+\._Element"
         ):
-            disposable_element[0] = iterable_of(disposable_element)
+            disposable_element[0] = cast(Any, iterable_of(el))
+
+    @settings(suppress_health_check=[HealthCheck.too_slow], max_examples=300)
+    @given(
+        thing=_st.all_instances_except_of_type(_Element).filter(lambda x: x is not NotImplemented and bool(x)),
+        iterable_of=_st.fixed_item_iterables(),
+    )
+    @pytest.mark.slow
+    def test_sequence_modify_bad_4(
+        self,
+        disposable_element: _Element,
+        thing: Any,
+        iterable_of: Callable[[Any], Iterable[Any]],
+    ) -> None:
+        assume(  # unhashable types not addable to set
+            getattr(iterable_of, "type") not in {set, frozenset}
+            or is_hashable(thing)
+        )
+        with pytest.raises(TypeError, match=r"Cannot convert \S+ to \S+\._Element"):
+            disposable_element[:] = iterable_of(thing)
 
 
 class TestProperties:
