@@ -38,7 +38,7 @@ from .._testutils import strategy as _st
 from .._testutils.common import (
     attr_name_types,
     attr_value_types,
-    is_hashable,
+    hashable_elem_if_is_set,
 )
 from .._testutils.errors import (
     raise_cannot_convert,
@@ -119,11 +119,7 @@ class TestMixinProperties:
         iterable_of: Callable[[_AttrVal], Iterable[_AttrVal]],
         v: _AttrVal,
     ) -> None:
-        # unhashable types not addable to set
-        assume(not (
-            getattr(iterable_of, "type") in {set, frozenset}
-            and v.__hash__ is None
-        ))  # fmt: skip
+        assume(hashable_elem_if_is_set(iterable_of, v))
         with pytest.raises(AssertionError):
             disposable_html_element.classes = cast(Any, iterable_of(v))
 
@@ -312,10 +308,7 @@ class TestBasicBehavior:
         thing: Any,
         iterable_of: Callable[[Any], Iterable[Any]],
     ) -> None:
-        assume(  # unhashable types not addable to set
-            getattr(iterable_of, "type") not in {set, frozenset}
-            or is_hashable(thing)
-        )
+        assume(hashable_elem_if_is_set(iterable_of, thing))
         with raise_cannot_convert:
             disposable_html_element[:] = iterable_of(thing)
 

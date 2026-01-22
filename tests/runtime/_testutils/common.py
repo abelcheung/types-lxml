@@ -32,13 +32,14 @@ class FuncSignatureError(Exception):
         return "{}(): {}".format(self._func, self.args[0])
 
 
-def is_hashable(obj: object) -> bool:
+def hashable_elem_if_is_set(iterable_of: object, elem: object) -> bool:
+    if getattr(iterable_of, "type") not in {set, frozenset}:
+        return True
     try:
-        hash(obj)
+        hash(elem)
     except Exception:
         return False
     return True
-
 
 @dataclass
 class ArgumentTypes:

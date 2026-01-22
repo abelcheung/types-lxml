@@ -19,7 +19,7 @@ from lxml.etree import (
 )
 
 from .._testutils import signature_tester, strategy as _st
-from .._testutils.common import is_hashable, tag_selector_types
+from .._testutils.common import hashable_elem_if_is_set, tag_selector_types
 from .._testutils.errors import (
     raise_non_iterable,
 )
@@ -102,9 +102,7 @@ class TestIter:
     def test_input_bad_2(
         self, xml2_root: _Element, thing: Any, iterable_of: Any
     ) -> None:
-        assume(
-            getattr(iterable_of, "type") not in {set, frozenset} or is_hashable(thing)
-        )
+        assume(hashable_elem_if_is_set(iterable_of, thing))
         with raise_non_iterable:
             xml2_root.iter(iterable_of(thing))
 
@@ -183,9 +181,7 @@ class TestIterDescendants:
     def test_input_bad_2(
         self, xml2_root: _Element, thing: Any, iterable_of: Any
     ) -> None:
-        assume(
-            getattr(iterable_of, "type") not in {set, frozenset} or is_hashable(thing)
-        )
+        assume(hashable_elem_if_is_set(iterable_of, thing))
         with raise_non_iterable:
             xml2_root.iterdescendants(iterable_of(thing))
 
@@ -263,9 +259,7 @@ class TestIterAncestors:
     def test_input_bad_2(
         self, xml2_root: _Element, thing: Any, iterable_of: Any
     ) -> None:
-        assume(
-            getattr(iterable_of, "type") not in {set, frozenset} or is_hashable(thing)
-        )
+        assume(hashable_elem_if_is_set(iterable_of, thing))
         with raise_non_iterable:
             xml2_root.iterancestors(iterable_of(thing))
 
@@ -349,9 +343,7 @@ class TestIterSiblings:
     def test_input_bad_2(
         self, xml2_root: _Element, thing: Any, iterable_of: Any
     ) -> None:
-        assume(
-            getattr(iterable_of, "type") not in {set, frozenset} or is_hashable(thing)
-        )
+        assume(hashable_elem_if_is_set(iterable_of, thing))
         child = xml2_root[0]
         with raise_non_iterable:
             child.itersiblings(iterable_of(thing))
@@ -434,9 +426,7 @@ class TestIterChildren:
     def test_input_bad_2(
         self, xml2_root: _Element, thing: Any, iterable_of: Any
     ) -> None:
-        assume(
-            getattr(iterable_of, "type") not in {set, frozenset} or is_hashable(thing)
-        )
+        assume(hashable_elem_if_is_set(iterable_of, thing))
         with raise_non_iterable:
             xml2_root.iterchildren(iterable_of(thing))
 
@@ -521,8 +511,6 @@ class TestIterText:
     def test_input_bad_2(
         self, xml2_root: _Element, thing: Any, iterable_of: Any
     ) -> None:
-        assume(
-            getattr(iterable_of, "type") not in {set, frozenset} or is_hashable(thing)
-        )
+        assume(hashable_elem_if_is_set(iterable_of, thing))
         with raise_non_iterable:
             xml2_root.itertext(iterable_of(thing))

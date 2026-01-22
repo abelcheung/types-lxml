@@ -29,7 +29,7 @@ from lxml.etree import (
 from lxml.html import Element as h_Element
 
 from .._testutils import strategy as _st
-from .._testutils.common import is_hashable, tag_name_types
+from .._testutils.common import hashable_elem_if_is_set, tag_name_types
 from .._testutils.errors import (
     raise_attr_not_writable,
     raise_cannot_convert,
@@ -188,10 +188,7 @@ class TestBasicBehavior:
         thing: Any,
         iterable_of: Callable[[Any], Iterable[Any]],
     ) -> None:
-        assume(  # unhashable types not addable to set
-            getattr(iterable_of, "type") not in {set, frozenset}
-            or is_hashable(thing)
-        )
+        assume(hashable_elem_if_is_set(iterable_of, thing))
         with raise_cannot_convert:
             disposable_element[:] = iterable_of(thing)
 
