@@ -30,6 +30,7 @@ from ._testutils.errors import (
     raise_attr_not_writable,
     raise_no_attribute,
     raise_non_iterable,
+    raise_unexpected_type,
     raise_wrong_arg_type,
 )
 
@@ -223,7 +224,7 @@ class TestListLogMethods:
     )
     def test_receive(self, list_log: _ListErrorLog) -> None:
         assert list_log.receive(entry=list_log[0]) is None
-        with pytest.raises(TypeError, match=r"expected .+\._LogEntry, got int"):
+        with raise_unexpected_type:
             list_log.receive(cast(Any, 1))
 
     # BEWARE: vanilla _ListErrorLog has no clear() method,
@@ -254,14 +255,14 @@ class TestModuleFunc:
     @given(thing=_st.all_instances_except_of_type())
     @pytest.mark.slow
     def test_global_log_arg_bad_1(self, thing: Any) -> None:
-        with pytest.raises(TypeError, match=r"expected .+\.PyErrorLog, got .+"):
+        with raise_unexpected_type:
             use_global_python_log(thing)
 
     @settings(max_examples=5)
     @given(iterable_of=_st.fixed_item_iterables())
     def test_global_log_arg_bad_2(self, iterable_of: Any) -> None:
         pylog = PyErrorLog()
-        with pytest.raises(TypeError, match=r"expected .+\.PyErrorLog, got .+"):
+        with raise_unexpected_type:
             use_global_python_log(iterable_of(pylog))
 
     @signature_tester(

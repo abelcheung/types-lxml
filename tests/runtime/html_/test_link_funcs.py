@@ -44,6 +44,7 @@ from .._testutils import strategy as _st
 from .._testutils.common import attr_value_types
 from .._testutils.errors import (
     raise_invalid_utf8_type,
+    raise_non_callable,
     raise_non_integer,
     raise_unexpected_kwarg,
     raise_wrong_pos_arg_count,
@@ -390,7 +391,7 @@ class TestRewriteLinksArg:
     def test_link_repl_func_is_callable(
         self, disposable_html_with_base_href: HtmlElement, thing: Any
     ) -> None:
-        with pytest.raises(TypeError, match="object is not callable"):
+        with raise_non_callable:
             _ = rewrite_links(disposable_html_with_base_href, thing)
 
     # QName has the unintended consequence of doing tag name check while

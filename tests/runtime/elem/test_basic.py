@@ -32,9 +32,11 @@ from .._testutils import strategy as _st
 from .._testutils.common import is_hashable, tag_name_types
 from .._testutils.errors import (
     raise_attr_not_writable,
+    raise_cannot_convert,
     raise_invalid_filename_type,
     raise_invalid_utf8_type,
     raise_non_integer,
+    raise_non_iterable,
 )
 
 if sys.version_info >= (3, 11):
@@ -139,9 +141,7 @@ class TestBasicBehavior:
             with pytest.raises(ValueError, match="cannot assign None"):
                 disposable_element[0] = cast(Any, thing)  # pyright: ignore[reportUnnecessaryCast]
         else:
-            with pytest.raises(
-                TypeError, match=r"Cannot convert \w+(\.\w+)* to .+\._Element"
-            ):
+            with raise_cannot_convert:
                 disposable_element[0] = thing
 
     # some iterables may cause indefinite hang when lxml diligently try inserting
@@ -159,12 +159,10 @@ class TestBasicBehavior:
         self, disposable_element: _Element, thing: Any
     ) -> None:
         if isinstance(thing, (Iterable)):
-            with pytest.raises(
-                TypeError, match=r"^Cannot convert \S+ to \S+\._Element$"
-            ):
+            with raise_cannot_convert:
                 disposable_element[:] = cast(Any, thing)
         else:
-            with pytest.raises(TypeError, match=r"object is not iterable$"):
+            with raise_non_iterable:
                 disposable_element[:] = thing
 
     @settings(max_examples=5)
@@ -175,9 +173,7 @@ class TestBasicBehavior:
         iterable_of: Callable[[_Element], Iterable[_Element]]
     ) -> None:
         el = Element("foo")
-        with pytest.raises(
-            TypeError, match=r"Cannot convert \w+(\.\w+)* to .+\._Element"
-        ):
+        with raise_cannot_convert:
             disposable_element[0] = cast(Any, iterable_of(el))
 
     @settings(suppress_health_check=[HealthCheck.too_slow], max_examples=300)
@@ -196,7 +192,7 @@ class TestBasicBehavior:
             getattr(iterable_of, "type") not in {set, frozenset}
             or is_hashable(thing)
         )
-        with pytest.raises(TypeError, match=r"Cannot convert \S+ to \S+\._Element"):
+        with raise_cannot_convert:
             disposable_element[:] = iterable_of(thing)
 
 

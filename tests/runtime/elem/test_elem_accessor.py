@@ -29,6 +29,7 @@ from lxml.etree import (
 
 from .._testutils import signature_tester, strategy as _st
 from .._testutils.errors import (
+    raise_cannot_convert,
     raise_non_integer,
     raise_non_iterable,
     raise_wrong_arg_type,
@@ -299,9 +300,7 @@ class TestExtendMethod:
     def test_bad_element_2(
         self, disposable_element: _Element, value: Iterable[Any]
     ) -> None:
-        with pytest.raises(
-            TypeError, match=r"Cannot convert \w+(\.\w+)* to .+\._Element"
-        ):
+        with raise_cannot_convert:
             disposable_element.extend(value)
 
 

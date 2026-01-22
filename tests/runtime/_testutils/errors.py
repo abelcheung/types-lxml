@@ -77,3 +77,15 @@ raise_non_iterable = pytest.raises(
 raise_non_integer = pytest.raises(
     TypeError, match="object cannot be interpreted as an integer"
 )
+
+# TypeError("Cannot convert ... to ...")
+raise_cannot_convert = pytest.raises(TypeError, match=r"^Cannot convert \S+ to \S+$")
+
+# TypeError("object is not callable")
+raise_non_callable = pytest.raises(TypeError, match="object is not callable")
+
+# TypeError("expected ..., ... found")
+# TypeError("expected ..., got ...")
+raise_unexpected_type = pytest.raises(
+    TypeError, match=r"expected \S+, (got \S+|\S+ found)"
+)

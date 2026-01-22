@@ -41,8 +41,10 @@ from .._testutils.common import (
     is_hashable,
 )
 from .._testutils.errors import (
+    raise_cannot_convert,
     raise_no_attribute,
     raise_non_integer,
+    raise_non_iterable,
     raise_prop_not_writable,
 )
 
@@ -263,9 +265,7 @@ class TestBasicBehavior:
             with pytest.raises(ValueError, match=r"cannot assign None"):
                 disposable_html_element[0] = cast(Any, thing)  # pyright: ignore[reportUnnecessaryCast]
         else:
-            with pytest.raises(
-                TypeError, match=r"^Cannot convert \S+ to \S+\._Element$"
-            ):
+            with raise_cannot_convert:
                 disposable_html_element[0] = thing
 
     # some iterables may cause indefinite hang when lxml diligently try inserting
@@ -283,12 +283,10 @@ class TestBasicBehavior:
         self, disposable_html_element: HtmlElement, thing: Any
     ) -> None:
         if isinstance(thing, (Iterable)):
-            with pytest.raises(
-                TypeError, match=r"^Cannot convert \S+ to \S+\._Element$"
-            ):
+            with raise_cannot_convert:
                 disposable_html_element[:] = cast(Any, thing)
         else:
-            with pytest.raises(TypeError, match=r"object is not iterable$"):
+            with raise_non_iterable:
                 disposable_html_element[:] = thing
 
     @settings(max_examples=5)
@@ -299,7 +297,7 @@ class TestBasicBehavior:
         iterable_of: Callable[[HtmlElement], Iterable[HtmlElement]],
     ) -> None:
         div = Element("div")
-        with pytest.raises(TypeError, match=r"Cannot convert \S+ to \S+\._Element"):
+        with raise_cannot_convert:
             disposable_html_element[0] = cast(Any, iterable_of(div))
 
     @settings(suppress_health_check=[HealthCheck.too_slow], max_examples=300)
@@ -318,7 +316,7 @@ class TestBasicBehavior:
             getattr(iterable_of, "type") not in {set, frozenset}
             or is_hashable(thing)
         )
-        with pytest.raises(TypeError, match=r"Cannot convert \S+ to \S+\._Element"):
+        with raise_cannot_convert:
             disposable_html_element[:] = iterable_of(thing)
 
 

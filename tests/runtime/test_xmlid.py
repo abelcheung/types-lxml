@@ -38,6 +38,7 @@ from lxml.objectify import (
 from ._testutils import signature_tester, strategy as _st
 from ._testutils.common import text_document_types
 from ._testutils.errors import (
+    raise_cannot_convert,
     raise_invalid_filename_type,
     raise_invalid_utf8_type,
     raise_wrong_arg_type,
@@ -386,7 +387,7 @@ class TestParseid:
         xml2_filepath: Path,
         thing: Any,
     ) -> None:
-        with pytest.raises(TypeError, match=r"Cannot convert .+ to .+\._BaseParser"):
+        with raise_cannot_convert:
             _ = parseid(xml2_filepath, parser=thing)
 
     @settings(max_examples=5)
@@ -396,7 +397,7 @@ class TestParseid:
         xml2_filepath: Path,
         iterable_of: Any,
     ) -> None:
-        with pytest.raises(TypeError, match=r"Cannot convert .+ to .+\._BaseParser"):
+        with raise_cannot_convert:
             _ = parseid(xml2_filepath, parser=iterable_of(XMLParser()))
 
     def test_baseurl_arg_ok(self, xml2_filepath: Path) -> None:

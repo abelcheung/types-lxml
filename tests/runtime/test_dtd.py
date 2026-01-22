@@ -28,6 +28,7 @@ from ._testutils.errors import (
     raise_attr_not_writable,
     raise_invalid_lxml_type,
     raise_invalid_utf8_type,
+    raise_unexpected_type,
     raise_wrong_pos_arg_count,
 )
 
@@ -129,7 +130,7 @@ class TestDtdInput:
         if LXML_VERSION >= (5, 3, 1):
             raise_cm = raise_invalid_utf8_type
         else:
-            raise_cm = pytest.raises(TypeError, match=r"expected bytes, .+ found")
+            raise_cm = raise_unexpected_type
         with raise_cm:
             _ = DTD(external_id=thing)
 
@@ -139,7 +140,7 @@ class TestDtdInput:
         if LXML_VERSION >= (5, 3, 1):
             raise_cm = raise_invalid_utf8_type
         else:
-            raise_cm = pytest.raises(TypeError, match=r"expected bytes, .+ found")
+            raise_cm = raise_unexpected_type
         with raise_cm:
             _ = DTD(external_id=iterable_of("test"))
 
