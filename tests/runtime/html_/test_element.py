@@ -1,10 +1,13 @@
 from __future__ import annotations
 
+import ipaddress
 import sys
 from collections.abc import (
     Callable,
     Iterable,
+    Iterator,
 )
+from random import randrange
 from typing import TYPE_CHECKING, Any, cast
 
 import pytest
@@ -15,12 +18,18 @@ from hypothesis import (
     settings,
     strategies as st,
 )
-from lxml.etree import LXML_VERSION
+from lxml.etree import (
+    LXML_VERSION,
+    _Element,
+)
 from lxml.html import (
     Classes as Classes,
     Element,
     FormElement as FormElement,
+    HtmlComment,
     HtmlElement,
+    HtmlEntity,
+    HtmlProcessingInstruction,
     InputElement,
     LabelElement,
 )
@@ -29,9 +38,11 @@ from .._testutils import strategy as _st
 from .._testutils.common import (
     attr_name_types,
     attr_value_types,
+    is_hashable,
 )
 from .._testutils.errors import (
     raise_no_attribute,
+    raise_non_integer,
     raise_prop_not_writable,
 )
 
@@ -164,6 +175,151 @@ class TestMixinProperties:
 
         with raise_no_attribute:
             input.label = cast(Any, iterable_of(label))
+
+
+# Almost a dup of runtime/elem/test_basic.py counterpart
+class TestBasicBehavior:
+    @settings(suppress_health_check=[HealthCheck.too_slow], max_examples=300)
+    @given(thing=_st.all_instances_except_of_type(int, slice))
+    @pytest.mark.slow
+    def test_sequence_read_bad(
+        self, disposable_html_element: HtmlElement, thing: Any
+    ) -> None:
+        with raise_non_integer:
+            _ = cast(Any, disposable_html_element[thing])
+
+    def test_sequence_read_ok(self, bightml_root: HtmlElement) -> None:
+        reveal_type(len(bightml_root))
+        length = len(bightml_root)
+        reveal_type(bightml_root[randrange(length)])
+        reveal_type(bightml_root[: 2])  # fmt: skip  # ast: why the space???
+
+        itr = iter(bightml_root)
+        reveal_type(itr)
+        item = next(itr)
+        reveal_type(item)
+        assert bightml_root.index(item) == 0
+        del itr
+
+        for sub in bightml_root:
+            reveal_type(sub)
+
+        assert bightml_root.body is not None
+        subelem = bightml_root.body[3]
+        reveal_type(subelem in bightml_root)
+        o = object()
+        reveal_type(o in bightml_root)
+
+        with raise_non_integer:
+            _ = bightml_root[cast(int, "0")]
+
+    # mypy and ty don't support magic method and always treat
+    # reversed(...) as `reversed` object
+    @pytest.mark.notypechecker("mypy", "ty")
+    def test_reversed_seq_read_1(self, bightml_root: HtmlElement) -> None:
+        rev = reversed(bightml_root)
+        reveal_type(rev)
+        reveal_type(list(rev))
+
+    @pytest.mark.onlytypechecker("mypy", "ty")
+    def test_reversed_seq_read_2(self, bightml_root: HtmlElement) -> None:
+        rev = bightml_root.__reversed__()
+        reveal_type(rev)
+        reveal_type(list(rev))
+
+    def test_sequence_modify_ok(self, disposable_html_element: HtmlElement) -> None:
+        comment = HtmlComment("comment")
+        comment2 = HtmlComment("comment2")
+        entity = HtmlEntity("foo")
+        pi = HtmlProcessingInstruction("target", "data")
+        div = HtmlElement("div")
+
+        length = len(disposable_html_element)
+        disposable_html_element.insert(0, comment)
+        assert len(disposable_html_element) == length + 1
+        length = length + 1
+
+        disposable_html_element[length - 1] = entity
+        assert len(disposable_html_element) == length
+
+        disposable_html_element[length:] = [comment, pi, div]
+        assert disposable_html_element[-3] is comment
+        assert len(disposable_html_element) == length + 3
+        length = length + 3
+
+        disposable_html_element[length - 2 : length] = {div, comment2}
+        assert len(disposable_html_element) == length
+
+        del disposable_html_element[0:2]
+        assert len(disposable_html_element) == length - 2
+
+    @settings(suppress_health_check=[HealthCheck.too_slow], max_examples=300)
+    @given(thing=_st.all_instances_except_of_type(_Element))
+    @pytest.mark.slow
+    def test_sequence_modify_bad_1(
+        self, disposable_html_element: HtmlElement, thing: Any
+    ) -> None:
+        if thing is None:
+            with pytest.raises(ValueError, match=r"cannot assign None"):
+                disposable_html_element[0] = cast(Any, thing)  # pyright: ignore[reportUnnecessaryCast]
+        else:
+            with pytest.raises(
+                TypeError, match=r"^Cannot convert \S+ to \S+\._Element$"
+            ):
+                disposable_html_element[0] = thing
+
+    # some iterables may cause indefinite hang when lxml diligently try inserting
+    # items into element tree (e.g. huge ranges)
+    @settings(suppress_health_check=[HealthCheck.too_slow], max_examples=300)
+    @given(thing=_st.all_instances_except_of_type(
+        _Element,
+        Iterator,
+        range,
+        ipaddress.IPv4Network,
+        ipaddress.IPv6Network,
+    ).filter(lambda x: x is not NotImplemented and bool(x)))
+    @pytest.mark.slow
+    def test_sequence_modify_bad_2(
+        self, disposable_html_element: HtmlElement, thing: Any
+    ) -> None:
+        if isinstance(thing, (Iterable)):
+            with pytest.raises(
+                TypeError, match=r"^Cannot convert \S+ to \S+\._Element$"
+            ):
+                disposable_html_element[:] = cast(Any, thing)
+        else:
+            with pytest.raises(TypeError, match=r"object is not iterable$"):
+                disposable_html_element[:] = thing
+
+    @settings(max_examples=5)
+    @given(iterable_of=_st.fixed_item_iterables())
+    def test_sequence_modify_bad_3(
+        self,
+        disposable_html_element: HtmlElement,
+        iterable_of: Callable[[HtmlElement], Iterable[HtmlElement]],
+    ) -> None:
+        div = Element("div")
+        with pytest.raises(TypeError, match=r"Cannot convert \S+ to \S+\._Element"):
+            disposable_html_element[0] = cast(Any, iterable_of(div))
+
+    @settings(suppress_health_check=[HealthCheck.too_slow], max_examples=300)
+    @given(
+        thing=_st.all_instances_except_of_type(_Element).filter(lambda x: x is not NotImplemented and bool(x)),
+        iterable_of=_st.fixed_item_iterables(),
+    )
+    @pytest.mark.slow
+    def test_sequence_modify_bad_4(
+        self,
+        disposable_html_element: HtmlElement,
+        thing: Any,
+        iterable_of: Callable[[Any], Iterable[Any]],
+    ) -> None:
+        assume(  # unhashable types not addable to set
+            getattr(iterable_of, "type") not in {set, frozenset}
+            or is_hashable(thing)
+        )
+        with pytest.raises(TypeError, match=r"Cannot convert \S+ to \S+\._Element"):
+            disposable_html_element[:] = iterable_of(thing)
 
 
 class TestSetMethod:

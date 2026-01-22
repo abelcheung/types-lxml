@@ -35,7 +35,7 @@ class FuncSignatureError(Exception):
 def is_hashable(obj: object) -> bool:
     try:
         hash(obj)
-    except TypeError:
+    except Exception:
         return False
     return True
 
