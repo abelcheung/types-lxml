@@ -8,7 +8,11 @@ from collections.abc import (
     Iterator,
 )
 from random import randrange
-from typing import TYPE_CHECKING, Any, cast
+from typing import (
+    TYPE_CHECKING,
+    Any,
+    cast,
+)
 
 import pytest
 from hypothesis import (
@@ -267,13 +271,15 @@ class TestBasicBehavior:
     # some iterables may cause indefinite hang when lxml diligently try inserting
     # items into element tree (e.g. huge ranges)
     @settings(suppress_health_check=[HealthCheck.too_slow], max_examples=300)
-    @given(thing=_st.all_instances_except_of_type(
-        _Element,
-        Iterator,
-        range,
-        ipaddress.IPv4Network,
-        ipaddress.IPv6Network,
-    ).filter(lambda x: x is not NotImplemented and bool(x)))
+    @given(
+        thing=_st.all_instances_except_of_type(
+            _Element,
+            Iterator,
+            range,
+            ipaddress.IPv4Network,
+            ipaddress.IPv6Network,
+        ).filter(lambda x: x is not NotImplemented and bool(x))
+    )
     @pytest.mark.slow
     def test_sequence_modify_bad_2(
         self, disposable_html_element: HtmlElement, thing: Any
@@ -298,7 +304,9 @@ class TestBasicBehavior:
 
     @settings(suppress_health_check=[HealthCheck.too_slow], max_examples=300)
     @given(
-        thing=_st.all_instances_except_of_type(_Element).filter(lambda x: x is not NotImplemented and bool(x)),
+        thing=_st.all_instances_except_of_type(_Element).filter(
+            lambda x: x is not NotImplemented and bool(x)
+        ),
         iterable_of=_st.fixed_item_iterables(),
     )
     @pytest.mark.slow

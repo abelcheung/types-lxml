@@ -41,6 +41,7 @@ def hashable_elem_if_is_set(iterable_of: object, elem: object) -> bool:
         return False
     return True
 
+
 @dataclass
 class ArgumentTypes:
     allow: tuple[type[Any], ...]
