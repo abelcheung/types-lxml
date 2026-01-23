@@ -28,7 +28,6 @@ if sys.version_info >= (3, 11):
 else:
     from typing_extensions import LiteralString, Self
 
-
 class ObjectifiedElement(ElementBase):
     """Element class that provides object-like access to XML elements.
 

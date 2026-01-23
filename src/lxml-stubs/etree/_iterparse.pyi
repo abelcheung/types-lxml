@@ -32,7 +32,6 @@ else:
 
 _T_co = TypeVar("_T_co", covariant=True)
 
-
 @disjoint_base
 class iterparse(Iterator[_T_co]):
     """Incremental parser. Parses XML into a tree and generates tuples (event, element) in a

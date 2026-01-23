@@ -12,6 +12,7 @@ class DTDError(LxmlError):
     --------
     - [API Documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree.DTDError)
     """
+
 class DTDParseError(DTDError):
     """Error while parsing a DTD.
 

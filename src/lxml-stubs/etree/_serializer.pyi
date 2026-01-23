@@ -209,6 +209,7 @@ def canonicalize(
     --------
     - [API Documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree.canonicalize)
     """
+
 @overload
 def canonicalize(
     xml_data: None = None,
@@ -234,6 +235,7 @@ def canonicalize(
     --------
     - [API Documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree.canonicalize)
     """
+
 @overload
 def canonicalize(
     xml_data: str | _ElementOrTree,
@@ -259,6 +261,7 @@ def canonicalize(
     --------
     - [API Documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree.canonicalize)
     """
+
 @overload
 def canonicalize(
     xml_data: None = None,
