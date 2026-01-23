@@ -24,7 +24,7 @@ jobs:
 
     - uses: astral-sh/setup-uv@v7
       with:
-        version: '0.9.5'
+        version: '0.9.26'
         cache-dependency-glob: |
           ./pyproject.toml
 
