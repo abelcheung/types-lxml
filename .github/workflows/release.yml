@@ -28,7 +28,7 @@ jobs:
 
   pypi-rel:
     needs: all_tests
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-slim
     environment: pypi
     permissions:
       id-token: write
@@ -58,7 +58,7 @@ jobs:
 
   gh-rel:
     needs: all_tests
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-slim
     permissions:
       contents: write
       id-token: write
