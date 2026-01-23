@@ -31,8 +31,7 @@ class LxmlTranslator(_csel.GenericTranslator):
         self, xpath: XPathExpr, function: Function
     ) -> XPathExpr: ...
 
-class LxmlHTMLTranslator(LxmlTranslator, _csel.HTMLTranslator):
-    ...
+class LxmlHTMLTranslator(LxmlTranslator, _csel.HTMLTranslator): ...
 
 class CSSSelector(XPath):
     """A compiled CSS selector expression for querying elements.
