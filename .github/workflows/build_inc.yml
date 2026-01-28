@@ -2,9 +2,6 @@
 
 name: Reusable build workflow
 
-permissions:
-  contents: read
-
 on:
   workflow_call:
     inputs:
@@ -15,6 +12,8 @@ on:
 
 jobs:
   build:
+    permissions:
+      contents: read
     strategy:
       matrix:
         flavor:
@@ -59,36 +58,78 @@ jobs:
         path: dist/*
         if-no-files-found: error
 
-  checksrc:
+  pyrefly:
     needs: build
+    permissions:
+      contents: read
+      checks: write
     strategy:
+      fail-fast: false
       matrix:
         flavor:
           - "normal"
           - "alt"
-    runs-on: ubuntu-slim
-    steps:
-    - uses: actions/download-artifact@v7
-      with:
-        name: dist-${{ matrix.flavor }}
-        path: dist
+    uses: ./.github/workflows/inc_tc_pyrefly.yml
+    with:
+      tarball-flavor: ${{ matrix.flavor }}
 
-    - name: Extract tarball
-      shell: bash
-      run: >
-        tar -zxf dist/*.tar.gz --strip-components=1
+  pyright:
+    needs: build
+    permissions:
+      contents: read
+      checks: write
+    strategy:
+      fail-fast: false
+      matrix:
+        flavor:
+          - "normal"
+          - "alt"
+    uses: ./.github/workflows/inc_tc_pyright.yml
+    with:
+      tarball-flavor: ${{ matrix.flavor }}
 
-    - uses: astral-sh/setup-uv@v7
-      with:
-        version: '0.9.26'
-        cache-dependency-glob: |
-          ./pyproject.toml
+  mypy:
+    needs: build
+    permissions:
+      contents: read
+      checks: write
+    strategy:
+      fail-fast: false
+      matrix:
+        flavor:
+          - "normal"
+          - "alt"
+    uses: ./.github/workflows/inc_tc_mypy.yml
+    with:
+      tarball-flavor: ${{ matrix.flavor }}
 
-    - name: Run type checker on source
-      run: >
-        uvx
-        --python-preference only-system
-        --with tox-uv
-        tox run-parallel -vv
-        -m typecheck
+  basedpyright:
+    needs: build
+    permissions:
+      contents: read
+      checks: write
+    strategy:
+      fail-fast: false
+      matrix:
+        flavor:
+          - "normal"
+          - "alt"
+    uses: ./.github/workflows/inc_tc_basedpyright.yml
+    with:
+      tarball-flavor: ${{ matrix.flavor }}
+
+  ty:
+    needs: build
+    permissions:
+      contents: read
+      checks: write
+    strategy:
+      fail-fast: false
+      matrix:
+        flavor:
+          - "normal"
+          - "alt"
+    uses: ./.github/workflows/inc_tc_ty.yml
+    with:
+      tarball-flavor: ${{ matrix.flavor }}
 

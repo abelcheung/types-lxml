@@ -1,0 +1,77 @@
+name: Reusable mypy check workflow
+
+permissions:
+  contents: read
+  checks: write
+
+on:
+  workflow_call:
+    inputs:
+      tarball-flavor:
+        required: true
+        type: string
+        description: "Tarball flavor to be checked [normal,alt,none]"
+      gitref:
+        required: false
+        type: string
+        description: "Git ref to be checked"
+        default: ${{ github.ref }}
+      ver-spec:
+        required: false
+        type: string
+        description: "Mypy version specifier"
+        default: "mypy"
+
+jobs:
+  mypy:
+    runs-on: ubuntu-slim
+    steps:
+    - uses: actions/checkout@v6
+      if: inputs.tarball-flavor != 'none'
+      with:
+        repository: abelcheung/ci-annotation-converter
+        path: ci-annotation-converter
+
+    - uses: actions/download-artifact@v7
+      if: inputs.tarball-flavor != 'none'
+      with:
+        name: dist-${{ inputs.tarball-flavor }}
+        path: dist
+
+    - name: Extract ${{ inputs.tarball-flavor }} tarball
+      if: inputs.tarball-flavor != 'none'
+      shell: bash
+      run: >
+        tar -zxf dist/*.tar.gz --strip-components=1
+
+    - uses: actions/checkout@v6
+      if: inputs.tarball-flavor == 'none'
+      with:
+        ref: ${{ inputs.gitref }}
+        submodules: true
+
+    - uses: astral-sh/setup-uv@v7
+      with:
+        version: '0.9.26'
+        cache-dependency-glob: |
+          ./pyproject.toml
+
+    - name: Install prerequisites
+      run: |
+        uv venv --python-preference only-system
+        uv pip install '.[dev]' '${{ inputs.ver-spec }}'
+
+    - name: Run mypy on src
+      run: |
+        source .venv/bin/activate
+        mypy --output=json src/ > out.json || exitstatus=$?
+        python ci-annotation-converter/ci_annotation_converter.py mypy github-text -i out.json
+        exit ${exitstatus:-0}
+
+    - name: Run mypy on runtime tests
+      run: |
+        source .venv/bin/activate
+        mypy --output=json --config-file=tests/runtime/mypy.ini tests/runtime/ > out.json || exitstatus=$?
+        python ci-annotation-converter/ci_annotation_converter.py mypy github-text -i out.json
+        exit ${exitstatus:-0}
+

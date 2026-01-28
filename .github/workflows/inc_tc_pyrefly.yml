@@ -1,0 +1,71 @@
+name: Reusable pyrefly check workflow
+
+permissions:
+  contents: read
+  checks: write
+
+on:
+  workflow_call:
+    inputs:
+      tarball-flavor:
+        required: true
+        type: string
+        description: "Tarball flavor to be checked [normal,alt,none]"
+      gitref:
+        required: false
+        type: string
+        description: "Git ref to be checked"
+        default: ${{ github.ref }}
+      ver-spec:
+        required: false
+        type: string
+        description: "Pyrefly version specifier"
+        default: "pyrefly"
+
+jobs:
+  pyrefly:
+    runs-on: ubuntu-slim
+    steps:
+    - uses: actions/download-artifact@v7
+      if: inputs.tarball-flavor != 'none'
+      with:
+        name: dist-${{ inputs.tarball-flavor }}
+        path: dist
+
+    - name: Extract ${{ inputs.tarball-flavor }} tarball
+      if: inputs.tarball-flavor != 'none'
+      shell: bash
+      run: >
+        tar -zxf dist/*.tar.gz --strip-components=1
+
+    - uses: actions/checkout@v6
+      if: inputs.tarball-flavor == 'none'
+      with:
+        ref: ${{ inputs.gitref }}
+
+    - uses: astral-sh/setup-uv@v7
+      with:
+        version: '0.9.26'
+        cache-dependency-glob: |
+          ./pyproject.toml
+
+    - name: Install prerequisites
+      run: |
+        uv venv --python-preference only-system
+        uv pip install '.[dev]' '${{ inputs.ver-spec }}'
+
+    - name: Run pyrefly on src
+      run: >
+        .venv/bin/pyrefly check
+        --output-format=github
+        --summary=none
+        src/
+
+    - name: Run pyrefly on runtime tests
+      run: >
+        .venv/bin/pyrefly check
+        --config=tests/runtime/pyrefly.toml
+        --output-format=github
+        --summary=none
+        tests/runtime/
+
