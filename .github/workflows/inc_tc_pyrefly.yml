@@ -55,17 +55,12 @@ jobs:
         uv pip install '.[dev]' '${{ inputs.ver-spec }}'
 
     - name: Run pyrefly on src
-      run: >
-        .venv/bin/pyrefly check
-        --output-format=github
-        --summary=none
-        src/
+      run: |
+        source .venv/bin/activate
+        pyrefly check --output-format=github --summary=none src/
 
     - name: Run pyrefly on runtime tests
-      run: >
-        .venv/bin/pyrefly check
-        --config=tests/runtime/pyrefly.toml
-        --output-format=github
-        --summary=none
-        tests/runtime/
+      run: |
+        source .venv/bin/activate
+        pyrefly check --config=tests/runtime/pyrefly.toml --output-format=github --summary=none tests/runtime/
 
