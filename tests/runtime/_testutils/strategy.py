@@ -33,7 +33,7 @@ def all_types_except(
         strategy = st.sampled_from([
             t for t in all_types if inspect.isclass(t) and not issubclass(t, excluded)
         ])
-    return strategy
+    return cast(st.SearchStrategy[type], strategy)
 
 
 def all_instances_except_of_type(*excluded: type[Any]) -> st.SearchStrategy[Any]:
