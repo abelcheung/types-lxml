@@ -26,6 +26,12 @@ jobs:
   pyrefly:
     runs-on: ubuntu-slim
     steps:
+    - uses: actions/checkout@v6
+      if: inputs.tarball-flavor != 'none'
+      with:
+        repository: abelcheung/ci-annotation-converter
+        path: ci-annotation-converter
+
     - uses: actions/download-artifact@v7
       if: inputs.tarball-flavor != 'none'
       with:
@@ -42,6 +48,7 @@ jobs:
       if: inputs.tarball-flavor == 'none'
       with:
         ref: ${{ inputs.gitref }}
+        submodules: true
 
     - uses: astral-sh/setup-uv@v7
       with:
@@ -57,10 +64,13 @@ jobs:
     - name: Run pyrefly on src
       run: |
         source .venv/bin/activate
-        pyrefly check --output-format=github --summary=none src/
+        pyrefly check --output-format=json --summary=none src/ > out.json || exitstatus=$?
+        python ci-annotation-converter/ci_annotation_converter.py pyrefly github-text -i out.json
+        exit ${exitstatus:-0}
 
     - name: Run pyrefly on runtime tests
       run: |
         source .venv/bin/activate
-        pyrefly check --config=tests/runtime/pyrefly.toml --output-format=github --summary=none tests/runtime/
-
+        pyrefly check --config=tests/runtime/pyrefly.toml --output-format=json --summary=none tests/runtime/ > out.json || exitstatus=$?
+        python ci-annotation-converter/ci_annotation_converter.py pyrefly github-text -i out.json
+        exit ${exitstatus:-0}
