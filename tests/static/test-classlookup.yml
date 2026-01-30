@@ -100,7 +100,7 @@
   main: |
     from lxml.etree import ElementDefaultClassLookup, ElementBase, CommentBase
     ElementDefaultClassLookup(pi=CommentBase)  # ER: Argument "pi" .+; expected ".+"  \[arg-type]$
-    ElementDefaultClassLookup(CommentBase)  # ER: Argument 1 .+; expected ".+"  \[arg-type]$
+    ElementDefaultClassLookup(CommentBase)  # ER: Value of type variable .+ cannot be ".+?"  \[type-var]$
     lookup: ElementDefaultClassLookup
     lookup.element_class = ElementBase  # ER: Property "element_class" .+ is read-only  \[misc]$
 
