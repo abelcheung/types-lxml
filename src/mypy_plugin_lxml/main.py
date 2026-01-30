@@ -70,6 +70,9 @@ def _set_class_lookup_method_hook(ctx: MethodContext) -> Type:
         ctx.type.args = (
             _create_instance_from("lxml.objectify._element.ObjectifiedElement"),
         )
+    elif lookup.type.fullname == "lxml.etree._classlookup.ElementDefaultClassLookup":
+        assert len(lookup.args) == 1
+        ctx.type.args = (lookup.args[0],)
 
     for base in lookup.type.bases:
         if base.type.fullname == "lxml.html._parse.HtmlElementClassLookup":
@@ -78,6 +81,9 @@ def _set_class_lookup_method_hook(ctx: MethodContext) -> Type:
             ctx.type.args = (
                 _create_instance_from("lxml.objectify._element.ObjectifiedElement"),
             )
+        elif base.type.fullname == "lxml.etree._classlookup.ElementDefaultClassLookup":
+            assert len(base.args) == 1
+            ctx.type.args = (base.args[0],)
     return ctx.default_return_type
 
 
