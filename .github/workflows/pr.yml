@@ -1,7 +1,13 @@
 name: PR review
 
+permissions:
+  contents: read
+  pull-requests: write
+
 on:
-  pull_request_target:
+  pull_request:
+    branches-ignore:
+      - 'dependabot/**'
     paths-ignore:
       - '**/dependabot.yml'
       - '**/bandit.yml'
@@ -12,51 +18,38 @@ on:
       - 'LICENSE'
 
 jobs:
-  review:
+  pyrefly:
     runs-on: ubuntu-slim
-    permissions:
-      contents: read
-      pull-requests: write
     steps:
-    - uses: actions/checkout@v6
+    - uses: ./.github/workflows/inc_tc_pyrefly.yml
       with:
-        ref: ${{ github.event.pull_request.head.sha }}
+        tarball-flavor: none
 
-    - uses: astral-sh/setup-uv@v7
+  pyright:
+    runs-on: ubuntu-slim
+    steps:
+    - uses: ./.github/workflows/inc_tc_pyright.yml
       with:
-        version: '0.9.26'
-        cache-dependency-glob: |
-          ./pyproject.toml
+        tarball-flavor: none
 
-    - name: Install prerequisites
-      run: |
-        uv python install 3.12
-        uv venv --python-preference only-managed
-        uv pip install -r pyproject.toml
-        uv pip install mypy
-
-    - name: Mypy review
-      id: mypy
-      uses: tsuyoshicho/action-mypy@v5
+  basedpyright:
+    runs-on: ubuntu-slim
+    steps:
+    - uses: ./.github/workflows/inc_tc_basedpyright.yml
       with:
-        reporter: github-pr-review
-        level: warning
-        target: src/lxml-stubs
-        fail_on_error: true
-        setup_method: nothing
-        install_types: false
-        output_json: true
-        execute_command: .venv/bin/mypy
+        tarball-flavor: none
 
-    # Action doesn't support --pythonpath, smuggle it
-    # through misc flags
-    - name: Pyright review
-      id: pyright
-      if: success() || steps.mypy.conclusion == 'failure'
-      uses: jordemort/action-pyright@v1
+  mypy:
+    runs-on: ubuntu-slim
+    steps:
+    - uses: ./.github/workflows/inc_tc_mypy.yml
       with:
-        reporter: github-pr-review
-        level: warning
-        fail_on_error: true
-        pyright_flags: --pythonpath .venv/bin/python3 src
+        tarball-flavor: none
+
+  ty:
+    runs-on: ubuntu-slim
+    steps:
+    - uses: ./.github/workflows/inc_tc_ty.yml
+      with:
+        tarball-flavor: none
 
