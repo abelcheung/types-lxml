@@ -4,7 +4,7 @@
 
 from abc import ABCMeta, abstractmethod
 from collections.abc import Mapping
-from typing import Literal, final
+from typing import Generic, Literal, TypeVar, final, overload
 from typing_extensions import disjoint_base
 
 from .._types import (
@@ -12,6 +12,7 @@ from .._types import (
     _AttrName,
     _AttrVal,
     _DefEtreeParsers,
+    _ET_co,
     _NSMapArg,
     _TagName,
     _TextArg,
@@ -121,13 +122,18 @@ class FallbackElementClassLookup(ElementClassLookup):
         - [API documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree.FallbackElementClassLookup.set_fallback)
         """
 
+_Public_ET_co = TypeVar("_Public_ET_co", bound=ElementBase, covariant=True)
+
 @disjoint_base
-class ElementDefaultClassLookup(ElementClassLookup):
+class ElementDefaultClassLookup(ElementClassLookup, Generic[_ET_co]):
     """Element class lookup scheme that always returns the default Element
     class.
 
-    The keyword arguments ``element``, ``comment``, ``pi`` and ``entity``
-    accept the respective Element classes.
+    Annotation
+    ----------
+    This is only a best-effort mimicry of runtime ElementDefaultClassLookup.
+    In runtime, using ElementBase itself as element class will be rejected,
+    while there is no equivalent mechanism in typing to express this.
 
     See Also
     --------
@@ -142,13 +148,23 @@ class ElementDefaultClassLookup(ElementClassLookup):
     def pi_class(self) -> type[_ProcessingInstruction]: ...
     @property
     def entity_class(self) -> type[_Entity]: ...
-    def __init__(
-        self,
-        element: type[ElementBase] | None = None,
+    @overload
+    def __new__(
+        cls,
+        element: type[_Public_ET_co],
         comment: type[CommentBase] | None = None,
         pi: type[PIBase] | None = None,
         entity: type[EntityBase] | None = None,
-    ) -> None: ...
+    ) -> ElementDefaultClassLookup[_Public_ET_co]: ...
+    @overload
+    def __new__(
+        cls,
+        element: None = None,
+        comment: type[CommentBase] | None = None,
+        pi: type[PIBase] | None = None,
+        entity: type[EntityBase] | None = None,
+    ) -> ElementDefaultClassLookup[_Element]: ...
+
 
 @disjoint_base
 class AttributeBasedElementClassLookup(FallbackElementClassLookup):
