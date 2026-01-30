@@ -60,6 +60,7 @@ dev = [
     'basedpyright >= 1.31.6; platform_machine != "i686"',
     'ty >= 0.0.7',
     'pyrefly >= 0.46.3',
+    'pre-commit',
 ]
 
 # mostly pinned for tox testing except dev group
