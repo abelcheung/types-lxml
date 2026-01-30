@@ -1,0 +1,3 @@
+[submodule "ci-annotation-converter"]
+	path = ci-annotation-converter
+	url = https://github.com/abelcheung/ci-annotation-converter.git
