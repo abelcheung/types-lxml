@@ -5,6 +5,9 @@ repos:
   - id: check-yaml
   - id: mixed-line-ending
     args: [--fix=lf]
+  - id: trailing-whitespace
+    exclude: |
+      ^.+\.(patch|diff)$
 - repo: https://github.com/rhysd/actionlint
   rev: v1.7.10
   hooks:
