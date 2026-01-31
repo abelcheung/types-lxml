@@ -3,6 +3,7 @@ from __future__ import annotations
 from collections.abc import (
     Callable,
 )
+from typing import cast
 
 from mypy.checker import (
     TypeChecker,
@@ -48,6 +49,20 @@ def _set_class_lookup_method_hook(ctx: MethodContext) -> Type:
     def _create_instance_from(fullname: str) -> Instance:
         return Instance(_get_typeinfo_from(fullname), [])
 
+    def _fullname_or_base_is(name: str) -> Instance | None:
+        lookup = get_proper_type(ctx.arg_types[0][0])
+        assert isinstance(lookup, Instance)
+        # Use stock class lookups -> check fullname
+        # Custom subclassed lookups -> check bases
+        if lookup.type.fullname == name:
+            return lookup
+
+        for base in lookup.type.bases:
+            if base.type.fullname == name:
+                return base
+        else:
+            return None
+
     if len(ctx.arg_types) == 0:  # Non-generic class like html.HTMLParser
         return ctx.default_return_type
 
@@ -59,31 +74,21 @@ def _set_class_lookup_method_hook(ctx: MethodContext) -> Type:
         return ctx.default_return_type
 
     assert len(ctx.arg_types[0]) == 1
-    lookup = get_proper_type(ctx.arg_types[0][0])
-    assert isinstance(lookup, Instance)
+    arg = None
 
-    # Use stock class lookups -> check fullname
-    # Custom subclassed lookups -> check bases
-    if lookup.type.fullname == "lxml.html._parse.HtmlElementClassLookup":
-        ctx.type.args = (_create_instance_from("lxml.html._element.HtmlElement"),)
-    elif lookup.type.fullname == "lxml.objectify._misc.ObjectifyElementClassLookup":
-        ctx.type.args = (
-            _create_instance_from("lxml.objectify._element.ObjectifiedElement"),
-        )
-    elif lookup.type.fullname == "lxml.etree._classlookup.ElementDefaultClassLookup":
-        assert len(lookup.args) == 1
-        ctx.type.args = (lookup.args[0],)
+    if lookup := _fullname_or_base_is("lxml.html._parse.HtmlElementClassLookup"):
+        arg = _create_instance_from("lxml.html._element.HtmlElement")
+    elif lookup := _fullname_or_base_is(
+        "lxml.objectify._misc.ObjectifyElementClassLookup"
+    ):
+        arg = _create_instance_from("lxml.objectify._element.ObjectifiedElement")
+    elif lookup := _fullname_or_base_is(
+        "lxml.etree._classlookup.ElementDefaultClassLookup"
+    ):
+        arg = cast(Instance, lookup.args[0])
+    if arg:
+        ctx.type.args = (arg,)
 
-    for base in lookup.type.bases:
-        if base.type.fullname == "lxml.html._parse.HtmlElementClassLookup":
-            ctx.type.args = (_create_instance_from("lxml.html._element.HtmlElement"),)
-        elif base.type.fullname == "lxml.objectify._misc.ObjectifyElementClassLookup":
-            ctx.type.args = (
-                _create_instance_from("lxml.objectify._element.ObjectifiedElement"),
-            )
-        elif base.type.fullname == "lxml.etree._classlookup.ElementDefaultClassLookup":
-            assert len(base.args) == 1
-            ctx.type.args = (base.args[0],)
     return ctx.default_return_type
 
 
