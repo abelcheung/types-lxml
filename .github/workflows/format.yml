@@ -26,20 +26,6 @@ jobs:
           args: 'format'
           src: '.'
 
-      - uses: astral-sh/setup-uv@v7
-        with:
-          version: '0.9.26'
-          cache-dependency-glob: |
-            ./pyproject.toml
-
-      - name: Run type checker on source
-        run: >
-          uvx
-          --python-preference only-system
-          --with tox-uv
-          tox run-parallel -vv
-          -m typecheck
-
       - uses: peter-evans/create-pull-request@v8
         with:
           branch: create-pull-request/formatting
@@ -52,4 +38,3 @@ jobs:
             Automated formatting by
             [ruff-action](https://github.com/ChartBoost/ruff-action) and
             [create-pull-request](https://github.com/peter-evans/create-pull-request)
-
