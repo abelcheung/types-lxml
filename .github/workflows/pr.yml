@@ -2,12 +2,11 @@ name: PR review
 
 permissions:
   contents: read
-  pull-requests: write
+  pull-requests: read
+  checks: write
 
 on:
   pull_request:
-    branches-ignore:
-      - 'dependabot/**'
     paths-ignore:
       - '**/dependabot.yml'
       - '**/bandit.yml'
@@ -19,37 +18,26 @@ on:
 
 jobs:
   pyrefly:
-    runs-on: ubuntu-slim
-    steps:
-    - uses: ./.github/workflows/inc_tc_pyrefly.yml
-      with:
+    uses: ./.github/workflows/inc_tc_pyrefly.yml
+    with:
         tarball-flavor: none
 
   pyright:
-    runs-on: ubuntu-slim
-    steps:
-    - uses: ./.github/workflows/inc_tc_pyright.yml
-      with:
-        tarball-flavor: none
+    uses: ./.github/workflows/inc_tc_pyright.yml
+    with:
+      tarball-flavor: none
 
   basedpyright:
-    runs-on: ubuntu-slim
-    steps:
-    - uses: ./.github/workflows/inc_tc_basedpyright.yml
-      with:
-        tarball-flavor: none
+    uses: ./.github/workflows/inc_tc_basedpyright.yml
+    with:
+      tarball-flavor: none
 
   mypy:
-    runs-on: ubuntu-slim
-    steps:
-    - uses: ./.github/workflows/inc_tc_mypy.yml
-      with:
-        tarball-flavor: none
+    uses: ./.github/workflows/inc_tc_mypy.yml
+    with:
+      tarball-flavor: none
 
   ty:
-    runs-on: ubuntu-slim
-    steps:
-    - uses: ./.github/workflows/inc_tc_ty.yml
-      with:
-        tarball-flavor: none
-
+    uses: ./.github/workflows/inc_tc_ty.yml
+    with:
+      tarball-flavor: none
