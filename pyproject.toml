@@ -285,6 +285,7 @@ runtime = [
     'py313-rt-lxml54',
     'py313-rt-lxml60',
     'py314-rt-lxml60',
+    'pypy311-rt-lxml60',
 ]
 
 # HACK Taking advantage of tox-gh-actions using
@@ -369,6 +370,11 @@ commands = [
         '--mypy-ini-file=tests/static/mypy-pytest.ini',
         {replace = 'posargs', default = ['tests/static'], extend = true},
     ],
+    [
+        'python', '-m', 'mypy.stubtest', 'lxml',
+        '--ignore-unused-allowlist',
+        '--allowlist', 'tests/runtime/allowlist.txt'
+    ],
 ]
 
 [tool.tox._env_rt]
@@ -379,11 +385,6 @@ pass_env = [
 package = 'wheel'
 wheel_build_env = '{package_env}'
 commands = [
-    [
-        'python', '-m', 'mypy.stubtest', 'lxml',
-        '--ignore-unused-allowlist',
-        '--allowlist', 'tests/runtime/allowlist.txt'
-    ],
     [
         'pytest',
         '--revealtype-disable-adapter=ty',
@@ -440,6 +441,7 @@ py313-rt-lxml53 = {base = ['_env_rt', '_env_lxml53']}
 py313-rt-lxml54 = {base = ['_env_rt', '_env_lxml54']}
 py313-rt-lxml60 = {base = ['_env_rt', '_env_lxml60']}
 py314-rt-lxml60 = {base = ['_env_rt', '_env_lxml60']}
+pypy311-rt-lxml60 = {base = ['_env_rt', '_env_lxml60']}
 
 [tool.tox.env.build-normal]
 pass_env = ['PDM_BUILD_SCM_VERSION']

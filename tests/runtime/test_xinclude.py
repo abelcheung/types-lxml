@@ -158,6 +158,9 @@ class TestElementInclude:
         temp_el = copy.deepcopy(elem)
         # Coerce loader into text mode, this is REALLY artificial though
         temp_el[1].attrib["parse"] = "text"
-        with pytest.raises(TypeError, match="can only concatenate str"):
+        with pytest.raises(
+            TypeError,
+            match=r"(can only concatenate str|unsupported operand type\(s\) for \+: 'str' and '\S+?')",
+        ):
             EI.include(temp_el, cast(Any, bad_loader_3))
         del temp_el

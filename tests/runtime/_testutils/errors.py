@@ -20,9 +20,12 @@ raise_invalid_filename_type = pytest.raises(
 # TypeError("Invalid input object: ...")
 raise_invalid_lxml_type = pytest.raises(TypeError, match=r"Invalid input object: ")
 
+# TODO: seperate non-writable and non-deletable?
 # AttributeError("attribute '...' of '...' objects is not writable")
+# AttributeError("cannot delete '...' attribute of immutable type '?'")  <pypy>
 raise_attr_not_writable = pytest.raises(
-    AttributeError, match=r"objects is not writable"
+    AttributeError,
+    match=r"(objects is not writable|cannot delete '.+?' attribute of immutable type '.+?')",
 )
 
 # AttributeError("'...' object has no attribute '...'")
