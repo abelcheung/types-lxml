@@ -30,7 +30,6 @@ from lxml.etree import (
 from .._testutils import signature_tester, strategy as _st
 from .._testutils.errors import (
     raise_no_attribute,
-    raise_non_iterable,
 )
 
 if sys.version_info >= (3, 11):
@@ -116,15 +115,8 @@ class TestIterfind:
         self, disposable_element: _Element, thing: Any
     ) -> None:
         assume(thing is not NotImplemented and bool(thing))
-        if not hasattr(thing, "__iter__"):
-            raise_cm = raise_non_iterable
-        else:
-            # pyrefly: ignore[no-matching-overload]
-            raise_cm = pytest.raises((
-                TypeError,
-                AttributeError,
-            ))
-        with raise_cm:
+        # pyrefly: ignore[no-matching-overload]
+        with pytest.raises((TypeError, AttributeError)):  # too diversified
             _ = disposable_element.iterfind("foo", namespaces=thing)
 
     # prove ns prefix/url tuple pair won't do
@@ -189,15 +181,8 @@ class TestFind:
         self, disposable_element: _Element, thing: Any
     ) -> None:
         assume(thing is not NotImplemented and bool(thing))
-        if not hasattr(thing, "__iter__"):
-            raise_cm = raise_non_iterable
-        else:
-            # pyrefly: ignore[no-matching-overload]
-            raise_cm = pytest.raises((
-                TypeError,
-                AttributeError,
-            ))
-        with raise_cm:
+        # pyrefly: ignore[no-matching-overload]
+        with pytest.raises((TypeError, AttributeError)):  # too diversified
             _ = disposable_element.find("foo", namespaces=thing)
 
     # prove ns prefix/url tuple pair won't do
@@ -262,15 +247,8 @@ class TestFindall:
         self, disposable_element: _Element, thing: Any
     ) -> None:
         assume(thing is not NotImplemented and bool(thing))
-        if not hasattr(thing, "__iter__"):
-            raise_cm = raise_non_iterable
-        else:
-            # pyrefly: ignore[no-matching-overload]
-            raise_cm = pytest.raises((
-                TypeError,
-                AttributeError,
-            ))
-        with raise_cm:
+        # pyrefly: ignore[no-matching-overload]
+        with pytest.raises((TypeError, AttributeError)):  # too diversified
             _ = disposable_element.findall("foo", namespaces=thing)
 
     # prove ns prefix/url tuple pair won't do
@@ -357,15 +335,8 @@ class TestFindtext:
         self, disposable_element: _Element, thing: Any
     ) -> None:
         assume(thing is not NotImplemented and bool(thing))
-        if not hasattr(thing, "__iter__"):
-            raise_cm = raise_non_iterable
-        else:
-            # pyrefly: ignore[no-matching-overload]
-            raise_cm = pytest.raises((
-                TypeError,
-                AttributeError,
-            ))
-        with raise_cm:
+        # pyrefly: ignore[no-matching-overload]
+        with pytest.raises((TypeError, AttributeError)):  # too diversified
             _ = disposable_element.findtext("foo", namespaces=thing)
 
     # prove ns prefix/url tuple pair won't do

@@ -37,6 +37,7 @@ from lxml.html import Element as h_Element
 
 from .._testutils import strategy as _st
 from .._testutils.common import (
+    can_practically_iter,
     hashable_elem_if_is_set,
     tag_name_types,
 )
@@ -170,7 +171,7 @@ class TestBasicBehavior:
     def test_sequence_modify_bad_2(
         self, disposable_element: _Element, thing: Any
     ) -> None:
-        if isinstance(thing, (Iterable)):
+        if isinstance(thing, (Iterable)) or can_practically_iter(thing):
             with raise_cannot_convert:
                 disposable_element[:] = cast(Any, thing)
         else:

@@ -24,6 +24,7 @@ from lxml.etree import (
 from lxml.html import HtmlElement
 
 from ._testutils import signature_tester, strategy as _st
+from ._testutils.common import can_practically_iter
 from ._testutils.errors import (
     raise_attr_not_writable,
     raise_invalid_lxml_type,
@@ -94,7 +95,10 @@ class TestCSSSelectorArgs:
     @settings(max_examples=5)
     @given(iterable_of=_st.fixed_item_iterables())
     def test_css_arg_bad_2(self, iterable_of: Any) -> None:
-        with pytest.raises(TypeError, match=r"expected string or bytes-like object"):
+        with pytest.raises(
+            TypeError,
+            match=r"(expected string or bytes-like object|use a string pattern on a bytes-like object)",
+        ):
             _ = CSSSelector(iterable_of("#id"))
 
     def test_namespaces_arg_ok(
@@ -155,14 +159,11 @@ class TestCSSSelectorArgs:
     )
     @pytest.mark.slow
     def test_namespaces_arg_bad(self, svg_root: _Element, thing: Any) -> None:
-        if not isinstance(thing, Iterable):
+        if not isinstance(thing, Iterable) and not can_practically_iter(thing):
             raise_cm = raise_non_iterable
         else:
             # pyrefly: ignore[no-matching-overload]
-            raise_cm = pytest.raises((
-                TypeError,
-                ValueError,
-            ))
+            raise_cm = pytest.raises((TypeError, ValueError))
         with raise_cm:
             _ = CSSSelector("li", namespaces=thing)  # pyright: ignore[reportUnknownArgumentType]
 

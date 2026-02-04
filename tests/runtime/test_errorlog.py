@@ -26,6 +26,7 @@ from lxml.etree import (
 )
 
 from ._testutils import signature_tester, strategy as _st
+from ._testutils.common import can_practically_iter
 from ._testutils.errors import (
     raise_attr_not_writable,
     raise_no_attribute,
@@ -161,11 +162,15 @@ class TestListLogMethods:
         HealthCheck.too_slow,
         HealthCheck.function_scoped_fixture,
     ])  # fmt: skip
-    @given(types=_st.all_instances_except_of_type(int, Iterable))
+    @given(
+        thing=_st.all_instances_except_of_type(int, Iterable).filter(
+            lambda x: not can_practically_iter(x)
+        )
+    )
     @pytest.mark.slow
-    def test_filter_types_arg_bad(self, list_log: _ListErrorLog, types: Any) -> None:
+    def test_filter_types_arg_bad(self, list_log: _ListErrorLog, thing: Any) -> None:
         with raise_non_iterable:
-            _ = list_log.filter_types(types)
+            _ = list_log.filter_types(thing)
 
     @signature_tester(
         _ListErrorLog.filter_levels,
@@ -186,11 +191,15 @@ class TestListLogMethods:
         HealthCheck.too_slow,
         HealthCheck.function_scoped_fixture,
     ])  # fmt: skip
-    @given(levels=_st.all_instances_except_of_type(int, Iterable))
+    @given(
+        thing=_st.all_instances_except_of_type(int, Iterable).filter(
+            lambda x: not can_practically_iter(x)
+        )
+    )
     @pytest.mark.slow
-    def test_filter_levels_arg_bad(self, list_log: _ListErrorLog, levels: Any) -> None:
+    def test_filter_levels_arg_bad(self, list_log: _ListErrorLog, thing: Any) -> None:
         with raise_non_iterable:
-            _ = list_log.filter_levels(levels)
+            _ = list_log.filter_levels(thing)
 
     @signature_tester(
         _ListErrorLog.filter_from_level,

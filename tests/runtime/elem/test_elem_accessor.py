@@ -28,6 +28,7 @@ from lxml.etree import (
 )
 
 from .._testutils import signature_tester, strategy as _st
+from .._testutils.common import can_practically_iter
 from .._testutils.errors import (
     raise_cannot_convert,
     raise_non_integer,
@@ -285,12 +286,16 @@ class TestExtendMethod:
         # broken behavior (but no exception though)
         xml2_root.extend(xml2_root[0])
 
-    @given(value=_st.all_instances_except_of_type(Iterable, _Element, NoneType))
-    def test_bad_element_1(
-        self, disposable_element: _Element, value: Iterable[Any]
-    ) -> None:
+    @settings(suppress_health_check=[HealthCheck.too_slow], max_examples=300)
+    @given(
+        thing=_st.all_instances_except_of_type(Iterable, _Element, NoneType).filter(
+            lambda x: not can_practically_iter(x)
+        )
+    )
+    @pytest.mark.slow
+    def test_bad_element_1(self, disposable_element: _Element, thing: Any) -> None:
         with raise_non_iterable:
-            disposable_element.extend(value)
+            disposable_element.extend(thing)
 
     @given(value=st.iterables(
         _st.all_instances_except_of_type(Iterable, _Element, NoneType),

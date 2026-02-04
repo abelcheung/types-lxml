@@ -49,7 +49,7 @@ dev = [
     'urllib3 >= 2.0',
     "pytest >= 7.0, < 9",
     'pytest-mypy-plugins >= 3.2.0',
-    'pytest-revealtype-injector >= 0.8.0',
+    'pytest-revealtype-injector >= 0.9.0',
     'lxml >= 5.0',
     'rnc2rng',
     'hypothesis >= 6.127.7',  # HypothesisWorks/hypothesis#4269
@@ -90,7 +90,7 @@ rt-test = [
     "hypothesis == 6.148.8",
     "tzdata",
     "pytest >= 7.0, < 9",
-    "pytest-revealtype-injector == 0.8.0",
+    "pytest-revealtype-injector == 0.9.0",
     "rnc2rng == 2.7.0",
     {include-group = "mypy"},
     {include-group = "pyright"},
@@ -285,6 +285,12 @@ runtime = [
     'py313-rt-lxml54',
     'py313-rt-lxml60',
     'py314-rt-lxml60',
+    'pypy310-rt-lxml50',
+    'pypy310-rt-lxml51',
+    'pypy310-rt-lxml52',
+    'pypy310-rt-lxml53',
+    'pypy310-rt-lxml54',
+    'pypy310-rt-lxml60',
     'pypy311-rt-lxml60',
 ]
 
@@ -302,6 +308,8 @@ python = """
     3.12: py312
     3.13: py313
     3.14: py314
+    pypy-3.10: pypy310
+    pypy-3.11: pypy311
     """
 
 [tool.tox.env_run_base.set_env]
@@ -394,6 +402,23 @@ commands = [
     ]
 ]
 
+[tool.tox._env_rt_pypy]
+pass_env = [
+    'CI',
+    'TF_BUILD',
+]
+package = 'wheel'
+wheel_build_env = '{package_env}'
+commands = [
+    [
+        'pytest',
+        '--revealtype-disable-adapter=ty',
+        '--revealtype-disable-adapter=mypy',
+        '--revealtype-pyrefly-config=tests/runtime/pyrefly.toml',
+        {replace = 'posargs', default = ['tests/runtime'], extend = true}
+    ]
+]
+
 [tool.tox._env_lxml50]
 dependency_groups = ['basic', 'rt-test', 'lxml50']
 
@@ -441,7 +466,13 @@ py313-rt-lxml53 = {base = ['_env_rt', '_env_lxml53']}
 py313-rt-lxml54 = {base = ['_env_rt', '_env_lxml54']}
 py313-rt-lxml60 = {base = ['_env_rt', '_env_lxml60']}
 py314-rt-lxml60 = {base = ['_env_rt', '_env_lxml60']}
-pypy311-rt-lxml60 = {base = ['_env_rt', '_env_lxml60']}
+pypy310-rt-lxml50 = {base = ['_env_rt_pypy', '_env_lxml50']}
+pypy310-rt-lxml51 = {base = ['_env_rt_pypy', '_env_lxml51']}
+pypy310-rt-lxml52 = {base = ['_env_rt_pypy', '_env_lxml52']}
+pypy310-rt-lxml53 = {base = ['_env_rt_pypy', '_env_lxml53']}
+pypy310-rt-lxml54 = {base = ['_env_rt_pypy', '_env_lxml54']}
+pypy310-rt-lxml60 = {base = ['_env_rt_pypy', '_env_lxml60']}
+pypy311-rt-lxml60 = {base = ['_env_rt_pypy', '_env_lxml60']}
 
 [tool.tox.env.build-normal]
 pass_env = ['PDM_BUILD_SCM_VERSION']
