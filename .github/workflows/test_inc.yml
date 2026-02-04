@@ -60,11 +60,11 @@ jobs:
         tox run -v
         --skip-env='.*-rt-.*'
         --installpkg ${{ steps.wheel-name.outputs.filename }}
-        --result-json test-${{ inputs.flavor }}-stub-py${{ matrix.pyver }}.json
+        --result-json test-${{ inputs.flavor }}-stub-${{ matrix.pyver }}.json
 
     - uses: actions/upload-artifact@v6
       with:
-        name: log-${{ inputs.flavor }}-stub-py${{ matrix.pyver }}
+        name: log-${{ inputs.flavor }}-stub-${{ matrix.pyver }}
         path: test-${{ inputs.flavor }}-stub-*.json
         if-no-files-found: error
 
@@ -78,6 +78,8 @@ jobs:
           - "3.12"
           - "3.13"
           - "3.14"
+          - "pypy3.10"
+          - "pypy3.11"
         os:
           - ubuntu-24.04
           - windows-2025
@@ -122,11 +124,11 @@ jobs:
         tox run-parallel
         --skip-env='.*-stub$'
         --installpkg ${{ steps.wheel-name.outputs.filename }}
-        --result-json test-${{ inputs.flavor }}-rt-${{ matrix.os }}-py${{ matrix.pyver }}.json
+        --result-json test-${{ inputs.flavor }}-rt-${{ matrix.os }}-${{ matrix.pyver }}.json
 
     - uses: actions/upload-artifact@v6
       with:
-        name: log-${{ inputs.flavor }}-rt-${{ matrix.os }}-py${{ matrix.pyver }}
+        name: log-${{ inputs.flavor }}-rt-${{ matrix.os }}-${{ matrix.pyver }}
         path: test-${{ inputs.flavor }}-rt-*.json
         if-no-files-found: error
 
