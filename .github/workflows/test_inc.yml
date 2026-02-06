@@ -12,7 +12,65 @@ on:
         type: string
 
 jobs:
-  test-stub:
+  mypy-stubtest:
+    strategy:
+      fail-fast: false
+      matrix:
+        lxml-ver:
+          - "lxml50"
+          - "lxml51"
+          - "lxml52"
+          - "lxml53"
+          - "lxml54"
+          - "lxml60"
+    runs-on: ubuntu-slim
+    steps:
+    - uses: actions/download-artifact@v7
+      with:
+        name: dist-${{ inputs.flavor }}
+        path: dist
+
+    - name: Extract tarball
+      shell: bash
+      run: >
+        tar -zxf dist/*.tar.gz --strip-components=1
+
+    - uses: astral-sh/setup-uv@v7
+      with:
+        version: '0.9.26'
+        cache-dependency-glob: |
+          ./pyproject.toml
+
+    - name: Install prerequisites
+      run: >
+        uv tool install
+        -p 3.12
+        --python-preference only-managed
+        --with tox-uv
+        tox
+
+    # Glob not supported under default windows env
+    - name: Determine wheel file name
+      id: wheel-name
+      shell: bash
+      run: |
+        echo "filename=$(echo dist/*.whl)" >> "$GITHUB_OUTPUT"
+
+    - name: Execute mypy.stubtest
+      run: >
+        uvx
+        tox run -e py312-myst-${{ matrix.lxml-ver }}
+        --installpkg ${{ steps.wheel-name.outputs.filename }}
+        --result-json test-${{ inputs.flavor }}-mypy-stubtest-${{ matrix.lxml-ver }}.json
+
+    - uses: actions/upload-artifact@v6
+      with:
+        name: log-${{ inputs.flavor }}-mypy-stubtest-${{ matrix.lxml-ver }}
+        path: test-${{ inputs.flavor }}-mypy-*.json
+        if-no-files-found: error
+
+
+  stub:
     strategy:
       fail-fast: false
       matrix:
@@ -58,7 +116,7 @@ jobs:
         --with "tox-gh-actions == 3.5.0"
         --with tox-uv
         tox run -v
-        --skip-env='.*-rt-.*'
+        --skip-env '.*-(rt|myst)-.*'
         --installpkg ${{ steps.wheel-name.outputs.filename }}
         --result-json test-${{ inputs.flavor }}-stub-${{ matrix.pyver }}.json
 
@@ -68,7 +126,7 @@ jobs:
         path: test-${{ inputs.flavor }}-stub-*.json
         if-no-files-found: error
 
-  test-rt:
+  runtime:
     strategy:
       fail-fast: false
       matrix:
@@ -78,7 +136,6 @@ jobs:
           - "3.12"
           - "3.13"
           - "3.14"
-          - "pypy3.10"
           - "pypy3.11"
         os:
           - ubuntu-24.04
@@ -122,7 +179,7 @@ jobs:
       run: >
         uvx
         tox run-parallel
-        --skip-env='.*-stub$'
+        --skip-env '.*-(stub|myst)-.*'
         --installpkg ${{ steps.wheel-name.outputs.filename }}
         --result-json test-${{ inputs.flavor }}-rt-${{ matrix.os }}-${{ matrix.pyver }}.json
 
@@ -134,7 +191,7 @@ jobs:
 
   log-aggregation:
     if: success() || failure()
-    needs: [test-stub, test-rt]
+    needs: [stub, runtime, mypy-stubtest]
     runs-on: ubuntu-24.04
     permissions:
       actions: write

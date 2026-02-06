@@ -98,6 +98,11 @@ rt-test = [
     {include-group = "ty"},
     {include-group = "pyrefly"},
 ]
+mypy-stubtest = [
+    {include-group = "basic"},
+    {include-group = "mypy"},
+    "html5lib == 1.1",
+]
 lxml50 = ["lxml == 5.0.2"]
 lxml51 = ["lxml == 5.1.1"]
 lxml52 = ["lxml == 5.2.2"]
@@ -243,6 +248,7 @@ filterwarnings = [
 env_list = [
     # No project maintenance related envs here
     {replace = 'ref', of = ['tool', 'tox', 'labels', 'typecheck'], extend = true},
+    {replace = 'ref', of = ['tool', 'tox', 'labels', 'mypystubtest'], extend = true},
     {replace = 'ref', of = ['tool', 'tox', 'labels', 'static'   ], extend = true},
     {replace = 'ref', of = ['tool', 'tox', 'labels', 'runtime'  ], extend = true},
 ]
@@ -285,13 +291,15 @@ runtime = [
     'py313-rt-lxml54',
     'py313-rt-lxml60',
     'py314-rt-lxml60',
-    'pypy310-rt-lxml50',
-    'pypy310-rt-lxml51',
-    'pypy310-rt-lxml52',
-    'pypy310-rt-lxml53',
-    'pypy310-rt-lxml54',
-    'pypy310-rt-lxml60',
     'pypy311-rt-lxml60',
+]
+mypystubtest = [
+    'py312-myst-lxml50',
+    'py312-myst-lxml51',
+    'py312-myst-lxml52',
+    'py312-myst-lxml53',
+    'py312-myst-lxml54',
+    'py312-myst-lxml60',
 ]
 
 # HACK Taking advantage of tox-gh-actions using
@@ -308,7 +316,6 @@ python = """
     3.12: py312
     3.13: py313
     3.14: py314
-    pypy-3.10: pypy310
     pypy-3.11: pypy311
     """
 
@@ -378,11 +385,6 @@ commands = [
         '--mypy-ini-file=tests/static/mypy-pytest.ini',
         {replace = 'posargs', default = ['tests/static'], extend = true},
     ],
-    [
-        'python', '-m', 'mypy.stubtest', 'lxml',
-        '--ignore-unused-allowlist',
-        '--allowlist', 'tests/runtime/allowlist.txt'
-    ],
 ]
 
 [tool.tox._env_rt]
@@ -417,6 +419,21 @@ commands = [
         '--revealtype-pyrefly-config=tests/runtime/pyrefly.toml',
         {replace = 'posargs', default = ['tests/runtime'], extend = true}
     ]
+]
+
+[tool.tox._env_myst]
+pass_env = [
+    'CI',
+    'TF_BUILD',
+]
+package = 'wheel'
+wheel_build_env = '{package_env}'
+commands = [
+    [
+        'python', '-m', 'mypy.stubtest', 'lxml',
+        '--ignore-unused-allowlist',
+        '--allowlist', 'tests/runtime/allowlist.txt'
+    ],
 ]
 
 [tool.tox._env_lxml50]
@@ -466,13 +483,13 @@ py313-rt-lxml53 = {base = ['_env_rt', '_env_lxml53']}
 py313-rt-lxml54 = {base = ['_env_rt', '_env_lxml54']}
 py313-rt-lxml60 = {base = ['_env_rt', '_env_lxml60']}
 py314-rt-lxml60 = {base = ['_env_rt', '_env_lxml60']}
-pypy310-rt-lxml50 = {base = ['_env_rt_pypy', '_env_lxml50']}
-pypy310-rt-lxml51 = {base = ['_env_rt_pypy', '_env_lxml51']}
-pypy310-rt-lxml52 = {base = ['_env_rt_pypy', '_env_lxml52']}
-pypy310-rt-lxml53 = {base = ['_env_rt_pypy', '_env_lxml53']}
-pypy310-rt-lxml54 = {base = ['_env_rt_pypy', '_env_lxml54']}
-pypy310-rt-lxml60 = {base = ['_env_rt_pypy', '_env_lxml60']}
 pypy311-rt-lxml60 = {base = ['_env_rt_pypy', '_env_lxml60']}
+py312-myst-lxml50 = {base = ['_env_myst'], dependency_groups = ['mypy-stubtest', 'lxml50']}
+py312-myst-lxml51 = {base = ['_env_myst'], dependency_groups = ['mypy-stubtest', 'lxml51']}
+py312-myst-lxml52 = {base = ['_env_myst'], dependency_groups = ['mypy-stubtest', 'lxml52']}
+py312-myst-lxml53 = {base = ['_env_myst'], dependency_groups = ['mypy-stubtest', 'lxml53']}
+py312-myst-lxml54 = {base = ['_env_myst'], dependency_groups = ['mypy-stubtest', 'lxml54']}
+py312-myst-lxml60 = {base = ['_env_myst'], dependency_groups = ['mypy-stubtest', 'lxml60']}
 
 [tool.tox.env.build-normal]
 pass_env = ['PDM_BUILD_SCM_VERSION']
