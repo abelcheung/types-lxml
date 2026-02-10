@@ -3,7 +3,6 @@ from collections.abc import (
     Callable,
     Iterable,
     Iterator,
-    Mapping,
 )
 from typing import (
     Any,
@@ -1058,44 +1057,63 @@ class _Attrib:
 # from _Element, even though their interfaces are vastly different
 # from _Element. The notion of or'ing different kind of elements
 # throughout all element methods would cause great inconvenience
-# for me and all users alike -- using some _AnyHtmlElement alias
-# to represent union of all elements was a failure for users.
+# for maintenance and usage.
 # We opt for convenience and ease of use in the future.
+#
+# TODO (low priority) The list of methods that don't work for content-only
+# elements could be incomplete
 class __ContentOnlyElement(_Element):
     #
-    # Useful properties
-    # .text and .tag are overridden in each concrete class below
+    # - .text and .tag are overridden in each concrete subclass
+    # - attrib() returns some sort of immutable empty-dict-like
+    #   object. Don't intend to waste time and effort on it.
+    # - __getitem__() source code returns empty list upon slice
+    #   input, stub bans whole method altogether
     #
+    @deprecated("Some properties of content-only elements are fake values")
     @property
-    # pyrefly: ignore[bad-override]
-    def attrib(self) -> Mapping[_t.Unused, _t.Unused]: ...  # type: ignore[override]  # pyright: ignore[reportIncompatibleMethodOverride]
+    def attrib(self) -> _Attrib: ...
+    @deprecated("Most accessor methods of content-only elements are dummies or cause undesirable effect")
     # pyrefly: ignore[bad-override]
     def get(self, key: _t.Unused, default: _t.Unused = None) -> None: ...  # type: ignore[override]
+    @deprecated("Most accessor methods of content-only elements are dummies or cause undesirable effect")
+    def __len__(self) -> Literal[0]: ...
+    @deprecated("Most accessor methods of content-only elements are dummies or cause undesirable effect")
     # pyrefly: ignore[bad-override]
     def set(self, key: Never, value: Never) -> Never: ...  # type: ignore[override]  # pyright: ignore[reportIncompatibleMethodOverride]  # ty: ignore[invalid-method-override]
+    @deprecated("Most accessor methods of content-only elements are dummies or cause undesirable effect")
     # pyrefly: ignore[bad-override]
     def append(self, element: Never) -> Never: ...  # type: ignore[override]  # pyright: ignore[reportIncompatibleMethodOverride]  # ty: ignore[invalid-method-override]
+    @deprecated("Most accessor methods of content-only elements are dummies or cause undesirable effect")
     # pyrefly: ignore[bad-override]
     def insert(self, index: Never, value: Never) -> Never: ...  # type: ignore[override]  # pyright: ignore[reportIncompatibleMethodOverride]  # ty: ignore[invalid-method-override]
+    @deprecated("Most accessor methods of content-only elements are dummies or cause undesirable effect")
     # pyrefly: ignore[bad-override]
     def __setitem__(self, __k: Never, __v: Never) -> Never: ...  # type: ignore[override]  # pyright: ignore[reportIncompatibleMethodOverride]  # ty: ignore[invalid-method-override]
-    # The intention is to discourage elem.__getitem__, allowing slice
-    # argument in runtime doesn't make any sense
+    @deprecated("Most accessor methods of content-only elements are dummies or cause undesirable effect")
     # pyrefly: ignore[bad-override]
     def __getitem__(self, __k: Never) -> Never: ...  # type: ignore[override]  # pyright: ignore[reportIncompatibleMethodOverride]  # ty: ignore[invalid-method-override]
+    #
     # Methods above are explicitly defined in source, while those below aren't
+    #
+    @deprecated("Most accessor methods of content-only elements are dummies or cause undesirable effect")
     # pyrefly: ignore[bad-override]
-    def __delitem__(self, __k: Never) -> Never: ...  # type: ignore[override]  # pyright: ignore[reportIncompatibleMethodOverride]  # ty: ignore[invalid-method-override]
-    def __iter__(self) -> Never: ...
-
-    # TODO (low priority) There are many, many more methods that
-    # don't work for content only elements, such as most
-    # ElementTree / ElementPath ones, and all inherited
-    # HTML element methods. None of those are handled in
-    # source code -- users are left to bump into wall themselves.
-    # For example, append(elem) explicitly raises exception, yet
-    # one can use extend([elem]) to circumvent restriction.
-    # Go figure.
+    def extend(self, elements: Never) -> Never: ...  # type: ignore[override]  # pyright: ignore[reportIncompatibleMethodOverride]  # ty: ignore[invalid-method-override]
+    @deprecated("Most accessor methods of content-only elements are dummies or cause undesirable effect")
+    # pyrefly: ignore[bad-override]
+    def remove(self, element: Never) -> Never: ...  # type: ignore[override]  # pyright: ignore[reportIncompatibleMethodOverride]  # ty: ignore[invalid-method-override]
+    @deprecated("Most accessor methods of content-only elements are dummies or cause undesirable effect")
+    # pyrefly: ignore[bad-override]
+    def index(self, child: Never, start: Never, stop: Never) -> Never: ...  # type: ignore[override]  # pyright: ignore[reportIncompatibleMethodOverride]  # ty: ignore[invalid-method-override]
+    @deprecated("Most accessor methods of content-only elements are dummies or cause undesirable effect")
+    def keys(self) -> list[_t.Unused]: ...
+    @deprecated("Most accessor methods of content-only elements are dummies or cause undesirable effect")
+    def values(self) -> list[_t.Unused]: ...
+    @deprecated("Most accessor methods of content-only elements are dummies or cause undesirable effect")
+    def items(self) -> list[_t.Unused]: ...
+    @deprecated("cssselect method not usable on content-only elements")
+    # pyrefly: ignore[bad-override]
+    def cssselect(self, expr: Never) -> Never: ...  # type: ignore[override]  # pyright: ignore[reportIncompatibleMethodOverride]  # ty: ignore[invalid-method-override]
 
 class _Comment(__ContentOnlyElement):
     @property  # type: ignore[misc]
@@ -1126,7 +1144,8 @@ class _ProcessingInstruction(__ContentOnlyElement):
     @target.setter
     def target(self, value: _t._TextArg) -> None: ...
     @property
-    def attrib(self) -> dict[str, str]: ...  # type: ignore[override]
+    # pyrefly: ignore[bad-override]
+    def attrib(self) -> dict[str, str]: ...  # type: ignore[override]  # pyright: ignore[reportIncompatibleMethodOverride]
 
 class _Entity(__ContentOnlyElement):
     @property  # type: ignore[misc]
