@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import pathlib
+import platform
 import sys
 from types import NoneType
 from typing import (
@@ -138,6 +139,7 @@ class TestProperties:
         reveal_type(docinfo.URL)
 
     @settings(max_examples=300)
+    #reproduce_failure("6.151.6", b"AEEv")
     @given(thing=_st.all_instances_except_of_type(str, NoneType))
     def test_rw_properties_bad_public_id(
         self,
@@ -145,9 +147,13 @@ class TestProperties:
         thing: Any,
     ) -> None:
         docinfo = disposable_element.getroottree().docinfo
-        if isinstance(thing, (bytes, Buffer)):
+        if isinstance(thing, (bytes, Buffer)) or platform.python_implementation() == "PyPy":
             raise_cm = pytest.raises(
-                TypeError, match=r"string pattern on a bytes-like object"
+                TypeError, match=r"use a string pattern on a bytes-like object"
+            )
+        elif sys.version_info < (3, 11):
+            raise_cm = pytest.raises(
+                TypeError, match=r"expected string or bytes-like object"
             )
         else:
             raise_cm = raise_unexpected_type
