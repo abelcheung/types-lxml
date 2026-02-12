@@ -90,5 +90,5 @@ raise_non_callable = pytest.raises(TypeError, match="object is not callable")
 # TypeError("expected ..., ... found")
 # TypeError("expected ..., got ...")
 raise_unexpected_type = pytest.raises(
-    TypeError, match=r"expected \S+, (got \S+|\S+ found)"
+    TypeError, match=r"expected [^,]+, (got \S+|\S+ found)"
 )
