@@ -3,6 +3,7 @@ from __future__ import annotations
 import sys
 from collections.abc import Iterable
 from dataclasses import dataclass
+from inspect import isclass
 from types import NoneType
 from typing import (
     Any,
@@ -46,8 +47,11 @@ def hashable_elem_if_is_set(iterable_of: object, elem: object) -> bool:
 # without __iter__() by using __getitem__(), so isinstance is
 # usesless there
 def can_practically_iter(thing: object) -> bool:
+    if hasattr(thing, '__next__') and not isclass(thing):
+        return True
     try:
-        _ = [n for n in cast(Any, thing)]
+        for _ in cast(Any, thing):
+            pass
     except Exception:
         return False
     else:
