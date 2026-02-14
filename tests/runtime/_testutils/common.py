@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import copy
 import sys
 from collections.abc import Iterable
 from dataclasses import dataclass
@@ -56,6 +57,24 @@ def can_practically_iter(thing: object) -> bool:
         return False
     else:
         return True
+
+# Some objects can be iterated to yield nothing, like enumerate(()).
+# They become false positives because no exception is raised.
+def is_iterator_of_nothing(thing: Any) -> bool:
+    if not hasattr(thing, "__next__") or isclass(thing):
+        return False
+    try:
+        thing_copy = copy.deepcopy(thing)  # copy.copy won't do
+    except TypeError:
+        # no choice, can't test iterator without changing it
+        # assume hypothesis frequently emits empty iterator objects
+        return True
+    try:
+        _ = next(thing_copy)
+    except StopIteration:
+        return True
+    else:
+        return False
 
 
 @dataclass
