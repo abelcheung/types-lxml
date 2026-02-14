@@ -323,10 +323,13 @@ class TestIterSiblings:
         max_examples=300,
     )
     @given(
-        thing=_st.all_instances_except_of_type(
+        thing=_st
+        .all_instances_except_of_type(
             *tag_selector_types.allow,
             *tag_selector_types.skip,
-        ).filter(lambda x: x is not NotImplemented and bool(x)).filter(lambda x: not can_practically_iter(x)),
+        )
+        .filter(lambda x: x is not NotImplemented and bool(x))
+        .filter(lambda x: not can_practically_iter(x)),
     )
     @pytest.mark.slow
     def test_input_bad_1(self, xml2_root: _Element, thing: Any) -> None:

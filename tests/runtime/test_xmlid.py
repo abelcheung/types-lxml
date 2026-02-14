@@ -11,7 +11,6 @@ from typing import Any
 import pytest
 from hypothesis import (
     HealthCheck,
-    assume,
     given,
     settings,
 )
@@ -136,10 +135,13 @@ class TestXmlid:
             assert len(xmlids) == len(root.xpath("//*[@id]"))
 
     @settings(suppress_health_check=[HealthCheck.too_slow], max_examples=300)
-    @given(thing=_st.all_instances_except_of_type(str, bytes, NoneType))
+    @given(
+        thing=_st.all_instances_except_of_type(str, bytes, NoneType).filter(
+            lambda x: x is not NotImplemented and bool(x)
+        )
+    )
     @pytest.mark.slow
     def test_baseurl_arg_bad_1(self, xml2_bytes: bytes, thing: Any) -> None:
-        assume(thing is not NotImplemented and bool(thing))
         with raise_invalid_filename_type:
             _ = XMLID(xml2_bytes, base_url=thing)
 
@@ -264,10 +266,13 @@ class TestXmldtdid:
             reveal_type(xmlids)
 
     @settings(suppress_health_check=[HealthCheck.too_slow], max_examples=300)
-    @given(thing=_st.all_instances_except_of_type(str, bytes, NoneType))
+    @given(
+        thing=_st.all_instances_except_of_type(str, bytes, NoneType).filter(
+            lambda x: x is not NotImplemented and bool(x)
+        )
+    )
     @pytest.mark.slow
     def test_baseurl_arg_bad_1(self, xml2_bytes: bytes, thing: Any) -> None:
-        assume(thing is not NotImplemented and bool(thing))
         with raise_invalid_filename_type:
             _ = XMLDTDID(xml2_bytes, base_url=thing)
 
@@ -408,10 +413,13 @@ class TestParseid:
             reveal_type(xmlids)
 
     @settings(suppress_health_check=[HealthCheck.too_slow], max_examples=300)
-    @given(thing=_st.all_instances_except_of_type(str, bytes, NoneType))
+    @given(
+        thing=_st.all_instances_except_of_type(str, bytes, NoneType).filter(
+            lambda x: x is not NotImplemented and bool(x)
+        )
+    )
     @pytest.mark.slow
     def test_baseurl_arg_bad_1(self, xml2_filepath: Path, thing: Any) -> None:
-        assume(thing is not NotImplemented and bool(thing))
         with raise_invalid_filename_type:
             _ = parseid(xml2_filepath, base_url=thing)
 

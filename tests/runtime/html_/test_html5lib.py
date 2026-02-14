@@ -12,7 +12,11 @@ import html5lib.html5parser
 import lxml.etree as _e
 import lxml.html.html5parser as h5
 import pytest
-from hypothesis import HealthCheck, assume, given, settings
+from hypothesis import (
+    HealthCheck,
+    given,
+    settings,
+)
 from lxml.etree import (
     _Element as _Element,
     _ElementTree as _ElementTree,
@@ -220,10 +224,13 @@ class TestInputArg:
     #   empty html document (<html><body/></html>)
     # - buffer-like objects, in which html content is directly taken from
     @settings(suppress_health_check=[HealthCheck.too_slow], max_examples=300)
-    @given(thing=_st.all_instances_except_of_type(str, io.BytesIO, io.StringIO, Buffer))
+    @given(
+        thing=_st.all_instances_except_of_type(
+            str, io.BytesIO, io.StringIO, Buffer
+        ).filter(lambda x: x is not NotImplemented and bool(x))
+    )
     @pytest.mark.slow
     def test_parse_src_bad(self, thing: Any) -> None:
-        assume(thing is not NotImplemented and bool(thing))
         # pyrefly: ignore[no-matching-overload]
         with pytest.raises((
             TypeError,

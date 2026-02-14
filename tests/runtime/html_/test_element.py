@@ -273,15 +273,13 @@ class TestBasicBehavior:
     # items into element tree (e.g. huge ranges)
     @settings(suppress_health_check=[HealthCheck.too_slow], max_examples=300)
     @given(
-        thing=_st
-        .all_instances_except_of_type(
+        thing=_st.all_instances_except_of_type(
             _Element,
             Iterator,
             range,
             ipaddress.IPv4Network,
             ipaddress.IPv6Network,
-        )
-        .filter(lambda x: x is not NotImplemented and bool(x))
+        ).filter(lambda x: x is not NotImplemented and bool(x))
     )
     @pytest.mark.slow
     def test_sequence_modify_bad_2(

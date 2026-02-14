@@ -12,7 +12,6 @@ from typing import Any
 import pytest
 from hypothesis import (
     HealthCheck,
-    assume,
     given,
     settings,
     strategies as st,
@@ -76,10 +75,13 @@ class TestIndexMethod:
         suppress_health_check=[HealthCheck.function_scoped_fixture],
         max_examples=300,
     )
-    @given(thing=_st.all_instances_except_of_type(NoneType, int, Decimal))
+    @given(
+        thing=_st.all_instances_except_of_type(NoneType, int, Decimal).filter(
+            lambda x: x is not NotImplemented and bool(x)
+        )
+    )
     @pytest.mark.slow
     def test_start_arg_bad_1(self, xml2_root: _Element, thing: Any) -> None:
-        assume(thing is not NotImplemented and bool(thing))
         with raise_lxml_non_integer:
             _ = xml2_root.index(xml2_root[0], start=thing)
 
@@ -96,10 +98,13 @@ class TestIndexMethod:
         suppress_health_check=[HealthCheck.function_scoped_fixture],
         max_examples=300,
     )
-    @given(thing=_st.all_instances_except_of_type(NoneType, int, Decimal))
+    @given(
+        thing=_st.all_instances_except_of_type(NoneType, int, Decimal).filter(
+            lambda x: x is not NotImplemented and bool(x)
+        )
+    )
     @pytest.mark.slow
     def test_stop_arg_bad_1(self, xml2_root: _Element, thing: Any) -> None:
-        assume(thing is not NotImplemented and bool(thing))
         with raise_lxml_non_integer:
             _ = xml2_root.index(xml2_root[0], stop=thing)
 

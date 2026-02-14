@@ -15,7 +15,12 @@ from types import (
 from typing import Any, cast
 
 import pytest
-from hypothesis import HealthCheck, assume, example, given, settings
+from hypothesis import (
+    HealthCheck,
+    example,
+    given,
+    settings,
+)
 from lxml.etree import (
     QName,
     _Attrib as _Attrib,
@@ -109,12 +114,15 @@ class TestIterfind:
 
     # range objects can cause indefinite hang
     @settings(suppress_health_check=[HealthCheck.too_slow], max_examples=300)
-    @given(thing=_st.all_instances_except_of_type(Mapping, NoneType, range))
+    @given(
+        thing=_st.all_instances_except_of_type(Mapping, NoneType, range).filter(
+            lambda x: x is not NotImplemented and bool(x)
+        )
+    )
     @pytest.mark.slow
     def test_namespaces_arg_bad_1(
         self, disposable_element: _Element, thing: Any
     ) -> None:
-        assume(thing is not NotImplemented and bool(thing))
         # pyrefly: ignore[no-matching-overload]
         with pytest.raises((TypeError, AttributeError)):  # too diversified
             _ = disposable_element.iterfind("foo", namespaces=thing)
@@ -175,12 +183,15 @@ class TestFind:
 
     # range objects can cause indefinite hang
     @settings(suppress_health_check=[HealthCheck.too_slow], max_examples=300)
-    @given(thing=_st.all_instances_except_of_type(Mapping, NoneType, range))
+    @given(
+        thing=_st.all_instances_except_of_type(Mapping, NoneType, range).filter(
+            lambda x: x is not NotImplemented and bool(x)
+        )
+    )
     @pytest.mark.slow
     def test_namespaces_arg_bad_1(
         self, disposable_element: _Element, thing: Any
     ) -> None:
-        assume(thing is not NotImplemented and bool(thing))
         # pyrefly: ignore[no-matching-overload]
         with pytest.raises((TypeError, AttributeError)):  # too diversified
             _ = disposable_element.find("foo", namespaces=thing)
@@ -241,12 +252,15 @@ class TestFindall:
 
     # range objects can cause indefinite hang
     @settings(suppress_health_check=[HealthCheck.too_slow], max_examples=300)
-    @given(thing=_st.all_instances_except_of_type(Mapping, NoneType, range))
+    @given(
+        thing=_st.all_instances_except_of_type(Mapping, NoneType, range).filter(
+            lambda x: x is not NotImplemented and bool(x)
+        )
+    )
     @pytest.mark.slow
     def test_namespaces_arg_bad_1(
         self, disposable_element: _Element, thing: Any
     ) -> None:
-        assume(thing is not NotImplemented and bool(thing))
         # pyrefly: ignore[no-matching-overload]
         with pytest.raises((TypeError, AttributeError)):  # too diversified
             _ = disposable_element.findall("foo", namespaces=thing)
@@ -329,12 +343,15 @@ class TestFindtext:
 
     # range objects can cause indefinite hang
     @settings(suppress_health_check=[HealthCheck.too_slow], max_examples=300)
-    @given(thing=_st.all_instances_except_of_type(Mapping, NoneType, range))
+    @given(
+        thing=_st.all_instances_except_of_type(Mapping, NoneType, range).filter(
+            lambda x: x is not NotImplemented and bool(x)
+        )
+    )
     @pytest.mark.slow
     def test_namespaces_arg_bad_1(
         self, disposable_element: _Element, thing: Any
     ) -> None:
-        assume(thing is not NotImplemented and bool(thing))
         # pyrefly: ignore[no-matching-overload]
         with pytest.raises((TypeError, AttributeError)):  # too diversified
             _ = disposable_element.findtext("foo", namespaces=thing)

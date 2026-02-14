@@ -9,7 +9,12 @@ from types import NoneType
 from typing import Any, cast
 
 import pytest
-from hypothesis import HealthCheck, assume, example, given, settings
+from hypothesis import (
+    HealthCheck,
+    example,
+    given,
+    settings,
+)
 from lxml.etree import (
     DocumentInvalid,
     RelaxNG,
@@ -147,11 +152,13 @@ class TestRelaxNGInput:
             assert rng(xml2_root) is True
 
     @settings(suppress_health_check=[HealthCheck.too_slow], max_examples=300)
-    @given(thing=_st.all_instances_except_of_type(str, bytes, NoneType))
+    @given(
+        thing=_st.all_instances_except_of_type(str, bytes, NoneType).filter(
+            lambda x: x is not NotImplemented and bool(x)
+        )
+    )
     @pytest.mark.slow
     def test_from_rnc_baseurl_bad_1(self, rnc_str: str, thing: Any) -> None:
-        # Falsy values evaluated as None in _parseDocFromFileLike
-        assume(thing is not NotImplemented and bool(thing))
         with raise_invalid_filename_type:
             _ = RelaxNG.from_rnc_string(rnc_str, base_url=thing)
 
