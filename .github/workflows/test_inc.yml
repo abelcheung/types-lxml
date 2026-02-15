@@ -179,7 +179,7 @@ jobs:
       run: >
         uvx
         tox run-parallel
-        --skip-env '.*-(stub|myst)-.*'
+        --skip-env '.*-(stub$|myst-.*)'
         --installpkg ${{ steps.wheel-name.outputs.filename }}
         --result-json test-${{ inputs.flavor }}-rt-${{ matrix.os }}-${{ matrix.pyver }}.json
 
