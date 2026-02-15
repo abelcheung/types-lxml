@@ -85,6 +85,7 @@ lxml\.etree\._ErrorLog
 lxml\.etree\.__all__
 lxml\.etree\.ElementDefaultClassLookup\.__init__
 lxml\.etree\.HTMLPullParser\.__init__
+lxml\.etree\.Resolver\.resolve.*
 lxml\.etree\.XMLPullParser\.__init__
 lxml\.html\.builder\.[A-Z0-9]+
 lxml\.html\.find_class
