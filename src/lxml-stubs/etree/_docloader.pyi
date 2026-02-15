@@ -1,13 +1,8 @@
 # Resolver documented at https://lxml.de/resolvers.html
 
 import sys
-from abc import ABCMeta, abstractmethod
+from abc import ABC, abstractmethod
 from typing import Any, final, type_check_only
-
-if sys.version_info >= (3, 11):
-    from typing import Self
-else:
-    from typing_extensions import Self
 
 if sys.version_info >= (3, 14):
     from io import Reader
@@ -24,7 +19,7 @@ class _InputDocument:
 # class _ResolverContext:
 #     """An internal opaque object used in resolve methods"""
 
-class Resolver(metaclass=ABCMeta):
+class Resolver(ABC):
     """Base class for custom document resolvers.
 
     Resolvers handle loading of external documents referenced in XML input.
@@ -40,15 +35,18 @@ class Resolver(metaclass=ABCMeta):
         system_url: str | None,
         public_id: str | None,
         context: object,  # _ResolverContext
+        /,
     ) -> _InputDocument | None: ...
     def resolve_empty(
         self,
         context: object,  # _ResolverContext
+        /,
     ) -> _InputDocument: ...
     def resolve_string(
         self,
         string: str | bytes,
         context: object,  # _ResolverContext
+        /,
         *,
         base_url: str | bytes | None = None,
     ) -> _InputDocument: ...
@@ -56,11 +54,13 @@ class Resolver(metaclass=ABCMeta):
         self,
         filename: str | bytes,
         context: object,  # _ResolverContext
+        /,
     ) -> _InputDocument: ...
     def resolve_file(
         self,
         f: Reader[Any],
         context: object,  # _ResolverContext
+        /,
         *,
         base_url: str | bytes | None = None,
         close: bool = True,
@@ -70,6 +70,6 @@ class Resolver(metaclass=ABCMeta):
 class _ResolverRegistry:
     def add(self, resolver: Resolver) -> None: ...
     def remove(self, resolver: Resolver) -> None: ...
-    def copy(self) -> Self: ...
+    def copy(self) -> _ResolverRegistry: ...
     # resolve() removed. User can't possibly extract or create
     # the context object independently and supply it.
