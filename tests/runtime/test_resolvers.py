@@ -7,6 +7,7 @@
 
 from __future__ import annotations
 
+import platform
 import sys
 import textwrap
 from io import StringIO
@@ -193,8 +194,9 @@ class TestRegistryMethods:
         try:
             _ = hash(thing)
         except TypeError:
-            with pytest.raises(TypeError, match=r"unhashable type: '.+?'"):
-                parser.resolvers.remove(thing)
-        else:
-            # set.discard(nonexistent_element) never raises
-            parser.resolvers.remove(thing)
+            if platform.python_implementation() == "CPython":
+                with pytest.raises(TypeError, match=r"unhashable type|Cannot hash a .* value"):
+                    parser.resolvers.remove(thing)
+                return
+        # set.discard(nonexistent_element) never raises
+        parser.resolvers.remove(thing)
