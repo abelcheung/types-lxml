@@ -70,6 +70,8 @@ class Resolver(ABC):
 class _ResolverRegistry:
     def add(self, resolver: Resolver) -> None: ...
     def remove(self, resolver: Resolver) -> None: ...
-    def copy(self) -> _ResolverRegistry: ...
+    # copy() removed. It is only for lxml internal use;
+    # user can't possibly use the copied registry anywhere
+    # in lxml API.
     # resolve() removed. User can't possibly extract or create
-    # the context object independently and supply it.
+    # the context object independently and supply it to resolve().
