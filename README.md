@@ -5,6 +5,10 @@
 
 ## Important note
 
+- Since `2026.02.16`:
+  - Partial support of [`ty` type checker](https://docs.astral.sh/ty/)
+  - Supports type checking under `PyPy` 3.11
+
 - Since `2026.01.01`:
   - Support for [`pyrefly` type checker](https://pyrefly.org/)
   - New `mypy` plugin that mimics [`XMLParser.set_element_class_lookup()` behavior](https://github.com/abelcheung/types-lxml/wiki/Using-specialised-class-directly#no-automatic-change-of-subscript)
@@ -44,6 +48,7 @@ Currently the annotations are validated for following type checkers:
 | [`mypy`](https://github.com/python/mypy) | ≥ 1.18.1 |
 | [`pyrefly`](https://pyrefly.org/) | ≥ 0.46.3 |
 | [`pyright`](https://github.com/microsoft/pyright) | ≥ 1.1.406 |
+| [`ty`](https://docs.astral.sh/ty/) | ≥ 0.0.7 |
 
 `pyright` and `basedpyright` are recommended for their greater flexibility, maturity and early adoption of newer type checking features. In the future, there is plan to bring even more type checker support (such as `ty` or `zuban`).
 

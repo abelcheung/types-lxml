@@ -1,3 +1,56 @@
+# 2026.02.16
+
+## 🚀 Features
+
+- *(mypy plugin)* Supports `ElementDefaultClassLookup`
+- Supports type checking and runtime testing under PyPy 3.11
+- Stub is error-free for `ty` type checker
+
+## 🐛 Bug Fixes
+
+- `HtmlElement.head` and `.body` can be None
+- [**breaking**] Convert `ElementDefaultClassLookup` into Generic class
+- Extend the list of unusable content-only elem methods
+- `Resolver` methods args mostly position only
+- [**breaking**] Remove `_ResolverRegistry.copy()`
+
+## 🚜 Refactor
+
+- Retire some unused type aliases
+- *(mypy plugin)* Determine class lookup names more systematically
+
+## 📚 Documentation
+
+- Existing old docstring layout converted to new one
+- New docstrings for some etree classes and funcs
+- Add `CHANGELOG.md` to help searching among past changes
+
+## 🧪 Testing
+
+- Remove some signature tests already covered by `mypy.stubtest`
+- Retire type checker `"if KEYWORD:"` usage
+- Compat fix for `pyright` 1.1.408+ and `basedpyright` 1.37.1+
+- Compat fix for `pyright` 1.1.406 and `basedpyright` 1.31.6
+- Split `mypy.stubtest` as standalone tests
+- More static tests migrated to runtime:
+    - `HtmlElement` sequence tests, `DocInfo`, `Resolver`
+    - "backport" some `HtmlElement` sequence tests to `_Element`
+    - Partially migrate `Element` factory annotation test
+
+## ☑️ Miscellaneous Tasks
+
+- Introduce `pre-commit` usage to help running `actionlint`
+- Drop pytest-mypy-plugin from `[dev]` extras
+- Add config for `git-cliff`
+
+## ⚙️ CI/CD Tasks
+
+- Enable Bandit security scanner in workflow
+- Add `ty` to compat checks, and add more versions
+- Use `ubuntu-slim` GitHub runner for lightweight workflows
+- Stop using `reviewdog` for PR check
+- Add `ci-annotation-converter` as submodule to support type checker reporting
+
 # 2026.01.01
 
 ## Breaking or important changes
