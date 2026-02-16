@@ -9,6 +9,7 @@ jobs:
   build:
     permissions:
       contents: read
+      checks: write
     uses: ./.github/workflows/build_inc.yml
     with:
       gitref: ${{ github.ref }}
@@ -16,6 +17,7 @@ jobs:
   all_tests:
     needs: build
     permissions:
+      contents: read
       actions: write
     strategy:
       matrix:
@@ -31,6 +33,7 @@ jobs:
     runs-on: ubuntu-slim
     environment: pypi
     permissions:
+      contents: read
       id-token: write
     strategy:
       matrix:
