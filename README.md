@@ -3,6 +3,11 @@
 )
 ![Wheel](https://img.shields.io/pypi/wheel/types-lxml.svg)
 
+## Introduction
+
+This repository contains [external type annotations](https://peps.python.org/pep-0561/) for [`lxml`](http://lxml.de/). It can be used by type-checking tools to check code that uses `lxml`, or used within IDEs like [Visual Studio Code](https://code.visualstudio.com/) to facilitate development.
+
+
 ## Important note
 
 - Since `2026.02.16`:
@@ -24,21 +29,11 @@
   - `BeautifulSoup4` package is added as dependency to utilise its inline annotation, thus dropping `types-beautifulsoup4` dependency.
   - Fixes compatibility with older versions of type checkers, as well as `mypy` 1.14+.
 
+----
 
-## Introduction
+## Features
 
-This repository contains [external type annotations](https://peps.python.org/pep-0561/) for [`lxml`](http://lxml.de/). It can be used by [type-checking tools](#goal---support-multiple-type-checkers) to check code that uses `lxml`, or used within IDEs like [Visual Studio Code](https://code.visualstudio.com/) to facilitate development.
-
-## Goal ① : Completion
-
-Implementation is complete since 1Q 2003, thus no more [considered as `partial`](https://peps.python.org/pep-0561/#partial-stub-packages). Following submodules intentionally not implemented due to irrelevance to type checking or other reasons:
-
-  - `lxml.etree.Schematron` (obsolete and superseded by `lxml.isoschematron`)
-  - `lxml.usedoctest` (for testing only)
-  - `lxml.html.usedoctest` (for testing only)
-  - `lxml.html.formfill` (shouldn't have existed, this would belong to HTTP libraries like `requests` or `httpx`)
-
-## Goal ② : Support multiple type checkers
+### Support multiple type checkers
 
 Currently the annotations are validated for following type checkers:
 
@@ -50,39 +45,34 @@ Currently the annotations are validated for following type checkers:
 | [`pyright`](https://github.com/microsoft/pyright) | ≥ 1.1.406 |
 | [`ty`](https://docs.astral.sh/ty/) | ≥ 0.0.7 |
 
-`pyright` and `basedpyright` are recommended for their greater flexibility, maturity and early adoption of newer type checking features. In the future, there is plan to bring even more type checker support (such as `ty` or `zuban`).
+`pyright` and `basedpyright` are recommended for their greater flexibility, maturity and early adoption of newer type checking features. In the future, there is plan to bring even more type checker support (such as `zuban`).
 
-## Goal ③: Review and test suite
+### Annotation specific docstrings for users
 
-- [x] All prior `lxml-stubs` contributions are reviewed thoroughly, bringing coherency of annotation across the whole package
-- [x] Perform runtime check, and compare against static type checker result; this guarantees annotations are indeed working in real world, not just within some cooked up test suite
-- [x] Existing static test suite already vastly expanded, and is under progress of migrating to runtime test
-- [x] Modernize package building infrastructure
-
-## Goal ④ : Geared towards users
-
-#### Docstring
-
-This package tries to bring type annotation specific docstrings for some classes and functions, explaining how they can be used. Following screenshot demonstrates annotation specific docstring in Visual Studio Code:
+Type annotation specific docstrings were added for some classes and functions, explaining how they can be used. Following screenshot demonstrates annotation specific docstring in Visual Studio Code:
 
 ![Stub docstring in VSCode mouseover tooltip](https://user-images.githubusercontent.com/83110/277119481-debbd929-afbd-4f59-b9e6-52a1f7f23241.png)
 
-#### Warnings for exception and wrong code
-
-![image showing deprecation warning](https://github.com/user-attachments/assets/6ab30a54-60e7-4e34-932a-2ac2e253c669)
+### Warnings for exception and wrong code
 
 `pyright` and `basedpyright` users receive additional benefit of being forewarned when their lxml code will likely cause undesirable runtime behavior or outright exception.
 - [#64](https://github.com/abelcheung/types-lxml/issues/64) covers one such example where such warnings are warrented.
 - Another example is `html.html5parser` submodule functions causing exception when `str` input and `guess_charset` parameter are used together.
 
-Similarly their corresponding Visual Studio Code extensions would display visual cue when such problematic usage is encountered, as shown in above screenshot.
+Similarly the corresponding Visual Studio Code extensions would display visual cue when such problematic usage is encountered, as shown in screenshot below:
+
+![image showing deprecation warning](https://github.com/user-attachments/assets/6ab30a54-60e7-4e34-932a-2ac2e253c669)
 
 > [!NOTE]
 > This feature makes use of [`@deprecated` decorator](https://typing.python.org/en/latest/spec/directives.html#deprecated) from Python 3.13. `mypy` disables such warnings by default, and need to be [turned on explicitly](https://mypy.readthedocs.io/en/stable/error_code_list2.html#check-that-imported-or-used-feature-is-deprecated-deprecated).
 
-#### Class inheritance change
+### Class inheritance change
 
-Current annotations are geared towards convenience for programmers' convenience instead of absolute logical 'correctness'. The [deviation of class inheritance](https://github.com/abelcheung/types-lxml/wiki/Element-inheritance-change) for `HtmlComment` and friends is one prominent example.
+Annotations are geared towards programmers' convenience instead of absolute logical 'correctness'. The [deviation of class inheritance](https://github.com/abelcheung/types-lxml/wiki/Element-inheritance-change) for `HtmlComment` and friends is one prominent example.
+
+### Mypy plugin
+
+This package contains a minimal `mypy` plugin for emulating [`XMLParser.set_element_class_lookup()` behavior](https://github.com/abelcheung/types-lxml/wiki/Using-specialised-class-directly#no-automatic-change-of-subscript), which can't be expressed readily with standard typing mechanism.
 
 ----
 
