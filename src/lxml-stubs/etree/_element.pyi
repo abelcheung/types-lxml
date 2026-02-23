@@ -1073,43 +1073,69 @@ class __ContentOnlyElement(_Element):
     @deprecated("Some properties of content-only elements are fake values")
     @property
     def attrib(self) -> _Attrib: ...
-    @deprecated("Most accessor methods of content-only elements are dummies or cause undesirable effect")
+    @deprecated(
+        "Most accessor methods of content-only elements are dummies or cause undesirable effect"
+    )
     # pyrefly: ignore[bad-override]
     def get(self, key: _t.Unused, default: _t.Unused = None) -> None: ...  # type: ignore[override]
-    @deprecated("Most accessor methods of content-only elements are dummies or cause undesirable effect")
+    @deprecated(
+        "Most accessor methods of content-only elements are dummies or cause undesirable effect"
+    )
     def __len__(self) -> Literal[0]: ...
-    @deprecated("Most accessor methods of content-only elements are dummies or cause undesirable effect")
+    @deprecated(
+        "Most accessor methods of content-only elements are dummies or cause undesirable effect"
+    )
     # pyrefly: ignore[bad-override]
     def set(self, key: Never, value: Never) -> Never: ...  # type: ignore[override]  # pyright: ignore[reportIncompatibleMethodOverride]  # ty: ignore[invalid-method-override]
-    @deprecated("Most accessor methods of content-only elements are dummies or cause undesirable effect")
+    @deprecated(
+        "Most accessor methods of content-only elements are dummies or cause undesirable effect"
+    )
     # pyrefly: ignore[bad-override]
     def append(self, element: Never) -> Never: ...  # type: ignore[override]  # pyright: ignore[reportIncompatibleMethodOverride]  # ty: ignore[invalid-method-override]
-    @deprecated("Most accessor methods of content-only elements are dummies or cause undesirable effect")
+    @deprecated(
+        "Most accessor methods of content-only elements are dummies or cause undesirable effect"
+    )
     # pyrefly: ignore[bad-override]
     def insert(self, index: Never, value: Never) -> Never: ...  # type: ignore[override]  # pyright: ignore[reportIncompatibleMethodOverride]  # ty: ignore[invalid-method-override]
-    @deprecated("Most accessor methods of content-only elements are dummies or cause undesirable effect")
+    @deprecated(
+        "Most accessor methods of content-only elements are dummies or cause undesirable effect"
+    )
     # pyrefly: ignore[bad-override]
     def __setitem__(self, __k: Never, __v: Never) -> Never: ...  # type: ignore[override]  # pyright: ignore[reportIncompatibleMethodOverride]  # ty: ignore[invalid-method-override]
-    @deprecated("Most accessor methods of content-only elements are dummies or cause undesirable effect")
+    @deprecated(
+        "Most accessor methods of content-only elements are dummies or cause undesirable effect"
+    )
     # pyrefly: ignore[bad-override]
     def __getitem__(self, __k: Never) -> Never: ...  # type: ignore[override]  # pyright: ignore[reportIncompatibleMethodOverride]  # ty: ignore[invalid-method-override]
     #
     # Methods above are explicitly defined in source, while those below aren't
     #
-    @deprecated("Most accessor methods of content-only elements are dummies or cause undesirable effect")
+    @deprecated(
+        "Most accessor methods of content-only elements are dummies or cause undesirable effect"
+    )
     # pyrefly: ignore[bad-override]
     def extend(self, elements: Never) -> Never: ...  # type: ignore[override]  # pyright: ignore[reportIncompatibleMethodOverride]  # ty: ignore[invalid-method-override]
-    @deprecated("Most accessor methods of content-only elements are dummies or cause undesirable effect")
+    @deprecated(
+        "Most accessor methods of content-only elements are dummies or cause undesirable effect"
+    )
     # pyrefly: ignore[bad-override]
     def remove(self, element: Never) -> Never: ...  # type: ignore[override]  # pyright: ignore[reportIncompatibleMethodOverride]  # ty: ignore[invalid-method-override]
-    @deprecated("Most accessor methods of content-only elements are dummies or cause undesirable effect")
+    @deprecated(
+        "Most accessor methods of content-only elements are dummies or cause undesirable effect"
+    )
     # pyrefly: ignore[bad-override]
     def index(self, child: Never, start: Never, stop: Never) -> Never: ...  # type: ignore[override]  # pyright: ignore[reportIncompatibleMethodOverride]  # ty: ignore[invalid-method-override]
-    @deprecated("Most accessor methods of content-only elements are dummies or cause undesirable effect")
+    @deprecated(
+        "Most accessor methods of content-only elements are dummies or cause undesirable effect"
+    )
     def keys(self) -> list[_t.Unused]: ...
-    @deprecated("Most accessor methods of content-only elements are dummies or cause undesirable effect")
+    @deprecated(
+        "Most accessor methods of content-only elements are dummies or cause undesirable effect"
+    )
     def values(self) -> list[_t.Unused]: ...
-    @deprecated("Most accessor methods of content-only elements are dummies or cause undesirable effect")
+    @deprecated(
+        "Most accessor methods of content-only elements are dummies or cause undesirable effect"
+    )
     def items(self) -> list[_t.Unused]: ...
     @deprecated("cssselect method not usable on content-only elements")
     # pyrefly: ignore[bad-override]

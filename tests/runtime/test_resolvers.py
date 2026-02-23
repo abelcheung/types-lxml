@@ -171,9 +171,11 @@ class TestPrefixResolver:
         result = transform(tree)
         print(result)
 
+
 #
 # TODO Test for filename and file object resolvers
 #
+
 
 class TestRegistryMethods:
     # Positive method test already done in TestPrefixResolver
@@ -195,7 +197,9 @@ class TestRegistryMethods:
             _ = hash(thing)
         except TypeError:
             if platform.python_implementation() == "CPython":
-                with pytest.raises(TypeError, match=r"unhashable type|Cannot hash a .* value"):
+                with pytest.raises(
+                    TypeError, match=r"unhashable type|Cannot hash a .* value"
+                ):
                     parser.resolvers.remove(thing)
                 return
         # set.discard(nonexistent_element) never raises
