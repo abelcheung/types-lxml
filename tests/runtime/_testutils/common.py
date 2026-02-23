@@ -44,11 +44,12 @@ def hashable_elem_if_is_set(iterable_of: object, elem: object) -> bool:
         return False
     return True
 
+
 # In PyPy, some objects can practically perform iter operation
 # without __iter__() by using __getitem__(), so isinstance is
 # usesless there
 def can_practically_iter(thing: object) -> bool:
-    if hasattr(thing, '__next__') and not isclass(thing):
+    if hasattr(thing, "__next__") and not isclass(thing):
         return True
     try:
         for _ in cast(Any, thing):
@@ -57,6 +58,7 @@ def can_practically_iter(thing: object) -> bool:
         return False
     else:
         return True
+
 
 # Some objects can be iterated to yield nothing, like enumerate(()).
 # They become false positives because no exception is raised.

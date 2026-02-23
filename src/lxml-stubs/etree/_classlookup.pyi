@@ -165,7 +165,6 @@ class ElementDefaultClassLookup(ElementClassLookup, Generic[_ET_co]):
         entity: type[EntityBase] | None = None,
     ) -> ElementDefaultClassLookup[_Element]: ...
 
-
 @disjoint_base
 class AttributeBasedElementClassLookup(FallbackElementClassLookup):
     """Checks an attribute of an Element and looks up the value in a

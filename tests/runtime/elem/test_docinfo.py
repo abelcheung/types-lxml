@@ -139,7 +139,7 @@ class TestProperties:
         reveal_type(docinfo.URL)
 
     @settings(max_examples=300)
-    #reproduce_failure("6.151.6", b"AEEv")
+    # reproduce_failure("6.151.6", b"AEEv")
     @given(thing=_st.all_instances_except_of_type(str, NoneType))
     def test_rw_properties_bad_public_id(
         self,
@@ -147,7 +147,10 @@ class TestProperties:
         thing: Any,
     ) -> None:
         docinfo = disposable_element.getroottree().docinfo
-        if isinstance(thing, (bytes, Buffer)) or platform.python_implementation() == "PyPy":
+        if (
+            isinstance(thing, (bytes, Buffer))
+            or platform.python_implementation() == "PyPy"
+        ):
             raise_cm = pytest.raises(
                 TypeError, match=r"use a string pattern on a bytes-like object"
             )
