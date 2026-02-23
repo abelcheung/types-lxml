@@ -920,7 +920,9 @@ class _ElementTree(Generic[_t._ET_co]):
         --------
         - [API Documentation](https://lxml.de/apidoc/lxml.etree.html#lxml.etree._ElementTree.write)
         """
+    # pyrefly: ignore[invalid-type-var]
     def getpath(self: _ElementTree[_t._ET], element: _t._ET) -> str: ...
+    # pyrefly: ignore[invalid-type-var]
     def getelementpath(self: _ElementTree[_t._ET], element: _t._ET) -> str: ...
     @overload
     def iter(self, *tags: _t._TagSelector) -> Iterator[_t._ET_co]: ...
