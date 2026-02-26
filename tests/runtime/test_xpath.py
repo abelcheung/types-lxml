@@ -347,7 +347,7 @@ class TestXPathInit:
     def test_two_positional_args(self) -> None:
         with pytest.raises(TypeError):
             # pyrefly: ignore[bad-argument-count]
-            XPath("//a", "//b")  # type: ignore[call-arg]  # pyright: ignore[reportCallIssue]
+            XPath("//a", cast(Any, "//b"))  # type: ignore[misc]  # pyright: ignore[reportCallIssue]
 
     @settings(suppress_health_check=[HealthCheck.too_slow], max_examples=300)
     @given(thing=_st.all_instances_except_of_type(str, bytes, bytearray))
@@ -496,7 +496,7 @@ class TestETXPathInit:
     def test_two_positional_args(self) -> None:
         with pytest.raises(TypeError):
             # pyrefly: ignore[bad-argument-count]
-            ETXPath("//a", "//b")  # type: ignore[call-arg]  # pyright: ignore[reportCallIssue]
+            ETXPath("//a", cast(Any, "//b"))  # type: ignore[misc]  # pyright: ignore[reportCallIssue]
 
     @settings(suppress_health_check=[HealthCheck.too_slow], max_examples=300)
     @given(thing=_st.all_instances_except_of_type(str, bytes, bytearray))
@@ -562,7 +562,7 @@ class TestXPathElementEvaluatorInit:
     def test_two_positional_args(self, disposable_element: _Element) -> None:
         with pytest.raises(TypeError):
             # pyrefly: ignore[bad-argument-count]
-            XPathElementEvaluator(disposable_element, disposable_element)  # type: ignore[call-arg]  # pyright: ignore[reportCallIssue]
+            XPathElementEvaluator(disposable_element, cast(Any, disposable_element))  # type: ignore[misc]  # pyright: ignore[reportCallIssue]
 
     @settings(suppress_health_check=[HealthCheck.too_slow], max_examples=300)
     @given(thing=_st.all_instances_except_of_type(_Element))
@@ -660,7 +660,7 @@ class TestXPathDocumentEvaluatorInit:
     def test_two_positional_args(self, xml2_tree: _ElementTree) -> None:
         with pytest.raises(TypeError):
             # pyrefly: ignore[bad-argument-count]
-            XPathDocumentEvaluator(xml2_tree, xml2_tree)  # type: ignore[call-arg]  # pyright: ignore[reportCallIssue]
+            XPathDocumentEvaluator(xml2_tree, cast(Any, xml2_tree))  # type: ignore[misc]  # pyright: ignore[reportCallIssue]
 
     @settings(suppress_health_check=[HealthCheck.too_slow], max_examples=300)
     @given(thing=_st.all_instances_except_of_type(_ElementTree))
