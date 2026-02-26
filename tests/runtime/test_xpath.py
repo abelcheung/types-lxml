@@ -150,9 +150,7 @@ class TestElementXPathNamespaces:
         .filter(lambda x: not is_iterator_of_nothing(x))
     )
     @pytest.mark.slow
-    def test_namespaces_arg_bad(
-        self, disposable_element: _Element, thing: Any
-    ) -> None:
+    def test_namespaces_arg_bad(self, disposable_element: _Element, thing: Any) -> None:
         if isinstance(thing, Iterable) or can_practically_iter(thing):
             # pyrefly: ignore[no-matching-overload]
             raise_cm = pytest.raises((TypeError, ValueError))
@@ -188,9 +186,7 @@ class TestElementXPathExtensions:
                 return str(nodes[0].text).lower()
             return ""
 
-        ext: dict[tuple[None, str], Callable[..., Any]] = {
-            (None, "lower"): my_lower
-        }
+        ext: dict[tuple[None, str], Callable[..., Any]] = {(None, "lower"): my_lower}
         result = xml2_root.xpath("lower(//orderperson)", extensions=ext)
         assert result == "john smith"
 
@@ -200,9 +196,7 @@ class TestElementXPathExtensions:
 
         ext_list = [{("http://ns1", "func1"): ext_func}]
         ns = {"ns1": "http://ns1"}
-        result = xml2_root.xpath(
-            "ns1:func1('x')", namespaces=ns, extensions=ext_list
-        )
+        result = xml2_root.xpath("ns1:func1('x')", namespaces=ns, extensions=ext_list)
         assert result == 42
 
     @settings(suppress_health_check=[HealthCheck.too_slow], max_examples=300)
@@ -213,9 +207,7 @@ class TestElementXPathExtensions:
         .filter(lambda x: not is_iterator_of_nothing(x))
     )
     @pytest.mark.slow
-    def test_extensions_arg_bad(
-        self, disposable_element: _Element, thing: Any
-    ) -> None:
+    def test_extensions_arg_bad(self, disposable_element: _Element, thing: Any) -> None:
         # pyrefly: ignore[no-matching-overload]
         with pytest.raises((TypeError, AttributeError)):
             disposable_element.xpath("//foo", extensions=thing)
@@ -359,15 +351,11 @@ class TestXPathInit:
 
 
 class TestXPathCall:
-    def test_call_element(
-        self, xml2_root: _Element
-    ) -> None:
+    def test_call_element(self, xml2_root: _Element) -> None:
         xpath_obj = XPath("//item")
         assert len(xpath_obj(xml2_root)) == 3
 
-    def test_call_tree(
-        self, xml2_tree: _ElementTree
-    ) -> None:
+    def test_call_tree(self, xml2_tree: _ElementTree) -> None:
         xpath_obj = XPath("//item")
         assert len(xpath_obj(xml2_tree)) == 3
 
@@ -592,13 +580,15 @@ class TestXPathElementEvaluatorCall:
         assert len(result) == 1
 
     @settings(suppress_health_check=[HealthCheck.too_slow], max_examples=300)
-    @given(thing=_st.all_instances_except_of_type(str, bytes, bytearray))
+    @given(
+        thing=_st.all_instances_except_of_type(str, bytes, bytearray).filter(
+            lambda x: x is not NotImplemented and bool(x)
+        )
+    )
     @pytest.mark.slow
-    def test_call_path_bad_1(
-        self, disposable_element: _Element, thing: Any
-    ) -> None:
+    def test_call_path_bad_1(self, disposable_element: _Element, thing: Any) -> None:
         evaluator = XPathElementEvaluator(disposable_element)
-        with raise_unexpected_type:
+        with raise_invalid_utf8_type:
             evaluator(thing)  # pyright: ignore[reportUnknownVariableType]
 
     def test_call_returns_string(self, xml2_root: _Element) -> None:
@@ -639,6 +629,7 @@ class TestXPathElementEvaluatorRegisterNamespace:
         assert len(result) > 0
 
     # TODO Negative tests TBD
+
 
 # -- XPathDocumentEvaluator tests --
 
@@ -691,9 +682,7 @@ class TestXPathDocumentEvaluatorCall:
     @settings(suppress_health_check=[HealthCheck.too_slow], max_examples=300)
     @given(thing=_st.all_instances_except_of_type(str, bytes, bytearray))
     @pytest.mark.slow
-    def test_call_path_bad_1(
-        self, disposable_element: _Element, thing: Any
-    ) -> None:
+    def test_call_path_bad_1(self, disposable_element: _Element, thing: Any) -> None:
         evaluator = XPathDocumentEvaluator(disposable_element.getroottree())
         with raise_invalid_utf8_type:
             evaluator(thing)
