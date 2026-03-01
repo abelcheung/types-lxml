@@ -25,7 +25,7 @@ jobs:
           - "lxml60"
     runs-on: ubuntu-slim
     steps:
-    - uses: actions/download-artifact@v7
+    - uses: actions/download-artifact@v8
       with:
         name: dist-${{ inputs.flavor }}
         path: dist
@@ -63,7 +63,7 @@ jobs:
         --installpkg ${{ steps.wheel-name.outputs.filename }}
         --result-json test-${{ inputs.flavor }}-mypy-stubtest-${{ matrix.lxml-ver }}.json
 
-    - uses: actions/upload-artifact@v6
+    - uses: actions/upload-artifact@v7
       with:
         name: log-${{ inputs.flavor }}-mypy-stubtest-${{ matrix.lxml-ver }}
         path: test-${{ inputs.flavor }}-mypy-*.json
@@ -85,7 +85,7 @@ jobs:
           - "ubuntu-slim"
     runs-on: ${{ matrix.os }}
     steps:
-    - uses: actions/download-artifact@v7
+    - uses: actions/download-artifact@v8
       with:
         name: dist-${{ inputs.flavor }}
         path: dist
@@ -120,7 +120,7 @@ jobs:
         --installpkg ${{ steps.wheel-name.outputs.filename }}
         --result-json test-${{ inputs.flavor }}-stub-${{ matrix.pyver }}.json
 
-    - uses: actions/upload-artifact@v6
+    - uses: actions/upload-artifact@v7
       with:
         name: log-${{ inputs.flavor }}-stub-${{ matrix.pyver }}
         path: test-${{ inputs.flavor }}-stub-*.json
@@ -143,7 +143,7 @@ jobs:
           - macos-14
     runs-on: ${{ matrix.os }}
     steps:
-    - uses: actions/download-artifact@v7
+    - uses: actions/download-artifact@v8
       with:
         name: dist-${{ inputs.flavor }}
         path: dist
@@ -183,7 +183,7 @@ jobs:
         --installpkg ${{ steps.wheel-name.outputs.filename }}
         --result-json test-${{ inputs.flavor }}-rt-${{ matrix.os }}-${{ matrix.pyver }}.json
 
-    - uses: actions/upload-artifact@v6
+    - uses: actions/upload-artifact@v7
       with:
         name: log-${{ inputs.flavor }}-rt-${{ matrix.os }}-${{ matrix.pyver }}
         path: test-${{ inputs.flavor }}-rt-*.json
@@ -197,13 +197,13 @@ jobs:
       actions: write
     steps:
 
-    - uses: actions/download-artifact@v7
+    - uses: actions/download-artifact@v8
       with:
         path: all-logs
         pattern: log-${{ inputs.flavor }}-*
         merge-multiple: true
 
-    - uses: actions/upload-artifact@v6
+    - uses: actions/upload-artifact@v7
       with:
         name: alllogs-${{ inputs.flavor }}
         path: all-logs

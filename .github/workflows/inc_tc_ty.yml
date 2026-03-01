@@ -26,7 +26,7 @@ jobs:
   ty:
     runs-on: ubuntu-slim
     steps:
-    - uses: actions/download-artifact@v7
+    - uses: actions/download-artifact@v8
       if: inputs.tarball-flavor != 'none'
       with:
         name: dist-${{ inputs.tarball-flavor }}
