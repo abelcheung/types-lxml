@@ -32,7 +32,7 @@ jobs:
         repository: abelcheung/ci-annotation-converter
         path: ci-annotation-converter
 
-    - uses: actions/download-artifact@v7
+    - uses: actions/download-artifact@v8
       if: inputs.tarball-flavor != 'none'
       with:
         name: dist-${{ inputs.tarball-flavor }}
