@@ -209,7 +209,7 @@ jobs:
         path: all-logs
         if-no-files-found: error
 
-    - uses: geekyeggo/delete-artifact@v5
+    - uses: geekyeggo/delete-artifact@v6
       with:
         name: log-${{ inputs.flavor }}-*
 
