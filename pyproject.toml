@@ -71,8 +71,8 @@ basic = [
     "beautifulsoup4 == 4.14.3",
 ]
 mypy = ["mypy == 1.19.1"]
-pyright = ["pyright == 1.1.408"]
-basedpyright = ["basedpyright == 1.38.0; platform_machine != 'i686'"]
+pyright = ["pyright == 1.1.410"]
+basedpyright = ["basedpyright == 1.39.8; platform_machine != 'i686'"]
 ty = ["ty == 0.0.16"]
 pyrefly = ["pyrefly == 0.52.0"]
 stub-test = [
@@ -503,4 +503,3 @@ base = ['env.build-normal']
 allowlist_externals = ['git']
 commands_pre  = [['git', 'apply',              'multi-subclass.patch']]
 commands_post = [['git', 'apply', '--reverse', 'multi-subclass.patch']]
-

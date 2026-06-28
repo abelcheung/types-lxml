@@ -407,12 +407,12 @@ class TestPyErrorLogMethods:
     def test_receive_arg_bad_1(self, pylog: PyErrorLog, thing: Any) -> None:
         raise_cm = raise_no_attribute if thing is None else raise_wrong_arg_type
         with raise_cm:
-            pylog.receive(thing)
+            pylog.receive(cast(_LogEntry, thing))
 
     @given(iterable_of=_st.fixed_item_iterables())
     def test_receive_arg_bad_2(self, pylog: PyErrorLog, iterable_of: Any) -> None:
         with raise_wrong_arg_type:
-            pylog.receive(iterable_of(pylog.last_error))
+            pylog.receive(cast(_LogEntry, iterable_of(pylog.last_error)))
 
     def test_receive_arg_ok(self, pylog: PyErrorLog) -> None:
         assert pylog.last_error is not None
