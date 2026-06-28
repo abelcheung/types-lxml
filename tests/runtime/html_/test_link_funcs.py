@@ -487,7 +487,7 @@ class TestMethodFuncBug:
 
         for input in (str_content, bytes_content):
             with raise_unexpected_kwarg:
-                _ = make_links_absolute(  # type: ignore[var-annotated]
+                _ = make_links_absolute(
                     input, _BASE_HREF, resolve_base_href=True
                 )
         _ = make_links_absolute(
@@ -496,7 +496,7 @@ class TestMethodFuncBug:
 
         for input in (str_content, bytes_content):
             with raise_unexpected_kwarg:
-                _ = make_links_absolute(  # type: ignore[var-annotated]
+                _ = make_links_absolute(
                     input, _BASE_HREF, handle_failures=None
                 )
         _ = make_links_absolute(
@@ -527,14 +527,14 @@ class TestMethodFuncBug:
 
         for input in (str_content, byte_content):
             with raise_unexpected_kwarg:
-                _ = rewrite_links(  # type: ignore[var-annotated]
+                _ = rewrite_links(
                     input, str, resolve_base_href=False
                 )
         _ = rewrite_links(disposable_html_with_base_href, str, resolve_base_href=False)
 
         for input in (str_content, byte_content):
             with raise_unexpected_kwarg:
-                _ = rewrite_links(  # type: ignore[var-annotated]
+                _ = rewrite_links(
                     input, str, base_href=_BASE_HREF
                 )
         _ = rewrite_links(disposable_html_with_base_href, str, base_href=_BASE_HREF)

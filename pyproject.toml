@@ -70,7 +70,7 @@ basic = [
     "cssselect == 1.4.0; python_version >= '3.10'",
     "beautifulsoup4 == 4.14.3",
 ]
-mypy = ["mypy == 1.19.1"]
+mypy = ["mypy == 1.20.1"]
 pyright = ["pyright == 1.1.408"]
 basedpyright = ["basedpyright == 1.38.0; platform_machine != 'i686'"]
 ty = ["ty == 0.0.16"]
@@ -503,4 +503,3 @@ base = ['env.build-normal']
 allowlist_externals = ['git']
 commands_pre  = [['git', 'apply',              'multi-subclass.patch']]
 commands_post = [['git', 'apply', '--reverse', 'multi-subclass.patch']]
-

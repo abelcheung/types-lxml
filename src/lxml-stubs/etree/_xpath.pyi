@@ -53,7 +53,6 @@ class XPathResultError(XPathEvalError):
 class XPathSyntaxError(LxmlSyntaxError, XPathError):
     """Error in XPath expression"""
 
-@disjoint_base
 class _XPathEvaluatorBase(Protocol):
     @property
     def error_log(self) -> _ListErrorLog: ...
