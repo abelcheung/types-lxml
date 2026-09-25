@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import inspect
 import operator
+import sys
 from collections import deque
 from collections.abc import Callable, Iterable, Iterator
 from typing import Any, Literal, TypeVar, cast
@@ -37,6 +38,13 @@ def all_types_except(
 
 
 def all_instances_except_of_type(*excluded: type[Any]) -> st.SearchStrategy[Any]:
+    if (3, 11) <= sys.version_info < (3, 13, 3):
+        # Passing a class to code expecting an instance can segfault CPython, if
+        # that code calls an unbound METH_FASTCALL method without arguments,
+        # such as str.split() (https://github.com/python/cpython/issues/131998,
+        # fixed in 3.13.3).
+        excluded += (type,)
+
     def _aux_filter(typ_: Any) -> bool:
         note(f"Failed type: {typ_.__qualname__=} {typ_.__module__=}")
         # HACK from_type() handles TypeVar as a special case, but we don't have
