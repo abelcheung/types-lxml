@@ -148,6 +148,21 @@
     reveal_type(ie >= ie)  # NR: .+ "[\w\.]+\.bool"$
     reveal_type(ie |  ie)  # NR: .+ "[\w\.]+\.int"$
 
+- case: number_elem_is_not_native_number
+  files: *DE_INC
+  main: |
+    from de_inc import ie, fe
+    def takes_int(x: int) -> None: ...
+    def takes_float(x: float) -> None: ...
+    takes_int(ie)  # ER: Argument 1 to "takes_int" has incompatible type "IntElement"; expected "int"  \[arg-type]$
+    takes_float(fe)  # ER: Argument 1 to "takes_float" has incompatible type "FloatElement"; expected "float"  \[arg-type]$
+    reveal_type(ie.real)  # NR: .+ "[\w\.]+\.ObjectifiedElement"$
+    reveal_type(fe.is_integer)  # NR: .+ "[\w\.]+\.ObjectifiedElement"$
+    reveal_type(ie == 5)  # NR: .+ "[\w\.]+\.bool"$
+    reveal_type(pow(ie, 2, 3))  # NR: .+ "[\w\.]+\.int"$
+    reveal_type(divmod(ie, fe))  # NR: .+ "tuple\[[\w\.]+\.float, [\w\.]+\.float\]"$
+    reveal_type(range(ie))  # NR: .+ "[\w\.]+\.range"$
+
 - case: fe_behave_as_float
   files: *DE_INC
   main: |
