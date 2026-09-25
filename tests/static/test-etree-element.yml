@@ -52,6 +52,8 @@
     badns = {s: 1}
     def extfunc1(context, a): return ''
     def extfunc2(context, a, b): return 0
+    def noctxfunc() -> str: return ''
+    def badctxfunc(context: int, /, a: str) -> str: return ''
     ext1 = [{(None, s): extfunc1}]
     ext2 = {(s, s): extfunc2}
     badext = [{badns: extfunc1}]
@@ -66,3 +68,6 @@
     el.xpath(path=s)  # ER: Too few arguments.*  \[call-arg]$
     el.xpath(s, namespaces=badns)  # ER: Argument "namespaces" .+; expected ".+"  \[arg-type]$
     el.xpath(s, extensions=badext)  # ER: Argument "extensions" .+; expected ".+"  \[arg-type]$
+    el.xpath(s, extensions={(s, s): noctxfunc})  # ER: Value of type variable .+  \[type-var]$
+    el.xpath(s, extensions={(s, s): badctxfunc})  # ER: Value of type variable .+  \[type-var]$
+    el.xpath(s, extensions=[{(s, s): noctxfunc}])  # ER: Dict entry 0 has incompatible type .+  \[dict-item]$

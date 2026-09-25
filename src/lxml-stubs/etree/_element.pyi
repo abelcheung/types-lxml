@@ -15,7 +15,7 @@ from typing import (
 from typing_extensions import disjoint_base
 
 from .. import _types as _t
-from .._types import _CSSTransArg
+from .._types import _CSSTransArg, _XPathExtFuncT
 from ._module_misc import CDATA, DocInfo, QName
 from ._parser import CustomTargetParser
 from ._xslt import XSLTAccessControl, XSLTExtension, _Stylesheet_Param, _XSLTResultTree
@@ -649,7 +649,7 @@ class _Element:
         /,
         *,
         namespaces: _t._XPathNSArg | None = None,
-        extensions: _t._XPathExtFuncArg | None = None,
+        extensions: _t._XPathExtFuncArg[_XPathExtFuncT] | None = None,
         smart_strings: bool = True,
         **_variables: _t._XPathVarArg,
     ) -> _t._XPathObject:
@@ -963,7 +963,7 @@ class _ElementTree(Generic[_t._ET_co]):
         /,
         *,
         namespaces: _t._XPathNSArg | None = None,
-        extensions: _t._XPathExtFuncArg | None = None,
+        extensions: _t._XPathExtFuncArg[_XPathExtFuncT] | None = None,
         smart_strings: bool = True,
         **_variables: _t._XPathVarArg,
     ) -> _t._XPathObject: ...

@@ -1,28 +1,19 @@
-import sys
 from collections.abc import (
     Callable,
     Iterable,
     Iterator,
 )
 from typing import (
-    Any,
     TypeVar,
     final,
     overload,
 )
 from typing_extensions import disjoint_base
 
-if sys.version_info >= (3, 10):
-    from typing import ParamSpec
-else:
-    from typing_extensions import ParamSpec
-
-from .._types import SupportsLaxItems
+from .._types import SupportsLaxItems, _XPathExtFunc, _XPathExtFuncT
 from ._classlookup import ElementBase, ElementClassLookup, FallbackElementClassLookup
 from ._module_misc import LxmlError
 
-_T = TypeVar("_T")
-_P = ParamSpec("_P")
 _Public_ET = TypeVar("_Public_ET", bound=type[ElementBase])
 
 class LxmlRegistryError(LxmlError):
@@ -114,14 +105,14 @@ class _XPathFunctionNamespaceRegistry:
     prefix: str
 
     def __delitem__(self, __key: str) -> None: ...
-    def __getitem__(self, __key: str) -> Callable[..., Any]: ...
-    def __setitem__(self, __key: str, __value: Callable[..., Any]) -> None: ...
+    def __getitem__(self, __key: str) -> _XPathExtFunc: ...
+    def __setitem__(self, __key: str, __value: _XPathExtFunc) -> None: ...
     def __iter__(self) -> Iterator[str]: ...
     def __len__(self) -> int: ...
     def update(
         self,
-        class_dict_iterable: SupportsLaxItems[str, Callable[..., Any]]
-        | Iterable[tuple[str, Callable[..., Any]]],
+        class_dict_iterable: SupportsLaxItems[str, _XPathExtFunc]
+        | Iterable[tuple[str, _XPathExtFunc]],
     ) -> None:
         """Forgivingly update the registry.
 
@@ -133,15 +124,15 @@ class _XPathFunctionNamespaceRegistry:
         This allows registrations at the module or class level using
         ``vars()``, ``globals()`` etc.
         """
-    def items(self) -> list[tuple[str, Callable[..., Any]]]: ...
-    def iteritems(self) -> Iterator[tuple[str, Callable[..., Any]]]: ...
+    def items(self) -> list[tuple[str, _XPathExtFunc]]: ...
+    def iteritems(self) -> Iterator[tuple[str, _XPathExtFunc]]: ...
     def clear(self) -> None: ...
     @overload  # @ns('name')
     def __call__(
         self, _funcname: str, /
-    ) -> Callable[[Callable[_P, _T]], Callable[_P, _T]]: ...
+    ) -> Callable[[_XPathExtFuncT], _XPathExtFuncT]: ...
     @overload  # plain @ns
-    def __call__(self, obj: Callable[_P, _T], /) -> Callable[_P, _T]: ...
+    def __call__(self, obj: _XPathExtFuncT, /) -> _XPathExtFuncT: ...
 
 def FunctionNamespace(ns_uri: str | None) -> _XPathFunctionNamespaceRegistry:
     """Retrieve the function namespace object associated with the given

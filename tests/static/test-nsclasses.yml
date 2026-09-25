@@ -105,3 +105,33 @@
     @ns('name')
     def ola(context, a):
       return "Ola %s" % a
+
+- case: func_nsreg_context
+  main: |
+    from typing import TYPE_CHECKING
+    from lxml.etree import FunctionNamespace as F
+    if TYPE_CHECKING:
+      from lxml.etree._xpath import _BaseContext
+    uri: str
+    ns = F(uri)
+    @ns
+    def hello(context: "_BaseContext", a: str) -> str:
+      reveal_type(context.context_node)  # NR: .+ "[\w\.]+\._Element"$
+      reveal_type(context.eval_context)  # NR: .+ "builtins\.dict\[Any, Any\]"$
+      return "Hello %s" % a
+    reveal_type(hello)  # NR: .+ "def \(context: [\w\.]+\._BaseContext, a: builtins\.str\) -> builtins\.str"$
+    reveal_type(ns['hello'])  # NR: .+ "def \([\w\.]+\._BaseContext, \*Any, \*\*Any\) -> Any"$
+
+- case: func_nsreg_bad_func
+  main: |
+    from lxml.etree import FunctionNamespace as F
+    uri: str
+    ns = F(uri)
+    def no_context() -> str:
+      return "Hello"
+    def bad_context(context: int, /, a: str) -> str:
+      return "Hello %s" % a
+    ns['no_context'] = no_context  # ER: Incompatible types in assignment .+  \[assignment]$
+    ns['bad_context'] = bad_context  # ER: Incompatible types in assignment .+  \[assignment]$
+    ns(no_context)  # ER: Value of type variable .+  \[type-var]$
+    ns('bad')(bad_context)  # ER: Value of type variable .+  \[type-var]$

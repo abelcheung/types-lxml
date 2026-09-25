@@ -5,10 +5,7 @@
 
 import sys
 from abc import ABCMeta, abstractmethod
-from collections.abc import (
-    Callable,
-    Iterable,
-)
+from collections.abc import Iterable
 from types import ModuleType
 from typing import (
     Any,
@@ -23,7 +20,9 @@ from .._types import (
     SupportsLaxItems,
     _ElementOrTree,
     _TextArg,
+    _XPathExtFunc,
     _XPathExtFuncArg,
+    _XPathExtFuncT,
     _XPathNSArg,
     _XPathObject,
     _XPathVarArg,
@@ -52,6 +51,26 @@ class XPathResultError(XPathEvalError):
 class XPathSyntaxError(LxmlSyntaxError, XPathError):
     """Error in XPath expression"""
 
+# Stub-only class, not exported by lxml. An instance is passed as
+# the first argument to every XPath extension function; at runtime it
+# is either an _XPathContext or an _XSLTContext, depending on whether
+# the function is called from XPath or XSLT.
+class _BaseContext:
+    """Context object passed as first argument to XPath extension functions
+
+    See Also
+    --------
+    - [User documentation](https://lxml.de/extensions.html#the-xpath-context)
+    """
+    @property
+    def context_node(self) -> _Element:
+        """The context node, i.e. the element where the current
+        function is called"""
+    @property
+    def eval_context(self) -> dict[Any, Any]:
+        """A dictionary that is local to the evaluation, which allows
+        functions to keep state between separate calls"""
+
 @disjoint_base
 class _XPathEvaluatorBase(metaclass=ABCMeta):
     @property
@@ -76,7 +95,7 @@ class XPath(_XPathEvaluatorBase):
         path: _TextArg,
         *,
         namespaces: _XPathNSArg | None = None,
-        extensions: _XPathExtFuncArg | None = None,
+        extensions: _XPathExtFuncArg[_XPathExtFuncT] | None = None,
         regexp: bool = True,
         smart_strings: bool = True,
     ) -> None: ...
@@ -99,7 +118,7 @@ class ETXPath(XPath):
         self,
         path: _TextArg,
         *,
-        extensions: _XPathExtFuncArg | None = None,
+        extensions: _XPathExtFuncArg[_XPathExtFuncT] | None = None,
         regexp: bool = True,
         smart_strings: bool = True,
     ) -> None: ...
@@ -117,7 +136,7 @@ class XPathElementEvaluator(_XPathEvaluatorBase):
         element: _Element,
         *,
         namespaces: _XPathNSArg | None = None,
-        extensions: _XPathExtFuncArg | None = None,
+        extensions: _XPathExtFuncArg[_XPathExtFuncT] | None = None,
         regexp: bool = True,
         smart_strings: bool = True,
     ) -> None: ...
@@ -141,7 +160,7 @@ class XPathDocumentEvaluator(XPathElementEvaluator):
         etree: _ElementTree,
         *,
         namespaces: _XPathNSArg | None = None,
-        extensions: _XPathExtFuncArg | None = None,
+        extensions: _XPathExtFuncArg[_XPathExtFuncT] | None = None,
         regexp: bool = True,
         smart_strings: bool = True,
     ) -> None: ...
@@ -151,7 +170,7 @@ def XPathEvaluator(
     etree_or_element: _Element,
     *,
     namespaces: _XPathNSArg | None = None,
-    extensions: _XPathExtFuncArg | None = None,
+    extensions: _XPathExtFuncArg[_XPathExtFuncT] | None = None,
     regexp: bool = True,
     smart_strings: bool = True,
 ) -> XPathElementEvaluator: ...
@@ -160,7 +179,7 @@ def XPathEvaluator(
     etree_or_element: _ElementTree,
     *,
     namespaces: _XPathNSArg | None = None,
-    extensions: _XPathExtFuncArg | None = None,
+    extensions: _XPathExtFuncArg[_XPathExtFuncT] | None = None,
     regexp: bool = True,
     smart_strings: bool = True,
 ) -> XPathDocumentEvaluator: ...
@@ -198,7 +217,7 @@ def Extension(
     function_mapping: dict[str, str] | Iterable[str] | None = None,
     *,
     ns: str,
-) -> dict[tuple[str, str], Callable[..., Any]]:
+) -> dict[tuple[str, str], _XPathExtFunc]:
     """Build a dictionary of extension functions from the functions
     defined in a module or the methods of an object.
 
@@ -219,7 +238,7 @@ def Extension(
     function_mapping: dict[str, str] | Iterable[str] | None = None,
     *,
     ns: None = None,
-) -> dict[tuple[None, str], Callable[..., Any]]:
+) -> dict[tuple[None, str], _XPathExtFunc]:
     """Build a dictionary of extension functions from the functions
     defined in a module or the methods of an object.
 
