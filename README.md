@@ -83,6 +83,17 @@ The normal choice for most people is to fetch package from PyPI, like:
     uv pip install -U types-lxml  # using uv
     pip install -U types-lxml  # using pip
 
+For `lxml.html.soupparser` or `lxml.html.html5parser`, install the corresponding
+typing extra (or both):
+
+    pip install -U 'types-lxml[htmlsoup]'
+    pip install -U 'types-lxml[html5]'
+    pip install -U 'types-lxml[htmlsoup,html5]'
+
+These extras provide the dependencies used by the integration stubs. Install
+the runtime integrations separately with `lxml[htmlsoup]` or `lxml[html5]`.
+Core `lxml.etree` and `lxml.html` typing does not require these extras.
+
 In the unlikely case PyPI is down, one can directly download wheel from [latest release in GitHub](https://github.com/abelcheung/types-lxml/releases/latest), and then perform installation as local file.
 
 As convenience, it is possible to [pull development related packages](https://peps.python.org/pep-0508/#extras). This helps when you want to submit PR on bugs or features:
