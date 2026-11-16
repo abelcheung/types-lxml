@@ -15,8 +15,6 @@ license-files = ['LICENSE']
 dependencies = [
     'typing_extensions ~= 4.15',
     'cssselect ~= 1.2',  # inline annotation
-    'beautifulsoup4 ~= 4.13',  # inline annotation
-    'types-html5lib ~= 1.1.11.20250809',  # 20250516 breaks pyright
 ]
 keywords = ['lxml', 'typing', 'stubs', 'annotation']
 authors = [
@@ -41,8 +39,11 @@ classifiers = [
 homepage = 'https://github.com/abelcheung/types-lxml'
 
 [project.optional-dependencies]
+htmlsoup = ['beautifulsoup4 ~= 4.13']  # inline annotation
+html5 = ['types-html5lib ~= 1.1.11.20250809']  # 20250516 breaks pyright
 mypy = ['mypy >= 1.18.1']
 dev = [
+    'types-lxml[htmlsoup,html5]',
     'tox ~= 4.24',
     'html5lib == 1.1',
     'pook >= 2.0',
@@ -368,6 +369,16 @@ dependency_groups = [
     'pyrefly',
 ]
 commands = [['pyrefly', 'check', {replace = 'posargs', extend = true}, 'src']]
+
+[tool.tox.env.py313-core]
+description = 'Check installed core stubs without optional integrations'
+package = 'wheel'
+dependency_groups = ['mypy', 'lxml60']
+change_dir = '{env_tmp_dir}'
+commands = [
+    ['python', '{tox_root}/tests/packaging/core.py'],
+    ['mypy', '--config-file', '{tox_root}/tests/packaging/mypy.ini', '{tox_root}/tests/packaging/core.py'],
+]
 
 [tool.tox._env_stub]
 pass_env = [
